@@ -1,4 +1,4 @@
-import { CONTEXT_PATH } from "@/constants/generalConstants";
+import { CONTEXT_PATH } from "@/constants/general.constants";
 import Axios from "axios";
 
 const CancelToken = Axios.CancelToken;

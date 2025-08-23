@@ -1,6 +1,7 @@
 "use client";
 
-import { THEME } from "@/constants/generalConstants";
+import { THEME } from "@/constants/general.constants";
+import { getCookie } from "@/utils/general.utils";
 import { StyledEngineProvider, ThemeProvider } from "@mui/material/styles";
 import { useSelector } from "react-redux";
 
@@ -18,7 +19,9 @@ export default function ThemeWrapper({
   const localStorageTheme =
     typeof window !== "undefined" ? localStorage.getItem("theme") : null;
 
-  const mode = currentTheme ?? localStorageTheme ?? THEME.DARK;
+  const cookieTheme = getCookie("theme");
+
+  const mode = localStorageTheme ?? cookieTheme ?? currentTheme ?? THEME.DARK;
   const theme = getTheme(mode);
 
   return (

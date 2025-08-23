@@ -1,5 +1,5 @@
 {
-  "name": "next-template",
+  "name": "digital-student-registration",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -7,7 +7,7 @@
     "name": "Valentin Röhle"
   },
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev --turbopack --experimental-https",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -24,9 +24,11 @@
     "@vercel/analytics": "^1.5.0",
     "axios": "^1.10.0",
     "device-type-detection": "^1.0.1",
+    "file-saver": "^2.0.5",
     "i18next": "^25.3.2",
     "i18next-browser-languagedetector": "^8.2.0",
     "i18next-http-backend": "^3.0.2",
+    "js-cookie": "^3.0.5",
     "lodash": "^4.17.21",
     "next": "15.4.2",
     "react": "19.1.0",
@@ -50,6 +52,8 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
+    "@types/file-saver": "^2.0.7",
+    "@types/js-cookie": "^3.0.6",
     "@types/node": "^24.0.15",
     "@types/react": "^19",
     "@types/react-dom": "^19",
@@ -78,6 +82,6 @@
   },
   "engines": {
     "node": "v22.17.0",
-    "npm": "10.9.2"
+    "yarn": "1.22.22"
   }
 }

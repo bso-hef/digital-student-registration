@@ -2,7 +2,7 @@
 
 import { Theme } from "@mui/material";
 
-import { THEME } from "../constants/generalConstants";
+import { THEME } from "../constants/general.constants";
 
 export const applicationScrollbar = (theme: Theme) => {
   const isDarkTheme = theme.palette.mode === THEME.DARK;

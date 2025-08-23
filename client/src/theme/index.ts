@@ -4,9 +4,9 @@ import {
   BASE_THEME_COLORS,
   DARK_THEME_COLORS,
   LIGHT_THEME_COLORS,
-} from "../constants/themeConstants";
+} from "../constants/theme.constants";
 
-import { THEME } from "../constants/generalConstants";
+import { THEME } from "../constants/general.constants";
 import MuiOverrides from "./overrides";
 
 const baseTheme = {

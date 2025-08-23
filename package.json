@@ -1,5 +1,5 @@
 {
-  "name": "next-template",
+  "name": "digital-student-registration",
   "version": "1.0.0",
   "description": "A modern, scalable fullstack template",
   "main": "server/server.js",
@@ -24,7 +24,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/EinfachValle/next-template.git"
+    "url": "git+https://github.com/bso-hef/digital-student-registration"
   },
   "keywords": [],
   "author": {
@@ -32,11 +32,11 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/EinfachValle/next-template/issues"
+    "url": "https://github.com/bso-hef/digital-student-registration/issues"
   },
-  "homepage": "https://github.com/EinfachValle/next-template#readme",
+  "homepage": "https://github.com/bso-hef/digital-student-registration#readme",
   "engines": {
     "node": "v22.17.0",
-    "npm": "10.9.2"
+    "yarn": "1.22.22"
   }
 }

@@ -9,8 +9,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Next Template",
-  description: "A Next.js template with TypeScript, Mui Material, and more.",
+  title: "Digital Student Registration",
+  description: "A platform for students to register digitally.",
 };
 
 export default function RootLayout({

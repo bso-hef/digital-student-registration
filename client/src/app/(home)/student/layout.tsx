@@ -3,7 +3,7 @@
 import { applicationScrollbar } from "@/utils/styling.utils";
 import { Box, styled } from "@mui/material";
 
-const HomeLayoutContainer = styled(Box)(({ theme }) => ({
+const StudentLayoutContainer = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "row",
   alignItems: "center",
@@ -16,7 +16,7 @@ const HomeLayoutContainer = styled(Box)(({ theme }) => ({
   overflow: "hidden",
 }));
 
-const HomeLayoutBox = styled(Box)(({ theme }) => ({
+const StudentLayoutBox = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "row",
   alignItems: "center",
@@ -30,14 +30,14 @@ const HomeLayoutBox = styled(Box)(({ theme }) => ({
   ...applicationScrollbar(theme),
 }));
 
-export default function HomeLayout({
+export default function StudentLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <HomeLayoutContainer>
-      <HomeLayoutBox>{children}</HomeLayoutBox>
-    </HomeLayoutContainer>
+    <StudentLayoutContainer>
+      <StudentLayoutBox>{children}</StudentLayoutBox>
+    </StudentLayoutContainer>
   );
 }

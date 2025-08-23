@@ -2,9 +2,11 @@
 
 import { useEffect } from "react";
 
+import GeneralButton from "@/components/atoms/buttons/GeneralButton";
+import Logger from "@/lib/logger";
 import ReportProblemIcon from "@mui/icons-material/ReportProblem";
-import { Box, Button, Typography } from "@mui/material";
-import { styled } from "@mui/material/styles";
+import { Box, Stack, Typography, styled } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 interface ErrorProps {
   error: Error;
@@ -19,31 +21,60 @@ const ErrorContainer = styled(Box)(({ theme }) => ({
   textAlign: "center",
   padding: theme.spacing(6),
   height: "100vh",
+  minWidth: "100vw",
+  width: "100%",
   color: theme.palette.text.primary,
+  backgroundColor: theme.palette.surface.interface.background,
+}));
+
+const StyledTitle = styled(Typography)(({ theme }) => ({
+  fontSize: "2rem !important",
+  fontWeight: 600,
+  lineHeight: 1.2,
+  textAlign: "center",
+  fontFamily: "Inter",
+  color: theme.palette.text.default,
+}));
+
+const StyledSubtitle = styled(Typography)(({ theme }) => ({
+  fontSize: "1.5rem !important",
+  fontWeight: 600,
+  lineHeight: 1.2,
+  textAlign: "center",
+  fontFamily: "Inter",
+  color: theme.palette.text.information,
 }));
 
 export default function GlobalError({ error, reset }: ErrorProps) {
+  const { t } = useTranslation();
+
   useEffect(() => {
-    console.error("Unhandled error:", error);
+    Logger.error("Global error occurred:", error);
   }, [error]);
 
   return (
     <ErrorContainer>
-      <ReportProblemIcon sx={{ fontSize: 80, color: "warning.main", mb: 2 }} />
-      <Typography variant="h4" gutterBottom>
-        Something went wrong
-      </Typography>
-      <Typography variant="body1" color="text.secondary">
-        {error.message}
-      </Typography>
-      <Button
-        onClick={reset}
-        variant="contained"
-        color="warning"
-        sx={{ mt: 4 }}
+      <Stack
+        spacing={3}
+        justifyContent="center"
+        alignItems="center"
+        textAlign="center"
       >
-        Try again
-      </Button>
+        <ReportProblemIcon
+          sx={{ fontSize: 80, color: "warning.main", mb: 2 }}
+        />
+        <StyledTitle>{t("error.An unexpected error occurred")}</StyledTitle>
+        <StyledSubtitle>{error.message}</StyledSubtitle>
+        <Box>
+          <GeneralButton
+            onAction={reset}
+            label={t("error.Please try again later")}
+            fullHeight={false}
+            fullWidth={false}
+            maxWidth="350px"
+          />
+        </Box>
+      </Stack>
     </ErrorContainer>
   );
 }
