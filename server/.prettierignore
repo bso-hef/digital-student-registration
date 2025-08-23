@@ -1,0 +1,35 @@
+# Directories with generated or external files
+/node_modules/
+/keys/
+/.husky/
+/.idea/
+/.space/
+/.vscode/
+/logs/
+/Project Docs/
+
+# Minimized files
+*.min.js
+*.min.css
+
+# Configuration files that may require special formatting
+/.hintrc
+/.env
+/docker-compose.yml
+/docker-compose.yaml
+/Dockerfile
+
+# Logs
+*.log
+/yarn-error.log
+
+# Cache files
+.cache/
+.npm/
+
+# Other files that are not changed frequently or require special formatting
+/package-lock.json
+/yarn.lock
+
+# Git directory
+/.git/

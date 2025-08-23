@@ -1,0 +1,42 @@
+{
+  "name": "next-template",
+  "version": "1.0.0",
+  "description": "A modern, scalable fullstack template",
+  "main": "server/server.js",
+  "scripts": {
+    "install:all": "concurrently \"yarn install\" \"yarn --cwd client install\" \"yarn --cwd server install\"",
+    "clone-env": "concurrently \"cp server/.env.example server/.env\" \"cp client/.env.example client/.env\"",
+    "clone-env:win": "concurrently \"copy server\\.env.example server\\.env\" \"copy client\\.env.example client\\.env\"",
+    "client": "yarn --cwd client start",
+    "server": "yarn --cwd server server",
+    "dev": "concurrently \"yarn client\" \"yarn server\"",
+    "format:client": "yarn --cwd client prettier --write src/**/*.{js,jsx,json,css,scss}",
+    "format:server": "yarn --cwd server prettier --write .",
+    "format:all": "concurrently \"yarn format:client\" \"yarn format:server\"",
+    "lint:all": "concurrently \"yarn --cwd client lint\" \"yarn --cwd server lint\"",
+    "prepare:husky": "husky install"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.2",
+    "nodemon": "^3.1.10"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EinfachValle/next-template.git"
+  },
+  "keywords": [],
+  "author": {
+    "name": "Valentin Röhle"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/EinfachValle/next-template/issues"
+  },
+  "homepage": "https://github.com/EinfachValle/next-template#readme",
+  "engines": {
+    "node": "v22.17.0",
+    "npm": "10.9.2"
+  }
+}

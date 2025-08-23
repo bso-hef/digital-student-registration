@@ -1,0 +1,24 @@
+@url=https://localhost:5000/api/auth
+
+@token=token
+
+### Register User
+POST {{url}}/register HTTP/1.1
+Content-Type: application/json
+
+{
+  "userName": "TestUser01",
+  "firstName": "Test",
+  "lastName": "User",
+  "email": "TestUser01@collabyou.com",
+  "password": "test123456!",
+  "role": "admin",
+  "policies": {
+    "termsOfUse": true,
+    "agePolicy": true,
+    "privacyPolicy": true
+  },
+  "profile": {
+    "birthday": "2000-05-13"
+  }
+}
