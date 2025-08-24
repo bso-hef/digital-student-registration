@@ -1,3 +1,5 @@
+import { LANGUAGES, THEME } from "@/constants/general.constants";
+
 import * as TYPES from "../types";
 import { AppAction } from "./index";
 
@@ -13,8 +15,8 @@ interface UIState {
 const initialUIState: UIState = {
   documnetDraggedOver: false,
   appTouched: false,
-  theme: "dark",
-  locale: "en",
+  theme: THEME.LIGHT,
+  locale: LANGUAGES.GERMAN.isoCode,
   loading: false,
   error: null,
 };

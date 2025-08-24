@@ -24,7 +24,6 @@ const HomeLayoutBox = styled(Box)(({ theme }) => ({
   height: "100vh",
   width: "100%",
   textAlign: "center",
-  padding: theme.spacing(4),
   backgroundColor: theme.palette.surface.interface.background,
   color: theme.palette.text.default,
   ...applicationScrollbar(theme),

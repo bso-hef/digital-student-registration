@@ -21,7 +21,7 @@ export default function ThemeWrapper({
 
   const cookieTheme = getCookie("theme");
 
-  const mode = localStorageTheme ?? cookieTheme ?? currentTheme ?? THEME.DARK;
+  const mode = localStorageTheme ?? cookieTheme ?? currentTheme ?? THEME.LIGHT;
   const theme = getTheme(mode);
 
   return (

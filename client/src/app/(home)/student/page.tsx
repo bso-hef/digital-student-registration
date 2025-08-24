@@ -13,16 +13,6 @@ const Wrapper = styled(Box)(({ theme }) => ({
   color: theme.palette.text.default,
 }));
 
-interface StudentIdProps {
-  params: { studentId: string };
+export default function StudentPage() {
+  return <Wrapper>Hier wird dann der Content platziert werden.</Wrapper>;
 }
-
-const StudentId = ({ params }: StudentIdProps) => {
-  const { studentId } = params;
-
-  return (
-    <Wrapper>Hi, dies ist ein Testtext für Student ID: {studentId}</Wrapper>
-  );
-};
-
-export default StudentId;

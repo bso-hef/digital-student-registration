@@ -8,9 +8,9 @@ export const BASE_THEME_COLORS = {
   },
   SECONDARY: {
     WHITE: "#FFFFFF",
-    LIGHT: "#94A3B8",
-    MAIN: "#E2E8F0",
-    DARK: "#64748B",
+    LIGHT: "#7B7A7E",
+    MAIN: "#515053",
+    DARK: "#282829",
     BLACK: "#000000",
   },
   SUCCESS: {
@@ -37,22 +37,24 @@ export const BASE_THEME_COLORS = {
     LIGHT: "rgba(0, 0, 0, 0.12)",
     DARK: "rgba(255, 255, 255, 0.12)",
   },
+  GRADIENT:
+    "linear-gradient( 90deg, #0052CC 0%, #007DFF 33%, #66FF99 66%, #7AC883 100%)",
 };
 
 export const LIGHT_THEME_COLORS = {
-  100: "#FFFFFF",
-  200: "#F5FAFB",
-  300: "#E9F0F1",
-  400: "#D3DEE0",
-  500: "#B7C5C8",
-  600: "#9AA9AD",
+  100: "#FAFAFA",
+  200: "#F3F5F7",
+  300: "#F2F2F2",
+  400: "#D8DFE0",
+  500: "#B8C0C2",
+  600: "#6F7071",
 };
 
 export const DARK_THEME_COLORS = {
-  650: "#CAD4D6",
-  700: "#3B4F5D",
-  750: "#324451",
-  800: "#0F172A",
-  850: "#25323D",
-  900: "#1F2A33",
+  650: "#4F5052",
+  700: "#343536",
+  750: "#2A2A2B",
+  800: "#202021",
+  850: "#18191B",
+  900: "#121314",
 };
