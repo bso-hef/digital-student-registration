@@ -4,13 +4,23 @@ import React from "react";
 
 import ActionsTooltip from "@/components/atoms/ActionsTooltip";
 import { STEPPER_ICON_SIZE } from "@/constants/ui.constants";
+import BusinessRoundedIcon from "@mui/icons-material/BusinessRounded";
+import EmojiEventsRoundedIcon from "@mui/icons-material/EmojiEventsRounded";
+import FamilyRestroomRoundedIcon from "@mui/icons-material/FamilyRestroomRounded";
+import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
+import InfoRoundedIcon from "@mui/icons-material/InfoRounded";
+import LocationOnRoundedIcon from "@mui/icons-material/LocationOnRounded";
+import PublicRoundedIcon from "@mui/icons-material/PublicRounded";
+import SchoolRoundedIcon from "@mui/icons-material/SchoolRounded";
+import SummarizeRoundedIcon from "@mui/icons-material/SummarizeRounded";
+import WorkRoundedIcon from "@mui/icons-material/WorkRounded";
 import {
   Box,
   Step,
   StepConnector,
+  StepIconProps,
   StepLabel,
   Stepper,
-  alpha,
   stepConnectorClasses,
   styled,
 } from "@mui/material";
@@ -24,21 +34,7 @@ const StepperBox = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.surface.interface.base,
   borderRadius: theme.spacing(3),
   boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
-}));
-
-const CustomConnector = styled(StepConnector)(({ theme }) => ({
-  [`&.${stepConnectorClasses.alternativeLabel}`]: {
-    marginRight: theme.spacing(1),
-    height: "2px",
-  },
-  [`& .${stepConnectorClasses.line}`]: {
-    borderTopWidth: 2,
-    borderColor: alpha(theme.palette.text.primary, 0.2),
-  },
-  [`&.${stepConnectorClasses.active} .${stepConnectorClasses.line}, 
-    &.${stepConnectorClasses.completed} .${stepConnectorClasses.line}`]: {
-    borderColor: theme.palette.primary.main,
-  },
+  zIndex: 2,
 }));
 
 const stepperSx = {
@@ -57,34 +53,111 @@ const stepperSx = {
   "& .MuiStepLabel-root.Mui-active .MuiStepLabel-label": { display: "block" },
 };
 
-type StepDef = { id: number; label: string };
+type StepDef = { id: number; label: string; icon: React.ReactElement };
+
+const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
+  [`&.${stepConnectorClasses.alternativeLabel}`]: {
+    top: 22,
+  },
+  [`&.${stepConnectorClasses.active}`]: {
+    [`& .${stepConnectorClasses.line}`]: {
+      backgroundImage:
+        "linear-gradient(95deg, rgb(25, 118, 210) 0%, rgb(0, 150, 136) 50%, rgb(129, 199, 132) 100%)",
+    },
+  },
+  [`&.${stepConnectorClasses.completed}`]: {
+    [`& .${stepConnectorClasses.line}`]: {
+      backgroundImage:
+        "linear-gradient(95deg, rgb(25, 118, 210) 0%, rgb(0, 150, 136) 50%, rgb(129, 199, 132) 100%)",
+    },
+  },
+  [`& .${stepConnectorClasses.line}`]: {
+    height: 3,
+    border: 0,
+    backgroundColor: "#eaeaf0",
+    borderRadius: 1,
+    ...theme.applyStyles("dark", {
+      backgroundColor: theme.palette.grey[800],
+    }),
+  },
+}));
+
+const ColorlibStepIconRoot = styled("div")<{
+  ownerState: { completed?: boolean; active?: boolean };
+}>(({ theme }) => ({
+  backgroundColor: "#ccc",
+  zIndex: 1,
+  color: "#fff",
+  width: 50,
+  height: 50,
+  display: "flex",
+  borderRadius: "50%",
+  justifyContent: "center",
+  alignItems: "center",
+  ...theme.applyStyles("dark", {
+    backgroundColor: theme.palette.grey[700],
+  }),
+  variants: [
+    {
+      props: ({ ownerState }) => ownerState.active,
+      style: {
+        backgroundImage:
+          "linear-gradient(136deg, rgb(25, 118, 210) 0%, rgb(0, 150, 136) 50%, rgb(129, 199, 132) 100%)",
+        boxShadow: "0 4px 10px 0 rgba(0,0,0,.25)",
+      },
+    },
+    {
+      props: ({ ownerState }) => ownerState.completed,
+      style: {
+        backgroundImage:
+          "linear-gradient(136deg, rgb(25, 118, 210) 0%, rgb(0, 150, 136) 50%, rgb(129, 199, 132) 100%)",
+      },
+    },
+  ],
+}));
 
 const DynamicPageStepper = ({
-  activeStep = 0,
+  activeStep = 3,
   showLabelForId = null,
 }: {
   activeStep?: number;
   showLabelForId?: number | null;
 }) => {
   const steps: StepDef[] = [
-    { id: 0, label: "Willkommen" },
-    { id: 1, label: "Allgemein" },
-    { id: 2, label: "Herkunft" },
-    { id: 3, label: "Adresse" },
-    { id: 4, label: "Eltern" },
-    { id: 5, label: "Vorbildung" },
-    { id: 6, label: "Ausbildung" },
-    { id: 7, label: "Betriebskontakt" },
-    { id: 8, label: "Zusammenfassung" },
-    { id: 9, label: "Abschluss" },
+    { id: 0, label: "Willkommen", icon: <HomeRoundedIcon /> },
+    { id: 1, label: "Allgemein", icon: <InfoRoundedIcon /> },
+    { id: 2, label: "Herkunft", icon: <PublicRoundedIcon /> },
+    { id: 3, label: "Adresse", icon: <LocationOnRoundedIcon /> },
+    { id: 4, label: "Eltern", icon: <FamilyRestroomRoundedIcon /> },
+    { id: 5, label: "Vorbildung", icon: <SchoolRoundedIcon /> },
+    { id: 6, label: "Ausbildung", icon: <WorkRoundedIcon /> },
+    { id: 7, label: "Betriebskontakt", icon: <BusinessRoundedIcon /> },
+    { id: 8, label: "Zusammenfassung", icon: <SummarizeRoundedIcon /> },
+    { id: 9, label: "Abschluss", icon: <EmojiEventsRoundedIcon /> },
   ];
+
+  function ColorlibStepIcon(props: StepIconProps) {
+    const { active, completed, className, icon } = props;
+
+    const stepIndex = Number(icon) - 1;
+    const step = steps[stepIndex];
+
+    return (
+      <ColorlibStepIconRoot
+        ownerState={{ completed, active }}
+        className={className}
+      >
+        {step?.icon}
+      </ColorlibStepIconRoot>
+    );
+  }
 
   return (
     <StepperBox>
       <Stepper
         activeStep={activeStep}
         alternativeLabel
-        connector={<CustomConnector />}
+        connector={<ColorlibConnector />}
         sx={stepperSx}
       >
         {steps.map((step, index) => {
@@ -103,6 +176,7 @@ const DynamicPageStepper = ({
               >
                 <Box component="span" sx={{ display: "inline-flex" }}>
                   <StepLabel
+                    StepIconComponent={ColorlibStepIcon}
                     sx={{
                       "& .MuiStepLabel-label": {
                         display: shouldShowLabel ? "block" : "none",

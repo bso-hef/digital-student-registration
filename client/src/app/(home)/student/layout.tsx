@@ -3,9 +3,17 @@
 import { applicationScrollbar } from "@/utils/styling.utils";
 import { Box, Typography, styled } from "@mui/material";
 import { useDeviceTypeDetection } from "device-type-detection";
+import Image from "next/image";
 
+import BackgroundStudyPattern from "./BackgroundStudyPattern";
 import DynamicPageStepper from "./DynamicPageStepper";
-import RandomSvg from "./RandomSvg";
+
+const StyledBox = styled(Box)({
+  position: "relative",
+  minHeight: "100vh",
+  width: "100%",
+  overflow: "hidden",
+});
 
 const StudentLayoutContainer = styled(Box, {
   shouldForwardProp: (prop) => prop !== "showMobileView",
@@ -17,10 +25,7 @@ const StudentLayoutContainer = styled(Box, {
   height: "100vh",
   width: "100%",
   textAlign: "center",
-  background:
-    "linear-gradient(to bottom, #d8e0ff 0%, #c2ccff 50%, #aebdff 100%)",
-  backgroundRepeat: "no-repeat",
-  backgroundSize: "cover",
+  background: "transparent",
   color: theme.palette.text.default,
   padding: !showMobileView ? theme.spacing(20) : 0,
   overflow: "hidden",
@@ -42,7 +47,7 @@ const LayoutBox = styled(Box, {
   width: "100%",
   maxWidth: "1200px",
   textAlign: "center",
-  padding: theme.spacing(4, 4, 0, 4),
+  padding: showMobileView ? theme.spacing(4, 4, 0, 4) : theme.spacing(4),
   backgroundColor: theme.palette.surface.interface.base,
   backgroundImage: "unset",
   color: theme.palette.text.default,
@@ -54,6 +59,7 @@ const LayoutBox = styled(Box, {
   boxShadow: showMobileView
     ? "0px 8px 24px rgba(0,0,0,0.06)"
     : "rgba(0, 0, 0, 0.1) 0px 4px 12px",
+  zIndex: 2,
   ...applicationScrollbar(theme),
 }));
 
@@ -98,29 +104,14 @@ const SubTitle = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.information,
 }));
 
-const LayoutLeft = styled(Box)(() => ({
+const StyledImageBox = styled(Box)({
   display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "center",
-  width: "50%",
-}));
-
-const LayoutRight = styled(Box)(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
   width: "100%",
-  maxWidth: "400px",
-  marginTop: theme.spacing(5),
-  borderTop: `1px solid ${theme.palette.border.seperator}`,
-  borderRight: `1px solid ${theme.palette.border.seperator}`,
-  borderLeft: `1px solid ${theme.palette.border.seperator}`,
-  height: "560px",
-  borderRadius: theme.spacing(2, 2, 0, 0),
-  padding: theme.spacing(2),
-}));
+  position: "absolute",
+  top: 0,
+});
 
 export default function StudentLayout({
   children,
@@ -132,22 +123,33 @@ export default function StudentLayout({
   const showMobileView = isMobile || isTabletVertical;
 
   return (
-    <StudentLayoutContainer showMobileView={showMobileView}>
-      {!showMobileView && <DynamicPageStepper />}
-      <LayoutBox showMobileView={showMobileView}>
-        <TitleBox showMobileView={showMobileView}>
-          <Title>Anmeldung der BSO</Title>
-          <SubTitle>Schließen Sie in 10 Schritten ihre Anmeldung ab.</SubTitle>
-        </TitleBox>
-        <StyledRowLayout>
-          {!showMobileView && (
-            <LayoutLeft>
-              <RandomSvg size="560px" />
-            </LayoutLeft>
-          )}
-          <LayoutRight>{children}</LayoutRight>
-        </StyledRowLayout>
-      </LayoutBox>
-    </StudentLayoutContainer>
+    <StyledBox>
+      <BackgroundStudyPattern
+        density={0.3}
+        minSize={64}
+        maxSize={164}
+        opacity={0.08}
+        stroke="#0b3558"
+        seed={20250825}
+      />
+      <StudentLayoutContainer showMobileView={showMobileView}>
+        {showMobileView ? (
+          <StyledImageBox>
+            <Image src="/logo.svg" alt="logo" width={250} height={250} />
+          </StyledImageBox>
+        ) : (
+          <DynamicPageStepper />
+        )}
+        <LayoutBox showMobileView={showMobileView}>
+          <TitleBox showMobileView={showMobileView}>
+            <Title>Anmeldung der BSO</Title>
+            <SubTitle>
+              Schließen Sie in 10 Schritten ihre Anmeldung ab.
+            </SubTitle>
+          </TitleBox>
+          <StyledRowLayout>{children}</StyledRowLayout>
+        </LayoutBox>
+      </StudentLayoutContainer>
+    </StyledBox>
   );
 }
