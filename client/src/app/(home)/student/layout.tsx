@@ -1,9 +1,12 @@
 "use client";
 
 import { applicationScrollbar } from "@/utils/styling.utils";
-import { Box, Typography, styled } from "@mui/material";
+import { Box, styled } from "@mui/material";
 import { useDeviceTypeDetection } from "device-type-detection";
 import Image from "next/image";
+import { useSelector } from "react-redux";
+
+import { RootState } from "@/store/reducers";
 
 import BackgroundStudyPattern from "./BackgroundStudyPattern";
 import DynamicPageStepper from "./DynamicPageStepper";
@@ -43,7 +46,8 @@ const LayoutBox = styled(Box, {
   alignItems: "center",
   justifyContent: "center",
   minHeight: "30dvh",
-  height: "auto",
+  height: showMobileView ? "100%" : "auto",
+  maxHeight: showMobileView ? "75%" : undefined,
   width: "100%",
   maxWidth: "1200px",
   textAlign: "center",
@@ -63,47 +67,6 @@ const LayoutBox = styled(Box, {
   ...applicationScrollbar(theme),
 }));
 
-const StyledRowLayout = styled(Box)(({ theme }) => ({
-  display: "flex",
-  flexDirection: "row",
-  alignItems: "center",
-  justifyContent: "center",
-  minHeight: "30dvh",
-  height: "auto",
-  width: "100%",
-  color: theme.palette.text.default,
-  gap: theme.spacing(2),
-  ...applicationScrollbar(theme),
-}));
-
-const TitleBox = styled(Box, {
-  shouldForwardProp: (prop) => prop !== "showMobileView",
-})<{ showMobileView: boolean }>(({ theme, showMobileView }) => ({
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "flex-start",
-  justifyContent: "center",
-  width: "100%",
-  textAlign: showMobileView ? "center" : "left",
-  color: theme.palette.text.default,
-}));
-
-const Title = styled(Typography)(({ theme }) => ({
-  fontSize: "32px !important",
-  fontWeight: 600,
-  lineHeight: "24px !important",
-  color: theme.palette.text.default,
-  marginBottom: theme.spacing(2),
-}));
-
-const SubTitle = styled(Typography)(({ theme }) => ({
-  fontSize: "24px !important",
-  fontWeight: 400,
-  lineHeight: "32px !important",
-  letterSpacing: "0.115px",
-  color: theme.palette.text.information,
-}));
-
 const StyledImageBox = styled(Box)({
   display: "flex",
   alignItems: "center",
@@ -118,6 +81,8 @@ export default function StudentLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const { currentStep } = useSelector((state: RootState) => state.student);
+
   const { isMobile, isTabletVertical } = useDeviceTypeDetection();
 
   const showMobileView = isMobile || isTabletVertical;
@@ -130,7 +95,7 @@ export default function StudentLayout({
         maxSize={164}
         opacity={0.08}
         stroke="#0b3558"
-        seed={20250825}
+        seed={20250822}
       />
       <StudentLayoutContainer showMobileView={showMobileView}>
         {showMobileView ? (
@@ -138,17 +103,9 @@ export default function StudentLayout({
             <Image src="/logo.svg" alt="logo" width={250} height={250} />
           </StyledImageBox>
         ) : (
-          <DynamicPageStepper />
+          <DynamicPageStepper activeStep={currentStep} />
         )}
-        <LayoutBox showMobileView={showMobileView}>
-          <TitleBox showMobileView={showMobileView}>
-            <Title>Anmeldung der BSO</Title>
-            <SubTitle>
-              Schließen Sie in 10 Schritten ihre Anmeldung ab.
-            </SubTitle>
-          </TitleBox>
-          <StyledRowLayout>{children}</StyledRowLayout>
-        </LayoutBox>
+        <LayoutBox showMobileView={showMobileView}>{children}</LayoutBox>
       </StudentLayoutContainer>
     </StyledBox>
   );

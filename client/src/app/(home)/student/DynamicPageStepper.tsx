@@ -24,6 +24,7 @@ import {
   stepConnectorClasses,
   styled,
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 const StepperBox = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -117,23 +118,49 @@ const ColorlibStepIconRoot = styled("div")<{
 }));
 
 const DynamicPageStepper = ({
-  activeStep = 3,
+  activeStep = 0,
   showLabelForId = null,
 }: {
   activeStep?: number;
   showLabelForId?: number | null;
 }) => {
+  const { t } = useTranslation();
+
   const steps: StepDef[] = [
-    { id: 0, label: "Willkommen", icon: <HomeRoundedIcon /> },
-    { id: 1, label: "Allgemein", icon: <InfoRoundedIcon /> },
-    { id: 2, label: "Herkunft", icon: <PublicRoundedIcon /> },
-    { id: 3, label: "Adresse", icon: <LocationOnRoundedIcon /> },
-    { id: 4, label: "Eltern", icon: <FamilyRestroomRoundedIcon /> },
-    { id: 5, label: "Vorbildung", icon: <SchoolRoundedIcon /> },
-    { id: 6, label: "Ausbildung", icon: <WorkRoundedIcon /> },
-    { id: 7, label: "Betriebskontakt", icon: <BusinessRoundedIcon /> },
-    { id: 8, label: "Zusammenfassung", icon: <SummarizeRoundedIcon /> },
-    { id: 9, label: "Abschluss", icon: <EmojiEventsRoundedIcon /> },
+    { id: 0, label: t("student.steps.Welcome"), icon: <HomeRoundedIcon /> },
+    { id: 1, label: t("student.steps.General"), icon: <InfoRoundedIcon /> },
+    { id: 2, label: t("student.steps.Origin"), icon: <PublicRoundedIcon /> },
+    {
+      id: 3,
+      label: t("student.steps.Address"),
+      icon: <LocationOnRoundedIcon />,
+    },
+    {
+      id: 4,
+      label: t("student.steps.Parents"),
+      icon: <FamilyRestroomRoundedIcon />,
+    },
+    {
+      id: 5,
+      label: t("student.steps.Pre Education"),
+      icon: <SchoolRoundedIcon />,
+    },
+    { id: 6, label: t("student.steps.Training"), icon: <WorkRoundedIcon /> },
+    {
+      id: 7,
+      label: t("student.steps.Company Contact"),
+      icon: <BusinessRoundedIcon />,
+    },
+    {
+      id: 8,
+      label: t("student.steps.Summary"),
+      icon: <SummarizeRoundedIcon />,
+    },
+    {
+      id: 9,
+      label: t("student.steps.Completion"),
+      icon: <EmojiEventsRoundedIcon />,
+    },
   ];
 
   function ColorlibStepIcon(props: StepIconProps) {

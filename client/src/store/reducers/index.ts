@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { combineReducers } from "redux";
 
+import studentReducer from "./student";
 import uiReducer from "./ui";
 
 export interface AppAction {
@@ -10,6 +11,7 @@ export interface AppAction {
 }
 
 const rootReducer = combineReducers({
+  student: studentReducer,
   ui: uiReducer,
 });
 

@@ -1,5 +1,6 @@
 "use client";
 
+import StepForm from "@/components/organisms/StepForm";
 import { Box, styled } from "@mui/material";
 
 const Wrapper = styled(Box)(({ theme }) => ({
@@ -21,7 +22,9 @@ const StudentId = ({ params }: StudentIdProps) => {
   const { studentId } = params;
 
   return (
-    <Wrapper>Hi, dies ist ein Testtext für Student ID: {studentId}</Wrapper>
+    <Wrapper>
+      <StepForm />
+    </Wrapper>
   );
 };
 

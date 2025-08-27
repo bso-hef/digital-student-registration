@@ -1,1 +1,26 @@
-{}
+{
+  "general": {
+    "Save": "Speichern",
+    "Cancel": "Abbrechen",
+    "Next": "Weiter",
+    "Previous": "Zurück",
+    "Edit": "Bearbeiten",
+    "Delete": "Löschen",
+    "Start": "Starten",
+    "Confirm": "Bestätigen"
+  },
+  "student": {
+    "steps": {
+      "Welcome": "Willkommen",
+      "General": "Allgemein",
+      "Origin": "Herkunft",
+      "Address": "Adresse",
+      "Parents": "Eltern",
+      "Pre Education": "Vorbildung",
+      "Training": "Ausbildung",
+      "Company Contact": "Unternehmenskontakt",
+      "Summary": "Zusammenfassung",
+      "Completion": "Abschluss"
+    }
+  }
+}

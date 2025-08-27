@@ -1,1 +1,26 @@
-{}
+{
+  "general": {
+    "Save": "Save",
+    "Cancel": "Cancel",
+    "Next": "Next",
+    "Previous": "Previous",
+    "Edit": "Edit",
+    "Delete": "Delete",
+    "Start": "Start",
+    "Confirm": "Confirm"
+  },
+  "student": {
+    "steps": {
+      "Welcome": "Welcome",
+      "General": "General",
+      "Origin": "Origin",
+      "Address": "Address",
+      "Parents": "Parents",
+      "Pre Education": "Previous Education",
+      "Training": "Training",
+      "Company Contact": "Company Contact",
+      "Summary": "Summary",
+      "Completion": "Completion"
+    }
+  }
+}

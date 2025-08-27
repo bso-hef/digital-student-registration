@@ -8,7 +8,7 @@ import rootReducer from "../store/reducers";
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["ui"],
+  whitelist: ["ui", "student"],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

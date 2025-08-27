@@ -1,6 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
-import { Box } from "@mui/material";
+import DocumentScannerRoundedIcon from "@mui/icons-material/DocumentScannerRounded";
+import MenuBookRoundedIcon from "@mui/icons-material/MenuBookRounded";
+import ModeOutlinedIcon from "@mui/icons-material/ModeOutlined";
+import PushPinRoundedIcon from "@mui/icons-material/PushPinRounded";
+import SchoolRoundedIcon from "@mui/icons-material/SchoolRounded";
+import { Box, SvgIconProps } from "@mui/material";
 
 function mulberry32(seed: number) {
   let t = seed >>> 0;
@@ -12,54 +17,28 @@ function mulberry32(seed: number) {
   };
 }
 
-const strokeCommon = {
-  fill: "none",
-  strokeLinecap: "round",
-  strokeLinejoin: "round",
-} as const;
-
 interface IconProps {
   strokeWidth?: number;
 }
 
-function BookIcon({ strokeWidth = 2 }: IconProps) {
-  return (
-    <svg viewBox="0 0 64 64" aria-hidden="true">
-      <g stroke="currentColor" {...strokeCommon} strokeWidth={strokeWidth}>
-        <path d="M6 14v36c9-5 17-5 26 0V14c-9-5-17-5-26 0Z" />
-        <path d="M32 14v36c9-5 17-5 26 0V14c-9-5-17-5-26 0Z" />
-        <path d="M12 22h10M12 28h10M12 34h10M12 40h10" />
-        <path d="M38 22h10M38 28h10M38 34h10M38 40h10" />
-      </g>
-    </svg>
-  );
-}
+type PatternIcon = React.ComponentType<IconProps>;
 
-function PencilIcon({ strokeWidth = 2 }: IconProps) {
-  return (
-    <svg viewBox="0 0 64 64" aria-hidden="true">
-      <g stroke="currentColor" {...strokeCommon} strokeWidth={strokeWidth}>
-        <path d="M12 52l8-2 28-28-6-6-28 28-2 8Z" />
-        <path d="M42 10l6 6" />
-        <path d="M20 50l-6-6" />
-      </g>
-    </svg>
-  );
-}
+const isMuiIcon = (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Icon: React.ComponentType<any>,
+): Icon is React.ComponentType<SvgIconProps> =>
+  typeof (Icon as { muiName?: string }).muiName === "string";
 
-function DocIcon({ strokeWidth = 2 }: IconProps) {
-  return (
-    <svg viewBox="0 0 64 64" aria-hidden="true">
-      <g stroke="currentColor" {...strokeCommon} strokeWidth={strokeWidth}>
-        <path d="M14 10h24l12 12v32a6 6 0 0 1-6 6H20a6 6 0 0 1-6-6V16a6 6 0 0 1 6-6Z" />
-        <path d="M38 10v12h12" />
-        <path d="M22 30h20M22 38h20M22 46h12" />
-        <circle cx="46" cy="50" r="6" />
-        <path d="M43 50l2 2 4-5" />
-      </g>
-    </svg>
-  );
-}
+const wrapMuiIcon = (MuiIcon: React.ComponentType<SvgIconProps>): PatternIcon =>
+  function WrappedMuiIcon() {
+    return (
+      <MuiIcon style={{ width: "100%", height: "100%" }} fontSize="inherit" />
+    );
+  };
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const normalizeIcons = (arr: Array<React.ComponentType<any>>): PatternIcon[] =>
+  arr.map((I) => (isMuiIcon(I) ? wrapMuiIcon(I) : (I as PatternIcon)));
 
 type BackgroundStudyPatternProps = {
   gradient?: [string, string, string];
@@ -112,10 +91,18 @@ export default function BackgroundStudyPattern({
   const ref = useRef<HTMLDivElement>(null);
   const [rect, setRect] = useState({ w: 0, h: 0 });
 
-  const IconSet = useMemo(
-    () => (icons && icons.length ? icons : [BookIcon, PencilIcon, DocIcon]),
-    [icons],
-  );
+  const IconSet = useMemo<PatternIcon[]>(() => {
+    if (icons && icons.length) {
+      return normalizeIcons(icons);
+    }
+    return [
+      wrapMuiIcon(SchoolRoundedIcon),
+      wrapMuiIcon(ModeOutlinedIcon),
+      wrapMuiIcon(MenuBookRoundedIcon),
+      wrapMuiIcon(DocumentScannerRoundedIcon),
+      wrapMuiIcon(PushPinRoundedIcon),
+    ];
+  }, [icons]);
 
   useEffect(() => {
     const el = ref.current;

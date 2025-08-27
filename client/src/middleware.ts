@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 // import { verifyToken } from "./src/lib/auth";
+// TODO: Create good flow for middleware
 
 const PUBLIC_PATHS = [
   "/",
