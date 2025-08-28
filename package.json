@@ -4,14 +4,12 @@
   "description": "A modern, scalable fullstack template",
   "main": "server/server.js",
   "scripts": {
-    "install:all": "concurrently \"yarn install\" \"yarn --cwd client install\" \"yarn --cwd server install\"",
-    "clone-env": "concurrently \"cp server/.env.example server/.env\" \"cp client/.env.example client/.env\"",
-    "clone-env:win": "concurrently \"copy server\\.env.example server\\.env\" \"copy client\\.env.example client\\.env\"",
+    "install:all": "concurrently \"yarn install\" \"yarn --cwd client install\"",
+    "clone-env": "\"cp client/.env.example client/.env\"",
+    "clone-env:win": "\"copy client\\.env.example client\\.env\"",
     "client": "yarn --cwd client start",
-    "server": "yarn --cwd server server",
-    "dev": "concurrently \"yarn client\" \"yarn server\"",
+    "dev": "concurrently \"yarn client\"",
     "format:client": "yarn --cwd client prettier --write src/**/*.{js,jsx,json,css,scss}",
-    "format:server": "yarn --cwd server prettier --write .",
     "format:all": "concurrently \"yarn format:client\" \"yarn format:server\"",
     "lint:all": "concurrently \"yarn --cwd client lint\" \"yarn --cwd server lint\"",
     "prepare:husky": "husky install"

@@ -1,4 +1,4 @@
-import Logger from "@/lib/logger";
+import Logger from "@/lib/client-logger";
 import { saveAs } from "file-saver";
 import Cookies from "js-cookie";
 

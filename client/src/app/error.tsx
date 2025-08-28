@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
-import Logger from "@/lib/logger";
+import Logger from "@/lib/client-logger";
 import ReportProblemIcon from "@mui/icons-material/ReportProblem";
 import { Box, Stack, Typography, styled } from "@mui/material";
 import { useTranslation } from "react-i18next";

@@ -29,7 +29,7 @@ export const COLORS = {
   INFO: "#2196F3",
   ERROR: "#F44336",
   WARNING: "#FFC107",
-};
+} as const;
 
 export const LANGUAGES = {
   ENGLISH: {
