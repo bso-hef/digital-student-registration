@@ -42,7 +42,9 @@ export const LANGUAGES = {
     value: "German",
     key: "de-DE",
   },
-};
+} as const;
+
+export type LanguageKey = keyof typeof LANGUAGES;
 
 export const CONTEXT_PATH = process.env.NEXT_PUBLIC_API_URL || "";
 // export const MY_URL = `${window.location.origin}${process.env.NEXT_PUBLIC_API_URL}`;

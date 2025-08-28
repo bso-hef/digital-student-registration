@@ -1,7 +1,8 @@
 "use client";
 
-import { Fragment, memo } from "react";
+import { memo } from "react";
 
+import { getStudentSteps } from "@/constants/studentSteps.constants";
 import { setCurrentStudentOnboardingStep } from "@/store/actions/studentActions";
 import { AppDispatch } from "@/store/store";
 import DoneRoundedIcon from "@mui/icons-material/DoneRounded";
@@ -30,9 +31,9 @@ const Wrapper = styled(Box)(() => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "flex-start",
-  justifyContent: "center",
+  justifyContent: "space-between",
   width: "100%",
-  height: "auto",
+  height: "100%",
   gap: "32px",
 }));
 
@@ -92,6 +93,9 @@ const StepForm = () => {
 
   const showMobileView = isMobile || isTabletVertical;
 
+  const steps = getStudentSteps(t);
+  const currentStepDef = steps[currentStep];
+
   function renderFormByStep(step: number) {
     switch (step) {
       case 0:
@@ -143,8 +147,8 @@ const StepForm = () => {
     <Wrapper>
       {!isFirstStep && !showMobileView && (
         <TitleBox showMobileView={showMobileView}>
-          <Title>Titel des Steps</Title>
-          <SubTitle>{`Step ${currentStep + 1}`}</SubTitle>
+          <Title>{currentStepDef?.label}</Title>
+          <SubTitle>{`${t("general.Step")} ${currentStep + 1}`}</SubTitle>
         </TitleBox>
       )}
       <StyledFormBox>{renderFormByStep(currentStep)}</StyledFormBox>

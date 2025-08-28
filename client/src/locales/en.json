@@ -7,7 +7,10 @@
     "Edit": "Edit",
     "Delete": "Delete",
     "Start": "Start",
-    "Confirm": "Confirm"
+    "Confirm": "Confirm",
+    "Step": "Step",
+    "Close": "Close",
+    "Accessibility": "Accessibility"
   },
   "student": {
     "steps": {

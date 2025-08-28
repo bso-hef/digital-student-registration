@@ -1,5 +1,6 @@
 "use client";
 
+import AccessibilityMenu from "@/components/molecules/AccessibilityMenu";
 import { applicationScrollbar } from "@/utils/styling.utils";
 import { Box, styled, useTheme } from "@mui/material";
 import { useDeviceTypeDetection } from "device-type-detection";
@@ -77,6 +78,13 @@ const StyledImageBox = styled(Box)({
   top: 0,
 });
 
+const StyledAccessMenuLocation = styled(Box)({
+  position: "absolute",
+  top: 32,
+  right: 32,
+  zIndex: 2,
+});
+
 export default function StudentLayout({
   children,
 }: {
@@ -109,6 +117,9 @@ export default function StudentLayout({
         )}
         <LayoutBox showMobileView={showMobileView}>{children}</LayoutBox>
       </StudentLayoutContainer>
+      <StyledAccessMenuLocation>
+        <AccessibilityMenu />
+      </StyledAccessMenuLocation>
     </StyledBox>
   );
 }

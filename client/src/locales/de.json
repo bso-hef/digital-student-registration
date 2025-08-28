@@ -7,7 +7,10 @@
     "Edit": "Bearbeiten",
     "Delete": "Löschen",
     "Start": "Starten",
-    "Confirm": "Bestätigen"
+    "Confirm": "Bestätigen",
+    "Step": "Schritt",
+    "Close": "Schließen",
+    "Accessibility": "Barrierefreiheit"
   },
   "student": {
     "steps": {

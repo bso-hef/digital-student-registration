@@ -209,8 +209,8 @@ const IconButton = styled(Box, {
 const SmallIconButton: React.FC<SmallIconButtonProps> = ({
   icon,
   onAction,
-  noMargin,
-  noPadding,
+  noMargin = false,
+  noPadding = false,
   bigIcon = false,
   hugeIcon = false,
   customIconSize,
