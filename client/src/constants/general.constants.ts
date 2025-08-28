@@ -3,7 +3,7 @@ import { PaletteMode } from "@mui/material";
 export const THEME = {
   DARK: "dark" as PaletteMode,
   LIGHT: "light" as PaletteMode,
-};
+} as const;
 
 export const COLORS = {
   WHITE: "#ffffff",

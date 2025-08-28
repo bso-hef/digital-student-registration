@@ -9,6 +9,7 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
+  useTheme,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
@@ -36,6 +37,10 @@ const StyledFormControl = styled(FormControl)(({ theme }) => ({
   },
   "& .MuiSelect-outlined": {
     borderRadius: theme.spacing(2),
+  },
+  "& .MuiList-root": {
+    padding: "0px",
+    borderRadius: theme.spacing(1),
   },
 }));
 
@@ -71,6 +76,8 @@ const GeneralDropdown: React.FC<GeneralDropdownProps> = ({
   disabled = false,
   fullWidth = false,
 }) => {
+  const theme = useTheme();
+
   return (
     <StyledFormControl
       variant="outlined"
@@ -94,14 +101,17 @@ const GeneralDropdown: React.FC<GeneralDropdownProps> = ({
           PaperProps: {
             sx: {
               mt: 1,
+              padding: "0px !important",
+              borderRadius: "8px",
+              color: theme.palette.text.default,
+              border: `1px solid ${theme.palette.border.seperator}`,
+              backgroundColor: theme.palette.surface.interface.base,
+              boxShadow: theme.shadows[3],
+            },
+          },
+          MenuListProps: {
+            sx: {
               padding: 0,
-              borderRadius: 2,
-              border: (theme) => `1px solid ${theme.palette.divider}`,
-              backgroundColor: (theme) =>
-                theme.palette.mode === "dark"
-                  ? theme.palette.grey[900]
-                  : theme.palette.background.paper,
-              boxShadow: (theme) => theme.shadows[3],
             },
           },
         }}
@@ -112,11 +122,15 @@ const GeneralDropdown: React.FC<GeneralDropdownProps> = ({
           </StyledMenuItem>
         )}
         {options.map((option) => (
-          <StyledMenuItem key={option.value} value={option.value}>
-            <ListItemText primary={option.label} />
+          <StyledMenuItem
+            key={option.value}
+            value={option.value}
+            color="text.default"
+          >
+            <ListItemText primary={option.label} color="text.default" />
             {value === option.value && (
-              <ListItemIcon sx={{ minWidth: "28px", color: "primary.main" }}>
-                <CheckRoundedIcon fontSize="small" />
+              <ListItemIcon sx={{ minWidth: "28px", color: "icon.primary" }}>
+                <CheckRoundedIcon />
               </ListItemIcon>
             )}
           </StyledMenuItem>

@@ -10,7 +10,10 @@
     "Confirm": "Bestätigen",
     "Step": "Schritt",
     "Close": "Schließen",
-    "Accessibility": "Barrierefreiheit"
+    "Accessibility": "Barrierefreiheit",
+    "Language": "Sprache",
+    "Light": "Hell",
+    "Dark": "Dunkel"
   },
   "student": {
     "steps": {

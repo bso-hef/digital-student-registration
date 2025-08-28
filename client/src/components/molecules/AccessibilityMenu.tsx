@@ -2,10 +2,11 @@ import React, { Fragment, useState } from "react";
 
 import AccessibilityRoundedIcon from "@mui/icons-material/AccessibilityRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import { Box, Button, Drawer, Typography, styled } from "@mui/material";
+import { Box, Drawer, Typography, styled } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
 import SmallIconButton from "../atoms/buttons/SmallIconButton";
+import ThemeChangeButton from "../atoms/buttons/ThemeChangeButton";
 import LanguageDropdown from "../atoms/dropdowns/LanguageDropdown";
 
 const StyledDrawer = styled(Drawer)(({ theme }) => ({
@@ -23,11 +24,12 @@ const StyledDrawer = styled(Drawer)(({ theme }) => ({
 }));
 
 const StyledButtonLabel = styled(Typography)(({ theme }) => ({
-  fontSize: 14,
-  lineHeight: "20px",
+  fontSize: "18px !important",
+  lineHeight: "24px !important",
   fontWeight: 500,
   textTransform: "none",
-  color: theme.palette.text.default,
+  color: theme.palette.text.information,
+  marginBottom: theme.spacing(2),
 }));
 
 const AccessibilityMenu = () => {
@@ -51,7 +53,7 @@ const AccessibilityMenu = () => {
 
       <StyledDrawer anchor="right" open={openMenu} onClose={handleToggleMenu}>
         <Box display="flex" justifyContent="space-between" alignItems="center">
-          <Typography variant="h6" fontWeight="bold">
+          <Typography variant="h6" fontWeight="bold" color="text.default">
             {t("general.Accessibility")}
           </Typography>
           <SmallIconButton
@@ -64,18 +66,15 @@ const AccessibilityMenu = () => {
         </Box>
 
         <Box mt={2} display="flex" flexDirection="column" gap={3}>
-          <StyledButtonLabel>Language Control:</StyledButtonLabel>
-          <LanguageDropdown />
+          <Box>
+            <StyledButtonLabel>Language Control:</StyledButtonLabel>
+            <LanguageDropdown />
+          </Box>
 
-          <StyledButtonLabel>Theme Control:</StyledButtonLabel>
-          <Button variant="outlined" fullWidth>
-            Dark Mode
-          </Button>
-
-          <StyledButtonLabel>Language Control:</StyledButtonLabel>
-          <Button variant="outlined" fullWidth>
-            Language Control
-          </Button>
+          <Box>
+            <StyledButtonLabel>Theme Control:</StyledButtonLabel>
+            <ThemeChangeButton />
+          </Box>
         </Box>
       </StyledDrawer>
     </Fragment>

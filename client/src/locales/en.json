@@ -10,7 +10,10 @@
     "Confirm": "Confirm",
     "Step": "Step",
     "Close": "Close",
-    "Accessibility": "Accessibility"
+    "Accessibility": "Accessibility",
+    "Language": "Language",
+    "Light": "Light",
+    "Dark": "Dark"
   },
   "student": {
     "steps": {
