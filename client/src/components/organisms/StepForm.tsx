@@ -7,7 +7,8 @@ import { AppDispatch } from "@/store/store";
 import DoneRoundedIcon from "@mui/icons-material/DoneRounded";
 import KeyboardArrowLeftRoundedIcon from "@mui/icons-material/KeyboardArrowLeftRounded";
 import KeyboardArrowRightRoundedIcon from "@mui/icons-material/KeyboardArrowRightRounded";
-import { Box, styled } from "@mui/material";
+import { Box, Typography, styled } from "@mui/material";
+import { useDeviceTypeDetection } from "device-type-detection";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -25,23 +26,71 @@ import SummaryForm from "./forms/SummaryForm";
 import TrainingForm from "./forms/TrainingForm";
 import WelcomeForm from "./forms/WelcomeForm";
 
+const Wrapper = styled(Box)(() => ({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-start",
+  justifyContent: "center",
+  width: "100%",
+  height: "auto",
+  gap: "32px",
+}));
+
 const StyledMenuOptions = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "row",
   justifyContent: "space-between",
   alignItems: "center",
-  position: "absolute",
-  bottom: 32,
   width: "100%",
   maxWidth: "1200px",
-  padding: theme.spacing(0, 4),
   gap: theme.spacing(2),
+}));
+
+const TitleBox = styled(Box, {
+  shouldForwardProp: (prop) => prop !== "showMobileView",
+})<{ showMobileView: boolean }>(({ theme, showMobileView }) => ({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: showMobileView ? "center" : "flex-start",
+  justifyContent: "center",
+  width: "100%",
+  textAlign: showMobileView ? "center" : "left",
+  color: theme.palette.text.default,
+}));
+
+const Title = styled(Typography)(({ theme }) => ({
+  fontSize: "32px !important",
+  fontWeight: 600,
+  lineHeight: "24px !important",
+  color: theme.palette.text.default,
+  marginBottom: theme.spacing(2),
+}));
+
+const SubTitle = styled(Typography)(({ theme }) => ({
+  fontSize: "24px !important",
+  fontWeight: 400,
+  lineHeight: "32px !important",
+  letterSpacing: "0.115px",
+  color: theme.palette.text.information,
+}));
+
+const StyledFormBox = styled(Box)(() => ({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-start",
+  justifyContent: "center",
+  width: "100%",
+  height: "auto",
 }));
 
 const StepForm = () => {
   const { currentStep } = useSelector((state: RootState) => state.student);
   const dispatch: AppDispatch = useDispatch();
   const { t } = useTranslation();
+
+  const { isMobile, isTabletVertical } = useDeviceTypeDetection();
+
+  const showMobileView = isMobile || isTabletVertical;
 
   function renderFormByStep(step: number) {
     switch (step) {
@@ -91,8 +140,14 @@ const StepForm = () => {
   };
 
   return (
-    <Fragment>
-      <Box>{renderFormByStep(currentStep)}</Box>
+    <Wrapper>
+      {!isFirstStep && !showMobileView && (
+        <TitleBox showMobileView={showMobileView}>
+          <Title>Titel des Steps</Title>
+          <SubTitle>{`Step ${currentStep + 1}`}</SubTitle>
+        </TitleBox>
+      )}
+      <StyledFormBox>{renderFormByStep(currentStep)}</StyledFormBox>
       <StyledMenuOptions>
         {!isFirstStep && (
           <GeneralButton
@@ -121,7 +176,7 @@ const StepForm = () => {
           />
         )}
       </StyledMenuOptions>
-    </Fragment>
+    </Wrapper>
   );
 };
 

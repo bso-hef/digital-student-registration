@@ -1,5 +1,6 @@
 "use client";
 
+// TODO: Animation when change step
 import React from "react";
 
 import ActionsTooltip from "@/components/atoms/ActionsTooltip";
@@ -36,6 +37,7 @@ const StepperBox = styled(Box)(({ theme }) => ({
   borderRadius: theme.spacing(3),
   boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
   zIndex: 2,
+  border: `1px solid ${theme.palette.border.seperator}`,
 }));
 
 const stepperSx = {
@@ -95,6 +97,7 @@ const ColorlibStepIconRoot = styled("div")<{
   borderRadius: "50%",
   justifyContent: "center",
   alignItems: "center",
+  border: `1px solid ${theme.palette.border.seperator}`,
   ...theme.applyStyles("dark", {
     backgroundColor: theme.palette.grey[700],
   }),
@@ -209,9 +212,7 @@ const DynamicPageStepper = ({
                         display: shouldShowLabel ? "block" : "none",
                       },
                     }}
-                  >
-                    {step.label}
-                  </StepLabel>
+                  ></StepLabel>
                 </Box>
               </ActionsTooltip>
             </Step>

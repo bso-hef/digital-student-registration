@@ -5,7 +5,7 @@ import MenuBookRoundedIcon from "@mui/icons-material/MenuBookRounded";
 import ModeOutlinedIcon from "@mui/icons-material/ModeOutlined";
 import PushPinRoundedIcon from "@mui/icons-material/PushPinRounded";
 import SchoolRoundedIcon from "@mui/icons-material/SchoolRounded";
-import { Box, SvgIconProps } from "@mui/material";
+import { Box, SvgIconProps, useTheme } from "@mui/material";
 
 function mulberry32(seed: number) {
   let t = seed >>> 0;
@@ -41,6 +41,7 @@ const normalizeIcons = (arr: Array<React.ComponentType<any>>): PatternIcon[] =>
   arr.map((I) => (isMuiIcon(I) ? wrapMuiIcon(I) : (I as PatternIcon)));
 
 type BackgroundStudyPatternProps = {
+  haveGradient?: boolean;
   gradient?: [string, string, string];
   density?: number;
   minSize?: number;
@@ -71,6 +72,7 @@ interface Placement {
 }
 
 export default function BackgroundStudyPattern({
+  haveGradient = true,
   gradient = ["#d8e0ff", "#c2ccff", "#aebdff"],
   density = 1.0,
   minSize = 56,
@@ -90,6 +92,8 @@ export default function BackgroundStudyPattern({
 }: BackgroundStudyPatternProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [rect, setRect] = useState({ w: 0, h: 0 });
+
+  const theme = useTheme();
 
   const IconSet = useMemo<PatternIcon[]>(() => {
     if (icons && icons.length) {
@@ -203,7 +207,9 @@ export default function BackgroundStudyPattern({
         position: "absolute",
         inset: 0,
         overflow: "hidden",
-        background: `linear-gradient(to bottom, ${gradient[0]} 0%, ${gradient[1]} 50%, ${gradient[2]} 100%)`,
+        background: haveGradient
+          ? `linear-gradient(to bottom, ${gradient[0]} 0%, ${gradient[1]} 50%, ${gradient[2]} 100%)`
+          : theme.palette.surface.interface.background,
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover",
         ...style,

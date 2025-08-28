@@ -1,7 +1,7 @@
 "use client";
 
 import { applicationScrollbar } from "@/utils/styling.utils";
-import { Box, styled } from "@mui/material";
+import { Box, styled, useTheme } from "@mui/material";
 import { useDeviceTypeDetection } from "device-type-detection";
 import Image from "next/image";
 import { useSelector } from "react-redux";
@@ -59,6 +59,7 @@ const LayoutBox = styled(Box, {
   border: !showMobileView
     ? `1px solid ${theme.palette.border.seperator}`
     : "none",
+  borderTop: `1px solid ${theme.palette.border.seperator}`,
   position: showMobileView ? "absolute" : "relative",
   boxShadow: showMobileView
     ? "0px 8px 24px rgba(0,0,0,0.06)"
@@ -82,7 +83,7 @@ export default function StudentLayout({
   children: React.ReactNode;
 }) {
   const { currentStep } = useSelector((state: RootState) => state.student);
-
+  const theme = useTheme();
   const { isMobile, isTabletVertical } = useDeviceTypeDetection();
 
   const showMobileView = isMobile || isTabletVertical;
@@ -90,11 +91,12 @@ export default function StudentLayout({
   return (
     <StyledBox>
       <BackgroundStudyPattern
+        haveGradient={false}
         density={0.3}
         minSize={64}
         maxSize={164}
         opacity={0.08}
-        stroke="#0b3558"
+        stroke={theme.palette.text.default}
         seed={20250822}
       />
       <StudentLayoutContainer showMobileView={showMobileView}>

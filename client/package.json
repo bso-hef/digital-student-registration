@@ -20,11 +20,15 @@
     "@fontsource/inter": "^5.2.6",
     "@mui/icons-material": "^7.2.0",
     "@mui/material": "^7.2.0",
+    "@mui/x-date-pickers": "^8.10.2",
     "@reduxjs/toolkit": "^2.8.2",
     "@vercel/analytics": "^1.5.0",
     "axios": "^1.10.0",
     "device-type-detection": "^1.0.1",
     "file-saver": "^2.0.5",
+    "formik": "^2.4.6",
+    "formik-mui": "^5.0.0-alpha.1",
+    "formik-mui-x-date-pickers": "^2.0.0-alpha.0",
     "i18next": "^25.3.2",
     "i18next-browser-languagedetector": "^8.2.0",
     "i18next-http-backend": "^3.0.2",
@@ -47,7 +51,7 @@
     "sonner": "^2.0.6",
     "web-vitals": "^5.0.3",
     "yarn": "^1.22.22",
-    "yup": "^1.6.1"
+    "yup": "^1.7.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
