@@ -1,6 +1,7 @@
 "use client";
 
-import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
+import GeneralButton from "@/components/atoms/buttons/GeneralButton";
+import SchoolRoundedIcon from "@mui/icons-material/SchoolRounded";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import Link from "next/link";
@@ -18,35 +19,32 @@ const Wrapper = styled(Box)(({ theme }) => ({
 }));
 
 export default function Home() {
+  const handleVisitDocs = () => {
+    window.open("https://github.com", "_blank");
+  };
+
   return (
     <Wrapper>
-      <RocketLaunchIcon sx={{ fontSize: 80, color: "primary.main", mb: 2 }} />
-      <Typography variant="h3" component="h1" gutterBottom>
-        Welcome to Your Fullstack Template
+      <SchoolRoundedIcon sx={{ fontSize: 80, color: "primary.main", mb: 2 }} />
+      <Typography variant="h3" component="h1" color="text.default">
+        Digital Student Onboarding
       </Typography>
-      <Typography variant="body1" color="text.secondary" maxWidth="sm">
-        This template is ready to scale with: Next.js, Material-UI, Redux,
-        MongoDB, Socket.IO and more. You can now start building your app with
-        best practices already in place.
+      <Typography variant="body1" color="text.information" maxWidth="sm">
+        Simple description
       </Typography>
 
       <Stack direction="row" spacing={2} mt={4}>
-        <Button
-          component={Link}
-          href="/auth"
-          variant="contained"
-          color="primary"
-        >
-          Go to Auth Example
-        </Button>
-        <Button
-          component={Link}
-          href="https://github.com"
-          target="_blank"
-          variant="outlined"
-        >
-          View Docs
-        </Button>
+        <GeneralButton
+          label="Visit Admin UI"
+          isPrimary={false}
+          onAction={handleVisitDocs}
+        />
+        <GeneralButton
+          label="View Docs"
+          isPrimary={false}
+          onAction={handleVisitDocs}
+        />
+        <GeneralButton label="Visit Student UI" onAction={handleVisitDocs} />
       </Stack>
     </Wrapper>
   );
