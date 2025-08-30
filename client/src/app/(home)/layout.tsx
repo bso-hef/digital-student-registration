@@ -1,5 +1,6 @@
 "use client";
 
+import AccessibilityMenu from "@/components/molecules/AccessibilityMenu";
 import { applicationScrollbar } from "@/utils/styling.utils";
 import { Box, styled } from "@mui/material";
 
@@ -29,6 +30,13 @@ const HomeLayoutBox = styled(Box)(({ theme }) => ({
   ...applicationScrollbar(theme),
 }));
 
+const StyledAccessMenuLocation = styled(Box)({
+  position: "absolute",
+  top: 32,
+  right: 32,
+  zIndex: 2,
+});
+
 export default function HomeLayout({
   children,
 }: {
@@ -37,6 +45,9 @@ export default function HomeLayout({
   return (
     <HomeLayoutContainer>
       <HomeLayoutBox>{children}</HomeLayoutBox>
+      <StyledAccessMenuLocation>
+        <AccessibilityMenu />
+      </StyledAccessMenuLocation>
     </HomeLayoutContainer>
   );
 }

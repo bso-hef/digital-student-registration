@@ -15,7 +15,18 @@
     "Light": "Hell",
     "Dark": "Dunkel"
   },
+  "accessibility": {
+    "Language Control": "Sprachsteuerung",
+    "Theme Control": "Themensteuerung"
+  },
   "student": {
+    "home": {
+      "Title": "Digitale Anmeldung",
+      "Description": "Dies ist eine einfache, digitale Anmeldung für neue Schüler:innen der BSO in Bad Hersfeld.",
+      "Onboarding": "Anmeldung",
+      "Administration": "Administration",
+      "Documentation": "Dokumentation"
+    },
     "steps": {
       "Welcome": "Willkommen",
       "General": "Allgemein",

@@ -1,17 +1,25 @@
 "use client";
 
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
+import AdminPanelSettingsRoundedIcon from "@mui/icons-material/AdminPanelSettingsRounded";
+import ArticleRoundedIcon from "@mui/icons-material/ArticleRounded";
 import SchoolRoundedIcon from "@mui/icons-material/SchoolRounded";
-import { Box, Button, Stack, Typography } from "@mui/material";
+import StartRoundedIcon from "@mui/icons-material/StartRounded";
+import { Box, Stack, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import Link from "next/link";
+import { useDeviceTypeDetection } from "device-type-detection";
+import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 
-const Wrapper = styled(Box)(({ theme }) => ({
+const Wrapper = styled(Box, {
+  shouldForwardProp: (prop) => prop !== "showMobileView",
+})<{ showMobileView: boolean }>(({ theme, showMobileView }) => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
   height: "100vh",
+  width: "100%",
   textAlign: "center",
   padding: theme.spacing(4),
   backgroundColor: theme.palette.background.default,
@@ -19,32 +27,58 @@ const Wrapper = styled(Box)(({ theme }) => ({
 }));
 
 export default function Home() {
+  const router = useRouter();
+  const { t } = useTranslation();
+  const { isMobile, isTabletVertical } = useDeviceTypeDetection();
+
+  const showMobileView = isMobile || isTabletVertical;
+
   const handleVisitDocs = () => {
-    window.open("https://github.com", "_blank");
+    if (typeof window !== "undefined") {
+      window.open(
+        "https://github.com/bso-hef/digital-student-registration/",
+        "_blank",
+      );
+    }
+  };
+
+  const handleVisitAdmin = () => {
+    router.push("/admin");
+  };
+
+  const handleVisitOnboarding = () => {
+    router.push("/student");
   };
 
   return (
-    <Wrapper>
-      <SchoolRoundedIcon sx={{ fontSize: 80, color: "primary.main", mb: 2 }} />
+    <Wrapper showMobileView={showMobileView}>
+      <SchoolRoundedIcon sx={{ fontSize: 120, color: "primary.main", mb: 2 }} />
       <Typography variant="h3" component="h1" color="text.default">
-        Digital Student Onboarding
+        {t("student.home.Title")}
       </Typography>
       <Typography variant="body1" color="text.information" maxWidth="sm">
-        Simple description
+        {t("student.home.Description")}
       </Typography>
 
       <Stack direction="row" spacing={2} mt={4}>
         <GeneralButton
-          label="Visit Admin UI"
+          label={t("student.home.Administration")}
           isPrimary={false}
-          onAction={handleVisitDocs}
+          onAction={handleVisitAdmin}
+          startIcon={<AdminPanelSettingsRoundedIcon />}
         />
         <GeneralButton
-          label="View Docs"
+          label={t("student.home.Documentation")}
           isPrimary={false}
           onAction={handleVisitDocs}
+          startIcon={<ArticleRoundedIcon />}
         />
-        <GeneralButton label="Visit Student UI" onAction={handleVisitDocs} />
+        <GeneralButton
+          label={t("student.home.Onboarding")}
+          isPrimary={false}
+          onAction={handleVisitOnboarding}
+          startIcon={<StartRoundedIcon />}
+        />
       </Stack>
     </Wrapper>
   );

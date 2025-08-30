@@ -8,13 +8,14 @@ import { AppDispatch } from "@/store/store";
 import DoneRoundedIcon from "@mui/icons-material/DoneRounded";
 import KeyboardArrowLeftRoundedIcon from "@mui/icons-material/KeyboardArrowLeftRounded";
 import KeyboardArrowRightRoundedIcon from "@mui/icons-material/KeyboardArrowRightRounded";
-import { Box, Typography, styled } from "@mui/material";
+import { Box, styled } from "@mui/material";
 import { useDeviceTypeDetection } from "device-type-detection";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 
 import { RootState } from "@/store/reducers";
 
+import CustomTitle from "../atoms/CustomTitle";
 import GeneralButton from "../atoms/buttons/GeneralButton";
 import AddressForm from "./forms/AddressForm";
 import CompanyContactForm from "./forms/CompanyContactForm";
@@ -45,34 +46,6 @@ const StyledMenuOptions = styled(Box)(({ theme }) => ({
   width: "100%",
   maxWidth: "1200px",
   gap: theme.spacing(2),
-}));
-
-const TitleBox = styled(Box, {
-  shouldForwardProp: (prop) => prop !== "showMobileView",
-})<{ showMobileView: boolean }>(({ theme, showMobileView }) => ({
-  display: "flex",
-  flexDirection: "column",
-  alignItems: showMobileView ? "center" : "flex-start",
-  justifyContent: "center",
-  width: "100%",
-  textAlign: showMobileView ? "center" : "left",
-  color: theme.palette.text.default,
-}));
-
-const Title = styled(Typography)(({ theme }) => ({
-  fontSize: "32px !important",
-  fontWeight: 600,
-  lineHeight: "24px !important",
-  color: theme.palette.text.default,
-  marginBottom: theme.spacing(2),
-}));
-
-const SubTitle = styled(Typography)(({ theme }) => ({
-  fontSize: "24px !important",
-  fontWeight: 400,
-  lineHeight: "32px !important",
-  letterSpacing: "0.115px",
-  color: theme.palette.text.information,
 }));
 
 const StyledFormBox = styled(Box)(() => ({
@@ -146,10 +119,10 @@ const StepForm = () => {
   return (
     <Wrapper>
       {!isFirstStep && !showMobileView && (
-        <TitleBox showMobileView={showMobileView}>
-          <Title>{currentStepDef?.label}</Title>
-          <SubTitle>{`${t("general.Step")} ${currentStep + 1}`}</SubTitle>
-        </TitleBox>
+        <CustomTitle
+          title={currentStepDef?.label}
+          subTitle={`${t("general.Step")} ${currentStep + 1}`}
+        />
       )}
       <StyledFormBox>{renderFormByStep(currentStep)}</StyledFormBox>
       <StyledMenuOptions>

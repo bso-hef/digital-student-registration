@@ -15,7 +15,18 @@
     "Light": "Light",
     "Dark": "Dark"
   },
+  "accessibility": {
+    "Language Control": "Language Control",
+    "Theme Control": "Theme Control"
+  },
   "student": {
+    "home": {
+      "Title": "Digital Onboarding",
+      "Description": "This is a simple, digital onboarding system for new students at the BSO in Bad Hersfeld.",
+      "Onboarding": "Onboarding",
+      "Administration": "Administration",
+      "Documentation": "Documentation"
+    },
     "steps": {
       "Welcome": "Welcome",
       "General": "General",

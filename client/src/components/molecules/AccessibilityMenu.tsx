@@ -67,12 +67,16 @@ const AccessibilityMenu = () => {
 
         <Box mt={2} display="flex" flexDirection="column" gap={3}>
           <Box>
-            <StyledButtonLabel>Language Control:</StyledButtonLabel>
+            <StyledButtonLabel>
+              {t("accessibility.Language Control")}
+            </StyledButtonLabel>
             <LanguageDropdown />
           </Box>
 
           <Box>
-            <StyledButtonLabel>Theme Control:</StyledButtonLabel>
+            <StyledButtonLabel>
+              {t("accessibility.Theme Control")}
+            </StyledButtonLabel>
             <ThemeChangeButton />
           </Box>
         </Box>

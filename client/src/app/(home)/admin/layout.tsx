@@ -1,6 +1,5 @@
 "use client";
 
-import AccessibilityMenu from "@/components/molecules/AccessibilityMenu";
 import { Box, styled } from "@mui/material";
 
 const StyledBox = styled(Box)({
@@ -8,13 +7,6 @@ const StyledBox = styled(Box)({
   minHeight: "100vh",
   width: "100%",
   overflow: "hidden",
-});
-
-const StyledAccessMenuLocation = styled(Box)({
-  position: "absolute",
-  top: 32,
-  right: 32,
-  zIndex: 2,
 });
 
 export default function StudentLayout({
@@ -25,9 +17,6 @@ export default function StudentLayout({
   return (
     <StyledBox className="student-layout">
       <Box>{children}</Box>
-      <StyledAccessMenuLocation>
-        <AccessibilityMenu />
-      </StyledAccessMenuLocation>
     </StyledBox>
   );
 }

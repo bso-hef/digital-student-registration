@@ -46,7 +46,7 @@ const GeneralButtonContainer = styled(Button, {
     backgroundColor: disabled
       ? theme.palette.surface.button.disabled
       : isPrimary
-        ? theme.palette.text.primary
+        ? theme.palette.primary.dark
         : theme.palette.surface.interface.background,
     color: disabled ? theme.palette.text.disabled : theme.palette.text.default,
     padding: isMobile ? theme.spacing(0.5, 2) : theme.spacing(1.5, 2),

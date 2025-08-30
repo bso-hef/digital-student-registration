@@ -1,10 +1,10 @@
 "use client";
 
-import AccessibilityMenu from "@/components/molecules/AccessibilityMenu";
 import { applicationScrollbar } from "@/utils/styling.utils";
 import { Box, styled, useTheme } from "@mui/material";
 import { useDeviceTypeDetection } from "device-type-detection";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useSelector } from "react-redux";
 
 import { RootState } from "@/store/reducers";
@@ -78,13 +78,6 @@ const StyledImageBox = styled(Box)({
   top: 0,
 });
 
-const StyledAccessMenuLocation = styled(Box)({
-  position: "absolute",
-  top: 32,
-  right: 32,
-  zIndex: 2,
-});
-
 export default function StudentLayout({
   children,
 }: {
@@ -93,6 +86,10 @@ export default function StudentLayout({
   const { currentStep } = useSelector((state: RootState) => state.student);
   const theme = useTheme();
   const { isMobile, isTabletVertical } = useDeviceTypeDetection();
+  const pathname = usePathname();
+
+  const isStudentPage =
+    pathname.includes("/student/") && !pathname.endsWith("/student");
 
   const showMobileView = isMobile || isTabletVertical;
 
@@ -108,18 +105,15 @@ export default function StudentLayout({
         seed={20250822}
       />
       <StudentLayoutContainer showMobileView={showMobileView}>
-        {showMobileView ? (
+        {isStudentPage && !showMobileView ? (
+          <DynamicPageStepper activeStep={currentStep} />
+        ) : showMobileView ? (
           <StyledImageBox>
             <Image src="/logo.svg" alt="logo" width={250} height={250} />
           </StyledImageBox>
-        ) : (
-          <DynamicPageStepper activeStep={currentStep} />
-        )}
+        ) : null}
         <LayoutBox showMobileView={showMobileView}>{children}</LayoutBox>
       </StudentLayoutContainer>
-      <StyledAccessMenuLocation>
-        <AccessibilityMenu />
-      </StyledAccessMenuLocation>
     </StyledBox>
   );
 }
