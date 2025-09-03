@@ -58,7 +58,9 @@ const StyledFormBox = styled(Box)(() => ({
 }));
 
 const StepForm = () => {
-  const { currentStep } = useSelector((state: RootState) => state.student);
+  const { currentStep, data } = useSelector(
+    (state: RootState) => state.student,
+  );
   const dispatch: AppDispatch = useDispatch();
   const { t } = useTranslation();
 
@@ -74,23 +76,23 @@ const StepForm = () => {
       case 0:
         return <WelcomeForm />;
       case 1:
-        return <GeneralForm />;
+        return <GeneralForm data={data} />;
       case 2:
-        return <OriginForm />;
+        return <OriginForm data={data} />;
       case 3:
-        return <AddressForm />;
+        return <AddressForm data={data} />;
       case 4:
-        return <ParentsForm />;
+        return <ParentsForm data={data} />;
       case 5:
-        return <PreEducationForm />;
+        return <PreEducationForm data={data} />;
       case 6:
-        return <TrainingForm />;
+        return <TrainingForm data={data} />;
       case 7:
-        return <CompanyContactForm />;
+        return <CompanyContactForm data={data} />;
       case 8:
-        return <SummaryForm />;
+        return <SummaryForm data={data} />;
       case 9:
-        return <FormCompletion />;
+        return <FormCompletion data={data} />;
       default:
         return null;
     }

@@ -15,6 +15,14 @@
     "Light": "Light",
     "Dark": "Dark"
   },
+  "error": {
+    "Page not found": "Page not found",
+    "An unexpected error occurred": "An unexpected error occurred",
+    "Something went wrong": "Something went wrong",
+    "Please try again later": "Please try again later",
+    "Sorry we couldn't find that page": "Sorry, the page you’re looking for does not exist or has been moved.",
+    "Back Home": "Back to Dashboard"
+  },
   "accessibility": {
     "Language Control": "Language Control",
     "Theme Control": "Theme Control"

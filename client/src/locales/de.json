@@ -15,6 +15,14 @@
     "Light": "Hell",
     "Dark": "Dunkel"
   },
+  "error": {
+    "Page not found": "Seite nicht gefunden",
+    "An unexpected error occurred": "Ein unerwarteter Fehler ist aufgetreten",
+    "Something went wrong": "Etwas ist schief gelaufen",
+    "Please try again later": "Bitte versuche es später erneut",
+    "Sorry we couldn't find that page": "Leider existiert die gesuchte Seite nicht oder wurde verschoben.",
+    "Back Home": "Zurück zum Dashboard"
+  },
   "accessibility": {
     "Language Control": "Sprachsteuerung",
     "Theme Control": "Themensteuerung"

@@ -1,11 +1,11 @@
 import React from "react";
 
+import { validateGeneralStudentData } from "@/lib/validate/student.validate";
 import { styled } from "@mui/material";
 import { Field, Form, Formik } from "formik";
 import { TextField } from "formik-mui";
-import * as Yup from "yup";
 
-const StyledForm = styled(Form)(({ theme }) => ({
+const StyledForm = styled(Form)(() => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "flex-start",
@@ -29,34 +29,30 @@ interface FormValues {
   staatsangehoerigkeit2: string;
 }
 
-const validationSchema = Yup.object({
-  vorname: Yup.string().required("Vorname ist erforderlich"),
-  nachname: Yup.string().required("Nachname ist erforderlich"),
-  geburtsdatum: Yup.date()
-    .typeError("Ungültiges Datum")
-    .required("Geburtsdatum ist erforderlich"),
-});
+interface GeneralFormProps {
+  data?: Partial<FormValues>;
+}
 
-const GeneralForm: React.FC = () => {
+const GeneralForm: React.FC<GeneralFormProps> = ({ data }) => {
   const initialValues: FormValues = {
-    eintrittschule: "",
-    klassenname: "",
-    vorname: "",
-    nachname: "",
-    geburtsname: "",
-    geschlecht: "",
-    geburtsdatum: "",
-    geburtsland: "",
-    geburtsort: "",
-    religion: "",
-    staatsangehoerigkeit1: "",
-    staatsangehoerigkeit2: "",
+    eintrittschule: data?.eintrittschule || "",
+    klassenname: data?.klassenname || "",
+    vorname: data?.vorname || "",
+    nachname: data?.nachname || "",
+    geburtsname: data?.geburtsname || "",
+    geschlecht: data?.geschlecht || "",
+    geburtsdatum: data?.geburtsdatum || "",
+    geburtsland: data?.geburtsland || "",
+    geburtsort: data?.geburtsort || "",
+    religion: data?.religion || "",
+    staatsangehoerigkeit1: data?.staatsangehoerigkeit1 || "",
+    staatsangehoerigkeit2: data?.staatsangehoerigkeit2 || "",
   };
 
   return (
     <Formik<FormValues>
       initialValues={initialValues}
-      validationSchema={validationSchema}
+      validationSchema={validateGeneralStudentData}
       onSubmit={(values) => {
         console.log("✅ Submitted values:", values);
       }}
