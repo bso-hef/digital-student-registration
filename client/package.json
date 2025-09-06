@@ -22,7 +22,6 @@
     "@mui/material": "^7.2.0",
     "@mui/x-date-pickers": "^8.10.2",
     "@reduxjs/toolkit": "^2.8.2",
-    "@vercel/analytics": "^1.5.0",
     "axios": "^1.10.0",
     "countries-and-timezones": "^3.8.0",
     "device-type-detection": "^1.0.1",
