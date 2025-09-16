@@ -1,6 +1,6 @@
 import React from "react";
 
-import { validateGeneralStudentData } from "@/lib/validate/student.validate";
+import { validateStudentOriginData } from "@/lib/validate/student.validate";
 import { styled } from "@mui/material";
 import { Field, Form, Formik } from "formik";
 import { TextField } from "formik-mui";
@@ -34,7 +34,7 @@ const OriginForm: React.FC<OriginFormProps> = ({ data }) => {
   return (
     <Formik<FormValues>
       initialValues={initialValues}
-      validationSchema={validateGeneralStudentData}
+      validationSchema={validateStudentOriginData}
       onSubmit={(values) => {
         console.log("✅ Submitted values:", values);
       }}

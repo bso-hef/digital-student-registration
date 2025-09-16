@@ -92,7 +92,7 @@ const StepForm = () => {
       case 8:
         return <SummaryForm data={data} />;
       case 9:
-        return <FormCompletion data={data} />;
+        return <FormCompletion />;
       default:
         return null;
     }
