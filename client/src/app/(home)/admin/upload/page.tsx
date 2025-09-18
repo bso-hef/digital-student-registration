@@ -1,8 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useCallback, useState } from "react";
 
+import GeneralButton from "@/components/atoms/buttons/GeneralButton";
 import AdminSettingsHeader from "@/components/molecules/AdminSettingsHeader";
+import { ParsedMember, parseCSVFile } from "@/utils/csv.utils";
 import { Box, styled } from "@mui/material";
 
 const Wrapper = styled(Box)(({ theme }) => ({
@@ -17,10 +19,33 @@ const Wrapper = styled(Box)(({ theme }) => ({
 }));
 
 const UploadAdminPage = () => {
+  const [csvData, setCsvData] = useState<ParsedMember[]>([]);
+
+  const handleUploadCSV = useCallback(() => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".csv";
+    input.onchange = async (event: Event) => {
+      const target = event.target as HTMLInputElement;
+      const file = target.files?.[0];
+      if (file) {
+        const rows = (await parseCSVFile(file)) ?? [];
+        setCsvData(rows);
+      }
+    };
+    input.click();
+  }, []);
+
   return (
     <Wrapper>
       <AdminSettingsHeader title="Daten hochladen" />
-      hi
+      <GeneralButton
+        label="Upload CSV"
+        onAction={handleUploadCSV}
+        fullHeight={false}
+        fullWidth={false}
+        isPrimary={false}
+      />
     </Wrapper>
   );
 };
