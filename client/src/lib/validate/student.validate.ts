@@ -50,13 +50,13 @@ export const validateStudentAddressData = Yup.object({
     .nullable(),
   tel: Yup.string()
     .matches(/^\+?[0-9 ]{6,20}$/, "Ungültige Telefonnummer")
-    .nullable(),
+    .nullable(), // Optional
   mail: Yup.string()
     .email("Ungültige E-Mail-Adresse")
     .required("E-Mail ist erforderlich"),
 });
 
-// Step 4: Ansprechpartner:
+// Step 4: Ansprechpartner: (Optional / Pflicht bei Minderjährigen < 18 / Checkbox > 18 Jahre)
 export const validateStudentContactPersonData = Yup.object({
   ansprechpartnerArt: Yup.string().required(
     "Art des Ansprechpartners ist erforderlich",
@@ -95,7 +95,8 @@ export const validateStudentPreviousSchoolData = Yup.object({
   abschluesse: Yup.string().nullable(),
 });
 
-// Step 6: Betrieb
+// Step 6: Betrieb (Optional - Wenn admin klasse erstellt, dann checkbox ob Betrieb vorhanden oder nötig)
+// Falls Betriebsangabe pflichtig ist, aber keiner existiert dann optional checkbox "Kein Betrieb vorhanden"
 export const validateStudentCompanyData = Yup.object({
   beruf: Yup.string().required("Beruf ist erforderlich"),
   betriebEintritt: Yup.date()
@@ -112,10 +113,7 @@ export const validateStudentCompanyData = Yup.object({
     .matches(/^\+?[0-9 ]{6,20}$/, "Ungültige Telefonnummer")
     .nullable(),
   betriebMail: Yup.string().email("Ungültige E-Mail-Adresse").nullable(),
-});
-
-// Step 7: Betriebskontakt
-export const validateStudentCompanyContactData = Yup.object({
+  // Betriebskontakt hinzufügen:
   betriebAnsprechpartnerAnrede: Yup.string()
     .oneOf(["Herr", "Frau", "Divers"], "Ungültige Anrede")
     .required("Anrede ist erforderlich"),

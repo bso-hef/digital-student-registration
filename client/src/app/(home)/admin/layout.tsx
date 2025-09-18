@@ -1,5 +1,6 @@
 "use client";
 
+import LeftNavigation from "@/components/organisms/LeftNavigation";
 import { applicationScrollbar } from "@/utils/styling.utils";
 import { Box, styled } from "@mui/material";
 import { useDeviceTypeDetection } from "device-type-detection";
@@ -15,17 +16,17 @@ const AdminLayoutContainer = styled(Box, {
   shouldForwardProp: (prop) => prop !== "showMobileView",
 })<{ showMobileView: boolean }>(({ theme, showMobileView }) => ({
   display: "flex",
-  flexDirection: showMobileView ? "row" : "column",
-  alignItems: showMobileView ? "flex-end" : "center",
-  justifyContent: "center",
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "space-between",
   height: "100vh",
   width: "100%",
   textAlign: "center",
   background: "transparent",
   color: theme.palette.text.default,
-  padding: !showMobileView ? theme.spacing(20) : 0,
+  padding: !showMobileView ? theme.spacing(8, 20) : 0,
   overflow: "hidden",
-  gap: theme.spacing(2),
+  gap: theme.spacing(8),
   ...(showMobileView && {
     bottom: 0,
   }),
@@ -39,7 +40,7 @@ const LayoutBox = styled(Box, {
   alignItems: "center",
   justifyContent: "center",
   minHeight: "50dvh",
-  height: showMobileView ? "100%" : "auto",
+  height: "100%",
   maxHeight: showMobileView ? "75%" : undefined,
   width: "100%",
   maxWidth: "90%",
@@ -48,7 +49,7 @@ const LayoutBox = styled(Box, {
   backgroundColor: theme.palette.surface.interface.base,
   backgroundImage: "unset",
   color: theme.palette.text.default,
-  borderRadius: showMobileView ? theme.spacing(3, 3, 0, 0) : theme.spacing(3),
+  borderRadius: showMobileView ? theme.spacing(3, 3, 0, 0) : theme.spacing(2),
   border: !showMobileView
     ? `1px solid ${theme.palette.border.seperator}`
     : "none",
@@ -73,6 +74,7 @@ export default function StudentLayout({
   return (
     <StyledBox className="student-layout">
       <AdminLayoutContainer showMobileView={showMobileView}>
+        <LeftNavigation />
         <LayoutBox showMobileView={showMobileView}>{children}</LayoutBox>
       </AdminLayoutContainer>
     </StyledBox>
