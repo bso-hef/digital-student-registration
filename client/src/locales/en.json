@@ -47,5 +47,20 @@
       "Summary": "Summary",
       "Completion": "Completion"
     }
+  },
+  "navigation": {
+    "dashboard": "Übersicht",
+    "management": "Verwaltung",
+    "studentManagement": "Studentenverwaltung",
+    "classManagement": "Klassenverwaltung",
+    "data": "Daten",
+    "importData": "Daten importieren",
+    "exportData": "Daten exportieren",
+    "dataOverview": "Datenübersicht",
+    "settings": "Einstellungen",
+    "onboardingSettings": "Onboarding-Einstellungen",
+    "agreementSettings": "Vereinbarungen",
+    "integrationSettings": "Integrationen",
+    "auditLog": "Audit-Log"
   }
 }
