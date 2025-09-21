@@ -49,18 +49,20 @@
     }
   },
   "navigation": {
-    "dashboard": "Übersicht",
-    "management": "Verwaltung",
-    "studentManagement": "Studentenverwaltung",
-    "classManagement": "Klassenverwaltung",
-    "data": "Daten",
-    "importData": "Daten importieren",
-    "exportData": "Daten exportieren",
-    "dataOverview": "Datenübersicht",
-    "settings": "Einstellungen",
-    "onboardingSettings": "Onboarding-Einstellungen",
-    "agreementSettings": "Vereinbarungen",
-    "integrationSettings": "Integrationen",
-    "auditLog": "Audit-Log"
+    "dashboard": "Dashboard",
+    "management": "Management",
+    "studentManagement": "Student Management",
+    "classManagement": "Class Management",
+    "data": "Data",
+    "importData": "Import Data",
+    "exportData": "Export Data",
+    "dataOverview": "Data Overview",
+    "settings": "Settings",
+    "onboardingSettings": "Onboarding Settings",
+    "agreementSettings": "Agreement Settings",
+    "integrationSettings": "Integration Settings",
+    "auditLog": "Audit Log",
+    "Browse settings": "Browse settings",
+    "welcome": "Welcome {{name}}"
   }
 }

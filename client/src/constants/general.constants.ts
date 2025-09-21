@@ -47,6 +47,7 @@ export const LANGUAGES = {
 export type LanguageKey = keyof typeof LANGUAGES;
 
 export const CONTEXT_PATH = process.env.NEXT_PUBLIC_API_URL || "";
+export const NO_AVATAR_FOUND = `/images/no-avatar-found.png`;
 // export const MY_URL = `${window.location.origin}${process.env.NEXT_PUBLIC_API_URL}`;
 // export const FILE_URL = `${MY_URL}/api/document/download/`;
 // export const AVATAR_URL = `${MY_URL}/api/files/avatar`;

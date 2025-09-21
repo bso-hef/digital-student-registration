@@ -134,3 +134,14 @@ export function downloadDocument(
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 }
+
+export const getAvatarFullURL = (path: string) => {
+  if (!path || path === "" || path === null) {
+    return "";
+  }
+  // if (path?.startsWith("/img")) {
+  //   return `${benovaApplicationURL()}${path}`;
+  // } else {
+  //   return `${AVATAR_URL}/${path}`;
+  // }
+};

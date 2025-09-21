@@ -6,6 +6,7 @@ import GeneralButton from "@/components/atoms/buttons/GeneralButton";
 import AdminSettingsHeader from "@/components/molecules/AdminSettingsHeader";
 import { ParsedMember, parseCSVFile } from "@/utils/csv.utils";
 import { Box, styled } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 const Wrapper = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -18,8 +19,9 @@ const Wrapper = styled(Box)(({ theme }) => ({
   color: theme.palette.text.default,
 }));
 
-const UploadAdminPage = () => {
+const ImportDataAdminPage = () => {
   const [csvData, setCsvData] = useState<ParsedMember[]>([]);
+  const { t } = useTranslation();
 
   const handleUploadCSV = useCallback(() => {
     const input = document.createElement("input");
@@ -38,7 +40,7 @@ const UploadAdminPage = () => {
 
   return (
     <Wrapper>
-      <AdminSettingsHeader title="Daten hochladen" />
+      <AdminSettingsHeader title={t("navigation.importData")} />
       <GeneralButton
         label="Upload CSV"
         onAction={handleUploadCSV}
@@ -50,4 +52,4 @@ const UploadAdminPage = () => {
   );
 };
 
-export default UploadAdminPage;
+export default ImportDataAdminPage;

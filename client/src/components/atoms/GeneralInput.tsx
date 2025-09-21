@@ -1,0 +1,89 @@
+"use client";
+
+import React from "react";
+
+import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
+import EmailRoundedIcon from "@mui/icons-material/EmailRounded";
+import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
+import { InputAdornment, TextField, styled } from "@mui/material";
+
+const StyledInput = styled(TextField)(({ theme }) => ({
+  flexShrink: 0,
+  borderRadius: theme.spacing(0.5),
+  background: "#0B0D0E",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  alignSelf: "stretch",
+  fontFamily: "Inter",
+  fontSize: "16px",
+  fontStyle: "normal",
+  fontWeight: 400,
+  lineHeight: "150%",
+  color: "#FFF",
+  border: "1px solid #333638",
+  boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+  backdropFilter: "blur(25px)",
+}));
+
+interface GeneralInputProps {
+  type?: string;
+  value?: string | number;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  label?: string;
+  placeholder?: string;
+  fullWidth?: boolean;
+  style?: React.CSSProperties;
+  sx?: object;
+  autoComplete?: string;
+  id?: string;
+  name?: string;
+  required?: boolean;
+  showEmailStartIcon?: boolean;
+  showUserStartIcon?: boolean;
+  showSearchStartIcon?: boolean;
+}
+
+const GeneralInput: React.FC<GeneralInputProps> = ({
+  type,
+  value,
+  onChange,
+  label,
+  placeholder,
+  fullWidth,
+  style,
+  autoComplete,
+  id,
+  name,
+  required = false,
+  showEmailStartIcon,
+  showUserStartIcon,
+  showSearchStartIcon,
+}) => {
+  return (
+    <StyledInput
+      style={style}
+      fullWidth={fullWidth}
+      type={type}
+      value={value}
+      onChange={onChange}
+      autoComplete={autoComplete}
+      label={label}
+      placeholder={placeholder}
+      name={name}
+      id={id}
+      required={required}
+      InputProps={{
+        startAdornment: (
+          <InputAdornment position="start">
+            {showEmailStartIcon && <EmailRoundedIcon />}
+            {showUserStartIcon && <AccountCircleRoundedIcon />}
+            {showSearchStartIcon && <SearchRoundedIcon />}
+          </InputAdornment>
+        ),
+      }}
+    />
+  );
+};
+
+export default GeneralInput;

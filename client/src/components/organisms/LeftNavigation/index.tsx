@@ -2,7 +2,9 @@
 
 import React, { Fragment, memo, useCallback, useEffect, useState } from "react";
 
+import GeneralInput from "@/components/atoms/GeneralInput";
 import OnboardingVersion from "@/components/atoms/OnboardingVersion";
+import ProfileAvatar from "@/components/atoms/ProfileAvatar";
 import ExpandLessRoundedIcon from "@mui/icons-material/ExpandLessRounded";
 import ExpandMoreRoundedIcon from "@mui/icons-material/ExpandMoreRounded";
 import OpenInNewRoundedIcon from "@mui/icons-material/OpenInNewRounded";
@@ -10,6 +12,7 @@ import {
   Avatar,
   Box,
   Collapse,
+  Divider,
   List,
   ListItem,
   ListItemIcon,
@@ -38,7 +41,7 @@ const StyledWrapper = styled(Box)(({ theme }) => ({
   flexShrink: 0,
 }));
 
-const StyledNavigation = styled(Box)(({ theme }) => ({
+const StyledNavigation = styled(Box)(() => ({
   position: "relative",
   display: "flex",
   flexDirection: "column",
@@ -54,7 +57,7 @@ const StyledNavigation = styled(Box)(({ theme }) => ({
 const StyledListItem = styled(ListItem)<{
   button?: string;
   selected?: boolean;
-  sub?: string;
+  sub?: boolean;
 }>(({ theme, selected, sub }) => ({
   color: selected ? theme.palette.text.primary : theme.palette.text.default,
   display: "flex",
@@ -64,14 +67,16 @@ const StyledListItem = styled(ListItem)<{
   alignItems: "center",
   width: "100%",
   borderRadius: theme.spacing(1),
-  padding: sub ? theme.spacing(0.5, 2) : theme.spacing(1, 2),
+  padding: sub ? theme.spacing(0.5, 4) : theme.spacing(1, 2),
+  backgroundColor:
+    selected && sub ? theme.palette.surface.button.focused : "transparent",
   "&:hover": {
     backgroundColor: theme.palette.surface.button.hoverLight,
     cursor: "pointer",
   },
   "&.Mui-selected": {
     color: selected ? theme.palette.text.primary : theme.palette.text.default,
-    backgroundColor: "transparent",
+    backgroundColor: theme.palette.surface.button.focused,
   },
 }));
 
@@ -86,6 +91,22 @@ const StyledListItemIcon = styled(ListItemIcon)<{ selected?: boolean }>(
     height: "32px",
   }),
 );
+
+const StyledListItemText = styled(ListItemText, {
+  shouldForwardProp: (prop) => prop !== "isSelected",
+})<{ isSelected?: boolean }>(({ theme, isSelected }) => ({
+  color: isSelected ? theme.palette.text.primary : theme.palette.text.default,
+  fontWeight: isSelected ? 600 : 400,
+}));
+
+const StyledLabel = styled(Typography)(({ theme }) => ({
+  fontSize: "22px !important",
+  lineHeight: "28px !important",
+  letterSpacing: "0.02em !important",
+  fontWeight: "500 !important",
+  color: theme.palette.text.default,
+  marginTop: theme.spacing(1),
+}));
 
 const LeftNavigation = () => {
   const { t } = useTranslation();
@@ -142,9 +163,27 @@ const LeftNavigation = () => {
 
   return (
     <StyledWrapper>
-      <Avatar />
       <StyledNavigation>
-        <Typography>Search in Settings</Typography>
+        <Box width="100%">
+          <ProfileAvatar size={80} />
+          <StyledLabel>
+            {t("navigation.welcome", { name: "Admin" })}
+          </StyledLabel>
+          <Divider sx={{ my: 2 }} />
+        </Box>
+        <Box mb={2} width="100%">
+          <GeneralInput
+            style={{
+              width: "282px",
+              height: "50px",
+              flexShrink: 0,
+            }}
+            type="text"
+            placeholder={t("navigation.Browse settings")}
+            fullWidth
+            showSearchStartIcon
+          />
+        </Box>
         <List style={{ width: "100%" }}>
           {listOfRoutes(t).map((route: Route, index: number) => {
             const isSelected =
@@ -156,30 +195,24 @@ const LeftNavigation = () => {
                   <StyledListItem
                     button="true"
                     selected={isSelected}
-                    onClick={() => route.children && goToRoute(route.children[0].path)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleClick(index);
+                    }}
                   >
                     {route?.icon && (
                       <StyledListItemIcon selected={isSelected}>
                         {route.icon}
                       </StyledListItemIcon>
                     )}
-                    <ListItemText primary={route.displayValue} />
+                    <StyledListItemText
+                      isSelected={isSelected}
+                      primary={route.displayValue}
+                    />
                     {open[index] ? (
-                      <ExpandLessRoundedIcon
-                        sx={{ height: 24, width: 24 }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleClick(index);
-                        }}
-                      />
+                      <ExpandLessRoundedIcon sx={{ height: 24, width: 24 }} />
                     ) : (
-                      <ExpandMoreRoundedIcon
-                        sx={{ height: 24, width: 24 }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleClick(index);
-                        }}
-                      />
+                      <ExpandMoreRoundedIcon sx={{ height: 24, width: 24 }} />
                     )}
                   </StyledListItem>
                 </List>
@@ -187,7 +220,7 @@ const LeftNavigation = () => {
                   <List component="div" disablePadding>
                     {route.children.map((child) => (
                       <StyledListItem
-                        sub="true"
+                        sub={true}
                         button="true"
                         selected={hasRoute(child.path)}
                         key={child.displayValue}
@@ -198,7 +231,10 @@ const LeftNavigation = () => {
                             {child.icon}
                           </StyledListItemIcon>
                         )}
-                        <ListItemText secondary={child.displayValue} />
+                        <StyledListItemText
+                          isSelected={hasRoute(child.path)}
+                          secondary={child.displayValue}
+                        />
                       </StyledListItem>
                     ))}
                   </List>
@@ -216,10 +252,10 @@ const LeftNavigation = () => {
                     {route.icon}
                   </StyledListItemIcon>
                 )}
-                <ListItemText primary={route.displayValue} />
-                {route.path.startsWith("http") ? (
+                <StyledListItemText primary={route.displayValue} />
+                {route.path.startsWith("http") && (
                   <OpenInNewRoundedIcon sx={{ height: 24, width: 24 }} />
-                ) : null}
+                )}
               </StyledListItem>
             );
           })}
