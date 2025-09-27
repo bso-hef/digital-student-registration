@@ -46,12 +46,16 @@ const GeneralButtonContainer = styled(Button, {
     backgroundColor: disabled
       ? theme.palette.surface.button.disabled
       : isPrimary
-        ? theme.palette.primary.dark
+        ? theme.palette.surface.button.primary
         : theme.palette.surface.interface.background,
-    color: disabled ? theme.palette.text.disabled : theme.palette.text.default,
+    color: disabled
+      ? theme.palette.text.disabled
+      : isPrimary
+        ? theme.palette.text.contrast
+        : theme.palette.text.default,
     padding: isMobile ? theme.spacing(0.5, 2) : theme.spacing(1.5, 2),
     borderRadius: theme.spacing(0.5),
-    border: `1px solid ${theme.palette.border.seperator}`,
+    border: isPrimary ? "none" : `1px solid ${theme.palette.border.seperator}`,
     minWidth: isMobileHorizontal ? "155px" : undefined,
     width: fullWidth ? "100%" : "auto",
     height: fullHeight ? "48px" : undefined,
@@ -89,10 +93,6 @@ const ButtonLabel = styled(Typography, {
   fontWeight: `${fontWeight} !important`,
   lineHeight: `${lineHeight}px !important`,
   letterSpacing: `${letterSpacing}px !important`,
-  // textTransform: "lowercase",
-  // "&::first-letter": {
-  //   textTransform: "uppercase",
-  // },
 }));
 
 interface GeneralButtonProps {

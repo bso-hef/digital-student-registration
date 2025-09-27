@@ -3,7 +3,6 @@ import React from "react";
 import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
 import ImportExportRoundedIcon from "@mui/icons-material/ImportExportRounded";
 import ManageAccountsRoundedIcon from "@mui/icons-material/ManageAccountsRounded";
-import PublishRoundedIcon from "@mui/icons-material/PublishRounded";
 import RoomPreferencesRoundedIcon from "@mui/icons-material/RoomPreferencesRounded";
 import SchoolRoundedIcon from "@mui/icons-material/SchoolRounded";
 import SecurityRoundedIcon from "@mui/icons-material/SecurityRounded";
@@ -44,13 +43,8 @@ export const listOfRoutes = (t: TFunction) => {
       icon: <StorageRoundedIcon />,
       children: [
         {
-          path: "/admin/data/import",
-          displayValue: t("navigation.importData"),
-          icon: <PublishRoundedIcon />,
-        },
-        {
-          path: "/admin/data/export",
-          displayValue: t("navigation.exportData"),
+          path: "/admin/data/manage",
+          displayValue: t("navigation.manageData"),
           icon: <ImportExportRoundedIcon />,
         },
         {

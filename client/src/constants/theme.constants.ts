@@ -3,7 +3,7 @@ export const BASE_THEME_COLORS = {
     TERTIARY: "#D1F3F4",
     LIGHT: "#82D7DA",
     MAIN: "#4DBFC3",
-    DARK: "#318E91",
+    DARK: "#5AA5A7",
     LINK: "#3BB1B5",
   },
   SECONDARY: {

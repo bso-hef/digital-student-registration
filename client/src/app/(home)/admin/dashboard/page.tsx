@@ -20,7 +20,14 @@ const DashboardPage = () => {
   return (
     <Wrapper>
       <AdminSettingsHeader title="Dashboard" />
-      <Typography>Dashboard</Typography>
+      <Typography>
+        1. Übersicht (Dashboard) Statistiken auf einen Blick Anzahl
+        registrierter Studenten / Klassen Aktive Nutzer (Lehrer, Admins, Eltern)
+        Letzte Logins / Aktivität Offene To-Dos (z. B. unbestätigte
+        Registrierungen) Kacheln / Widgets “Neue Anmeldungen diese Woche”
+        “Zuletzt exportierte Daten” “Offene Vereinbarungen” Charts Zeitverlauf
+        der Registrierungen Verteilung nach Klassen / Jahrgang
+      </Typography>
     </Wrapper>
   );
 };

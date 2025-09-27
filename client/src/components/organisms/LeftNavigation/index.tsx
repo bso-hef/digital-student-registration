@@ -9,7 +9,6 @@ import ExpandLessRoundedIcon from "@mui/icons-material/ExpandLessRounded";
 import ExpandMoreRoundedIcon from "@mui/icons-material/ExpandMoreRounded";
 import OpenInNewRoundedIcon from "@mui/icons-material/OpenInNewRounded";
 import {
-  Avatar,
   Box,
   Collapse,
   Divider,
@@ -49,7 +48,6 @@ const StyledNavigation = styled(Box)(() => ({
   alignItems: "flex-start",
   flexGrow: 1,
   height: "100%",
-  maxHeight: "700px",
   width: "100%",
   overflowY: "auto",
 }));
@@ -146,7 +144,27 @@ const LeftNavigation = () => {
     }
   };
 
+  const [search, setSearch] = useState("");
+
   const listedRoutes = listOfRoutes;
+
+  const filteredRoutes = listedRoutes(t).filter((route) => {
+    if (search === "") {
+      return true;
+    }
+
+    if (route.displayValue.toLowerCase().includes(search.toLowerCase())) {
+      return true;
+    }
+
+    if (route.children) {
+      return route.children.some((child) =>
+        child.displayValue.toLowerCase().includes(search.toLowerCase()),
+      );
+    }
+
+    return false;
+  });
 
   useEffect(() => {
     const newOpen = listedRoutes(t).map(
@@ -182,10 +200,12 @@ const LeftNavigation = () => {
             placeholder={t("navigation.Browse settings")}
             fullWidth
             showSearchStartIcon
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
           />
         </Box>
         <List style={{ width: "100%" }}>
-          {listOfRoutes(t).map((route: Route, index: number) => {
+          {filteredRoutes.map((route: Route, index: number) => {
             const isSelected =
               hasRoute(route.path) || hasActiveChild(route, pathname);
 
@@ -218,25 +238,45 @@ const LeftNavigation = () => {
                 </List>
                 <Collapse in={open[index]} timeout="auto" unmountOnExit>
                   <List component="div" disablePadding>
-                    {route.children.map((child) => (
-                      <StyledListItem
-                        sub={true}
-                        button="true"
-                        selected={hasRoute(child.path)}
-                        key={child.displayValue}
-                        onClick={() => goToRoute(child.path)}
-                      >
-                        {child.icon && (
-                          <StyledListItemIcon selected={hasRoute(child.path)}>
-                            {child.icon}
-                          </StyledListItemIcon>
-                        )}
-                        <StyledListItemText
-                          isSelected={hasRoute(child.path)}
-                          secondary={child.displayValue}
-                        />
-                      </StyledListItem>
-                    ))}
+                    {route.children
+                      .filter((child) => {
+                        if (search === "") {
+                          return true;
+                        }
+
+                        if (
+                          route.displayValue
+                            .toLowerCase()
+                            .includes(search.toLowerCase())
+                        ) {
+                          return true;
+                        }
+
+                        return child.displayValue
+                          .toLowerCase()
+                          .includes(search.toLowerCase());
+                      })
+                      .map((child) => (
+                        <StyledListItem
+                          sub={true}
+                          button="true"
+                          selected={hasRoute(child.path)}
+                          key={child.displayValue}
+                          onClick={() => goToRoute(child.path)}
+                        >
+                          {child.icon && (
+                            <StyledListItemIcon
+                              selected={hasRoute(child.path)}
+                            >
+                              {child.icon}
+                            </StyledListItemIcon>
+                          )}
+                          <StyledListItemText
+                            isSelected={hasRoute(child.path)}
+                            secondary={child.displayValue}
+                          />
+                        </StyledListItem>
+                      ))}
                   </List>
                 </Collapse>
               </Fragment>

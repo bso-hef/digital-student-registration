@@ -13,7 +13,8 @@
     "Accessibility": "Barrierefreiheit",
     "Language": "Sprache",
     "Light": "Hell",
-    "Dark": "Dunkel"
+    "Dark": "Dunkel",
+    "Rows per page": "Zeilen pro Seite:"
   },
   "error": {
     "Page not found": "Seite nicht gefunden",
@@ -56,9 +57,10 @@
     "data": "Daten",
     "importData": "Daten importieren",
     "exportData": "Daten exportieren",
+    "manageData": "Datenverwaltung",
     "dataOverview": "Datenübersicht",
     "settings": "Einstellungen",
-    "onboardingSettings": "Onboarding-Einstellungen",
+    "onboardingSettings": "Onboarding",
     "agreementSettings": "Vereinbarungen",
     "integrationSettings": "Integrationen",
     "auditLog": "Audit-Log",

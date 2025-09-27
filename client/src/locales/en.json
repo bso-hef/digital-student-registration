@@ -13,7 +13,8 @@
     "Accessibility": "Accessibility",
     "Language": "Language",
     "Light": "Light",
-    "Dark": "Dark"
+    "Dark": "Dark",
+    "Rows per page": "Rows per page:"
   },
   "error": {
     "Page not found": "Page not found",
@@ -56,11 +57,12 @@
     "data": "Data",
     "importData": "Import Data",
     "exportData": "Export Data",
+    "manageData": "Manage Data",
     "dataOverview": "Data Overview",
     "settings": "Settings",
-    "onboardingSettings": "Onboarding Settings",
-    "agreementSettings": "Agreement Settings",
-    "integrationSettings": "Integration Settings",
+    "onboardingSettings": "Onboarding",
+    "agreementSettings": "Agreements",
+    "integrationSettings": "Integrations",
     "auditLog": "Audit Log",
     "Browse settings": "Browse settings",
     "welcome": "Welcome {{name}}"

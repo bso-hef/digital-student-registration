@@ -1,3 +1,4 @@
+import MuiCssBaselineOverride from "./MuiCssBaseline";
 import MuiDividerOverride from "./MuiDivider";
 import MuiFormControlOverride from "./MuiFormControl";
 import MuiFormControlLabelOverride from "./MuiFormControlLabel";
@@ -7,6 +8,9 @@ import MuiOutlinedInputOverride from "./MuiOutlinedInput";
 import MuiTextFieldOverride from "./MuiTextField";
 
 const overrides = {
+  MuiCssBaseline: {
+    styleOverrides: MuiCssBaselineOverride,
+  },
   MuiDivider: {
     styleOverrides: MuiDividerOverride,
   },

@@ -10,7 +10,6 @@ import { InputAdornment, TextField, styled } from "@mui/material";
 const StyledInput = styled(TextField)(({ theme }) => ({
   flexShrink: 0,
   borderRadius: theme.spacing(0.5),
-  background: "#0B0D0E",
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
@@ -20,9 +19,6 @@ const StyledInput = styled(TextField)(({ theme }) => ({
   fontStyle: "normal",
   fontWeight: 400,
   lineHeight: "150%",
-  color: "#FFF",
-  border: "1px solid #333638",
-  boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
   backdropFilter: "blur(25px)",
 }));
 

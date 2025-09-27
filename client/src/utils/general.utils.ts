@@ -1,6 +1,11 @@
 import Logger from "@/lib/client-logger";
 import { saveAs } from "file-saver";
 import Cookies from "js-cookie";
+import {
+  isChrome as detectChrome,
+  isFirefox as detectFirefox,
+  isSafari as detectSafari,
+} from "react-device-detect";
 
 export type FileResponse = {
   data: BlobPart;
@@ -145,3 +150,21 @@ export const getAvatarFullURL = (path: string) => {
   //   return `${AVATAR_URL}/${path}`;
   // }
 };
+
+export const ua =
+  (typeof navigator !== "undefined" && navigator.userAgent) || "";
+
+export const isIPadUA =
+  /iPad/i.test(ua) ||
+  (ua.includes("Macintosh") && navigator.maxTouchPoints >= 1);
+
+export const isSmartTVUA =
+  /Tizen|Web0S|webOS|HbbTV|SmartTV|Viera|BRAVIA|NetCast|MiTV|Hisense|Aquos|Browser_TV|TCL/i.test(
+    ua,
+  );
+
+export const isFirefox = detectFirefox && /firefox/i.test(ua);
+
+export const isSafari = detectSafari && /safari/i.test(ua);
+
+export const isChrome = detectChrome && /chrome/i.test(ua);

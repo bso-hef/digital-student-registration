@@ -24,7 +24,7 @@ const MuiOutlinedInputOverride = {
     },
   }),
   input: ({ theme }: { theme: Theme }) => ({
-    backgroundColor: "transparent",
+    backgroundColor: theme.palette.surface.interface.base,
     backgroundImage: "none",
     textTransform: "none",
     fontSize: 16,
@@ -36,6 +36,10 @@ const MuiOutlinedInputOverride = {
     "&.MuiInputBase-input.MuiOutlinedInput-input::placeholder": {
       color: theme.palette.text.information,
       opacity: 0.5,
+    },
+
+    "&:hover": {
+      borderColor: theme.palette.border.hover,
     },
   }),
   notchedOutline: ({ theme }: { theme: Theme }) => ({
