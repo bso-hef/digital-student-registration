@@ -42,7 +42,6 @@ const StyledTable = styled(Table)(({ theme }) => ({
   backgroundColor: theme.palette.surface.interface.base,
   backgroundImage: "unset",
   color: theme.palette.text.default,
-  marginBottom: 16,
   width: "100%",
   borderRadius: theme.spacing(0.5),
 }));
@@ -327,9 +326,8 @@ const DataTable: React.FC<DataTableProps> = ({
                 );
               })}
           </TableBody>
-        </StyledTable>
-      </StyledTableContainer>
-
+      </StyledTable>
+    </StyledTableContainer>
       {data?.length < 1 && !loading && (
         <Box sx={{ p: 3, textAlign: "center" }}>
           <Box sx={{ fontSize: 40, mb: 2 }}>😕</Box>

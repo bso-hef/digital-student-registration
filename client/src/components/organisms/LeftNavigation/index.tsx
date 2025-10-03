@@ -67,14 +67,16 @@ const StyledListItem = styled(ListItem)<{
   borderRadius: theme.spacing(1),
   padding: sub ? theme.spacing(0.5, 4) : theme.spacing(1, 2),
   backgroundColor:
-    selected && sub ? theme.palette.surface.button.focused : "transparent",
+    selected && sub ? theme.palette.surface.button.hoverLight : "transparent",
   "&:hover": {
-    backgroundColor: theme.palette.surface.button.hoverLight,
+    backgroundColor: selected
+      ? theme.palette.surface.button.focused
+      : theme.palette.surface.button.hoverLight,
     cursor: "pointer",
   },
   "&.Mui-selected": {
     color: selected ? theme.palette.text.primary : theme.palette.text.default,
-    backgroundColor: theme.palette.surface.button.focused,
+    backgroundColor: theme.palette.surface.button.hoverLight,
   },
 }));
 
@@ -265,9 +267,7 @@ const LeftNavigation = () => {
                           onClick={() => goToRoute(child.path)}
                         >
                           {child.icon && (
-                            <StyledListItemIcon
-                              selected={hasRoute(child.path)}
-                            >
+                            <StyledListItemIcon selected={hasRoute(child.path)}>
                               {child.icon}
                             </StyledListItemIcon>
                           )}

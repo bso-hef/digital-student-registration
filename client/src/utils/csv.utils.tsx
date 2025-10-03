@@ -95,7 +95,7 @@ export function parseCSVFile(
               h.replace(/"/g, "").trim(),
             );
 
-            const expected = ["username", "email"];
+            const expected = ["firstName", "lastName", "dateOfBirth"];
             const headerValid =
               expected.length === headerFields.length &&
               expected.every((f, i) => headerFields[i].toLowerCase() === f);

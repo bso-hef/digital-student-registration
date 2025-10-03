@@ -20,10 +20,11 @@
     "@fontsource/inter": "^5.2.6",
     "@mui/icons-material": "^7.2.0",
     "@mui/material": "^7.2.0",
-    "@mui/x-date-pickers": "^8.10.2",
+    "@mui/x-date-pickers": "^8.12.0",
     "@reduxjs/toolkit": "^2.8.2",
     "axios": "^1.10.0",
     "countries-and-timezones": "^3.8.0",
+    "dayjs": "^1.11.18",
     "device-type-detection": "^1.0.1",
     "file-saver": "^2.0.5",
     "formik": "^2.4.6",
@@ -88,7 +89,7 @@
     ]
   },
   "engines": {
-    "node": "v22.17.0",
+    "node": "v22.20.0",
     "yarn": "1.22.22"
   }
 }

@@ -42,6 +42,8 @@ const StyledTableHead = styled(TableHead)(({ theme }) => ({
     fontSize: "16px !important",
     lineHeight: "20px !important",
     border: `1px solid ${theme.palette.border.seperator}`,
+    borderTop: `1px solid ${theme.palette.border.seperator}`,
+    borderBottom: `1px solid ${theme.palette.border.seperator}`,
     whiteSpace: "nowrap",
     padding: theme.spacing(2),
   },

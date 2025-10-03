@@ -4,8 +4,10 @@ import React, { useCallback, useState } from "react";
 
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
 import AdminSettingsHeader from "@/components/molecules/AdminSettingsHeader";
+import AddStudentModal from "@/components/organisms/modals/AddStudentModal";
 import DataTable from "@/components/organisms/tables/DataTable";
 import { ParsedMember, parseCSVFile } from "@/utils/csv.utils";
+import { applicationScrollbar } from "@/utils/styling.utils";
 import { Box, styled } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
@@ -22,17 +24,22 @@ const Wrapper = styled(Box)(({ theme }) => ({
   color: theme.palette.text.default,
 }));
 
-const StyledTableBox = styled(Box)(() => ({
+const StyledTableBox = styled(Box)(({ theme }) => ({
   height: "100%",
   width: "100%",
   display: "flex",
   flexDirection: "column",
-  justifyContent: "space-between",
+  overflowY: "auto",
+  overflowX: "hidden",
+  flex: 1,
+  ...applicationScrollbar(theme),
 }));
 
 const ImportDataAdminPage = () => {
-  const [csvData, setCsvData] = useState<ParsedMember[]>([]);
   const { t } = useTranslation();
+
+  const [openStudentAddModal, setOpenStudentAddModal] = useState(false);
+  const [csvData, setCsvData] = useState<ParsedMember[]>([]);
 
   const handleUploadCSV = useCallback(() => {
     const input = document.createElement("input");
@@ -49,12 +56,27 @@ const ImportDataAdminPage = () => {
     input.click();
   }, []);
 
+  const handleAddStudentModalOpen = useCallback(() => {
+    setOpenStudentAddModal(true);
+  }, []);
+
+  const handleAddStudentModalClose = useCallback(() => {
+    setOpenStudentAddModal(false);
+    setCsvData([]);
+  }, []);
+
   return (
     <Wrapper>
+      <AddStudentModal
+        open={openStudentAddModal}
+        onClose={handleAddStudentModalClose}
+        onUploadCSV={handleUploadCSV}
+        csvData={csvData}
+      />
       <AdminSettingsHeader title={t("navigation.manageData")}>
         <GeneralButton
           label="Schüler importieren"
-          onAction={handleUploadCSV}
+          onAction={handleAddStudentModalOpen}
           fullHeight={false}
           fullWidth={false}
           isPrimary

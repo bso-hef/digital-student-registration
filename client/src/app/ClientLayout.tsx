@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 
-import { Analytics } from "@vercel/analytics/next";
 import { Toaster } from "sonner";
 
 import "./App.css";
@@ -38,7 +37,6 @@ export default function ClientLayout({
           },
         }}
       />
-      <Analytics />
       <div className="App" id="App">
         {children}
       </div>
