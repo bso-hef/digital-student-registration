@@ -5,6 +5,7 @@ import React, { Fragment, memo, useCallback, useEffect, useState } from "react";
 import { CHECKBOX_COL_WIDTH } from "@/constants/ui.constants";
 import { applicationScrollbar } from "@/utils/styling.utils";
 import { getComparator, stableSort } from "@/utils/table.utils";
+import ReportGmailerrorredRoundedIcon from "@mui/icons-material/ReportGmailerrorredRounded";
 import {
   Box,
   Checkbox,
@@ -30,6 +31,7 @@ const StyledTableContainer = styled(TableContainer, {
   height: "100%",
   width: "100%",
   display: "flex",
+  alignItems: "flex-start",
   overflow: "auto",
   transitionDuration: ".3s",
   flex: Array.isArray(data) && data.length > 0 ? 1 : "inherit",
@@ -63,6 +65,7 @@ const StyledTableCheckBoxCell = styled(TableCell)(({ theme }) => ({
   textAlign: "center",
   verticalAlign: "middle",
   height: 48,
+  maxHeight: 48,
   boxSizing: "border-box",
   backgroundImage: "unset",
   color: theme.palette.text.default,
@@ -80,6 +83,8 @@ const StyledTableCell = styled(TableCell, {
   fontSize: "16px",
   padding: "4px 16px",
   width: width,
+  height: 48,
+  maxHeight: 48,
 }));
 
 const StyledBox = styled(Box)(({ theme }) => ({
@@ -220,125 +225,130 @@ const DataTable: React.FC<DataTableProps> = ({
 
   return (
     <Fragment>
-      <StyledTableContainer data={data}>
-        <StyledTable
-          size="small"
-          aria-labelledby="tableTitle"
-          aria-label="enhanced table"
-        >
-          <EnhancedTableHead
-            numSelected={selected.length}
-            order={order}
-            orderBy={orderBy}
-            headers={headers}
-            onSelectAllClick={handleSelectAllClick}
-            onRequestSort={handleRequestSort}
-            rowCount={
-              data?.filter((i) => !(i as { disabled?: boolean }).disabled)
-                ?.length
-            }
-            dataSelection={dataSelection}
-          />
+      {data?.length > 0 && (
+        <StyledTableContainer data={data}>
+          <StyledTable
+            size="small"
+            aria-labelledby="tableTitle"
+            aria-label="enhanced table"
+          >
+            <EnhancedTableHead
+              numSelected={selected.length}
+              order={order}
+              orderBy={orderBy}
+              headers={headers}
+              onSelectAllClick={handleSelectAllClick}
+              onRequestSort={handleRequestSort}
+              rowCount={
+                data?.filter((i) => !(i as { disabled?: boolean }).disabled)
+                  ?.length
+              }
+              dataSelection={dataSelection}
+            />
 
-          <TableBody>
-            {stableSort(data, getComparator(order, orderBy))
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row: Record<string, unknown>, index: number) => {
-                const isItemSelected = isSelected(row.id as string | number);
-                const labelId = `enhanced-table-checkbox-${index}`;
+            <TableBody>
+              {stableSort(data || [], getComparator(order, orderBy))
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row: Record<string, unknown>, index: number) => {
+                  const isItemSelected = isSelected(row.id as string | number);
+                  const labelId = `enhanced-table-checkbox-${index}`;
 
-                return (
-                  <StyledTableRow
-                    role="checkbox"
-                    aria-checked={isItemSelected}
-                    selected={isItemSelected}
-                    tabIndex={-1}
-                    key={`${row.id}-${index}`}
-                  >
-                    {dataSelection && (
-                      <StyledTableCheckBoxCell
-                        component="td"
-                        id={labelId}
-                        scope="row"
-                        padding="checkbox"
-                        align="center"
-                        onClick={(event) =>
-                          !row?.disabled &&
-                          handleSelectClick(event, row.id as string | number)
-                        }
-                      >
-                        <Checkbox
-                          checked={
-                            selected.indexOf(row.id as string | number) !==
-                              -1 && !row?.disabled
+                  return (
+                    <StyledTableRow
+                      role="checkbox"
+                      aria-checked={isItemSelected}
+                      selected={isItemSelected}
+                      tabIndex={-1}
+                      key={`${row.id}-${index}`}
+                    >
+                      {dataSelection && (
+                        <StyledTableCheckBoxCell
+                          component="td"
+                          id={labelId}
+                          scope="row"
+                          padding="checkbox"
+                          align="center"
+                          onClick={(event) =>
+                            !row?.disabled &&
+                            handleSelectClick(event, row.id as string | number)
                           }
-                          color="primary"
-                          disabled={Boolean(
-                            (row as { disabled?: boolean }).disabled,
-                          )}
-                          size="small"
-                        />
-                      </StyledTableCheckBoxCell>
-                    )}
+                        >
+                          <Checkbox
+                            checked={
+                              selected.indexOf(row.id as string | number) !==
+                                -1 && !row?.disabled
+                            }
+                            color="primary"
+                            disabled={Boolean(
+                              (row as { disabled?: boolean }).disabled,
+                            )}
+                            size="small"
+                          />
+                        </StyledTableCheckBoxCell>
+                      )}
 
-                    {headers.map((header) => {
-                      if (
-                        header.id === "analytics" ||
-                        header.id === "actions" ||
-                        header.id === "callType" ||
-                        header.id === "recordings" ||
-                        header.id === "files"
-                      ) {
+                      {headers.map((header) => {
+                        if (
+                          header.id === "analytics" ||
+                          header.id === "actions" ||
+                          header.id === "callType" ||
+                          header.id === "recordings" ||
+                          header.id === "files"
+                        ) {
+                          return (
+                            <StyledTableCell
+                              key={`${row.id}-${header.id}`}
+                              width={row.width as string | number | undefined}
+                              align="center"
+                              onClick={() =>
+                                onClickActionCell &&
+                                onClickActionCell(row.id as string | number)
+                              }
+                            >
+                              <StyledBox key={`${row.id}-${header.id}-box`}>
+                                {row[header.id] as React.ReactNode}
+                              </StyledBox>
+                            </StyledTableCell>
+                          );
+                        }
+
                         return (
                           <StyledTableCell
                             key={`${row.id}-${header.id}`}
-                            width={row.width as string | number | undefined}
-                            align="center"
+                            width={header.width}
+                            align={header.align}
                             onClick={() =>
-                              onClickActionCell &&
-                              onClickActionCell(row.id as string | number)
+                              header.clickable &&
+                              onClickRowItem(row.id as string | number)
                             }
                           >
-                            <StyledBox key={`${row.id}-${header.id}-box`}>
+                            <StyledBox>
                               {row[header.id] as React.ReactNode}
                             </StyledBox>
                           </StyledTableCell>
                         );
-                      }
+                      })}
+                    </StyledTableRow>
+                  );
+                })}
+            </TableBody>
+          </StyledTable>
+        </StyledTableContainer>
+      )}
 
-                      return (
-                        <StyledTableCell
-                          key={`${row.id}-${header.id}`}
-                          width={header.width}
-                          align={header.align}
-                          onClick={() =>
-                            header.clickable &&
-                            onClickRowItem(row.id as string | number)
-                          }
-                        >
-                          <StyledBox>
-                            {row[header.id] as React.ReactNode}
-                          </StyledBox>
-                        </StyledTableCell>
-                      );
-                    })}
-                  </StyledTableRow>
-                );
-              })}
-          </TableBody>
-      </StyledTable>
-    </StyledTableContainer>
       {data?.length < 1 && !loading && (
         <Box sx={{ p: 3, textAlign: "center" }}>
-          <Box sx={{ fontSize: 40, mb: 2 }}>😕</Box>
+          <Box sx={{ fontSize: 60 }}>
+            <ReportGmailerrorredRoundedIcon
+              fontSize="inherit"
+              color="secondary"
+            />
+          </Box>
           <Box sx={{ fontSize: 20, fontWeight: "bold", mb: 1 }}>
             {notFoundTitle || t("table.No data found")}
           </Box>
           <Box sx={{ fontSize: 16, color: "text.secondary" }}>
-            {notFoundDescription ||
-              t(
-                "table.Try adjusting your search or filter to find what you're looking for.",
-              )}
+            {notFoundDescription || t("table.No data found description")}
           </Box>
         </Box>
       )}

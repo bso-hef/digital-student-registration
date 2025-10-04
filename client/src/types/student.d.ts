@@ -52,3 +52,17 @@ export interface StudentData {
   personenabbildung: boolean;
   teamsnutzung: boolean;
 }
+
+export type StudentFormRow = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  dateOfBirth: Date | null;
+  touched?: boolean;
+  isValid?: boolean;
+};
+
+export type CreateStudentInput = Pick<
+  Student,
+  "firstName" | "lastName" | "dateOfBirth"
+> & { status?: Student["status"] };

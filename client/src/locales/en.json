@@ -14,7 +14,12 @@
     "Language": "Language",
     "Light": "Light",
     "Dark": "Dark",
-    "Rows per page": "Rows per page:"
+    "Rows per page": "Rows per page:",
+    "Search": "Search",
+    "Imported": "Imported",
+    "Invited": "Invited",
+    "Onboarded": "Onboarded",
+    "Unknown": "Unknown"
   },
   "error": {
     "Page not found": "Page not found",
@@ -66,5 +71,48 @@
     "auditLog": "Audit Log",
     "Browse settings": "Browse settings",
     "welcome": "Welcome {{name}}"
+  },
+  "modals": {
+    "addStudent": {
+      "title": "Add Student",
+      "subtitle": "Add students manually or via csv import",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "dateOfBirth": "Date of Birth",
+      "required": "Required",
+      "firstNamePlaceholder": "John",
+      "lastNamePlaceholder": "Doe",
+      "uploadCsv": "Upload CSV",
+      "invite": "Invite"
+    }
+  },
+  "actions": {
+    "studentFetchFailed": "Failed to fetch students.",
+    "studentAddSuccess": "Students added successfully.",
+    "studentAddFailed": "Failed to add students."
+  },
+  "table": {
+    "No data found": "No Data to Show",
+    "No data found description": "After member/members are added, a list will appear here in this section."
+  },
+  "settings": {
+    "csv": {
+      "CSV data is empty": "CSV data is empty.",
+      "CSV data should contain both headers and data rows": "CSV data should contain both headers and data rows.",
+      "Invalid CSV headers": "Invalid CSV headers. Expected: {{headers}}",
+      "Invalid row format": "Invalid row format at row {{row}}.",
+      "CSV file has no valid data": "CSV file has no valid data.",
+      "CSV uploaded and parsed successfully": "CSV uploaded and parsed successfully.",
+      "Error while parsing CSV": "Error while parsing CSV.",
+      "Error while reading file": "Error while reading file."
+    },
+    "manageData": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "dateOfBirth": "Date of Birth",
+      "class": "Class",
+      "status": "Status",
+      "importStudents": "Import Students"
+    }
   }
 }

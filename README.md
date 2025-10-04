@@ -71,15 +71,15 @@ yarn start        # Start compiled backend (e.g. node dist/index.js)
 ### client/.env.local
 
 ```env
-NEXT_PUBLIC_SOCKET_URL=http://localhost:5000
-NEXT_PUBLIC_API_URL=http://localhost:5000
+NEXT_PUBLIC_SOCKET_URL=http://localhost:3000
+NEXT_PUBLIC_API_URL=http://localhost:3000
 ```
 
 ### server/.env
 
 ```env
 MONGODB_URI=mongodb://localhost:27017/mydb
-PORT=5000
+PORT=3000
 ```
 
 ---

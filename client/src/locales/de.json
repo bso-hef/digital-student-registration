@@ -14,7 +14,12 @@
     "Language": "Sprache",
     "Light": "Hell",
     "Dark": "Dunkel",
-    "Rows per page": "Zeilen pro Seite:"
+    "Rows per page": "Zeilen pro Seite:",
+    "Search": "Suche",
+    "Imported": "Importiert",
+    "Invited": "Eingeladen",
+    "Onboarded": "Eingeschrieben",
+    "Unknown": "Unbekannt"
   },
   "error": {
     "Page not found": "Seite nicht gefunden",
@@ -66,5 +71,48 @@
     "auditLog": "Audit-Log",
     "Browse settings": "Einstellungen durchsuchen",
     "welcome": "Willkommen {{name}}"
+  },
+  "modals": {
+    "addStudent": {
+      "title": "Studenten hinzufügen",
+      "subtitle": "Fügen Sie Studenten manuell oder per CSV-Import hinzu",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "dateOfBirth": "Geburtsdatum",
+      "required": "Erforderlich",
+      "firstNamePlaceholder": "John",
+      "lastNamePlaceholder": "Doe",
+      "uploadCsv": "CSV hochladen",
+      "invite": "Einladen"
+    }
+  },
+  "actions": {
+    "studentFetchFailed": "Abrufen der Schüler fehlgeschlagen.",
+    "studentAddSuccess": "Schüler erfolgreich hinzugefügt.",
+    "studentAddFailed": "Hinzufügen der Schüler fehlgeschlagen."
+  },
+  "table": {
+    "No data found": "Keine Daten gefunden",
+    "No data found description": "Nachdem mindestens ein Benutzer hinzugefügt wurde, erscheint hier eine Liste."
+  },
+  "settings": {
+    "csv": {
+      "CSV data is empty": "CSV-Daten sind leer.",
+      "CSV data should contain both headers and data rows": "CSV-Daten sollten sowohl Kopfzeilen als auch Datenzeilen enthalten.",
+      "Invalid CSV headers": "Ungültige CSV-Kopfzeilen. Erwartet: {{headers}}",
+      "Invalid row format": "Ungültiges Zeilenformat in Zeile {{row}}.",
+      "CSV file has no valid data": "CSV-Datei enthält keine gültigen Daten.",
+      "CSV uploaded and parsed successfully": "CSV wurde erfolgreich hochgeladen und verarbeitet.",
+      "Error while parsing CSV": "Fehler beim Parsen der CSV-Datei.",
+      "Error while reading file": "Fehler beim Lesen der Datei."
+    },
+    "manageData": {
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "dateOfBirth": "Geburtsdatum",
+      "class": "Klasse",
+      "status": "Status",
+      "importStudents": "Studenten importieren"
+    }
   }
 }

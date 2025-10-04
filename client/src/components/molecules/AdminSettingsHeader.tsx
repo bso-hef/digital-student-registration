@@ -69,6 +69,13 @@ const AdminSettingsHeader: React.FC<AdminSettingsHeaderProps> = ({
     <StyledHeader mb={2} px={3} py={2} {...OtherProps}>
       <StyledHeaderTitle>{title}</StyledHeaderTitle>
       <StyledToolBox>
+        {onSearch && (
+          <Box mx={2}>
+            <HeaderSearchInput
+              onChange={onSearch ? (e) => onSearch(e.target.value) : undefined}
+            />
+          </Box>
+        )}
         {children}
         {onSave && (
           <GeneralButton
@@ -77,13 +84,6 @@ const AdminSettingsHeader: React.FC<AdminSettingsHeaderProps> = ({
             type="submit"
             label={t("general.Save")}
           />
-        )}
-        {onSearch && (
-          <Box style={{ marginLeft: "16px" }}>
-            <HeaderSearchInput
-              onChange={onSearch ? (e) => onSearch(e.target.value) : undefined}
-            />
-          </Box>
         )}
       </StyledToolBox>
       <StyledDivierOrLoader>

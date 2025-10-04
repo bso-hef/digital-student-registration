@@ -1,3 +1,4 @@
+import { Student } from "@/types/db";
 import { StudentData } from "@/types/student";
 
 import * as TYPES from "../types";
@@ -6,6 +7,7 @@ import { AppAction } from "./index";
 interface StudentState {
   currentStep: number;
   data: StudentData;
+  students: Student[];
   loading: boolean;
   error: Error | null;
 }
@@ -66,6 +68,7 @@ const initialStudentState: StudentState = {
     personenabbildung: false,
     teamsnutzung: false,
   },
+  students: [],
   loading: false,
   error: null,
 };
@@ -77,6 +80,24 @@ const studentReducer = (state = initialStudentState, action: AppAction) => {
         ...state,
         currentStep: action.payload,
       };
+
+    case TYPES.GET_STUDENTS_REQUEST:
+    case TYPES.ADD_STUDENTS_REQUEST:
+      return { ...state, loading: true, error: null };
+
+    case TYPES.GET_STUDENTS_SUCCESS:
+      return { ...state, loading: false, students: action.payload };
+
+    case TYPES.ADD_STUDENTS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        students: [...state.students, ...action.payload],
+      };
+
+    case TYPES.ADD_STUDENTS_FAILURE:
+    case TYPES.GET_STUDENTS_FAILURE:
+      return { ...state, loading: false, error: action.payload };
     default:
       return state;
   }

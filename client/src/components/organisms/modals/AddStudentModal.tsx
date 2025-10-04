@@ -3,6 +3,8 @@ import React, { Fragment, useCallback, useEffect, useState } from "react";
 import GeneralInput from "@/components/atoms/GeneralInput";
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
 import SmallIconButton from "@/components/atoms/buttons/SmallIconButton";
+import { CreateStudentInput, StudentFormRow } from "@/types/student";
+import { ParsedStudent } from "@/utils/csv.utils";
 import { uuid_v4 } from "@/utils/string.utils";
 import { applicationScrollbar } from "@/utils/styling.utils";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
@@ -13,15 +15,6 @@ import dayjs, { Dayjs } from "dayjs";
 import { useTranslation } from "react-i18next";
 
 import GeneralModal from "./GeneralModal";
-
-type Student = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  dateOfBirth: Date | null;
-  isValid: boolean;
-  touched: boolean;
-};
 
 const StyledForm = styled(Box)(({ theme }) => ({
   height: "100%",
@@ -47,18 +40,12 @@ const StyledFormGroup = styled(Box)(({ theme }) => ({
   alignItems: "center",
 }));
 
-type CsvStudent = {
-  firstName?: string;
-  lastName?: string;
-  dateOfBirth?: string;
-};
-
 type AddStudentModalProps = {
   open: boolean;
   onClose: () => void;
-  onAddStudents: () => void;
+  onAddStudents: (students: CreateStudentInput[]) => void;
   onUploadCSV: () => void;
-  csvData?: CsvStudent[];
+  csvData?: ParsedStudent[];
 };
 
 const AddStudentModal: React.FC<AddStudentModalProps> = ({
@@ -69,7 +56,7 @@ const AddStudentModal: React.FC<AddStudentModalProps> = ({
   csvData = [],
 }) => {
   const { t } = useTranslation();
-  const [state, setState] = useState<Student[]>([]);
+  const [state, setState] = useState<StudentFormRow[]>([]);
   const [isFormValid, setIsFormValid] = useState(false);
 
   const handleAddStudent = useCallback(() => {
@@ -100,27 +87,6 @@ const AddStudentModal: React.FC<AddStudentModalProps> = ({
   const handleRemoveStudent = useCallback(
     (id: string) => {
       const newList = state.filter(({ id: _id }) => id !== _id);
-      setState(newList);
-    },
-    [state],
-  );
-
-  const handleStudentChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const { id, name, value } = event.target;
-      const newList = state.map((item) => {
-        if (item.id === id) {
-          const updatedItem = {
-            ...item,
-            [name]: value,
-            touched: true,
-          };
-
-          return updatedItem;
-        }
-        return item;
-      });
-
       setState(newList);
     },
     [state],
@@ -175,20 +141,18 @@ const AddStudentModal: React.FC<AddStudentModalProps> = ({
 
   useEffect(() => {
     // Check if all students are valid
-    const allValid =
-      state.length > 0 &&
-      state.every(
-        (student) =>
-          student.firstName.trim() !== "" &&
-          student.lastName.trim() !== "" &&
-          student.dateOfBirth !== null,
-      );
+    const allValid = state.every(
+      (student) =>
+        student.firstName.trim() !== "" &&
+        student.lastName.trim() !== "" &&
+        student.dateOfBirth !== null,
+    );
     setIsFormValid(allValid);
   }, [state]);
 
   const handleInvite = useCallback(() => {
-    onAddStudents();
-  }, [onAddStudents]);
+    onAddStudents(state);
+  }, [onAddStudents, state]);
 
   const handleDobChange = (id: string) => (value: Dayjs | null) => {
     setState((prev) =>
@@ -206,133 +170,94 @@ const AddStudentModal: React.FC<AddStudentModalProps> = ({
 
   const contentChildren = (
     <StyledForm>
-      {state?.map((item, index) =>
-        state.length > 1 ? (
-          <StyledFormRow key={item.id}>
-            <StyledFormGroup>
-              <GeneralInput
-                type="text"
-                placeholder="John"
-                label="Vorname"
-                onChange={handleTextChange(item.id, "firstName")}
-                value={item.firstName}
-                showUserStartIcon
-                style={{
-                  height: "50px",
-                  flexShrink: 0,
-                }}
-              />
-              <GeneralInput
-                type="text"
-                placeholder="Doe"
-                label="Nachname"
-                onChange={handleTextChange(item.id, "lastName")}
-                value={item.lastName}
-                showUserStartIcon
-                style={{
-                  height: "50px",
-                  flexShrink: 0,
-                }}
-              />
-              <DatePicker
-                value={item.dateOfBirth ? dayjs(item.dateOfBirth) : null}
-                label="Geburtsdatum"
-                onChange={handleDobChange(item.id)}
-                disableFuture
-                views={["year", "month", "day"]}
-                format="DD.MM.YYYY"
-                slotProps={{
-                  textField: {
-                    sx: { height: 50 },
-                    InputProps: { sx: { height: 50 } },
-                    size: "small",
-                  },
-                }}
-              />
-            </StyledFormGroup>
-            {index < 1 ? (
-              <SmallIconButton
-                icon={<AddRoundedIcon />}
-                onAction={handleAddStudent}
-                hugeIcon
-                noMargin
-              />
-            ) : (
-              <SmallIconButton
-                icon={<RemoveRoundedIcon />}
-                onAction={() => handleRemoveStudent(item.id)}
-                hugeIcon
-                noMargin
-              />
-            )}
-          </StyledFormRow>
-        ) : (
-          <StyledFormRow key={item.id}>
-            <StyledFormGroup>
-              <GeneralInput
-                type="text"
-                placeholder="John"
-                label="Vorname"
-                onChange={handleTextChange(item.id, "firstName")}
-                value={item.firstName}
-                showUserStartIcon
-                style={{
-                  height: "50px",
-                  flexShrink: 0,
-                }}
-              />
-              <GeneralInput
-                type="text"
-                placeholder="Doe"
-                label="Nachname"
-                onChange={handleTextChange(item.id, "lastName")}
-                value={item.lastName}
-                showUserStartIcon
-                style={{
-                  height: "50px",
-                  flexShrink: 0,
-                }}
-              />
-              <DatePicker
-                value={item.dateOfBirth ? dayjs(item.dateOfBirth) : null}
-                label="Geburtsdatum"
-                onChange={handleDobChange(item.id)}
-                disableFuture
-                views={["year", "month", "day"]}
-                format="DD.MM.YYYY"
-                slotProps={{
-                  textField: {
-                    sx: { height: 50 },
-                    InputProps: { sx: { height: 50 } },
-                    size: "small",
-                  },
-                }}
-              />
-            </StyledFormGroup>
+      {state?.map((item, index) => (
+        <StyledFormRow key={item.id}>
+          <StyledFormGroup>
+            <GeneralInput
+              type="text"
+              placeholder={t("modals.addStudent.firstNamePlaceholder")}
+              label={
+                item.touched && !item.firstName
+                  ? t("modals.addStudent.required")
+                  : t("modals.addStudent.firstName")
+              }
+              onChange={handleTextChange(item.id, "firstName")}
+              value={item.firstName}
+              showUserStartIcon
+              style={{
+                height: "50px",
+                flexShrink: 0,
+              }}
+              error={item.touched && !item.firstName}
+            />
+            <GeneralInput
+              type="text"
+              placeholder={t("modals.addStudent.lastNamePlaceholder")}
+              label={
+                item.touched && !item.lastName
+                  ? t("modals.addStudent.required")
+                  : t("modals.addStudent.lastName")
+              }
+              value={item.lastName}
+              onChange={handleTextChange(item.id, "lastName")}
+              showUserStartIcon
+              style={{
+                height: "50px",
+                flexShrink: 0,
+              }}
+              error={item.touched && !item.lastName}
+            />
+            <DatePicker
+              value={item.dateOfBirth ? dayjs(item.dateOfBirth) : null}
+              label={
+                item.touched && !item.dateOfBirth
+                  ? t("modals.addStudent.required")
+                  : t("modals.addStudent.dateOfBirth")
+              }
+              onChange={handleDobChange(item.id)}
+              disableFuture
+              views={["year", "month", "day"]}
+              format="DD.MM.YYYY"
+              slotProps={{
+                textField: {
+                  sx: { height: 50 },
+                  InputProps: { sx: { height: 50 } },
+                  size: "small",
+                  error: item.touched && !item.dateOfBirth,
+                },
+              }}
+            />
+          </StyledFormGroup>
+          {index < 1 ? (
             <SmallIconButton
               icon={<AddRoundedIcon />}
               onAction={handleAddStudent}
               hugeIcon
               noMargin
             />
-          </StyledFormRow>
-        ),
-      )}
+          ) : (
+            <SmallIconButton
+              icon={<RemoveRoundedIcon />}
+              onAction={() => handleRemoveStudent(item.id)}
+              hugeIcon
+              noMargin
+            />
+          )}
+        </StyledFormRow>
+      ))}
     </StyledForm>
   );
 
   const actionChildren = (
     <Fragment>
       <GeneralButton
-        // label={t("queue.upload csv")}
-        label="Upload CSV"
+        label={t("modals.addStudent.uploadCsv")}
         isPrimary={false}
         onAction={onUploadCSV}
         fullWidth={false}
       />
       <GeneralButton
-        // label={t("queue.invite")}
-        label="Invite"
+        label={t("modals.addStudent.invite")}
         disabled={!isFormValid}
         onAction={handleInvite}
         fullWidth={false}
@@ -344,8 +269,8 @@ const AddStudentModal: React.FC<AddStudentModalProps> = ({
     <GeneralModal
       open={open}
       onCloseModal={onClose}
-      customTitle="Add Student"
-      subtitle="Add students manually or via csv import"
+      customTitle={t("modals.addStudent.title")}
+      subtitle={t("modals.addStudent.subtitle")}
       modalWidth={960}
       modalMaxHeight={600}
       contentChildren={contentChildren}

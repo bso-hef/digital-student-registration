@@ -38,6 +38,8 @@ interface GeneralInputProps {
   showEmailStartIcon?: boolean;
   showUserStartIcon?: boolean;
   showSearchStartIcon?: boolean;
+  error?: boolean;
+  helperText?: string;
 }
 
 const GeneralInput: React.FC<GeneralInputProps> = ({
@@ -55,6 +57,8 @@ const GeneralInput: React.FC<GeneralInputProps> = ({
   showEmailStartIcon,
   showUserStartIcon,
   showSearchStartIcon,
+  error,
+  helperText,
 }) => {
   return (
     <StyledInput
@@ -69,6 +73,8 @@ const GeneralInput: React.FC<GeneralInputProps> = ({
       name={name}
       id={id}
       required={required}
+      error={error}
+      helperText={helperText}
       InputProps={{
         startAdornment: (
           <InputAdornment position="start">

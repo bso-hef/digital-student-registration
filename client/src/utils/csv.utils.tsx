@@ -3,13 +3,14 @@ import i18n from "i18next";
 
 import { errorNotification, successNotification } from "./notification.utils";
 
-export interface ParsedMember {
-  username: string;
-  email: string;
+export interface ParsedStudent {
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
 }
 
 /**
- * Parse a semicolon-delimited CSV with expected headers: username;email
+ * Parse a semicolon-delimited CSV with expected headers: firstName;lastName;dateOfBirth
  * - Accepts quoted fields
  * - Trims values and strips double quotes
  * - Validates headers and rows
@@ -20,8 +21,8 @@ export interface ParsedMember {
  */
 export function parseCSVFile(
   file: File,
-  setData?: (rows: ParsedMember[]) => void,
-): Promise<void> {
+  setData?: (rows: ParsedStudent[]) => void,
+): Promise<ParsedStudent[] | void> {
   return new Promise((resolve) => {
     const reader = new FileReader();
     const errors: string[] = [];
@@ -73,7 +74,7 @@ export function parseCSVFile(
 
         if (!trimmed) {
           addError(
-            i18n.t("memberTable.CSV data is empty"),
+            i18n.t("settings.csv.CSV data is empty"),
             "File content is empty",
           );
         } else {
@@ -86,7 +87,7 @@ export function parseCSVFile(
           if (lines.length < 2) {
             addError(
               i18n.t(
-                "memberTable.CSV data should contain both headers and data rows",
+                "settings.csv.CSV data should contain both headers and data rows",
               ),
               "Insufficient data rows in CSV",
             );
@@ -95,21 +96,25 @@ export function parseCSVFile(
               h.replace(/"/g, "").trim(),
             );
 
-            const expected = ["firstName", "lastName", "dateOfBirth"];
+            const expected = ["firstname", "lastname", "dateofbirth"];
             const headerValid =
               expected.length === headerFields.length &&
-              expected.every((f, i) => headerFields[i].toLowerCase() === f);
+              expected.every(
+                (f, i) => headerFields[i].toLowerCase().trim() === f,
+              );
 
             if (!headerValid) {
               const expectedHeaderString = expected.join(", ");
               addError(
-                i18n.t("memberTable.Invalid CSV headers", {
+                i18n.t("settings.csv.Invalid CSV headers", {
                   headers: expectedHeaderString,
                 }),
-                `Expected: ${expectedHeaderString}; Found: ${headerFields.join(", ")}`,
+                `Expected: ${expectedHeaderString}; Found: ${headerFields.join(
+                  ", ",
+                )}`,
               );
             } else {
-              const data: ParsedMember[] = [];
+              const data: ParsedStudent[] = [];
 
               lines.slice(1).forEach((line, idx) => {
                 const rowNum = idx + 2; // +2 (1-based + header row)
@@ -117,53 +122,38 @@ export function parseCSVFile(
 
                 if (fields.length < expected.length) {
                   addError(
-                    i18n.t("memberTable.Invalid row format", { row: rowNum }),
+                    i18n.t("settings.csv.Invalid row format", { row: rowNum }),
                     `Row ${rowNum} is malformed: ${line}`,
                   );
                   return;
                 }
 
-                const username = fields[0].replace(/(^"|"$)/g, "").trim();
-                const email = fields[1].replace(/(^"|"$)/g, "").trim();
+                const firstName =
+                  fields[0]?.replace(/(^"|"$)/g, "").trim() || "";
+                const lastName =
+                  fields[1]?.replace(/(^"|"$)/g, "").trim() || "";
+                const dateOfBirth =
+                  fields[2]?.replace(/(^"|"$)/g, "").trim() || "";
 
-                if (!username || !email) {
-                  if (!username) {
-                    addError(
-                      i18n.t("memberTable.Username field is missing", {
-                        count: rowNum,
-                      }),
-                      `Missing username at row ${rowNum}`,
-                    );
-                  }
-                  if (!email) {
-                    addError(
-                      i18n.t("memberTable.Email field is missing", {
-                        count: rowNum,
-                      }),
-                      `Missing email at row ${rowNum}`,
-                    );
-                  }
-                  return;
-                }
-
-                data.push({ username, email });
+                data.push({ firstName, lastName, dateOfBirth });
               });
 
               if (data.length === 0) {
                 addError(
-                  i18n.t("memberTable.CSV file has no valid data"),
+                  i18n.t("settings.csv.CSV file has no valid data"),
                   "No valid data rows after filtering",
                 );
               } else {
                 try {
                   if (setData) setData(data);
                   successNotification(
-                    i18n.t("memberTable.CSV uploaded and parsed successfully"),
+                    i18n.t("settings.csv.CSV uploaded and parsed successfully"),
                   );
+                  resolve(data);
                 } catch (err) {
                   const error = err as Error;
                   addError(
-                    i18n.t("memberTable.Error while parsing CSV"),
+                    i18n.t("settings.csv.Error while parsing CSV"),
                     `Exception during setData: ${error.message}`,
                   );
                   ClientLogger.error("Error parsing CSV:", err);
@@ -174,7 +164,7 @@ export function parseCSVFile(
         }
       } catch (err) {
         addError(
-          i18n.t("memberTable.Error while parsing CSV"),
+          i18n.t("settings.csv.Error while parsing CSV"),
           (err as Error).message,
         );
       } finally {
@@ -189,7 +179,7 @@ export function parseCSVFile(
 
     reader.onerror = () => {
       const reason = reader.error?.message ?? "Unknown FileReader error";
-      errors.push(i18n.t("memberTable.Error while reading file"));
+      errors.push(i18n.t("settings.csv.Error while reading file"));
       ClientLogger.error(reason);
       errorNotification(errors.join("\n"));
       resolve();

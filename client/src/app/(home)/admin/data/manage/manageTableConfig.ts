@@ -1,33 +1,36 @@
-export const manageTableHeaders = [
+import { TABLE_ALIGN } from "@/constants/ui.constants";
+import { TFunction } from "i18next";
+
+export const manageTableHeaders = (t: TFunction) => [
   {
     id: "firstName",
-    align: "left",
+    align: TABLE_ALIGN.LEFT,
     numeric: false,
     disablePadding: false,
     sortable: true,
-    label: "First name",
+    label: t("settings.manageData.firstName"),
   },
   {
     id: "lastName",
-    align: "left",
+    align: TABLE_ALIGN.LEFT,
     numeric: false,
     sortable: true,
     disablePadding: false,
-    label: "Last name",
+    label: t("settings.manageData.lastName"),
   },
   {
     id: "class",
-    align: "left",
+    align: TABLE_ALIGN.LEFT,
     numeric: false,
     disablePadding: false,
-    label: "Class",
+    label: t("settings.manageData.class"),
   },
   {
     id: "status",
-    align: "right",
+    align: TABLE_ALIGN.RIGHT,
     numeric: false,
     disablePadding: false,
-    label: "Status",
+    label: t("settings.manageData.status"),
   },
 ];
 
