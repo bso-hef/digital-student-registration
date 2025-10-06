@@ -63,7 +63,7 @@
     "data": "Data",
     "importData": "Import Data",
     "exportData": "Export Data",
-    "manageData": "Manage Data",
+    "manageStudent": "Manage Data",
     "dataOverview": "Data Overview",
     "settings": "Settings",
     "onboardingSettings": "Onboarding",
@@ -85,6 +85,26 @@
       "lastNamePlaceholder": "Doe",
       "uploadCsv": "Upload CSV",
       "add": "Add"
+    },
+    "generateQrModal": {
+      "creatingZip": "Creating ZIP...",
+      "progress": "Progress: {{progress}}%",
+      "pageSize": "Page Size",
+      "orientation": "Orientation",
+      "portrait": "Portrait",
+      "landscape": "Landscape",
+      "filenameSchema": "Filename Schema",
+      "filenameSchemaExample": "Example: {lastName}_{firstName}_{class}.pdf",
+      "options": "Options",
+      "showClassOnPdf": "Show class on PDF",
+      "shortenIdInLink": "Shorten ID in link (first 8 characters)",
+      "previewMock": "Preview (Mock):",
+      "onboardingWizard": "Onboarding Wizard",
+      "class": "Class:",
+      "id": "ID:",
+      "downloadPdf": "Download PDF",
+      "createZip": "Create ZIP",
+      "title": "Generate QR PDFs for selected students"
     }
   },
   "actions": {
@@ -109,7 +129,7 @@
       "Error while parsing CSV": "Error while parsing CSV.",
       "Error while reading file": "Error while reading file."
     },
-    "manageData": {
+    "manageStudent": {
       "firstName": "First Name",
       "lastName": "Last Name",
       "dateOfBirth": "Date of Birth",
@@ -120,25 +140,5 @@
       "generateQRCode": "Generate QR Code",
       "delete Student request": "Are you sure you want to delete the selected student(s)? This action cannot be undone."
     }
-  },
-  "generateQrModal": {
-    "creatingZip": "Creating ZIP...",
-    "progress": "Progress: {{progress}}%",
-    "pageSize": "Page Size",
-    "orientation": "Orientation",
-    "portrait": "Portrait",
-    "landscape": "Landscape",
-    "filenameSchema": "Filename Schema",
-    "filenameSchemaExample": "Example: {lastName}_{firstName}_{class}.pdf",
-    "options": "Options",
-    "showClassOnPdf": "Show class on PDF",
-    "shortenIdInLink": "Shorten ID in link (first 8 characters)",
-    "previewMock": "Preview (Mock):",
-    "onboardingWizard": "Onboarding Wizard",
-    "class": "Class:",
-    "id": "ID:",
-    "downloadPdf": "Download PDF",
-    "createZip": "Create ZIP",
-    "title": "Generate QR PDFs for selected students"
   }
 }

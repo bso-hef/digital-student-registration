@@ -58,12 +58,12 @@
   "navigation": {
     "dashboard": "Übersicht",
     "management": "Verwaltung",
-    "studentManagement": "Studentenverwaltung",
+    "studentManagement": "Schülerverwaltung",
     "classManagement": "Klassenverwaltung",
     "data": "Daten",
     "importData": "Daten importieren",
     "exportData": "Daten exportieren",
-    "manageData": "Datenverwaltung",
+    "manageStudent": "Datenverwaltung",
     "dataOverview": "Datenübersicht",
     "settings": "Einstellungen",
     "onboardingSettings": "Onboarding",
@@ -85,6 +85,26 @@
       "lastNamePlaceholder": "Doe",
       "uploadCsv": "CSV hochladen",
       "add": "Hinzufügen"
+    },
+    "generateQrModal": {
+      "creatingZip": "Erzeuge ZIP...",
+      "progress": "Fortschritt: {{progress}}%",
+      "pageSize": "Seitenformat",
+      "orientation": "Ausrichtung",
+      "portrait": "Hochformat",
+      "landscape": "Querformat",
+      "filenameSchema": "Dateinamensschema",
+      "filenameSchemaExample": "Beispiel: {nachname}_{vorname}_{klasse}.pdf",
+      "options": "Optionen",
+      "showClassOnPdf": "Klasse auf PDF anzeigen",
+      "shortenIdInLink": "ID im Link kürzen (erste 8 Zeichen)",
+      "previewMock": "Vorschau (Mock):",
+      "onboardingWizard": "Onboarding-Assistent",
+      "class": "Klasse:",
+      "id": "ID:",
+      "downloadPdf": "PDF herunterladen",
+      "createZip": "ZIP erzeugen",
+      "title": "QR-PDFs für ausgewählte Schüler erzeugen"
     }
   },
   "actions": {
@@ -109,7 +129,7 @@
       "Error while parsing CSV": "Fehler beim Parsen der CSV-Datei.",
       "Error while reading file": "Fehler beim Lesen der Datei."
     },
-    "manageData": {
+    "manageStudent": {
       "firstName": "Vorname",
       "lastName": "Nachname",
       "dateOfBirth": "Geburtsdatum",
@@ -120,25 +140,5 @@
       "generateQRCode": "QR-Code generieren",
       "delete Student request": "Sind Sie sicher, dass Sie die ausgewählten Schüler löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
     }
-  },
-  "generateQrModal": {
-    "creatingZip": "Erzeuge ZIP...",
-    "progress": "Fortschritt: {{progress}}%",
-    "pageSize": "Seitenformat",
-    "orientation": "Ausrichtung",
-    "portrait": "Hochformat",
-    "landscape": "Querformat",
-    "filenameSchema": "Dateinamensschema",
-    "filenameSchemaExample": "Beispiel: {nachname}_{vorname}_{klasse}.pdf",
-    "options": "Optionen",
-    "showClassOnPdf": "Klasse auf PDF anzeigen",
-    "shortenIdInLink": "ID im Link kürzen (erste 8 Zeichen)",
-    "previewMock": "Vorschau (Mock):",
-    "onboardingWizard": "Onboarding-Assistent",
-    "class": "Klasse:",
-    "id": "ID:",
-    "downloadPdf": "PDF herunterladen",
-    "createZip": "ZIP erzeugen",
-    "title": "QR-PDFs für ausgewählte Schüler erzeugen"
   }
 }

@@ -196,8 +196,8 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
           />
           <Typography variant="caption" sx={{ opacity: 0.7 }}>
             {progress == null
-              ? t("generateQrModal.creatingZip")
-              : t("generateQrModal.progress", {
+              ? t("modals.generateQrModal.creatingZip")
+              : t("modals.generateQrModal.progress", {
                   progress: Math.round(progress),
                 })}
           </Typography>
@@ -220,7 +220,7 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
         >
           <Stack spacing={1}>
             <StyledOptionLabel>
-              {t("generateQrModal.pageSize")}
+              {t("modals.generateQrModal.pageSize")}
             </StyledOptionLabel>
             <ToggleButtonGroup
               value={pageSize}
@@ -234,7 +234,7 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
           </Stack>
           <Stack spacing={1}>
             <StyledOptionLabel>
-              {t("generateQrModal.orientation")}
+              {t("modals.generateQrModal.orientation")}
             </StyledOptionLabel>
             <ToggleButtonGroup
               value={orientation}
@@ -244,11 +244,11 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
             >
               <ToggleButton value="portrait">
                 <CropPortraitRoundedIcon sx={{ mr: 1 }} />
-                {t("generateQrModal.portrait")}
+                {t("modals.generateQrModal.portrait")}
               </ToggleButton>
               <ToggleButton value="landscape">
                 <CropLandscapeRoundedIcon sx={{ mr: 1 }} />
-                {t("generateQrModal.landscape")}
+                {t("modals.generateQrModal.landscape")}
               </ToggleButton>
             </ToggleButtonGroup>
           </Stack>
@@ -259,14 +259,14 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                 mb: 1,
               }}
             >
-              {t("generateQrModal.filenameSchema")}
+              {t("modals.generateQrModal.filenameSchema")}
             </StyledOptionLabel>
 
             <TextField
               value={filenamePattern}
               onChange={(e) => setFilenamePattern(e.target.value)}
               size="small"
-              helperText={t("generateQrModal.filenameSchemaExample")}
+              helperText={t("modals.generateQrModal.filenameSchemaExample")}
             />
           </Stack>
 
@@ -276,7 +276,7 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                 mb: 1,
               }}
             >
-              {t("generateQrModal.options")}
+              {t("modals.generateQrModal.options")}
             </StyledOptionLabel>
             <FormControlLabel
               control={
@@ -285,7 +285,7 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                   onChange={(e) => setIncludeClass(e.target.checked)}
                 />
               }
-              label={t("generateQrModal.showClassOnPdf")}
+              label={t("modals.generateQrModal.showClassOnPdf")}
             />
             <FormControlLabel
               control={
@@ -294,13 +294,15 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                   onChange={(e) => setShortenId(e.target.checked)}
                 />
               }
-              label={t("generateQrModal.shortenIdInLink")}
+              label={t("modals.generateQrModal.shortenIdInLink")}
             />
           </Stack>
         </Stack>
 
         <Box sx={{ flex: 1, width: "50%" }}>
-          <StyledHeadline>{t("generateQrModal.previewMock")}</StyledHeadline>
+          <StyledHeadline>
+            {t("modals.generateQrModal.previewMock")}
+          </StyledHeadline>
           <Paper
             sx={{
               mt: 1,
@@ -331,7 +333,7 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                 <Stack direction="row" alignItems="center" spacing={1}>
                   <QrCode2RoundedIcon />
                   <Typography variant="subtitle2">
-                    {t("generateQrModal.onboardingWizard")}
+                    {t("modals.generateQrModal.onboardingWizard")}
                   </Typography>
                 </Stack>
 
@@ -369,14 +371,15 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                           variant="body2"
                           sx={{ color: "text.secondary" }}
                         >
-                          {t("generateQrModal.class")} <b>{sample.className}</b>
+                          {t("modals.generateQrModal.class")}{" "}
+                          <b>{sample.className}</b>
                         </Typography>
                       )}
                       <Typography
                         variant="caption"
                         sx={{ color: "text.disabled" }}
                       >
-                        {t("generateQrModal.id")}{" "}
+                        {t("modals.generateQrModal.id")}{" "}
                         {shortenId
                           ? (sample._id || "").slice(0, 8)
                           : sample._id}
@@ -397,8 +400,8 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                   >
                     {pageSize?.toUpperCase()} •{" "}
                     {isPortrait
-                      ? t("generateQrModal.portrait")
-                      : t("generateQrModal.landscape")}
+                      ? t("modals.generateQrModal.portrait")
+                      : t("modals.generateQrModal.landscape")}
                   </Typography>
                   <Typography
                     variant="caption"
@@ -427,8 +430,8 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
       <GeneralButton
         label={t(
           count === 1
-            ? "generateQrModal.downloadPdf"
-            : "generateQrModal.createZip",
+            ? "modals.generateQrModal.downloadPdf"
+            : "modals.generateQrModal.createZip",
         )}
         onAction={handleGenerate}
         disabled={!count || busy}
@@ -444,7 +447,7 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
       open={open}
       onCloseModal={onClose}
       modalWidth={960}
-      customTitle={t("generateQrModal.title")}
+      customTitle={t("modals.generateQrModal.title")}
       contentChildren={contentChildren}
       actionsChildren={actionsChildren}
     />

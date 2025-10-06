@@ -8,7 +8,7 @@ export const manageTableHeaders = (t: TFunction) => [
     numeric: false,
     disablePadding: false,
     sortable: true,
-    label: t("settings.manageData.firstName"),
+    label: t("settings.manageStudent.firstName"),
   },
   {
     id: "lastName",
@@ -16,21 +16,21 @@ export const manageTableHeaders = (t: TFunction) => [
     numeric: false,
     sortable: true,
     disablePadding: false,
-    label: t("settings.manageData.lastName"),
+    label: t("settings.manageStudent.lastName"),
   },
   {
     id: "class",
     align: TABLE_ALIGN.LEFT,
     numeric: false,
     disablePadding: false,
-    label: t("settings.manageData.class"),
+    label: t("settings.manageStudent.class"),
   },
   {
     id: "status",
     align: TABLE_ALIGN.RIGHT,
     numeric: false,
     disablePadding: false,
-    label: t("settings.manageData.status"),
+    label: t("settings.manageStudent.status"),
   },
 ];
 
