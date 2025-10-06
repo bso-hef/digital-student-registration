@@ -58,8 +58,8 @@ const GeneralButtonContainer = styled(Button, {
     border: isPrimary ? "none" : `1px solid ${theme.palette.border.seperator}`,
     minWidth: isMobileHorizontal ? "155px" : undefined,
     width: fullWidth ? "100%" : "auto",
-    height: fullHeight ? "48px" : undefined,
-    maxHeight: maxHeight || "48px",
+    height: fullHeight ? "44px" : undefined,
+    maxHeight: maxHeight || "44px",
     maxWidth: maxWidth || "100%",
     "&:hover": {
       transition: "background-color 0.3s ease-in-out",

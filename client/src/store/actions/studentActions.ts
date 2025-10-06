@@ -39,12 +39,27 @@ export const addStudents =
 
       dispatch({
         type: TYPES.ADD_STUDENTS_SUCCESS,
-        payload: data.students,
+        payload: data.created,
       });
 
       successNotification(i18n.t("actions.studentAddSuccess"));
     } catch (error) {
       errorNotification(i18n.t("actions.studentAddFailed"));
       dispatch({ type: TYPES.ADD_STUDENTS_FAILURE, payload: error });
+    }
+  };
+
+export const deleteStudents =
+  (ids: string[]): AppThunk =>
+  async (dispatch) => {
+    dispatch({ type: TYPES.DELETE_STUDENTS_REQUEST });
+    try {
+      await studentService.delete(ids);
+
+      dispatch({ type: TYPES.DELETE_STUDENTS_SUCCESS, payload: ids });
+      successNotification(i18n.t("actions.studentDeleteSuccess"));
+    } catch (error) {
+      errorNotification(i18n.t("actions.studentDeleteFailed"));
+      dispatch({ type: TYPES.DELETE_STUDENTS_FAILURE, payload: error });
     }
   };

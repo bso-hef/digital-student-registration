@@ -29,9 +29,10 @@ const StyledHeaderTitle = styled(Typography)(({ theme }) => ({
   lineHeight: "32px",
 }));
 
-const StyledToolBox = styled(Box)(() => ({
+const StyledToolBox = styled(Box)(({ theme }) => ({
   display: "flex",
   alignItems: "row",
+  gap: theme.spacing(2),
 }));
 
 const StyledDivierOrLoader = styled(Box)(() => ({
@@ -70,7 +71,7 @@ const AdminSettingsHeader: React.FC<AdminSettingsHeaderProps> = ({
       <StyledHeaderTitle>{title}</StyledHeaderTitle>
       <StyledToolBox>
         {onSearch && (
-          <Box mx={2}>
+          <Box>
             <HeaderSearchInput
               onChange={onSearch ? (e) => onSearch(e.target.value) : undefined}
             />

@@ -83,6 +83,7 @@ const studentReducer = (state = initialStudentState, action: AppAction) => {
 
     case TYPES.GET_STUDENTS_REQUEST:
     case TYPES.ADD_STUDENTS_REQUEST:
+    case TYPES.DELETE_STUDENTS_REQUEST:
       return { ...state, loading: true, error: null };
 
     case TYPES.GET_STUDENTS_SUCCESS:
@@ -95,8 +96,18 @@ const studentReducer = (state = initialStudentState, action: AppAction) => {
         students: [...state.students, ...action.payload],
       };
 
+    case TYPES.DELETE_STUDENTS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        students: state.students.filter(
+          (student) => !action.payload.includes(student._id),
+        ),
+      };
+
     case TYPES.ADD_STUDENTS_FAILURE:
     case TYPES.GET_STUDENTS_FAILURE:
+    case TYPES.DELETE_STUDENTS_FAILURE:
       return { ...state, loading: false, error: action.payload };
     default:
       return state;

@@ -31,9 +31,7 @@ export default function ClientLayout({
             backgroundColor: "rgba(0, 0, 0, 0.3)",
             backdropFilter: "blur(15px)",
             boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-            border: "1px solid #333638",
             borderRadius: "8px",
-            color: "#F4F6F8",
           },
         }}
       />

@@ -24,6 +24,9 @@ const studentService = {
   create: (students: CreateStudentInput[]) => {
     return http.post("/api/students", { students });
   },
+  delete: (ids: string[]) => {
+    return http.delete("/api/students", { data: { ids } });
+  },
 };
 
 export default studentService;

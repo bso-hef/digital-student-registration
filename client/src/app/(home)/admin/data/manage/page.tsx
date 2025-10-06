@@ -6,14 +6,23 @@ import GeneralButton from "@/components/atoms/buttons/GeneralButton";
 import StudentStatus from "@/components/atoms/status/StudentStatus";
 import AdminSettingsHeader from "@/components/molecules/AdminSettingsHeader";
 import AddStudentModal from "@/components/organisms/modals/AddStudentModal";
+import ConfirmationModal from "@/components/organisms/modals/ConfirmationModal";
+import GenerateQrDialog from "@/components/organisms/modals/GenerateQrModal";
 import DataTable from "@/components/organisms/tables/DataTable";
-import { addStudents, getStudents } from "@/store/actions/studentActions";
+import {
+  addStudents,
+  deleteStudents,
+  getStudents,
+} from "@/store/actions/studentActions";
 import { AppDispatch } from "@/store/store";
 import { Student } from "@/types/db";
 import { CreateStudentInput } from "@/types/student";
 import { ParsedStudent, parseCSVFile } from "@/utils/csv.utils";
 import { filterStudents } from "@/utils/filter.utils";
 import { applicationScrollbar } from "@/utils/styling.utils";
+import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
+import QrCode2RoundedIcon from "@mui/icons-material/QrCode2Rounded";
+import UploadFileRoundedIcon from "@mui/icons-material/UploadFileRounded";
 import { Box, styled } from "@mui/material";
 import { debounce, isString } from "lodash";
 import { useTranslation } from "react-i18next";
@@ -53,8 +62,12 @@ const ImportDataAdminPage = () => {
   );
 
   const [openStudentAddModal, setOpenStudentAddModal] = useState(false);
+  const [openStudentDeleteModal, setOpenStudentDeleteModal] = useState(false);
+  const [openStudentQRModal, setOpenStudentQRModal] = useState(false);
   const [searchString, setSearchString] = useState("");
   const [csvData, setCsvData] = useState<ParsedStudent[]>([]);
+  const [selectedItems, setSelectedItems] = useState<(string | number)[]>([]);
+  const [clearSelected, setClearSelected] = useState(false);
 
   useEffect(() => {
     dispatch(getStudents());
@@ -83,6 +96,22 @@ const ImportDataAdminPage = () => {
   const handleAddStudentModalClose = useCallback(() => {
     setOpenStudentAddModal(false);
     setCsvData([]);
+  }, []);
+
+  const handleDeleteStudentModalOpen = useCallback(() => {
+    setOpenStudentDeleteModal(true);
+  }, []);
+
+  const handleDeleteStudentModalClose = useCallback(() => {
+    setOpenStudentDeleteModal(false);
+  }, []);
+
+  const handleQRStudentModalOpen = useCallback(() => {
+    setOpenStudentQRModal(true);
+  }, []);
+
+  const handleQRStudentModalClose = useCallback(() => {
+    setOpenStudentQRModal(false);
   }, []);
 
   const handleAddStudents = useCallback(
@@ -122,6 +151,16 @@ const ImportDataAdminPage = () => {
     });
   }, [students, searchString]);
 
+  const handleDeleteStudents = useCallback(() => {
+    const ids = selectedItems.filter(
+      (id) => students.findIndex((item: Student) => item._id === id) !== -1,
+    );
+    dispatch(deleteStudents(ids as string[]));
+    setSelectedItems([]);
+    setClearSelected(true);
+    handleDeleteStudentModalClose();
+  }, [dispatch, handleDeleteStudentModalClose, selectedItems, students]);
+
   return (
     <Wrapper>
       <AddStudentModal
@@ -131,6 +170,20 @@ const ImportDataAdminPage = () => {
         csvData={csvData}
         onAddStudents={handleAddStudents}
       />
+      <ConfirmationModal
+        open={openStudentDeleteModal}
+        onClose={handleDeleteStudentModalClose}
+        onConfirmation={handleDeleteStudents}
+        title={`${t("settings.manageData.deleteStudents")}?`}
+        message={t("settings.manageData.delete Student request")}
+      />
+      <GenerateQrDialog
+        open={openStudentQRModal}
+        onClose={handleQRStudentModalClose}
+        students={students.filter((student: Student) =>
+          selectedItems.includes(student._id),
+        )}
+      />
       <AdminSettingsHeader
         title={t("navigation.manageData")}
         onSearch={(value: string) => {
@@ -138,11 +191,29 @@ const ImportDataAdminPage = () => {
         }}
       >
         <GeneralButton
+          label={t("settings.manageData.deleteStudents")}
+          onAction={handleDeleteStudentModalOpen}
+          fullHeight={false}
+          fullWidth={false}
+          isPrimary={false}
+          disabled={selectedItems.length === 0}
+          startIcon={<DeleteOutlineRoundedIcon />}
+        />
+        <GeneralButton
+          label={t("settings.manageData.generateQRCode")}
+          onAction={handleQRStudentModalOpen}
+          fullHeight={false}
+          fullWidth={false}
+          isPrimary={false}
+          disabled={selectedItems.length === 0}
+          startIcon={<QrCode2RoundedIcon />}
+        />
+        <GeneralButton
           label={t("settings.manageData.importStudents")}
           onAction={handleAddStudentModalOpen}
           fullHeight={false}
           fullWidth={false}
-          isPrimary
+          startIcon={<UploadFileRoundedIcon />}
         />
       </AdminSettingsHeader>
       <StyledTableBox>
@@ -150,6 +221,9 @@ const ImportDataAdminPage = () => {
           headers={manageTableHeaders(t)}
           data={getTableData()}
           loading={loading}
+          setSelectedItems={setSelectedItems}
+          clearSelected={clearSelected}
+          setClearSelected={setClearSelected}
         />
       </StyledTableBox>
     </Wrapper>

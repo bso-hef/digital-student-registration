@@ -163,3 +163,35 @@ export async function POST(request: Request) {
     return NextResponse.json({ message }, { status: 500 });
   }
 }
+
+export async function DELETE(request: Request) {
+  try {
+    await dbConnect();
+    const body = await request.json();
+    const ids: string[] = body?.ids;
+
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return NextResponse.json(
+        { message: "Invalid request body" },
+        { status: 400 },
+      );
+    }
+
+    const result = await Student.deleteMany({ _id: { $in: ids } });
+    return NextResponse.json(
+      {
+        deletedCount: result.deletedCount,
+      },
+      { status: 200 },
+    );
+  } catch (error) {
+    logger.error(
+      "Failed to delete Students",
+      error instanceof Error ? error.message : String(error),
+    );
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 },
+    );
+  }
+}

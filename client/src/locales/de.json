@@ -19,7 +19,8 @@
     "Imported": "Importiert",
     "Invited": "Eingeladen",
     "Onboarded": "Eingeschrieben",
-    "Unknown": "Unbekannt"
+    "Unknown": "Unbekannt",
+    "Are you sure you want to close this modal": "Sind Sie sicher, dass Sie dieses Modal schließen möchten?"
   },
   "error": {
     "Page not found": "Seite nicht gefunden",
@@ -83,13 +84,15 @@
       "firstNamePlaceholder": "John",
       "lastNamePlaceholder": "Doe",
       "uploadCsv": "CSV hochladen",
-      "invite": "Einladen"
+      "add": "Hinzufügen"
     }
   },
   "actions": {
     "studentFetchFailed": "Abrufen der Schüler fehlgeschlagen.",
     "studentAddSuccess": "Schüler erfolgreich hinzugefügt.",
-    "studentAddFailed": "Hinzufügen der Schüler fehlgeschlagen."
+    "studentAddFailed": "Hinzufügen der Schüler fehlgeschlagen.",
+    "studentDeleteSuccess": "Schüler erfolgreich gelöscht.",
+    "studentDeleteFailed": "Löschen der Schüler fehlgeschlagen."
   },
   "table": {
     "No data found": "Keine Daten gefunden",
@@ -112,7 +115,10 @@
       "dateOfBirth": "Geburtsdatum",
       "class": "Klasse",
       "status": "Status",
-      "importStudents": "Studenten importieren"
+      "importStudents": "Schüler hinzufügen",
+      "deleteStudents": "Schüler löschen",
+      "generateQRCode": "QR-Code generieren",
+      "delete Student request": "Sind Sie sicher, dass Sie die ausgewählten Schüler löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
     }
   }
 }

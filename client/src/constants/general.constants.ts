@@ -54,3 +54,5 @@ export const STUDENT_STATUS = {
   INVITED: "invited",
   ONBOARDED: "onboarded",
 } as const;
+
+export const WIZZARD_URL = "https://localhost:3000/student/{short-id}";

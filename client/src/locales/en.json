@@ -19,7 +19,8 @@
     "Imported": "Imported",
     "Invited": "Invited",
     "Onboarded": "Onboarded",
-    "Unknown": "Unknown"
+    "Unknown": "Unknown",
+    "Are you sure you want to close this modal": "Are you sure you want to close this modal?"
   },
   "error": {
     "Page not found": "Page not found",
@@ -83,13 +84,15 @@
       "firstNamePlaceholder": "John",
       "lastNamePlaceholder": "Doe",
       "uploadCsv": "Upload CSV",
-      "invite": "Invite"
+      "add": "Add"
     }
   },
   "actions": {
     "studentFetchFailed": "Failed to fetch students.",
     "studentAddSuccess": "Students added successfully.",
-    "studentAddFailed": "Failed to add students."
+    "studentAddFailed": "Failed to add students.",
+    "studentDeleteSuccess": "Students deleted successfully.",
+    "studentDeleteFailed": "Failed to delete students."
   },
   "table": {
     "No data found": "No Data to Show",
@@ -112,7 +115,10 @@
       "dateOfBirth": "Date of Birth",
       "class": "Class",
       "status": "Status",
-      "importStudents": "Import Students"
+      "importStudents": "Import Students",
+      "deleteStudents": "Delete Students",
+      "generateQRCode": "Generate QR Code",
+      "delete Student request": "Are you sure you want to delete the selected student(s)? This action cannot be undone."
     }
   }
 }

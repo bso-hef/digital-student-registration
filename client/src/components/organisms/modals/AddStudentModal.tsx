@@ -150,7 +150,7 @@ const AddStudentModal: React.FC<AddStudentModalProps> = ({
     setIsFormValid(allValid);
   }, [state]);
 
-  const handleInvite = useCallback(() => {
+  const handleAdd = useCallback(() => {
     onAddStudents(state);
   }, [onAddStudents, state]);
 
@@ -257,9 +257,9 @@ const AddStudentModal: React.FC<AddStudentModalProps> = ({
         fullWidth={false}
       />
       <GeneralButton
-        label={t("modals.addStudent.invite")}
+        label={t("modals.addStudent.add")}
         disabled={!isFormValid}
-        onAction={handleInvite}
+        onAction={handleAdd}
         fullWidth={false}
       />
     </Fragment>
