@@ -120,5 +120,25 @@
       "generateQRCode": "QR-Code generieren",
       "delete Student request": "Sind Sie sicher, dass Sie die ausgewählten Schüler löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
     }
+  },
+  "generateQrModal": {
+    "creatingZip": "Erzeuge ZIP...",
+    "progress": "Fortschritt: {{progress}}%",
+    "pageSize": "Seitenformat",
+    "orientation": "Ausrichtung",
+    "portrait": "Hochformat",
+    "landscape": "Querformat",
+    "filenameSchema": "Dateinamensschema",
+    "filenameSchemaExample": "Beispiel: {nachname}_{vorname}_{klasse}.pdf",
+    "options": "Optionen",
+    "showClassOnPdf": "Klasse auf PDF anzeigen",
+    "shortenIdInLink": "ID im Link kürzen (erste 8 Zeichen)",
+    "previewMock": "Vorschau (Mock):",
+    "onboardingWizard": "Onboarding-Assistent",
+    "class": "Klasse:",
+    "id": "ID:",
+    "downloadPdf": "PDF herunterladen",
+    "createZip": "ZIP erzeugen",
+    "title": "QR-PDFs für ausgewählte Schüler erzeugen"
   }
 }

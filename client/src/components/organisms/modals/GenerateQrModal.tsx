@@ -2,9 +2,14 @@ import React, { Fragment, useState } from "react";
 
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
 import { WIZZARD_URL } from "@/constants/general.constants";
-import ArchiveRoundedIcon from "@mui/icons-material/ArchiveRounded";
+import { downloadBlob } from "@/utils/general.utils";
+import { buildPdfForStudent } from "@/utils/pdf.utils";
+import { sanitizeFilename } from "@/utils/string.utils";
+import { buildZip } from "@/utils/zip.utils";
 import CropLandscapeRoundedIcon from "@mui/icons-material/CropLandscapeRounded";
 import CropPortraitRoundedIcon from "@mui/icons-material/CropPortraitRounded";
+import DownloadRoundedIcon from "@mui/icons-material/DownloadRounded";
+import FolderZipRoundedIcon from "@mui/icons-material/FolderZipRounded";
 import QrCode2RoundedIcon from "@mui/icons-material/QrCode2Rounded";
 import {
   Box,
@@ -44,36 +49,40 @@ const StyledOptionLabel = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.information,
 }));
 
+const StyledQRPreviewBox = styled(Box, {
+  shouldForwardProp: (prop) => prop !== "isPortrait",
+})<{ isPortrait?: boolean }>(({ theme, isPortrait }) => ({
+  width: "100%",
+  height: "100%",
+  maxWidth: isPortrait ? 180 : 140,
+  maxHeight: isPortrait ? 180 : 140,
+  aspectRatio: "1 / 1",
+  borderRadius: theme.spacing(1),
+  border: `2px dashed ${theme.palette.primary.main}`,
+  display: "grid",
+  placeItems: "center",
+  fontWeight: 700,
+  letterSpacing: 2,
+  userSelect: "none",
+}));
+
+type Student = {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  className?: string;
+};
+
 type GenerateQrModalProps = {
   open: boolean;
   onClose: () => void;
-  students?: {
-    _id: string;
-    firstName: string;
-    lastName: string;
-    className?: string;
-    wizardUrl?: string;
-  }[];
-  onGenerate?: (options: {
-    pageSize: "A4" | "A5";
-    orientation: "portrait" | "landscape";
-    filenamePattern: string;
-    includeClass: boolean;
-    shortenId: boolean;
-  }) => Promise<void>;
-  busy: boolean;
-  progress: number | null;
-  previewIndex?: number;
+  students: Student[];
 };
 
 const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
   open,
   onClose,
-  students = [],
-  onGenerate,
-  busy = false,
-  progress = null,
-  previewIndex = 0,
+  students,
 }) => {
   const theme = useTheme();
   const { t } = useTranslation();
@@ -88,32 +97,92 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
   const [includeClass, setIncludeClass] = useState(true);
   const [shortenId, setShortenId] = useState(true);
 
-  const count = students.length;
-  const sample = students[Math.max(0, Math.min(previewIndex, count - 1))] || {
-    firstName: "Max",
-    lastName: "Muster",
-    className: "7B",
-    wizardUrl: WIZZARD_URL,
-    _id: "671c23e91f4a9a2d7c3e1b45",
-  };
+  const [busy, setBusy] = useState(false);
+  const [progress, setProgress] = useState<number | null>(null);
 
-  const shortId = sample._id?.slice(0, 8) || "";
-  const url = shortenId
-    ? (WIZZARD_URL || "").replace("{short-id}", shortId)
-    : (WIZZARD_URL || "").replace("{short-id}", sample._id || shortId);
+  const count = students?.length || 0;
+  const sample = count
+    ? students[Math.min(0, count - 1)]
+    : {
+        firstName: "Max",
+        lastName: "Muster",
+        className: "7B",
+        _id: "671c23e91f4a9a2d7c3e1b45",
+      };
 
   const isPortrait = orientation === "portrait";
 
-  const handleGenerate = async () => {
-    if (onGenerate) {
-      await onGenerate({
-        pageSize,
-        orientation,
-        filenamePattern,
-        includeClass,
-        shortenId,
-      });
+  const resolveFilename = (s: Student) => {
+    const sid = s._id || "";
+    const map: Record<string, string> = {
+      "{vorname}": sanitizeFilename(s.firstName),
+      "{nachname}": sanitizeFilename(s.lastName),
+      "{klasse}": sanitizeFilename(s.className || "ohne_klasse"),
+      "{id}": sanitizeFilename(sid),
+      "{shortId}": sanitizeFilename(sid.slice(0, 8)),
+    };
+    let name = filenamePattern;
+    Object.keys(map).forEach((k) => (name = name.replaceAll(k, map[k])));
+    if (!name.toLowerCase().endsWith(".pdf")) name += ".pdf";
+    return name;
+  };
+
+  const generateExport = async () => {
+    if (!students?.length) return;
+
+    setBusy(true);
+    setProgress(0);
+
+    try {
+      if (students.length === 1) {
+        const s = students[0];
+        const pdf = await buildPdfForStudent(s, {
+          pageSize,
+          orientation,
+          includeClass,
+          shortenId,
+          wizardUrlTemplate: WIZZARD_URL,
+        });
+        const filename = resolveFilename(s);
+        downloadBlob(filename, pdf);
+        setProgress(100);
+      } else {
+        const files: Array<{ name: string; blob: Blob }> = [];
+        let done = 0;
+
+        for (const s of students as Student[]) {
+          const pdf = await buildPdfForStudent(s, {
+            pageSize,
+            orientation,
+            includeClass,
+            shortenId,
+            wizardUrlTemplate: WIZZARD_URL,
+          });
+          files.push({ name: resolveFilename(s), blob: pdf });
+          done += 1;
+          setProgress(Math.round((done / students.length) * 95));
+        }
+
+        const zipBlob = await buildZip(files, (p) =>
+          setProgress(95 + Math.round((p || 0) * 0.05)),
+        );
+
+        downloadBlob(
+          `schueler_qr_pdfs_${pageSize}_${orientation}.zip`,
+          zipBlob,
+        );
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setBusy(false);
+      setProgress(null);
+      onClose?.();
     }
+  };
+
+  const handleGenerate = async () => {
+    await generateExport();
   };
 
   const contentChildren = (
@@ -127,8 +196,10 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
           />
           <Typography variant="caption" sx={{ opacity: 0.7 }}>
             {progress == null
-              ? "Erzeuge ZIP…"
-              : `Fortschritt: ${Math.round(progress)}%`}
+              ? t("generateQrModal.creatingZip")
+              : t("generateQrModal.progress", {
+                  progress: Math.round(progress),
+                })}
           </Typography>
         </Box>
       )}
@@ -138,7 +209,6 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
         spacing={3}
         divider={<Divider flexItem orientation="vertical" />}
       >
-        {/* Linke Spalte: Optionen / Zusammenfassung */}
         <Stack
           sx={{
             width: "50%",
@@ -149,7 +219,9 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
           spacing={2}
         >
           <Stack spacing={1}>
-            <StyledOptionLabel>Seitenformat</StyledOptionLabel>
+            <StyledOptionLabel>
+              {t("generateQrModal.pageSize")}
+            </StyledOptionLabel>
             <ToggleButtonGroup
               value={pageSize}
               exclusive
@@ -161,7 +233,9 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
             </ToggleButtonGroup>
           </Stack>
           <Stack spacing={1}>
-            <StyledOptionLabel>Ausrichtung</StyledOptionLabel>
+            <StyledOptionLabel>
+              {t("generateQrModal.orientation")}
+            </StyledOptionLabel>
             <ToggleButtonGroup
               value={orientation}
               exclusive
@@ -170,11 +244,11 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
             >
               <ToggleButton value="portrait">
                 <CropPortraitRoundedIcon sx={{ mr: 1 }} />
-                Hochformat
+                {t("generateQrModal.portrait")}
               </ToggleButton>
               <ToggleButton value="landscape">
                 <CropLandscapeRoundedIcon sx={{ mr: 1 }} />
-                Querformat
+                {t("generateQrModal.landscape")}
               </ToggleButton>
             </ToggleButtonGroup>
           </Stack>
@@ -185,14 +259,14 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                 mb: 1,
               }}
             >
-              Dateinamensschema
+              {t("generateQrModal.filenameSchema")}
             </StyledOptionLabel>
 
             <TextField
               value={filenamePattern}
               onChange={(e) => setFilenamePattern(e.target.value)}
               size="small"
-              helperText="Beispiel: {nachname}_{vorname}_{klasse}.pdf"
+              helperText={t("generateQrModal.filenameSchemaExample")}
             />
           </Stack>
 
@@ -202,7 +276,7 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                 mb: 1,
               }}
             >
-              Optionen
+              {t("generateQrModal.options")}
             </StyledOptionLabel>
             <FormControlLabel
               control={
@@ -211,7 +285,7 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                   onChange={(e) => setIncludeClass(e.target.checked)}
                 />
               }
-              label="Klasse auf PDF anzeigen"
+              label={t("generateQrModal.showClassOnPdf")}
             />
             <FormControlLabel
               control={
@@ -220,22 +294,19 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                   onChange={(e) => setShortenId(e.target.checked)}
                 />
               }
-              label="ID im Link kürzen (erste 8 Zeichen)"
+              label={t("generateQrModal.shortenIdInLink")}
             />
           </Stack>
         </Stack>
 
-        {/* Rechte Spalte: Live-Vorschau (Mock) */}
         <Box sx={{ flex: 1, width: "50%" }}>
-          <StyledHeadline>Vorschau (Mock):</StyledHeadline>
-
+          <StyledHeadline>{t("generateQrModal.previewMock")}</StyledHeadline>
           <Paper
             sx={{
               mt: 1,
               borderRadius: 3,
             }}
           >
-            {/* Simulierte PDF-Seite */}
             <Box
               sx={{
                 aspectRatio:
@@ -243,8 +314,6 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                 borderRadius: 2,
                 border: `1px dashed ${theme.palette.border.seperator}`,
                 p: 3,
-                // display: "grid",
-                // gridTemplateRows: "auto 1fr auto",
                 gap: 2,
                 bgcolor: theme.palette.surface.interface.background,
               }}
@@ -261,7 +330,9 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
               >
                 <Stack direction="row" alignItems="center" spacing={1}>
                   <QrCode2RoundedIcon />
-                  <Typography variant="subtitle2">Onboarding-Wizard</Typography>
+                  <Typography variant="subtitle2">
+                    {t("generateQrModal.onboardingWizard")}
+                  </Typography>
                 </Stack>
 
                 <Box
@@ -269,7 +340,7 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                     display: "grid",
                     gridTemplateColumns: {
                       xs: "1fr",
-                      sm: "minmax(140px, 220px) 1fr", // linke Spalte fix/klappbar
+                      sm: "minmax(140px, 220px) 1fr",
                     },
                     alignItems: "start",
                     gap: 2,
@@ -282,27 +353,10 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                     alignItems="stretch"
                     sx={{ minHeight: 0 }}
                   >
-                    {/* QR Platzhalter */}
-                    <Box
-                      sx={{
-                        width: "100%",
-                        height: "100%",
-                        maxWidth: isPortrait ? 180 : 140,
-                        maxHeight: isPortrait ? 180 : 140,
-                        aspectRatio: "1 / 1",
-                        borderRadius: 2,
-                        border: `2px dashed ${theme.palette.primary.main}`,
-                        display: "grid",
-                        placeItems: "center",
-                        fontWeight: 700,
-                        letterSpacing: 2,
-                        userSelect: "none",
-                      }}
-                    >
+                    <StyledQRPreviewBox isPortrait={isPortrait}>
                       QR
-                    </Box>
+                    </StyledQRPreviewBox>
 
-                    {/* Textinfos */}
                     <Stack spacing={0.75} sx={{ minWidth: 0 }}>
                       <Typography
                         variant="h5"
@@ -315,14 +369,17 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                           variant="body2"
                           sx={{ color: "text.secondary" }}
                         >
-                          Klasse: <b>{sample.className}</b>
+                          {t("generateQrModal.class")} <b>{sample.className}</b>
                         </Typography>
                       )}
                       <Typography
                         variant="caption"
                         sx={{ color: "text.disabled" }}
                       >
-                        ID: {shortenId ? shortId : sample._id}
+                        {t("generateQrModal.id")}{" "}
+                        {shortenId
+                          ? (sample._id || "").slice(0, 8)
+                          : sample._id}
                       </Typography>
                     </Stack>
                   </Stack>
@@ -339,7 +396,9 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                     sx={{ color: "text.secondary" }}
                   >
                     {pageSize?.toUpperCase()} •{" "}
-                    {isPortrait ? "Hochformat" : "Querformat"}
+                    {isPortrait
+                      ? t("generateQrModal.portrait")
+                      : t("generateQrModal.landscape")}
                   </Typography>
                   <Typography
                     variant="caption"
@@ -366,10 +425,16 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
         isPrimary={false}
       />
       <GeneralButton
-        label="ZIP erzeugen"
+        label={t(
+          count === 1
+            ? "generateQrModal.downloadPdf"
+            : "generateQrModal.createZip",
+        )}
         onAction={handleGenerate}
         disabled={!count || busy}
-        startIcon={<ArchiveRoundedIcon />}
+        startIcon={
+          count === 1 ? <DownloadRoundedIcon /> : <FolderZipRoundedIcon />
+        }
       />
     </Fragment>
   );
@@ -379,7 +444,7 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
       open={open}
       onCloseModal={onClose}
       modalWidth={960}
-      customTitle="QR-PDFs für ausgewählte Schüler erzeugen"
+      customTitle={t("generateQrModal.title")}
       contentChildren={contentChildren}
       actionsChildren={actionsChildren}
     />

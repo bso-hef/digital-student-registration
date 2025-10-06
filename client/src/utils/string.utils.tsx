@@ -67,3 +67,12 @@ export function uuid_v4() {
     return v.toString(16);
   });
 }
+
+export function sanitizeFilename(input = ""): string {
+  return input
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^\w.-]+/g, "_")
+    .replace(/_+/g, "_")
+    .replace(/^_+|_+$/g, "");
+}

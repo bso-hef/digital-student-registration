@@ -168,3 +168,14 @@ export const isFirefox = detectFirefox && /firefox/i.test(ua);
 export const isSafari = detectSafari && /safari/i.test(ua);
 
 export const isChrome = detectChrome && /chrome/i.test(ua);
+
+export function downloadBlob(filename: string, blob: Blob): void {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
