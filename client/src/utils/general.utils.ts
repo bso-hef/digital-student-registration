@@ -1,4 +1,5 @@
 import Logger from "@/lib/client-logger";
+import { AppError } from "@/types/error";
 import { saveAs } from "file-saver";
 import Cookies from "js-cookie";
 import {
@@ -178,4 +179,26 @@ export function downloadBlob(filename: string, blob: Blob): void {
   a.click();
   a.remove();
   URL.revokeObjectURL(url);
+}
+
+export async function toAppError(err: unknown): Promise<AppError> {
+  if (err instanceof Error) {
+    return { message: err.message };
+  }
+
+  if (err instanceof Response) {
+    let details;
+    try {
+      details = await err.json();
+    } catch {
+      details = null;
+    }
+    return {
+      message: err.statusText || "Request failed",
+      statusCode: err.status,
+      details,
+    };
+  }
+
+  return { message: "An unknown error occurred" };
 }

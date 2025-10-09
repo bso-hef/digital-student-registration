@@ -26,6 +26,7 @@ interface GeneralInputProps {
   type?: string;
   value?: string | number;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  onBlur?: React.FocusEventHandler<HTMLInputElement>;
   label?: string;
   placeholder?: string;
   fullWidth?: boolean;
@@ -40,12 +41,14 @@ interface GeneralInputProps {
   showSearchStartIcon?: boolean;
   error?: boolean;
   helperText?: string;
+  inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
 }
 
 const GeneralInput: React.FC<GeneralInputProps> = ({
   type,
   value,
   onChange,
+  onBlur,
   label,
   placeholder,
   fullWidth,
@@ -59,6 +62,7 @@ const GeneralInput: React.FC<GeneralInputProps> = ({
   showSearchStartIcon,
   error,
   helperText,
+  inputProps,
 }) => {
   return (
     <StyledInput
@@ -67,6 +71,7 @@ const GeneralInput: React.FC<GeneralInputProps> = ({
       type={type}
       value={value}
       onChange={onChange}
+      onBlur={onBlur}
       autoComplete={autoComplete}
       label={label}
       placeholder={placeholder}
@@ -75,6 +80,7 @@ const GeneralInput: React.FC<GeneralInputProps> = ({
       required={required}
       error={error}
       helperText={helperText}
+      inputProps={inputProps}
       InputProps={{
         startAdornment: (
           <InputAdornment position="start">

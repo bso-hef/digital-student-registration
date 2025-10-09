@@ -20,7 +20,12 @@
     "Invited": "Invited",
     "Onboarded": "Onboarded",
     "Unknown": "Unknown",
-    "Are you sure you want to close this modal": "Are you sure you want to close this modal?"
+    "Are you sure you want to close this modal": "Are you sure you want to close this modal?",
+    "Add": "Add",
+    "Yes": "Yes",
+    "No": "No",
+    "Inactive": "Inactive",
+    "Active": "Active"
   },
   "error": {
     "Page not found": "Page not found",
@@ -105,6 +110,24 @@
       "downloadPdf": "Download PDF",
       "createZip": "Create ZIP",
       "title": "Generate QR PDFs for selected students"
+    },
+    "addClass": {
+      "title": "Add Class",
+      "subtitleSingle": "Create a single class",
+      "className": "Class Name",
+      "classNamePlaceholder": "e.g. 11A, 12B, ...",
+      "companyClass": "Company Class",
+      "isCompanyClass": "Is a company class",
+      "grade": "Grade",
+      "gradePlaceholder": "e.g. 10, 11, ...",
+      "requiresEmployerInfo": "Requires employer info",
+      "active": "Active",
+      "required": "Required",
+      "onlyNumbers": "Only numbers allowed",
+      "createClasses": "Create Class",
+      "schoolYearFrom": "School Year From",
+      "schoolYearTo": "School Year To",
+      "yearOrderError": "Must be after 'from'"
     }
   },
   "actions": {
@@ -112,7 +135,10 @@
     "studentAddSuccess": "Students added successfully.",
     "studentAddFailed": "Failed to add students.",
     "studentDeleteSuccess": "Students deleted successfully.",
-    "studentDeleteFailed": "Failed to delete students."
+    "studentDeleteFailed": "Failed to delete students.",
+    "classFetchFailed": "Failed to fetch classes.",
+    "classAddSuccess": "Classes added successfully.",
+    "classAddFailed": "Failed to add Classes."
   },
   "table": {
     "No data found": "No Data to Show",
@@ -139,6 +165,18 @@
       "deleteStudents": "Delete Students",
       "generateQRCode": "Generate QR Code",
       "delete Student request": "Are you sure you want to delete the selected student(s)? This action cannot be undone."
+    },
+    "manageClass": {
+      "className": "Class Name",
+      "numberOfStudents": "Number of Students",
+      "companyClass": "Company Class",
+      "isClassActive": "Active",
+      "addClass": "Add Class",
+      "deleteClasses": "Delete Classes",
+      "deleteClassRequest": "Are you sure you want to delete the selected class(es)? This action cannot be undone.",
+      "checkInActive": "Check-in active",
+      "schoolYear": "School Year",
+      "grade": "Grade"
     }
   }
 }

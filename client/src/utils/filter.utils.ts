@@ -1,3 +1,4 @@
+import { ClassInterface } from "@/types/class";
 import { Student } from "@/types/db";
 
 /********************************************************************************
@@ -41,4 +42,25 @@ export const filterStudents = (searchString = "", students = []) => {
     : [];
 
   return filteredUsers;
+};
+
+export const filterClasses = (
+  searchString = "",
+  classes: ClassInterface[] = [],
+) => {
+  if (!searchString || searchString.length < 3) return classes;
+
+  const filteredClasses = Array.isArray(classes)
+    ? classes.filter((classItem: ClassInterface) => {
+        const lowerSearchString = searchString.toLowerCase();
+
+        const nameMatch = classItem?.name
+          ?.toLowerCase()
+          .includes(lowerSearchString);
+
+        return nameMatch;
+      })
+    : [];
+
+  return filteredClasses;
 };

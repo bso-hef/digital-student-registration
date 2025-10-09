@@ -2,6 +2,7 @@
 import { combineReducers } from "redux";
 
 import appSettingsReducer from "./appSettings";
+import classReducer from "./class";
 import studentReducer from "./student";
 import uiReducer from "./ui";
 
@@ -13,6 +14,7 @@ export interface AppAction {
 
 const rootReducer = combineReducers({
   appSettings: appSettingsReducer,
+  class: classReducer,
   student: studentReducer,
   ui: uiReducer,
 });

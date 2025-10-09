@@ -1,3 +1,4 @@
+import { SCHEMA } from "@/constants/db.constants";
 import mongoose, { Schema } from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
 
@@ -18,4 +19,4 @@ const AppSettingsSchema = new Schema(
 
 AppSettingsSchema.plugin(mongoosePaginate);
 
-export default mongoose.model("AppSettings", AppSettingsSchema);
+export default mongoose.model(SCHEMA.APP_SETTINGS, AppSettingsSchema);
