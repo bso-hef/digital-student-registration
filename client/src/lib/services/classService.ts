@@ -8,6 +8,9 @@ const classService = {
   getAll: () => {
     return http.get("/api/classes");
   },
+  get: (id: string) => {
+    return http.get(`/api/classes/${id}`);
+  },
   create: (classes: ClassCreateInput[]) => {
     return http.post("/api/classes", { classes });
   },

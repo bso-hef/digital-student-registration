@@ -10,8 +10,10 @@ import ConfirmationModal from "@/components/organisms/modals/ConfirmationModal";
 import DataTable from "@/components/organisms/tables/DataTable";
 import {
   addClass,
+  clearCurrentClass,
   deleteClasses,
   getClasses,
+  setCurrentClass,
 } from "@/store/actions/classActions";
 import { AppDispatch } from "@/store/store";
 import { ClassCreateInput, ClassInterface } from "@/types/class";
@@ -47,6 +49,7 @@ const StyledTableBox = styled(Box)(({ theme }) => ({
   overflowY: "auto",
   overflowX: "hidden",
   flex: 1,
+  padding: theme.spacing(4),
   ...applicationScrollbar(theme),
 }));
 
@@ -63,6 +66,10 @@ const ClassManagementPage = () => {
 
   useEffect(() => {
     dispatch(getClasses());
+
+    return () => {
+      dispatch(clearCurrentClass());
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -132,20 +139,36 @@ const ClassManagementPage = () => {
       return {
         id: c._id,
         name: (
-          <Link href={`/admin/management/classes/${c._id}`}>{c?.name}</Link>
+          <Link
+            href={`/admin/management/classes/${c._id}/general`}
+            onClick={() => dispatch(setCurrentClass(c._id))}
+          >
+            {c?.name}
+          </Link>
         ),
         schoolYear: (
-          <Link href={`/admin/management/classes/${c._id}`}>{schoolYear}</Link>
+          <Link
+            href={`/admin/management/classes/${c._id}/general`}
+            onClick={() => dispatch(setCurrentClass(c._id))}
+          >
+            {schoolYear}
+          </Link>
         ),
         grade: (
-          <Link href={`/admin/management/classes/${c._id}`}>
+          <Link
+            href={`/admin/management/classes/${c._id}/general`}
+            onClick={() => dispatch(setCurrentClass(c._id))}
+          >
             {typeof c.grade === "number" && Number.isFinite(c.grade)
               ? c.grade
               : "–"}
           </Link>
         ),
         studentCount: (
-          <Link href={`/admin/management/classes/${c._id}`}>
+          <Link
+            href={`/admin/management/classes/${c._id}/general`}
+            onClick={() => dispatch(setCurrentClass(c._id))}
+          >
             {getStudentsCount(c)}
           </Link>
         ),
@@ -153,7 +176,7 @@ const ClassManagementPage = () => {
         status: <ClassStatus active={Boolean(c.active)} />,
       };
     });
-  }, [classes, searchString, t]);
+  }, [classes, dispatch, searchString, t]);
 
   const handleDeleteClasses = useCallback(() => {
     const ids = selectedItems.filter(

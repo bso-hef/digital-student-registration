@@ -1,151 +1,153 @@
 "use client";
 
-import React, { ReactNode, Suspense } from "react";
+import React, { Fragment, Suspense, useCallback } from "react";
 
 import {
   Box,
   CircularProgress,
   List,
   ListItemButton,
+  ListItemButtonProps,
   ListItemText,
+  ListItemTextProps,
+  styled,
 } from "@mui/material";
-import { styled } from "@mui/material/styles";
 import { usePathname, useRouter } from "next/navigation";
 
 export type VerticalTab = {
   label: string;
-  href: string; // absolut oder relativ, z.B. "/settings/profile" oder "profile"
+  link: string;
+  component: React.ReactNode;
 };
 
 export type VerticalTabsProps = {
   tabs: VerticalTab[];
-  /** Optional: fixe Breite der Leiste (px). Default 230. */
-  railWidth?: number;
-  /** Content der rechten Seite (wird vom Next.js-Routing geliefert) */
-  children?: ReactNode;
+  showSpinnerFallback?: boolean;
+  children?: React.ReactNode;
 };
 
 const Root = styled(Box)(({ theme }) => ({
   flexGrow: 1,
+  backgroundColor: theme.palette.surface.interface.base,
+  backgroundImage: "unset",
+  color: theme.palette.text.default,
   display: "flex",
   height: "100%",
-  // Falls du Custom Theme Keys hast, ersetze die folgenden drei:
-  backgroundColor: theme.palette.background.paper,
-  color: theme.palette.text.secondary,
-  borderRadius: theme.spacing(0.5),
+  width: "100%",
+  borderRadius: theme.spacing(2),
 }));
 
-const Rail = styled(List, {
-  shouldForwardProp: (p) => p !== "railwidth",
-})<{ railwidth: number }>(({ theme, railwidth }) => ({
+const LeftList = styled(List)(({ theme }) => ({
   paddingTop: theme.spacing(1.5),
-  maxWidth: railwidth,
+  maxWidth: 230,
   width: "100%",
 }));
 
-const Container = styled(Box)(({ theme }) => ({
+const RightContainer = styled(Box)(({ theme }) => ({
   width: "100%",
+  borderLeft: `1px solid ${theme.palette.border.seperator}`,
   position: "relative",
-  borderLeft: `1px solid ${theme.palette.divider}`,
+  height: "100%",
 }));
 
-const StyledItem = styled(ListItemButton, {
-  shouldForwardProp: (prop) => prop !== "selected",
-})<{ selected?: boolean }>(({ theme, selected }) => ({
+type StyledListItemExtraProps = { $selected?: boolean } & ListItemButtonProps;
+const StyledListItem = styled(ListItemButton, {
+  shouldForwardProp: (prop) => prop !== "$selected",
+})<StyledListItemExtraProps>(({ theme, $selected }) => ({
   height: 52,
-  width: "100%",
-  fontSize: 16,
-  // text.default -> text.secondary
-  color: selected ? theme.palette.text.primary : theme.palette.text.secondary,
-  // surface.button.hoverLight -> action.hover
+  fontSize: "16px",
+  color: theme.palette.text.default,
+  width: 230,
   "&:hover": {
-    backgroundColor: theme.palette.action.hover,
+    backgroundColor: theme.palette.surface.button.hoverLight,
     cursor: "pointer",
   },
-  paddingTop: 0,
-  paddingBottom: 0,
-  paddingRight: theme.spacing(0.5),
-  paddingLeft: selected ? theme.spacing(4.5) : theme.spacing(5),
-  borderLeft: selected
-    ? `4px solid ${theme.palette.primary.main}` // border.primary -> primary.main
+  padding: $selected
+    ? theme.spacing(0, 0.5, 0, 4.5)
+    : theme.spacing(0, 0.5, 0, 5),
+  borderLeft: $selected
+    ? `4px solid ${theme.palette.border.primary}`
     : "4px solid transparent",
   "&.Mui-selected": {
-    backgroundColor: theme.palette.action.hover,
+    background: `${theme.palette.surface.button.hoverLight} !important`,
+  },
+  "&.Mui-selected .MuiListItemText-root": {
+    color: theme.palette.text.primary,
+    fontWeight: 500,
   },
 }));
 
-const StyledText = styled(ListItemText, {
-  shouldForwardProp: (prop) => prop !== "selected",
-})<{ selected?: boolean }>(({ theme, selected }) => ({
+type StyledListItemTextExtraProps = { $selected?: boolean } & ListItemTextProps;
+const StyledListItemText = styled(ListItemText, {
+  shouldForwardProp: (prop) => prop !== "$selected",
+})<StyledListItemTextExtraProps>(({ theme, $selected }) => ({
   "& .MuiListItemText-primary": {
-    fontSize: 16,
-    fontWeight: selected ? 500 : 400,
-    color: selected ? theme.palette.text.primary : theme.palette.text.secondary,
+    fontSize: "16px",
+    fontWeight: $selected ? 500 : 400,
+    color: $selected ? theme.palette.text.primary : theme.palette.text.default,
   },
 }));
 
-export function VerticalTabs({
+export default function VerticalTabs({
   tabs,
-  railWidth = 230,
+  showSpinnerFallback = true,
   children,
 }: VerticalTabsProps) {
   const router = useRouter();
   const pathname = usePathname();
 
-  const isSelected = (href: string) => {
-    if (!pathname) return false;
-    // Exakt gleich?
-    if (pathname === href) return true;
+  const gotoRoute = (path: string) => router.replace(path);
 
-    // Falls href/URL-Teile nur im letzten Segment verglichen werden sollen:
-    const seg = pathname.split("/").filter(Boolean).at(-1);
-    const hrefSeg = href.split("/").filter(Boolean).at(-1);
-    return seg === hrefSeg;
-  };
+  const isTabSelected = useCallback(
+    (tabLink: string) => {
+      if (!pathname) return false;
+      if (pathname === tabLink) return true;
+
+      const pathSegments = pathname.split("/").filter(Boolean);
+      const currentSegment = pathSegments[pathSegments.length - 1];
+
+      const tabSegments = tabLink.split("/").filter(Boolean);
+      const tabLast = tabSegments[tabSegments.length - 1];
+
+      return currentSegment === tabLast;
+    },
+    [pathname],
+  );
 
   return (
     <Suspense
       fallback={
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            height: "100%",
-          }}
-        >
-          <CircularProgress />
-        </Box>
+        showSpinnerFallback ? (
+          <CircularProgress
+            sx={{
+              m: "auto",
+              position: "absolute",
+              inset: 0,
+            }}
+          />
+        ) : (
+          <></>
+        )
       }
     >
       <Root>
-        <Rail railwidth={railWidth}>
+        <LeftList>
           {tabs.map((tab) => {
-            const selected = isSelected(tab.href);
+            const selected = isTabSelected(tab.link);
             return (
-              <StyledItem
-                key={tab.href}
+              <StyledListItem
+                key={tab.link}
                 selected={selected}
-                onClick={() => router.push(tab.href)}
+                $selected={selected}
+                onClick={() => gotoRoute(tab.link)}
               >
-                <StyledText selected={selected} primary={tab.label} />
-              </StyledItem>
+                <StyledListItemText $selected={selected} primary={tab.label} />
+              </StyledListItem>
             );
           })}
-        </Rail>
-
-        <Container>
-          {/* 
-            Rechte Seite: 
-            - Normalerweise rendert hier der verschachtelte Route-Content über Next.js.
-            - Du kannst zusätzlich eine Fallback-Navigation auf den ersten Tab machen,
-              wenn keine Kind-Route aktiv ist. Das lässt du aber i.d.R. dem Router/Layouts.
-          */}
-          {children ?? null}
-        </Container>
+        </LeftList>
+        <RightContainer>{children}</RightContainer>
       </Root>
     </Suspense>
   );
 }
-
-export default VerticalTabs;

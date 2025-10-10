@@ -51,6 +51,7 @@ const StyledTableBox = styled(Box)(({ theme }) => ({
   overflowY: "auto",
   overflowX: "hidden",
   flex: 1,
+  padding: theme.spacing(4),
   ...applicationScrollbar(theme),
 }));
 

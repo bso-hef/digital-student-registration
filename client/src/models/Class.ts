@@ -8,7 +8,7 @@ const ClassSchema = new Schema(
     schoolYearTo: { type: Date, required: true },
 
     name: { type: String, required: true },
-    grade: { type: Number, required: true },
+    grade: { type: Number, default: null },
 
     isVocational: { type: Boolean, default: false },
     requiresEmployerInfo: { type: Boolean, default: false },

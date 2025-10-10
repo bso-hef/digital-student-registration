@@ -72,3 +72,29 @@ export const updateClass =
       dispatch({ type: TYPES.UPDATE_CLASS_FAILURE, payload: appError });
     }
   };
+
+export const setCurrentClass =
+  (id: string): AppThunk =>
+  (dispatch, getState) => {
+    const { classes } = getState().class;
+    const currentClass = classes.find((c) => c._id === id);
+
+    dispatch({ type: TYPES.SET_CURRENT_CLASS, payload: currentClass });
+  };
+
+export const clearCurrentClass = (): AppThunk => (dispatch) => {
+  dispatch({ type: TYPES.CLEAR_CURRENT_CLASS });
+};
+
+export const getClass =
+  (id: string): AppThunk =>
+  async (dispatch) => {
+    dispatch({ type: TYPES.GET_CLASS_REQUEST });
+    try {
+      const { data } = await classService.get(id);
+      dispatch({ type: TYPES.GET_CLASS_SUCCESS, payload: data });
+    } catch (error) {
+      const appError = await toAppError(error);
+      dispatch({ type: TYPES.GET_CLASS_FAILURE, payload: appError });
+    }
+  };

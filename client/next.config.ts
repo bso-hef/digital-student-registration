@@ -9,12 +9,7 @@ const nextConfig: NextConfig = {
   // running on 'https://localhost:3000/api/:path*'.
   // This is useful in development to avoid CORS issues.
   async rewrites() {
-    return [
-      {
-        source: "/api/:path*",
-        destination: "https://localhost:3000/api/:path*",
-      },
-    ];
+    return [];
   },
   images: {
     remotePatterns: [

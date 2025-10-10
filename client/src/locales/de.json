@@ -176,7 +176,14 @@
       "deleteClassRequest": "Sind Sie sicher, dass Sie die ausgewählten Klassen löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
       "checkInActive": "Check-in aktiv",
       "schoolYear": "Schuljahr",
-      "grade": "Jahrgang"
+      "grade": "Jahrgang",
+      "class": "Klasse",
+      "classSettings": {
+        "settings": "Klasseneinstellungen",
+        "general": "Allgemein",
+        "students": "Schüler",
+        "options": "Einstellungen"
+      }
     }
   }
 }

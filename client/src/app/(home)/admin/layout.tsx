@@ -45,7 +45,6 @@ const LayoutBox = styled(Box, {
   width: "100%",
   maxWidth: "90%",
   textAlign: "center",
-  padding: showMobileView ? theme.spacing(4, 4, 0, 4) : theme.spacing(4),
   backgroundColor: theme.palette.surface.interface.base,
   backgroundImage: "unset",
   color: theme.palette.text.default,

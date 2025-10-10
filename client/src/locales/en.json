@@ -176,7 +176,14 @@
       "deleteClassRequest": "Are you sure you want to delete the selected class(es)? This action cannot be undone.",
       "checkInActive": "Check-in active",
       "schoolYear": "School Year",
-      "grade": "Grade"
+      "grade": "Grade",
+      "class": "Class",
+      "classSettings": {
+        "settings": "Class Settings",
+        "general": "General",
+        "students": "Students",
+        "options": "Settings"
+      }
     }
   }
 }

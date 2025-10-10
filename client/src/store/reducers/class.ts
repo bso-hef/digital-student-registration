@@ -3,9 +3,16 @@ import { ClassInterface } from "@/types/class";
 import * as TYPES from "../types";
 import { AppAction } from "./index";
 
+interface CurrentClassState {
+  data: ClassInterface | null;
+  loading: boolean;
+  error: string | null;
+  success: boolean;
+}
+
 interface ClassState {
   classes: ClassInterface[];
-  currentClass: object;
+  currentClass: CurrentClassState;
   byId: { [key: string]: ClassInterface };
   loading: boolean;
   error: string | null;
@@ -20,7 +27,6 @@ const initialState: ClassState = {
   currentClass: {
     data: null,
     loading: false,
-    requestSent: false,
     error: null,
     success: false,
   },
@@ -40,6 +46,36 @@ const classReducer = (state = initialState, action: AppAction): ClassState => {
     case TYPES.DELETE_CLASSES_REQUEST:
     case TYPES.UPDATE_CLASS_REQUEST:
       return { ...state, loading: true, error: null };
+
+    case TYPES.GET_CLASS_REQUEST:
+      return {
+        ...state,
+        currentClass: {
+          ...state.currentClass,
+          loading: true,
+        },
+      };
+
+    case TYPES.GET_CLASS_SUCCESS:
+      return {
+        ...state,
+        currentClass: {
+          ...state.currentClass,
+          loading: false,
+          data: action.payload,
+          success: true,
+        },
+      };
+
+    case TYPES.GET_CLASS_FAILURE:
+      return {
+        ...state,
+        currentClass: {
+          ...state.currentClass,
+          loading: false,
+          error: action.payload,
+        },
+      };
 
     case TYPES.GET_CLASSES_SUCCESS: {
       const { classes, page, limit, total, pages } = action.payload; // <— wichtig!
@@ -94,6 +130,21 @@ const classReducer = (state = initialState, action: AppAction): ClassState => {
     case TYPES.DELETE_CLASSES_FAILURE:
     case TYPES.UPDATE_CLASS_FAILURE:
       return { ...state, loading: false, error: action.payload };
+
+    case TYPES.SET_CURRENT_CLASS:
+      return {
+        ...state,
+        currentClass: {
+          ...state.currentClass,
+          data: action.payload,
+        },
+      };
+
+    case TYPES.CLEAR_CURRENT_CLASS:
+      return {
+        ...state,
+        currentClass: initialState.currentClass,
+      };
 
     default:
       return state;

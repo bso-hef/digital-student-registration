@@ -18,6 +18,7 @@ import {
   ListItemText,
   Typography,
   styled,
+  useTheme,
 } from "@mui/material";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
@@ -94,9 +95,10 @@ const StyledListItemIcon = styled(ListItemIcon)<{ selected?: boolean }>(
 
 const StyledListItemText = styled(ListItemText, {
   shouldForwardProp: (prop) => prop !== "isSelected",
-})<{ isSelected?: boolean }>(({ theme, isSelected }) => ({
-  color: isSelected ? theme.palette.text.primary : theme.palette.text.default,
-  fontWeight: isSelected ? 600 : 400,
+})<{ selected?: boolean }>(({ theme, selected }) => ({
+  color: selected ? theme.palette.text.primary : theme.palette.text.default,
+  fontSize: "16px",
+  fontWeight: selected ? 600 : 400,
 }));
 
 const StyledLabel = styled(Typography)(({ theme }) => ({
@@ -112,6 +114,7 @@ const LeftNavigation = () => {
   const { t } = useTranslation();
   const pathname = usePathname();
   const router = useRouter();
+  const theme = useTheme();
 
   const [open, setOpen] = useState<boolean[]>([]);
 
@@ -228,7 +231,7 @@ const LeftNavigation = () => {
                       </StyledListItemIcon>
                     )}
                     <StyledListItemText
-                      isSelected={isSelected}
+                      selected={isSelected}
                       primary={route.displayValue}
                     />
                     {open[index] ? (
@@ -272,8 +275,15 @@ const LeftNavigation = () => {
                             </StyledListItemIcon>
                           )}
                           <StyledListItemText
-                            isSelected={hasRoute(child.path)}
-                            secondary={child.displayValue}
+                            primary={child.displayValue}
+                            selected={hasRoute(child.path)}
+                            primaryTypographyProps={{
+                              fontSize: "16px !important",
+                              fontWeight: hasRoute(child.path) ? 500 : 400,
+                              color: hasRoute(child.path)
+                                ? theme.palette.text.primary
+                                : theme.palette.text.default,
+                            }}
                           />
                         </StyledListItem>
                       ))}

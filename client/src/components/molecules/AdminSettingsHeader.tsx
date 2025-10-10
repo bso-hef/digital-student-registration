@@ -6,33 +6,41 @@ import { useTranslation } from "react-i18next";
 import HeaderSearchInput from "../atoms/HeaderSearchInput";
 import GeneralButton from "../atoms/buttons/GeneralButton";
 
-const StyledHeader = styled(Box)(({ theme }) => ({
+const StyledHeader = styled(Box, {
+  shouldForwardProp: (prop) => prop !== "isSubHeader",
+})<{ isSubHeader?: boolean }>(({ theme, isSubHeader }) => ({
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
   paddingLeft: 0,
   paddingRight: 0,
-  margin: theme.spacing(0, 3, 3, 3),
+  margin: isSubHeader ? theme.spacing(0, 0, 2, 0) : theme.spacing(0, 3, 3, 3),
   position: "relative",
   width: "100%",
 }));
 
-const StyledHeaderTitle = styled(Typography)(({ theme }) => ({
+const StyledHeaderTitle = styled(Typography, {
+  shouldForwardProp: (prop) => prop !== "isSubHeader",
+})<{ isSubHeader?: boolean }>(({ theme, isSubHeader }) => ({
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
   textTransform: "capitalize",
   color: theme.palette.text.default,
+  paddingLeft: isSubHeader ? theme.spacing(2) : theme.spacing(4),
   fontFamily: "Inter",
-  fontSize: 24,
-  fontWeight: 700,
-  lineHeight: "32px",
+  fontSize: "24px !important",
+  fontWeight: "700 !important",
+  lineHeight: "32px !important",
 }));
 
-const StyledToolBox = styled(Box)(({ theme }) => ({
+const StyledToolBox = styled(Box, {
+  shouldForwardProp: (prop) => prop !== "isSubHeader",
+})<{ isSubHeader?: boolean }>(({ theme, isSubHeader }) => ({
   display: "flex",
   alignItems: "row",
   gap: theme.spacing(2),
+  paddingRight: isSubHeader ? theme.spacing(2) : theme.spacing(4),
 }));
 
 const StyledDivierOrLoader = styled(Box)(() => ({
@@ -51,6 +59,7 @@ interface AdminSettingsHeaderProps {
   onSearch?: (value: string) => void;
   onSave?: () => void;
   onLoad?: boolean;
+  isSubHeader?: boolean;
   children?: React.ReactNode;
   [key: string]: unknown;
 }
@@ -61,15 +70,22 @@ const AdminSettingsHeader: React.FC<AdminSettingsHeaderProps> = ({
   onSearch,
   onSave,
   onLoad,
+  isSubHeader = false,
   children,
   ...OtherProps
 }) => {
   const { t } = useTranslation();
 
   return (
-    <StyledHeader mb={2} px={3} py={2} {...OtherProps}>
-      <StyledHeaderTitle>{title}</StyledHeaderTitle>
-      <StyledToolBox>
+    <StyledHeader
+      mb={2}
+      px={3}
+      py={2}
+      isSubHeader={isSubHeader}
+      {...OtherProps}
+    >
+      <StyledHeaderTitle isSubHeader={isSubHeader}>{title}</StyledHeaderTitle>
+      <StyledToolBox isSubHeader={isSubHeader}>
         {onSearch && (
           <Box>
             <HeaderSearchInput
