@@ -178,6 +178,10 @@
       "schoolYear": "School Year",
       "grade": "Grade",
       "class": "Class",
+      "schoolYearFrom": "School Year From",
+      "schoolYearTo": "School Year To",
+      "isVocational": "Is Vocational",
+      "requiresEmployerInfo": "Requires Employer Info",
       "classSettings": {
         "settings": "Class Settings",
         "general": "General",

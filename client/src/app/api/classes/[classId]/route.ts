@@ -41,3 +41,41 @@ export async function GET(
     );
   }
 }
+
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: { classId: string } },
+) {
+  try {
+    await dbConnect();
+    const { classId } = params;
+    const body = await request.json();
+
+    if (!classId || !mongoose.Types.ObjectId.isValid(classId)) {
+      return NextResponse.json(
+        { message: "Invalid Class ID" },
+        { status: 400 },
+      );
+    }
+
+    const updatedClass = await Class.findByIdAndUpdate(classId, body, {
+      new: true,
+    }).lean();
+
+    if (!updatedClass) {
+      return NextResponse.json({ message: "Class not found" }, { status: 404 });
+    }
+
+    logger.log(`Class ${classId} updated successfully`);
+    return NextResponse.json(updatedClass, { status: 200 });
+  } catch (error) {
+    logger.error(
+      `Failed to update Class ${params.classId}`,
+      error instanceof Error ? error.message : String(error),
+    );
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 },
+    );
+  }
+}
