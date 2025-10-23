@@ -1,0 +1,189 @@
+{
+  "general": {
+    "Save": "Speichern",
+    "Cancel": "Abbrechen",
+    "Next": "Weiter",
+    "Previous": "Zurück",
+    "Edit": "Bearbeiten",
+    "Delete": "Löschen",
+    "Start": "Starten",
+    "Confirm": "Bestätigen",
+    "Step": "Schritt",
+    "Close": "Schließen",
+    "Accessibility": "Barrierefreiheit",
+    "Language": "Sprache",
+    "Light": "Hell",
+    "Dark": "Dunkel",
+    "Rows per page": "Zeilen pro Seite:",
+    "Search": "Suche",
+    "Imported": "Importiert",
+    "Invited": "Eingeladen",
+    "Onboarded": "Eingeschrieben",
+    "Unknown": "Unbekannt",
+    "Are you sure you want to close this modal": "Sind Sie sicher, dass Sie dieses Modal schließen möchten?",
+    "Add": "Hinzufügen",
+    "Yes": "Ja",
+    "No": "Nein",
+    "Inactive": "Inaktiv",
+    "Active": "Aktiv"
+  },
+  "error": {
+    "Page not found": "Seite nicht gefunden",
+    "An unexpected error occurred": "Ein unerwarteter Fehler ist aufgetreten",
+    "Something went wrong": "Etwas ist schief gelaufen",
+    "Please try again later": "Bitte versuche es später erneut",
+    "Sorry we couldn't find that page": "Leider existiert die gesuchte Seite nicht oder wurde verschoben.",
+    "Back Home": "Zurück zum Dashboard"
+  },
+  "accessibility": {
+    "Language Control": "Sprachsteuerung",
+    "Theme Control": "Themensteuerung"
+  },
+  "student": {
+    "home": {
+      "Title": "Digitale Anmeldung",
+      "Description": "Dies ist eine einfache, digitale Anmeldung für neue Schüler:innen der BSO in Bad Hersfeld.",
+      "Onboarding": "Anmeldung",
+      "Administration": "Administration",
+      "Documentation": "Dokumentation"
+    },
+    "steps": {
+      "Welcome": "Willkommen",
+      "General": "Allgemein",
+      "Origin": "Herkunft",
+      "Address": "Adresse",
+      "Parents": "Eltern",
+      "Pre Education": "Vorbildung",
+      "Training": "Ausbildung",
+      "Company Contact": "Unternehmenskontakt",
+      "Summary": "Zusammenfassung",
+      "Completion": "Abschluss"
+    }
+  },
+  "navigation": {
+    "dashboard": "Übersicht",
+    "management": "Verwaltung",
+    "studentManagement": "Schülerverwaltung",
+    "classManagement": "Klassenverwaltung",
+    "data": "Daten",
+    "importData": "Daten importieren",
+    "exportData": "Daten exportieren",
+    "manageStudent": "Datenverwaltung",
+    "dataOverview": "Datenübersicht",
+    "settings": "Einstellungen",
+    "onboardingSettings": "Onboarding",
+    "agreementSettings": "Vereinbarungen",
+    "integrationSettings": "Integrationen",
+    "auditLog": "Audit-Log",
+    "Browse settings": "Einstellungen durchsuchen",
+    "welcome": "Willkommen {{name}}"
+  },
+  "modals": {
+    "addStudent": {
+      "title": "Studenten hinzufügen",
+      "subtitle": "Fügen Sie Studenten manuell oder per CSV-Import hinzu",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "dateOfBirth": "Geburtsdatum",
+      "required": "Erforderlich",
+      "firstNamePlaceholder": "John",
+      "lastNamePlaceholder": "Doe",
+      "uploadCsv": "CSV hochladen",
+      "add": "Hinzufügen"
+    },
+    "generateQrModal": {
+      "creatingZip": "Erzeuge ZIP...",
+      "progress": "Fortschritt: {{progress}}%",
+      "pageSize": "Seitenformat",
+      "orientation": "Ausrichtung",
+      "portrait": "Hochformat",
+      "landscape": "Querformat",
+      "filenameSchema": "Dateinamensschema",
+      "filenameSchemaExample": "Beispiel: {nachname}_{vorname}_{klasse}.pdf",
+      "options": "Optionen",
+      "showClassOnPdf": "Klasse auf PDF anzeigen",
+      "shortenIdInLink": "ID im Link kürzen (erste 8 Zeichen)",
+      "previewMock": "Vorschau (Mock):",
+      "onboardingWizard": "Onboarding-Assistent",
+      "class": "Klasse:",
+      "id": "ID:",
+      "downloadPdf": "PDF herunterladen",
+      "createZip": "ZIP erzeugen",
+      "title": "QR-PDFs für ausgewählte Schüler erzeugen"
+    },
+    "addClass": {
+      "title": "Klasse hinzufügen",
+      "subtitleSingle": "Erstelle eine einzelne Klasse",
+      "className": "Klassenname",
+      "classNamePlaceholder": "z.B. 11A, 12B, ...",
+      "companyClass": "Berufsklasse",
+      "isCompanyClass": "Ist eine Berufsklasse",
+      "grade": "Jahrgang",
+      "gradePlaceholder": "z.B. 10, 11, ...",
+      "requiresEmployerInfo": "Benötigt Informationen zum Ausbildungsbetrieb",
+      "active": "Aktiv",
+      "required": "Pflichtfeld",
+      "onlyNumbers": "Nur Zahlen erlaubt",
+      "createClasses": "Klassen anlegen",
+      "schoolYearFrom": "Schuljahr von",
+      "schoolYearTo": "Schuljahr bis",
+      "yearOrderError": "Das Endjahr muss größer als das Startjahr sein"
+    }
+  },
+  "actions": {
+    "studentFetchFailed": "Abrufen der Schüler fehlgeschlagen.",
+    "studentAddSuccess": "Schüler erfolgreich hinzugefügt.",
+    "studentAddFailed": "Hinzufügen der Schüler fehlgeschlagen.",
+    "studentDeleteSuccess": "Schüler erfolgreich gelöscht.",
+    "studentDeleteFailed": "Löschen der Schüler fehlgeschlagen.",
+    "classFetchFailed": "Abrufen der Klassen fehlgeschlagen.",
+    "classAddSuccess": "Klassen erfolgreich hinzugefügt.",
+    "classAddFailed": "Hinzufügen der Klassen fehlgeschlagen."
+  },
+  "table": {
+    "No data found": "Keine Daten gefunden",
+    "No data found description": "Nachdem mindestens ein Benutzer hinzugefügt wurde, erscheint hier eine Liste."
+  },
+  "settings": {
+    "csv": {
+      "CSV data is empty": "CSV-Daten sind leer.",
+      "CSV data should contain both headers and data rows": "CSV-Daten sollten sowohl Kopfzeilen als auch Datenzeilen enthalten.",
+      "Invalid CSV headers": "Ungültige CSV-Kopfzeilen. Erwartet: {{headers}}",
+      "Invalid row format": "Ungültiges Zeilenformat in Zeile {{row}}.",
+      "CSV file has no valid data": "CSV-Datei enthält keine gültigen Daten.",
+      "CSV uploaded and parsed successfully": "CSV wurde erfolgreich hochgeladen und verarbeitet.",
+      "Error while parsing CSV": "Fehler beim Parsen der CSV-Datei.",
+      "Error while reading file": "Fehler beim Lesen der Datei."
+    },
+    "manageStudent": {
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "dateOfBirth": "Geburtsdatum",
+      "class": "Klasse",
+      "status": "Status",
+      "importStudents": "Schüler hinzufügen",
+      "deleteStudents": "Schüler löschen",
+      "generateQRCode": "QR-Code generieren",
+      "delete Student request": "Sind Sie sicher, dass Sie die ausgewählten Schüler löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
+    },
+    "manageClass": {
+      "className": "Klassenname",
+      "numberOfStudents": "Anzahl der Schüler",
+      "companyClass": "Berufsklasse",
+      "isClassActive": "Aktiv",
+      "addClass": "Klasse hinzufügen",
+      "deleteClasses": "Klassen löschen",
+      "deleteClassRequest": "Sind Sie sicher, dass Sie die ausgewählten Klassen löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+      "checkInActive": "Check-in aktiv",
+      "schoolYear": "Schuljahr",
+      "grade": "Jahrgang",
+      "class": "Klasse",
+      "classSettings": {
+        "settings": "Klasseneinstellungen",
+        "general": "Allgemein",
+        "students": "Schüler",
+        "options": "Einstellungen"
+      }
+    }
+  }
+}
