@@ -11,11 +11,13 @@ import { Box, styled } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import { Field, Form, Formik } from "formik";
-import { Switch, TextField } from "formik-mui";
+import { Field, FieldProps, Form, Formik } from "formik";
+import { TextField } from "formik-mui";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import * as yup from "yup";
+
+import AppleSwitch from "@/components/atoms/AppleSwitch";
 
 import { RootState } from "@/store/reducers";
 
@@ -23,12 +25,25 @@ const StyledBox = styled(Box)(({ theme }) => ({
   height: "100%",
   width: "100%",
   display: "flex",
-  flexDirection: "column",
+  flexDirection: "row",
   overflowY: "auto",
   overflowX: "hidden",
   flex: 1,
   padding: theme.spacing(2),
+  gap: theme.spacing(2), // 16px Abstand zwischen den Spalten
   ...applicationScrollbar(theme),
+}));
+
+const StyledHalfBox = styled(Box)(({ theme }) => ({
+  height: "100%",
+  width: "50%",
+  display: "flex",
+  flexDirection: "column",
+  overflowY: "auto",
+  overflowX: "hidden",
+  flex: 1,
+  gap: theme.spacing(2), // 16px vertikaler Abstand zwischen Boxen/Feldern
+  padding: theme.spacing(2),
 }));
 
 const validationSchema = yup.object({
@@ -94,7 +109,7 @@ const GeneralClassSettingsTab = () => {
             isSubHeader
             title={t("settings.manageClass.classSettings.general")}
             onSave={handleSubmit}
-            saveDisabled={!dirty || isSubmitting || loading}
+            disabled={!dirty || isSubmitting || loading}
           />
           <StyledBox>
             {loading ? (
@@ -110,78 +125,128 @@ const GeneralClassSettingsTab = () => {
                 ))}
               </Fragment>
             ) : (
-              <Form>
-                <Box display="flex" flexDirection="column" flex="1">
-                  <Field
-                    component={TextField}
-                    name="name"
-                    type="text"
-                    label={t("settings.manageClass.className")}
-                    variant="outlined"
-                    margin="normal"
-                    style={{ marginTop: 0 }}
-                    size="small"
-                  />
-                  <Field
-                    component={TextField}
-                    name="name"
-                    type="text"
-                    label={t("settings.manageClass.grade")}
-                    variant="outlined"
-                    margin="normal"
-                    style={{ marginTop: 0 }}
-                    size="small"
-                  />
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker
-                      label={t("settings.manageClass.schoolYearFrom")}
-                      value={values.schoolYearFrom}
-                      onChange={(newValue) => {
-                        setFieldValue("schoolYearFrom", newValue);
-                      }}
-                      slotProps={{ textField: { fullWidth: true } }}
-                    />
-                    <DatePicker
-                      label={t("settings.manageClass.schoolYearTo")}
-                      value={values.schoolYearTo}
-                      onChange={(newValue) => {
-                        setFieldValue("schoolYearTo", newValue);
-                      }}
-                      slotProps={{ textField: { fullWidth: true } }}
-                    />
-                  </LocalizationProvider>
-                  <Box
-                    sx={{
-                      display: "grid",
-                      gridTemplateColumns: "1fr auto",
-                      rowGap: 1.5,
-                      alignItems: "center",
-                      mt: 0.5,
-                    }}
-                  >
-                    <Box sx={{ fontWeight: 600 }}>
-                      {t("settings.manageClass.isVocational")}
+              <Fragment>
+                <StyledHalfBox>
+                  <Form>
+                    <Box display="flex" flexDirection="column" gap={2}>
+                      <Field
+                        component={TextField}
+                        name="name"
+                        type="text"
+                        label={t("settings.manageClass.className")}
+                        variant="outlined"
+                        size="small"
+                        fullWidth
+                      />
+                      <Field
+                        component={TextField}
+                        name="grade"
+                        type="number"
+                        label={t("settings.manageClass.grade")}
+                        variant="outlined"
+                        size="small"
+                        fullWidth
+                      />
+
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <Box display="flex" flexDirection="column" gap={2}>
+                          <DatePicker
+                            label={t("settings.manageClass.schoolYearFrom")}
+                            value={values.schoolYearFrom}
+                            onChange={(newValue) =>
+                              setFieldValue("schoolYearFrom", newValue)
+                            }
+                            slotProps={{ textField: { fullWidth: true } }}
+                          />
+                          <DatePicker
+                            label={t("settings.manageClass.schoolYearTo")}
+                            value={values.schoolYearTo}
+                            onChange={(newValue) =>
+                              setFieldValue("schoolYearTo", newValue)
+                            }
+                            slotProps={{ textField: { fullWidth: true } }}
+                          />
+                        </Box>
+                      </LocalizationProvider>
+
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: 2,
+                          mt: 1,
+                        }}
+                      >
+                        <Box display="flex" alignItems="center" gap={1}>
+                          <Field name="isVocational">
+                            {({ field, form }: FieldProps) => (
+                              <>
+                                <AppleSwitch
+                                  checked={field.value}
+                                  onChange={(e) =>
+                                    form.setFieldValue(
+                                      field.name,
+                                      e.target.checked,
+                                    )
+                                  }
+                                />
+                                <Box sx={{ fontWeight: 600 }}>
+                                  {t("settings.manageClass.isVocational")}
+                                </Box>
+                              </>
+                            )}
+                          </Field>
+                        </Box>
+
+                        <Box display="flex" alignItems="center" gap={1}>
+                          <Field name="requiresEmployerInfo">
+                            {({ field, form }: FieldProps) => (
+                              <>
+                                <AppleSwitch
+                                  checked={field.value}
+                                  onChange={(e) =>
+                                    form.setFieldValue(
+                                      field.name,
+                                      e.target.checked,
+                                    )
+                                  }
+                                />
+                                <Box sx={{ fontWeight: 600 }}>
+                                  {t(
+                                    "settings.manageClass.requiresEmployerInfo",
+                                  )}
+                                </Box>
+                              </>
+                            )}
+                          </Field>
+                        </Box>
+
+                        <Box display="flex" alignItems="center" gap={1}>
+                          <Field name="active">
+                            {({ field, form }: FieldProps) => (
+                              <>
+                                <AppleSwitch
+                                  checked={field.value}
+                                  onChange={(e) =>
+                                    form.setFieldValue(
+                                      field.name,
+                                      e.target.checked,
+                                    )
+                                  }
+                                />
+                                <Box sx={{ fontWeight: 600 }}>
+                                  {t("settings.manageClass.isClassActive")}
+                                </Box>
+                              </>
+                            )}
+                          </Field>
+                        </Box>
+                      </Box>
                     </Box>
-                    <Field
-                      component={Switch}
-                      name="isVocational"
-                      type="checkbox"
-                    />
-                    <Box sx={{ fontWeight: 600 }}>
-                      {t("settings.manageClass.requiresEmployerInfo")}
-                    </Box>
-                    <Field
-                      component={Switch}
-                      name="requiresEmployerInfo"
-                      type="checkbox"
-                    />
-                    <Box sx={{ fontWeight: 600 }}>
-                      {t("settings.manageClass.isClassActive")}
-                    </Box>
-                    <Field component={Switch} name="active" type="checkbox" />
-                  </Box>
-                </Box>
-              </Form>
+                  </Form>
+                </StyledHalfBox>
+                <StyledHalfBox>{/* future content */}</StyledHalfBox>
+              </Fragment>
             )}
           </StyledBox>
         </Fragment>

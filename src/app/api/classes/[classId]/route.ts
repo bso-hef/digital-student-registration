@@ -48,7 +48,7 @@ export async function PATCH(
 ) {
   try {
     await dbConnect();
-    const { classId } = params;
+    const { classId } = await params;
     const body = await request.json();
 
     if (!classId || !mongoose.Types.ObjectId.isValid(classId)) {
@@ -66,7 +66,7 @@ export async function PATCH(
       return NextResponse.json({ message: "Class not found" }, { status: 404 });
     }
 
-    logger.log(`Class ${classId} updated successfully`);
+    logger.info(`Class ${classId} updated successfully`);
     return NextResponse.json(updatedClass, { status: 200 });
   } catch (error) {
     logger.error(

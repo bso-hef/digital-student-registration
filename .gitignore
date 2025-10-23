@@ -138,3 +138,9 @@ dist
 # keys
 keys/
 certificates/
+
+# AI Services
+GEMINI.md
+CLAUDE.md
+CODEX.md
+OPENAI.md
