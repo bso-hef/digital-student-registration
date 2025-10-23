@@ -66,3 +66,5 @@ export type CreateStudentInput = Pick<
   Student,
   "firstName" | "lastName" | "dateOfBirth"
 > & { status?: Student["status"] };
+
+export type GenderType = "male" | "female" | "diverse" | undefined;

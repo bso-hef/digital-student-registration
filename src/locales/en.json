@@ -39,6 +39,12 @@
     "Language Control": "Language Control",
     "Theme Control": "Theme Control"
   },
+  "gender": {
+    "male": "Male",
+    "female": "Female",
+    "diverse": "Diverse",
+    "unknown": "Unknown"
+  },
   "student": {
     "home": {
       "Title": "Digital Onboarding",
@@ -187,6 +193,13 @@
         "general": "General",
         "students": "Students",
         "options": "Settings"
+      },
+      "student": {
+        "firstName": "First name",
+        "lastName": "Last name",
+        "dateOfBirth": "Date of birth",
+        "gender": "Gender",
+        "status": "Status"
       }
     }
   }

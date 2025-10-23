@@ -39,6 +39,12 @@
     "Language Control": "Sprachsteuerung",
     "Theme Control": "Themensteuerung"
   },
+  "gender": {
+    "male": "Männlich",
+    "female": "Weiblich",
+    "diverse": "Divers",
+    "unknown": "Unbekannt"
+  },
   "student": {
     "home": {
       "Title": "Digitale Anmeldung",
@@ -183,6 +189,13 @@
         "general": "Allgemein",
         "students": "Schüler",
         "options": "Einstellungen"
+      },
+      "student": {
+        "firstName": "Vorname",
+        "lastName": "Nachname",
+        "dateOfBirth": "Geburtsdatum",
+        "gender": "Geschlecht",
+        "status": "Status"
       }
     }
   }

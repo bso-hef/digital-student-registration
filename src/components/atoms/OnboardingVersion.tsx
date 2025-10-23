@@ -1,7 +1,7 @@
 import React from "react";
 
-import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
 import { Box, Typography, styled } from "@mui/material";
+import Image from "next/image";
 
 const StyledWrapper = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -32,9 +32,12 @@ const StyledVersion = styled(Typography)(({ theme }) => ({
   textTransform: "capitalize",
 }));
 
-const OnboardingVersion = ({ heartColor = "#EA9A3E" }) => {
+const OnboardingVersion = () => {
   return (
     <StyledWrapper>
+      <StyledLabel>
+        <Image src="/logo.svg" alt="logo" width={200} height={75} />
+      </StyledLabel>
       {process.env.NEXT_PUBLIC_NAME && process.env.NEXT_PUBLIC_VERSION ? (
         <StyledVersion variant="caption" display="block">
           {process.env.NEXT_PUBLIC_NAME +
@@ -42,13 +45,6 @@ const OnboardingVersion = ({ heartColor = "#EA9A3E" }) => {
             process.env.NEXT_PUBLIC_VERSION}
         </StyledVersion>
       ) : null}
-      <StyledLabel>
-        Made with{" "}
-        <FavoriteRoundedIcon
-          style={{ height: "10px", width: "10px", color: heartColor }}
-        />{" "}
-        in Germany
-      </StyledLabel>
     </StyledWrapper>
   );
 };
