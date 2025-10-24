@@ -66,7 +66,9 @@ export default function ThemeWrapper({
   useEffect(() => {
     if (dyslexiaFont && typeof window !== "undefined") {
       // Import the font dynamically
+      // @ts-expect-error - Dynamic font loading
       import("@fontsource/opendyslexic/400.css");
+      // @ts-expect-error - Dynamic font loading
       import("@fontsource/opendyslexic/700.css");
     }
   }, [dyslexiaFont]);

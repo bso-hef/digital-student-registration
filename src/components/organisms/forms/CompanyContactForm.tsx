@@ -1,6 +1,7 @@
 import React from "react";
 
-import { validateStudentCompanyContactData } from "@/lib/validate/student.validate";
+import { validateStudentCompanyData } from "@/lib/validate/student.validate";
+import { StudentData } from "@/types/student";
 import { styled } from "@mui/material";
 import { Field, Form, Formik } from "formik";
 import { TextField } from "formik-mui";
@@ -15,84 +16,80 @@ const StyledForm = styled(Form)(() => ({
 }));
 
 interface FormValues {
-  betriebAnsprechpartnerAnrede: string;
-  betriebAnsprechpartnerVorname: string;
-  betriebAnsprechpartnerNachname: string;
-  betriebAnsprechpartnerTel: string;
+  betriebApAnrede: string;
+  betriebApVorname: string;
+  betriebApNachname: string;
+  betriebApTelefon1: string;
 }
 
 interface CompanyContactFormProps {
-  data?: Partial<FormValues>;
+  data?: Partial<StudentData>;
 }
 
 const CompanyContactForm: React.FC<CompanyContactFormProps> = ({ data }) => {
   const initialValues: FormValues = {
-    betriebAnsprechpartnerAnrede: data?.betriebAnsprechpartnerAnrede || "",
-    betriebAnsprechpartnerVorname: data?.betriebAnsprechpartnerVorname || "",
-    betriebAnsprechpartnerNachname: data?.betriebAnsprechpartnerNachname || "",
-    betriebAnsprechpartnerTel: data?.betriebAnsprechpartnerTel || "",
+    betriebApAnrede: data?.betriebApAnrede || "",
+    betriebApVorname: data?.betriebApVorname || "",
+    betriebApNachname: data?.betriebApNachname || "",
+    betriebApTelefon1: data?.betriebApTelefon1 || "",
   };
 
   return (
     <Formik<FormValues>
       initialValues={initialValues}
-      validationSchema={validateStudentCompanyContactData}
+      validationSchema={validateStudentCompanyData}
       onSubmit={(values) => {
         console.log("✅ Submitted values:", values);
       }}
     >
       {({ errors, touched }) => (
         <StyledForm>
-          {/* betriebAnsprechpartnerAnrede */}
+          {/* betriebApAnrede */}
           <Field
             component={TextField}
-            name="herkunftsland"
-            label="Herkunftsland"
+            name="betriebApAnrede"
+            label="Anrede"
             variant="outlined"
             margin="normal"
-            error={
-              touched.betriebAnsprechpartnerAnrede &&
-              Boolean(errors.betriebAnsprechpartnerAnrede)
-            }
-            helperText={
-              touched.betriebAnsprechpartnerAnrede &&
-              errors.betriebAnsprechpartnerAnrede
-            }
+            error={touched.betriebApAnrede && Boolean(errors.betriebApAnrede)}
+            helperText={touched.betriebApAnrede && errors.betriebApAnrede}
           />
 
-          {/* betriebAnsprechpartnerVorname */}
+          {/* betriebApVorname */}
           <Field
             component={TextField}
-            name="zuzugjahr"
-            label="Zuzugsjahr"
-            type="number"
+            name="betriebApVorname"
+            label="Vorname"
             variant="outlined"
             margin="normal"
-            error={
-              touched.betriebAnsprechpartnerVorname &&
-              Boolean(errors.betriebAnsprechpartnerVorname)
-            }
-            helperText={
-              touched.betriebAnsprechpartnerVorname &&
-              errors.betriebAnsprechpartnerVorname
-            }
+            error={touched.betriebApVorname && Boolean(errors.betriebApVorname)}
+            helperText={touched.betriebApVorname && errors.betriebApVorname}
           />
 
-          {/* Familiensprache */}
+          {/* betriebApNachname */}
           <Field
             component={TextField}
-            name="familiensprache"
-            label="Familiensprache"
+            name="betriebApNachname"
+            label="Nachname"
             variant="outlined"
             margin="normal"
             error={
-              touched.betriebAnsprechpartnerNachname &&
-              Boolean(errors.betriebAnsprechpartnerNachname)
+              touched.betriebApNachname && Boolean(errors.betriebApNachname)
             }
-            helperText={
-              touched.betriebAnsprechpartnerNachname &&
-              errors.betriebAnsprechpartnerNachname
+            helperText={touched.betriebApNachname && errors.betriebApNachname}
+          />
+
+          {/* betriebApTelefon1 */}
+          <Field
+            component={TextField}
+            name="betriebApTelefon1"
+            label="Telefon"
+            variant="outlined"
+            margin="normal"
+            error={
+              touched.betriebApTelefon1 && Boolean(errors.betriebApTelefon1)
             }
+            helperText={touched.betriebApTelefon1 && errors.betriebApTelefon1}
           />
         </StyledForm>
       )}

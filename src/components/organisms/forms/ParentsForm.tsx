@@ -1,6 +1,7 @@
 import React from "react";
 
 import { validateStudentContactPersonData } from "@/lib/validate/student.validate";
+import { StudentData } from "@/types/student";
 import { styled } from "@mui/material";
 import { Field, Form, Formik } from "formik";
 import { TextField } from "formik-mui";
@@ -15,32 +16,32 @@ const StyledForm = styled(Form)(() => ({
 }));
 
 interface FormValues {
-  ansprechpartnerArt: string;
-  ansprechpartnerVorname: string;
-  ansprechpartnerNachname: string;
-  ansprechpartnerPlz: number;
-  ansprechpartnerOrt: string;
-  ansprechpartnerStraße: string;
-  ansprechpartnerHausNr: string;
-  ansprechpartnerMobil: string;
-  ansprechpartnerTelefon: string;
+  ansprechpartner1Art: string;
+  ansprechpartner1Vorname: string;
+  ansprechpartner1Nachname: string;
+  ansprechpartner1Plz: string;
+  ansprechpartner1Ort: string;
+  ansprechpartner1Straße: string;
+  ansprechpartner1HausNr: string;
+  ansprechpartner1Mobil: string;
+  ansprechpartner1Telefon1: string;
 }
 
 interface ParentsFormProps {
-  data?: Partial<FormValues>;
+  data?: Partial<StudentData>;
 }
 
 const ParentsForm: React.FC<ParentsFormProps> = ({ data }) => {
   const initialValues: FormValues = {
-    ansprechpartnerArt: data?.ansprechpartnerArt || "",
-    ansprechpartnerVorname: data?.ansprechpartnerVorname || "",
-    ansprechpartnerNachname: data?.ansprechpartnerNachname || "",
-    ansprechpartnerPlz: data?.ansprechpartnerPlz || 0,
-    ansprechpartnerOrt: data?.ansprechpartnerOrt || "",
-    ansprechpartnerStraße: data?.ansprechpartnerStraße || "",
-    ansprechpartnerHausNr: data?.ansprechpartnerHausNr || "",
-    ansprechpartnerMobil: data?.ansprechpartnerMobil || "",
-    ansprechpartnerTelefon: data?.ansprechpartnerTelefon || "",
+    ansprechpartner1Art: data?.ansprechpartner1Art || "",
+    ansprechpartner1Vorname: data?.ansprechpartner1Vorname || "",
+    ansprechpartner1Nachname: data?.ansprechpartner1Nachname || "",
+    ansprechpartner1Plz: data?.ansprechpartner1Plz || "",
+    ansprechpartner1Ort: data?.ansprechpartner1Ort || "",
+    ansprechpartner1Straße: data?.ansprechpartner1Straße || "",
+    ansprechpartner1HausNr: data?.ansprechpartner1HausNr || "",
+    ansprechpartner1Mobil: data?.ansprechpartner1Mobil || "",
+    ansprechpartner1Telefon1: data?.ansprechpartner1Telefon1 || "",
   };
 
   return (
@@ -53,49 +54,51 @@ const ParentsForm: React.FC<ParentsFormProps> = ({ data }) => {
     >
       {({ errors, touched }) => (
         <StyledForm>
-          {/* ansprechpartnerArt */}
+          {/* ansprechpartner1Art */}
           <Field
             component={TextField}
-            name="herkunftsland"
-            label="Herkunftsland"
+            name="ansprechpartner1Art"
+            label="Ansprechpartner Art"
             variant="outlined"
             margin="normal"
             error={
-              touched.ansprechpartnerArt && Boolean(errors.ansprechpartnerArt)
-            }
-            helperText={touched.ansprechpartnerArt && errors.ansprechpartnerArt}
-          />
-
-          {/* ansprechpartnerVorname */}
-          <Field
-            component={TextField}
-            name="zuzugjahr"
-            label="Zuzugsjahr"
-            type="number"
-            variant="outlined"
-            margin="normal"
-            error={
-              touched.ansprechpartnerVorname &&
-              Boolean(errors.ansprechpartnerVorname)
+              touched.ansprechpartner1Art && Boolean(errors.ansprechpartner1Art)
             }
             helperText={
-              touched.ansprechpartnerVorname && errors.ansprechpartnerVorname
+              touched.ansprechpartner1Art && errors.ansprechpartner1Art
             }
           />
 
-          {/* Familiensprache */}
+          {/* ansprechpartner1Vorname */}
           <Field
             component={TextField}
-            name="familiensprache"
-            label="Familiensprache"
+            name="ansprechpartner1Vorname"
+            label="Vorname"
             variant="outlined"
             margin="normal"
             error={
-              touched.ansprechpartnerNachname &&
-              Boolean(errors.ansprechpartnerNachname)
+              touched.ansprechpartner1Vorname &&
+              Boolean(errors.ansprechpartner1Vorname)
             }
             helperText={
-              touched.ansprechpartnerNachname && errors.ansprechpartnerNachname
+              touched.ansprechpartner1Vorname && errors.ansprechpartner1Vorname
+            }
+          />
+
+          {/* ansprechpartner1Nachname */}
+          <Field
+            component={TextField}
+            name="ansprechpartner1Nachname"
+            label="Nachname"
+            variant="outlined"
+            margin="normal"
+            error={
+              touched.ansprechpartner1Nachname &&
+              Boolean(errors.ansprechpartner1Nachname)
+            }
+            helperText={
+              touched.ansprechpartner1Nachname &&
+              errors.ansprechpartner1Nachname
             }
           />
         </StyledForm>

@@ -87,3 +87,35 @@ export const HIGH_CONTRAST_DARK_COLORS = {
   WARNING: "#FFB84D", // Bright orange
   INFO: "#4DC3FF", // Bright cyan
 };
+
+// Dashboard Gradient Colors (Modern Style)
+export const DASHBOARD_GRADIENTS = {
+  TOTAL_STUDENTS: {
+    gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    solid: "#667eea",
+    light: "#8b95ee",
+    dark: "#5661c4",
+  },
+  TOTAL_CLASSES: {
+    gradient: "linear-gradient(135deg, #667eea 0%, #4fc3f7 100%)",
+    solid: "#5aa0f1",
+    light: "#7eb2f4",
+    dark: "#4685d4",
+  },
+  UNASSIGNED: {
+    gradient: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
+    solid: "#f375b3",
+    light: "#f693c7",
+    dark: "#d95e9a",
+  },
+  ACTIVE_CLASSES: {
+    gradient: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+    solid: "#27cfff",
+    light: "#52d9ff",
+    dark: "#1eb8e6",
+  },
+  CHART_PRIMARY: "#667eea",
+  CHART_SECONDARY: "#4fc3f7",
+  CHART_ACCENT: "#f093fb",
+  CHART_SUCCESS: "#27cfff",
+};

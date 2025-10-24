@@ -164,7 +164,51 @@
     "studentsAddedToClass": "Schüler erfolgreich zur Klasse hinzugefügt.",
     "studentsAddToClassFailed": "Hinzufügen der Schüler zur Klasse fehlgeschlagen.",
     "studentsRemovedFromClass": "Schüler erfolgreich aus der Klasse entfernt.",
-    "studentsRemoveFromClassFailed": "Entfernen der Schüler aus der Klasse fehlgeschlagen."
+    "studentsRemoveFromClassFailed": "Entfernen der Schüler aus der Klasse fehlgeschlagen.",
+    "dashboardStatsFetchFailed": "Abrufen der Dashboard-Statistiken fehlgeschlagen.",
+    "dashboardHealthFetchFailed": "Abrufen des Systemstatus fehlgeschlagen."
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "resetLayout": "Layout zurücksetzen",
+    "quickStats": {
+      "totalStudents": "Schüler gesamt",
+      "totalClasses": "Klassen gesamt",
+      "unassignedStudents": "Nicht zugeordnete Schüler",
+      "activeClasses": "Aktive Klassen"
+    },
+    "charts": {
+      "registrationTrend": "Anmeldungstrend (letzte 7 Tage)",
+      "studentStatus": "Schüler nach Status",
+      "classDistribution": "Klassen nach Jahrgang",
+      "systemMetrics": "Systemmetriken"
+    },
+    "status": {
+      "imported": "Importiert",
+      "invited": "Eingeladen",
+      "onboarded": "Angemeldet",
+      "other": "Sonstige"
+    },
+    "health": {
+      "title": "Systemstatus",
+      "status": "Status",
+      "up": "Betriebsbereit",
+      "down": "Ausgefallen",
+      "database": "Datenbank",
+      "uptime": "Betriebszeit",
+      "memory": "Speichernutzung",
+      "cpu": "CPU-Kerne",
+      "loadAverage": "Systemlast",
+      "hostname": "Hostname",
+      "platform": "Plattform",
+      "nodeVersion": "Node-Version",
+      "lastUpdated": "Zuletzt aktualisiert",
+      "refresh": "Aktualisieren"
+    },
+    "errors": {
+      "loadFailed": "Laden der Dashboard-Daten fehlgeschlagen",
+      "retry": "Erneut versuchen"
+    }
   },
   "table": {
     "No data found": "Keine Daten gefunden",

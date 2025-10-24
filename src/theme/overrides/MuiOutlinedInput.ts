@@ -26,7 +26,7 @@ const MuiOutlinedInputOverride = {
   input: ({ theme }: { theme: Theme }) => ({
     backgroundColor: theme.palette.surface.interface.base,
     backgroundImage: "none",
-    textTransform: "none",
+    textTransform: "none" as const,
     fontSize: 16,
     overflow: "hidden",
     whiteSpace: "nowrap",
