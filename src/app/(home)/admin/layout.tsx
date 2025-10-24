@@ -24,9 +24,17 @@ const AdminLayoutContainer = styled(Box, {
   textAlign: "center",
   background: "transparent",
   color: theme.palette.text.default,
-  padding: !showMobileView ? theme.spacing(8, 20) : 0,
+  padding: !showMobileView ? theme.spacing(4, 8) : 0,
   overflow: "hidden",
-  gap: theme.spacing(8),
+  gap: theme.spacing(4),
+  [theme.breakpoints.up("md")]: {
+    padding: !showMobileView ? theme.spacing(6, 12) : 0,
+    gap: theme.spacing(6),
+  },
+  [theme.breakpoints.up("lg")]: {
+    padding: !showMobileView ? theme.spacing(8, 20) : 0,
+    gap: theme.spacing(8),
+  },
   ...(showMobileView && {
     bottom: 0,
   }),
@@ -37,11 +45,10 @@ const LayoutBox = styled(Box, {
 })<{ showMobileView: boolean }>(({ theme, showMobileView }) => ({
   display: "flex",
   flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "center",
-  minHeight: "50dvh",
-  height: "100%",
-  maxHeight: showMobileView ? "75%" : undefined,
+  alignItems: "stretch",
+  justifyContent: "flex-start",
+  minHeight: "100%",
+  maxHeight: showMobileView ? "75%" : "100%",
   width: "100%",
   maxWidth: "90%",
   textAlign: "center",
@@ -58,6 +65,7 @@ const LayoutBox = styled(Box, {
     ? "0px 8px 24px rgba(0,0,0,0.06)"
     : "rgba(0, 0, 0, 0.1) 0px 4px 12px",
   zIndex: 2,
+  overflow: "hidden",
   ...applicationScrollbar(theme),
 }));
 

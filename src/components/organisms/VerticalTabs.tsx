@@ -27,12 +27,12 @@ export type VerticalTabsProps = {
 };
 
 const Root = styled(Box)(({ theme }) => ({
-  flexGrow: 1,
+  flex: 1,
   backgroundColor: theme.palette.surface.interface.base,
   backgroundImage: "unset",
   color: theme.palette.text.default,
   display: "flex",
-  height: "100%",
+  minHeight: 0,
   width: "100%",
   borderRadius: theme.spacing(2),
 }));
@@ -44,10 +44,14 @@ const LeftList = styled(List)(({ theme }) => ({
 }));
 
 const RightContainer = styled(Box)(({ theme }) => ({
+  flex: 1,
   width: "100%",
+  minHeight: 0,
   borderLeft: `1px solid ${theme.palette.border.seperator}`,
   position: "relative",
-  height: "100%",
+  display: "flex",
+  flexDirection: "column",
+  overflow: "hidden",
 }));
 
 type StyledListItemExtraProps = { $selected?: boolean } & ListItemButtonProps;

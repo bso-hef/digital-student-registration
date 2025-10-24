@@ -22,27 +22,23 @@ import AppleSwitch from "@/components/atoms/AppleSwitch";
 import { RootState } from "@/store/reducers";
 
 const StyledBox = styled(Box)(({ theme }) => ({
-  height: "100%",
   width: "100%",
   display: "flex",
   flexDirection: "row",
-  overflowY: "auto",
-  overflowX: "hidden",
   flex: 1,
+  minHeight: 0,
+  overflow: "auto",
   padding: theme.spacing(2),
-  gap: theme.spacing(2), // 16px Abstand zwischen den Spalten
+  gap: theme.spacing(2),
   ...applicationScrollbar(theme),
 }));
 
 const StyledHalfBox = styled(Box)(({ theme }) => ({
-  height: "100%",
   width: "50%",
   display: "flex",
   flexDirection: "column",
-  overflowY: "auto",
-  overflowX: "hidden",
   flex: 1,
-  gap: theme.spacing(2), // 16px vertikaler Abstand zwischen Boxen/Feldern
+  gap: theme.spacing(2),
   padding: theme.spacing(2),
 }));
 

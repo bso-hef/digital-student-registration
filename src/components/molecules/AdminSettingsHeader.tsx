@@ -14,7 +14,7 @@ const StyledHeader = styled(Box, {
   alignItems: "center",
   paddingLeft: 0,
   paddingRight: 0,
-  margin: isSubHeader ? theme.spacing(0, 0, 2, 0) : theme.spacing(0, 3, 3, 3),
+  margin: isSubHeader ? theme.spacing(0, 0, 2, 0) : theme.spacing(0),
   position: "relative",
   width: "100%",
 }));

@@ -23,7 +23,6 @@ import {
 import { AppDispatch } from "@/store/store";
 import { Student } from "@/types/db";
 import { filterStudents } from "@/utils/filter.utils";
-import { applicationScrollbar } from "@/utils/styling.utils";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import { Box, styled } from "@mui/material";
@@ -37,15 +36,13 @@ import { RootState } from "@/store/reducers";
 import { manageTableHeaders } from "./studentsTableConfig";
 
 const StyledBox = styled(Box)(({ theme }) => ({
-  height: "100%",
   width: "100%",
   display: "flex",
   flexDirection: "column",
-  overflowY: "auto",
-  overflowX: "hidden",
   flex: 1,
+  minHeight: 0,
+  overflow: "hidden",
   padding: theme.spacing(2),
-  ...applicationScrollbar(theme),
 }));
 
 const StudentClassSettingsTab = () => {

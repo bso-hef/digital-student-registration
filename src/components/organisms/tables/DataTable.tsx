@@ -21,20 +21,24 @@ import { useTranslation } from "react-i18next";
 import { EnhancedTableHead } from "./EnhancedTableHead";
 import { EnhancedTablePaginationRow } from "./Pagination";
 
-interface StyledTableContainerProps {
-  data?: Array<Record<string, unknown>>;
-}
-
-const StyledTableContainer = styled(TableContainer, {
-  shouldForwardProp: (prop) => prop !== "data",
-})<StyledTableContainerProps>(({ theme, data }) => ({
+const StyledTableWrapper = styled(Box)(() => ({
+  display: "flex",
+  flexDirection: "column",
   height: "100%",
+  width: "100%",
+  flex: 1,
+  minHeight: 0,
+  overflow: "hidden",
+}));
+
+const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
   width: "100%",
   display: "flex",
   alignItems: "flex-start",
   overflow: "auto",
   transitionDuration: ".3s",
-  flex: Array.isArray(data) && data.length > 0 ? 1 : "inherit",
+  flex: 1,
+  minHeight: 0,
   borderRadius: theme.spacing(0.5),
   color: theme.palette.text.default,
   ...applicationScrollbar(theme),
@@ -224,116 +228,132 @@ const DataTable: React.FC<DataTableProps> = ({
   const isSelected = (name: string | number) => selected.indexOf(name) !== -1;
 
   return (
-    <Fragment>
+    <StyledTableWrapper>
       {data?.length > 0 && (
-        <StyledTableContainer data={data}>
-          <StyledTable
-            size="small"
-            aria-labelledby="tableTitle"
-            aria-label="enhanced table"
-          >
-            <EnhancedTableHead
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              headers={headers}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={
-                data?.filter((i) => !(i as { disabled?: boolean }).disabled)
-                  ?.length
-              }
-              dataSelection={dataSelection}
-            />
+        <Fragment>
+          <StyledTableContainer>
+            <StyledTable
+              size="small"
+              aria-labelledby="tableTitle"
+              aria-label="enhanced table"
+            >
+              <EnhancedTableHead
+                numSelected={selected.length}
+                order={order}
+                orderBy={orderBy}
+                headers={headers}
+                onSelectAllClick={handleSelectAllClick}
+                onRequestSort={handleRequestSort}
+                rowCount={
+                  data?.filter((i) => !(i as { disabled?: boolean }).disabled)
+                    ?.length
+                }
+                dataSelection={dataSelection}
+              />
 
-            <TableBody>
-              {stableSort(data || [], getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row: Record<string, unknown>, index: number) => {
-                  const isItemSelected = isSelected(row.id as string | number);
-                  const labelId = `enhanced-table-checkbox-${index}`;
+              <TableBody>
+                {stableSort(data || [], getComparator(order, orderBy))
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row: Record<string, unknown>, index: number) => {
+                    const isItemSelected = isSelected(
+                      row.id as string | number,
+                    );
+                    const labelId = `enhanced-table-checkbox-${index}`;
 
-                  return (
-                    <StyledTableRow
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      selected={isItemSelected}
-                      tabIndex={-1}
-                      key={`${row.id}-${index}`}
-                    >
-                      {dataSelection && (
-                        <StyledTableCheckBoxCell
-                          component="td"
-                          id={labelId}
-                          scope="row"
-                          padding="checkbox"
-                          align="center"
-                          onClick={(event) =>
-                            !row?.disabled &&
-                            handleSelectClick(event, row.id as string | number)
-                          }
-                        >
-                          <Checkbox
-                            checked={
-                              selected.indexOf(row.id as string | number) !==
-                                -1 && !row?.disabled
+                    return (
+                      <StyledTableRow
+                        role="checkbox"
+                        aria-checked={isItemSelected}
+                        selected={isItemSelected}
+                        tabIndex={-1}
+                        key={`${row.id}-${index}`}
+                      >
+                        {dataSelection && (
+                          <StyledTableCheckBoxCell
+                            component="td"
+                            id={labelId}
+                            scope="row"
+                            padding="checkbox"
+                            align="center"
+                            onClick={(event) =>
+                              !row?.disabled &&
+                              handleSelectClick(
+                                event,
+                                row.id as string | number,
+                              )
                             }
-                            color="primary"
-                            disabled={Boolean(
-                              (row as { disabled?: boolean }).disabled,
-                            )}
-                            size="small"
-                          />
-                        </StyledTableCheckBoxCell>
-                      )}
+                          >
+                            <Checkbox
+                              checked={
+                                selected.indexOf(row.id as string | number) !==
+                                  -1 && !row?.disabled
+                              }
+                              color="primary"
+                              disabled={Boolean(
+                                (row as { disabled?: boolean }).disabled,
+                              )}
+                              size="small"
+                            />
+                          </StyledTableCheckBoxCell>
+                        )}
 
-                      {headers.map((header) => {
-                        if (
-                          header.id === "analytics" ||
-                          header.id === "actions" ||
-                          header.id === "callType" ||
-                          header.id === "recordings" ||
-                          header.id === "files"
-                        ) {
+                        {headers.map((header) => {
+                          if (
+                            header.id === "analytics" ||
+                            header.id === "actions" ||
+                            header.id === "callType" ||
+                            header.id === "recordings" ||
+                            header.id === "files"
+                          ) {
+                            return (
+                              <StyledTableCell
+                                key={`${row.id}-${header.id}`}
+                                width={row.width as string | number | undefined}
+                                align="center"
+                                onClick={() =>
+                                  onClickActionCell &&
+                                  onClickActionCell(row.id as string | number)
+                                }
+                              >
+                                <StyledBox key={`${row.id}-${header.id}-box`}>
+                                  {row[header.id] as React.ReactNode}
+                                </StyledBox>
+                              </StyledTableCell>
+                            );
+                          }
+
                           return (
                             <StyledTableCell
                               key={`${row.id}-${header.id}`}
-                              width={row.width as string | number | undefined}
-                              align="center"
+                              width={header.width}
+                              align={header.align}
                               onClick={() =>
-                                onClickActionCell &&
-                                onClickActionCell(row.id as string | number)
+                                header.clickable &&
+                                onClickRowItem(row.id as string | number)
                               }
                             >
-                              <StyledBox key={`${row.id}-${header.id}-box`}>
+                              <StyledBox>
                                 {row[header.id] as React.ReactNode}
                               </StyledBox>
                             </StyledTableCell>
                           );
-                        }
-
-                        return (
-                          <StyledTableCell
-                            key={`${row.id}-${header.id}`}
-                            width={header.width}
-                            align={header.align}
-                            onClick={() =>
-                              header.clickable &&
-                              onClickRowItem(row.id as string | number)
-                            }
-                          >
-                            <StyledBox>
-                              {row[header.id] as React.ReactNode}
-                            </StyledBox>
-                          </StyledTableCell>
-                        );
-                      })}
-                    </StyledTableRow>
-                  );
-                })}
-            </TableBody>
-          </StyledTable>
-        </StyledTableContainer>
+                        })}
+                      </StyledTableRow>
+                    );
+                  })}
+              </TableBody>
+            </StyledTable>
+          </StyledTableContainer>
+          {!loading && dataSelection && (
+            <EnhancedTablePaginationRow
+              data={data}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              handleChangePage={handleChangePage}
+              handleChangeRowsPerPage={handleChangeRowsPerPage}
+            />
+          )}
+        </Fragment>
       )}
 
       {data?.length < 1 && !loading && (
@@ -352,17 +372,7 @@ const DataTable: React.FC<DataTableProps> = ({
           </Box>
         </Box>
       )}
-
-      {data?.length > 0 && !loading && dataSelection && (
-        <EnhancedTablePaginationRow
-          data={data}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          handleChangePage={handleChangePage}
-          handleChangeRowsPerPage={handleChangeRowsPerPage}
-        />
-      )}
-    </Fragment>
+    </StyledTableWrapper>
   );
 };
 

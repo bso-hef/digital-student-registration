@@ -110,6 +110,7 @@ const AddStudentsToClassModal: React.FC<Props> = ({
                 placeholder={t("modals.addStudentsToClass.searchPlaceholder")}
                 variant="outlined"
                 size="small"
+                margin="normal"
               />
             )}
             renderTags={(value, getTagProps) =>

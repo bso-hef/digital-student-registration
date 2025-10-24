@@ -145,7 +145,10 @@ const classReducer = (state = initialState, action: AppAction): ClassState => {
         currentClass: isCurrentClass
           ? {
               ...state.currentClass,
-              data: { ...state.currentClass.data, ...updated } as ClassInterface,
+              data: {
+                ...state.currentClass.data,
+                ...updated,
+              } as ClassInterface,
             }
           : state.currentClass,
       };
