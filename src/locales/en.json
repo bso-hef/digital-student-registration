@@ -134,6 +134,14 @@
       "schoolYearFrom": "School Year From",
       "schoolYearTo": "School Year To",
       "yearOrderError": "Must be after 'from'"
+    },
+    "addStudentsToClass": {
+      "title": "Add Students to Class",
+      "subtitle": "Select students to add to this class",
+      "searchPlaceholder": "Search students...",
+      "noOptions": "No unassigned students available",
+      "addButton": "Add Students",
+      "selectedCount": "{{count}} student(s) selected"
     }
   },
   "actions": {
@@ -144,7 +152,11 @@
     "studentDeleteFailed": "Failed to delete students.",
     "classFetchFailed": "Failed to fetch classes.",
     "classAddSuccess": "Classes added successfully.",
-    "classAddFailed": "Failed to add Classes."
+    "classAddFailed": "Failed to add Classes.",
+    "studentsAddedToClass": "Students added to class successfully.",
+    "studentsAddToClassFailed": "Failed to add students to class.",
+    "studentsRemovedFromClass": "Students removed from class successfully.",
+    "studentsRemoveFromClassFailed": "Failed to remove students from class."
   },
   "table": {
     "No data found": "No Data to Show",
@@ -188,6 +200,8 @@
       "schoolYearTo": "School Year To",
       "isVocational": "Is Vocational",
       "requiresEmployerInfo": "Requires Employer Info",
+      "removeFromClass": "Remove from Class",
+      "removeFromClassConfirmation": "Are you sure you want to remove the selected student(s) from this class?",
       "classSettings": {
         "settings": "Class Settings",
         "general": "General",

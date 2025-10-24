@@ -83,14 +83,22 @@ export async function GET(request: NextRequest) {
       Math.max(1, Number(searchParams.get("limit") || 25)),
     );
     const skip = (page - 1) * limit;
+    const unassigned = searchParams.get("unassigned") === "true";
+
+    // Build filter query
+    const filter: Record<string, unknown> = {};
+    if (unassigned) {
+      filter.currentClass = null;
+      filter.active = true;
+    }
 
     const [students, total] = await Promise.all([
-      Student.find({})
+      Student.find(filter)
         .sort({ createdAt: -1, _id: -1 })
         .skip(skip)
         .limit(limit)
         .lean(),
-      Student.countDocuments({}),
+      Student.countDocuments(filter),
     ]);
 
     return NextResponse.json(

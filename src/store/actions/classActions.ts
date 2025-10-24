@@ -98,3 +98,60 @@ export const getClass =
       dispatch({ type: TYPES.GET_CLASS_FAILURE, payload: appError });
     }
   };
+
+export const getClassStudents =
+  (classId: string): AppThunk =>
+  async (dispatch) => {
+    dispatch({ type: TYPES.GET_CLASS_STUDENTS_REQUEST });
+    try {
+      const { data } = await classService.getStudentsInClass(classId);
+      dispatch({
+        type: TYPES.GET_CLASS_STUDENTS_SUCCESS,
+        payload: data.students,
+      });
+    } catch (error) {
+      errorNotification(i18n.t("actions.studentFetchFailed"));
+      const appError = await toAppError(error);
+      dispatch({ type: TYPES.GET_CLASS_STUDENTS_FAILURE, payload: appError });
+    }
+  };
+
+export const addStudentsToClass =
+  (classId: string, studentIds: string[]): AppThunk =>
+  async (dispatch) => {
+    dispatch({ type: TYPES.ADD_STUDENTS_TO_CLASS_REQUEST });
+    try {
+      await classService.addStudentsToClass(classId, studentIds);
+      dispatch({ type: TYPES.ADD_STUDENTS_TO_CLASS_SUCCESS });
+      successNotification(i18n.t("actions.studentsAddedToClass"));
+      // Refresh the students list after adding
+      dispatch(getClassStudents(classId));
+    } catch (error) {
+      errorNotification(i18n.t("actions.studentsAddToClassFailed"));
+      const appError = await toAppError(error);
+      dispatch({
+        type: TYPES.ADD_STUDENTS_TO_CLASS_FAILURE,
+        payload: appError,
+      });
+    }
+  };
+
+export const removeStudentsFromClass =
+  (classId: string, studentIds: string[]): AppThunk =>
+  async (dispatch) => {
+    dispatch({ type: TYPES.REMOVE_STUDENTS_FROM_CLASS_REQUEST });
+    try {
+      await classService.removeStudentsFromClass(classId, studentIds);
+      dispatch({ type: TYPES.REMOVE_STUDENTS_FROM_CLASS_SUCCESS });
+      successNotification(i18n.t("actions.studentsRemovedFromClass"));
+      // Refresh the students list after removing
+      dispatch(getClassStudents(classId));
+    } catch (error) {
+      errorNotification(i18n.t("actions.studentsRemoveFromClassFailed"));
+      const appError = await toAppError(error);
+      dispatch({
+        type: TYPES.REMOVE_STUDENTS_FROM_CLASS_FAILURE,
+        payload: appError,
+      });
+    }
+  };

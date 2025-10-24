@@ -134,6 +134,14 @@
       "schoolYearFrom": "Schuljahr von",
       "schoolYearTo": "Schuljahr bis",
       "yearOrderError": "Das Endjahr muss größer als das Startjahr sein"
+    },
+    "addStudentsToClass": {
+      "title": "Schüler zur Klasse hinzufügen",
+      "subtitle": "Wählen Sie Schüler aus, die zu dieser Klasse hinzugefügt werden sollen",
+      "searchPlaceholder": "Schüler suchen...",
+      "noOptions": "Keine nicht zugewiesenen Schüler verfügbar",
+      "addButton": "Schüler hinzufügen",
+      "selectedCount": "{{count}} Schüler ausgewählt"
     }
   },
   "actions": {
@@ -144,7 +152,11 @@
     "studentDeleteFailed": "Löschen der Schüler fehlgeschlagen.",
     "classFetchFailed": "Abrufen der Klassen fehlgeschlagen.",
     "classAddSuccess": "Klassen erfolgreich hinzugefügt.",
-    "classAddFailed": "Hinzufügen der Klassen fehlgeschlagen."
+    "classAddFailed": "Hinzufügen der Klassen fehlgeschlagen.",
+    "studentsAddedToClass": "Schüler erfolgreich zur Klasse hinzugefügt.",
+    "studentsAddToClassFailed": "Hinzufügen der Schüler zur Klasse fehlgeschlagen.",
+    "studentsRemovedFromClass": "Schüler erfolgreich aus der Klasse entfernt.",
+    "studentsRemoveFromClassFailed": "Entfernen der Schüler aus der Klasse fehlgeschlagen."
   },
   "table": {
     "No data found": "Keine Daten gefunden",
@@ -184,6 +196,12 @@
       "schoolYear": "Schuljahr",
       "grade": "Jahrgang",
       "class": "Klasse",
+      "schoolYearFrom": "Schuljahr von",
+      "schoolYearTo": "Schuljahr bis",
+      "isVocational": "Ist Berufsklasse",
+      "requiresEmployerInfo": "Benötigt Informationen zum Ausbildungsbetrieb",
+      "removeFromClass": "Aus Klasse entfernen",
+      "removeFromClassConfirmation": "Sind Sie sicher, dass Sie die ausgewählten Schüler aus dieser Klasse entfernen möchten?",
       "classSettings": {
         "settings": "Klasseneinstellungen",
         "general": "Allgemein",

@@ -38,11 +38,6 @@ const configureClassTabs = (t: TFunction) => {
       link: "students",
       component: null,
     },
-    {
-      label: t("settings.manageClass.classSettings.options"),
-      link: "settings",
-      component: null,
-    },
   ];
 
   return tabs;

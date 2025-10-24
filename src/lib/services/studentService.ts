@@ -21,6 +21,9 @@ const studentService = {
   getAll: () => {
     return http.get("/api/students");
   },
+  getUnassigned: () => {
+    return http.get("/api/students?unassigned=true");
+  },
   create: (students: CreateStudentInput[]) => {
     return http.post("/api/students", { students });
   },

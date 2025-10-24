@@ -75,7 +75,6 @@ const StudentSchema = new Schema(
     currentClass: {
       type: ObjectId,
       ref: SCHEMA.CLASS,
-      index: true,
       default: null,
     },
 
