@@ -113,8 +113,16 @@ const EnhancedTablePagination: React.FC<EnhancedTablePaginationProps> = ({
 }) => {
   const { t } = useTranslation();
 
+  const StyledTablePaginationAny =
+    StyledTablePagination as unknown as React.ComponentType<
+      React.ComponentProps<typeof TablePagination> & {
+        component?: React.ElementType;
+      }
+    >;
+
   return (
-    <StyledTablePagination
+    <StyledTablePaginationAny
+      component="div"
       rowsPerPageOptions={rowsPerPageOptions}
       count={count}
       rowsPerPage={rowsPerPage}

@@ -1,9 +1,9 @@
 "use client";
 
+import Logo from "@/components/atoms/Logo";
 import { applicationScrollbar } from "@/utils/styling.utils";
 import { Box, styled, useTheme } from "@mui/material";
 import { useDeviceTypeDetection } from "device-type-detection";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSelector } from "react-redux";
 
@@ -109,7 +109,7 @@ export default function StudentLayout({
           <DynamicPageStepper activeStep={currentStep} />
         ) : showMobileView ? (
           <StyledImageBox>
-            <Image src="/logo.svg" alt="logo" width={250} height={250} />
+            <Logo width={250} height={250} />
           </StyledImageBox>
         ) : null}
         <LayoutBox showMobileView={showMobileView}>{children}</LayoutBox>

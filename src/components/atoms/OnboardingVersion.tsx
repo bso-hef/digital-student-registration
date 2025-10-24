@@ -1,7 +1,8 @@
 import React from "react";
 
 import { Box, Typography, styled } from "@mui/material";
-import Image from "next/image";
+
+import Logo from "./Logo";
 
 const StyledWrapper = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -36,7 +37,7 @@ const OnboardingVersion = () => {
   return (
     <StyledWrapper>
       <StyledLabel>
-        <Image src="/logo.svg" alt="logo" width={200} height={75} />
+        <Logo width={200} height={75} />
       </StyledLabel>
       {process.env.NEXT_PUBLIC_NAME && process.env.NEXT_PUBLIC_VERSION ? (
         <StyledVersion variant="caption" display="block">
