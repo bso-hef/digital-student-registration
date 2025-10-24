@@ -142,11 +142,21 @@ const StudentManagementPage = () => {
 
   const getTableData = useCallback(() => {
     return filterStudents(searchString, students).map((student: Student) => {
+      const currentClass = (
+        student as Student & {
+          currentClass?: { name?: string } | string | null;
+        }
+      ).currentClass;
+      const className =
+        currentClass && typeof currentClass === "object"
+          ? (currentClass as { name: string }).name
+          : "-";
+
       return {
         id: student?._id,
         firstName: student?.firstName,
         lastName: student?.lastName,
-        class: student?.class,
+        class: className,
         status: <StudentStatus studentStatus={student?.status} />,
       };
     });

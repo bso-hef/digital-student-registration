@@ -153,6 +153,7 @@
     "classFetchFailed": "Failed to fetch classes.",
     "classAddSuccess": "Classes added successfully.",
     "classAddFailed": "Failed to add Classes.",
+    "classDeleteSuccess": "Classes deleted successfully.",
     "studentsAddedToClass": "Students added to class successfully.",
     "studentsAddToClassFailed": "Failed to add students to class.",
     "studentsRemovedFromClass": "Students removed from class successfully.",

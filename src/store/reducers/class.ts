@@ -106,12 +106,19 @@ const classReducer = (state = initialState, action: AppAction): ClassState => {
       };
     }
 
-    case TYPES.ADD_CLASS_SUCCESS:
+    case TYPES.ADD_CLASS_SUCCESS: {
+      const newClasses = action.payload;
+      const updatedById = { ...state.byId };
+      newClasses.forEach((c: ClassInterface) => {
+        updatedById[c._id] = c;
+      });
       return {
         ...state,
         loading: false,
-        classes: [...state.classes, action.payload],
+        classes: [...state.classes, ...newClasses],
+        byId: updatedById,
       };
+    }
 
     case TYPES.DELETE_CLASSES_SUCCESS:
       return {
@@ -122,8 +129,9 @@ const classReducer = (state = initialState, action: AppAction): ClassState => {
         ),
       };
 
-    case TYPES.UPDATE_CLASS_SUCCESS:
+    case TYPES.UPDATE_CLASS_SUCCESS: {
       const updated = action.payload;
+      const isCurrentClass = state.currentClass.data?._id === updated._id;
       return {
         ...state,
         loading: false,
@@ -134,7 +142,14 @@ const classReducer = (state = initialState, action: AppAction): ClassState => {
           ...state.byId,
           [updated._id]: { ...(state.byId[updated._id] || {}), ...updated },
         },
+        currentClass: isCurrentClass
+          ? {
+              ...state.currentClass,
+              data: { ...state.currentClass.data, ...updated } as ClassInterface,
+            }
+          : state.currentClass,
       };
+    }
 
     case TYPES.GET_CLASSES_FAILURE:
     case TYPES.ADD_CLASS_FAILURE:

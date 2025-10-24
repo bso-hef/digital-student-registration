@@ -94,6 +94,7 @@ export async function GET(request: NextRequest) {
 
     const [students, total] = await Promise.all([
       Student.find(filter)
+        .populate("currentClass", "name")
         .sort({ createdAt: -1, _id: -1 })
         .skip(skip)
         .limit(limit)

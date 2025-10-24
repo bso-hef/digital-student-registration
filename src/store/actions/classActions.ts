@@ -36,7 +36,7 @@ export const addClass =
     try {
       const { data } = await classService.create(classes);
 
-      dispatch({ type: TYPES.ADD_CLASS_SUCCESS, payload: data });
+      dispatch({ type: TYPES.ADD_CLASS_SUCCESS, payload: data.classes });
       successNotification(i18n.t("actions.classAddSuccess"));
     } catch (error) {
       errorNotification(i18n.t("actions.classAddFailed"));
@@ -52,6 +52,7 @@ export const deleteClasses =
     try {
       await classService.delete(ids);
       dispatch({ type: TYPES.DELETE_CLASSES_SUCCESS, payload: ids });
+      successNotification(i18n.t("actions.classDeleteSuccess"));
     } catch (error) {
       const appError = await toAppError(error);
       dispatch({ type: TYPES.DELETE_CLASSES_FAILURE, payload: appError });
@@ -126,6 +127,9 @@ export const addStudentsToClass =
       successNotification(i18n.t("actions.studentsAddedToClass"));
       // Refresh the students list after adding
       dispatch(getClassStudents(classId));
+      // Refresh global students to update class assignments
+      const { getStudents } = await import("./studentActions");
+      dispatch(getStudents());
     } catch (error) {
       errorNotification(i18n.t("actions.studentsAddToClassFailed"));
       const appError = await toAppError(error);
@@ -146,6 +150,9 @@ export const removeStudentsFromClass =
       successNotification(i18n.t("actions.studentsRemovedFromClass"));
       // Refresh the students list after removing
       dispatch(getClassStudents(classId));
+      // Refresh global students to update class assignments
+      const { getStudents } = await import("./studentActions");
+      dispatch(getStudents());
     } catch (error) {
       errorNotification(i18n.t("actions.studentsRemoveFromClassFailed"));
       const appError = await toAppError(error);

@@ -153,6 +153,7 @@
     "classFetchFailed": "Abrufen der Klassen fehlgeschlagen.",
     "classAddSuccess": "Klassen erfolgreich hinzugefügt.",
     "classAddFailed": "Hinzufügen der Klassen fehlgeschlagen.",
+    "classDeleteSuccess": "Klassen erfolgreich gelöscht.",
     "studentsAddedToClass": "Schüler erfolgreich zur Klasse hinzugefügt.",
     "studentsAddToClassFailed": "Hinzufügen der Schüler zur Klasse fehlgeschlagen.",
     "studentsRemovedFromClass": "Schüler erfolgreich aus der Klasse entfernt.",
