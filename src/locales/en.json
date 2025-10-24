@@ -37,7 +37,11 @@
   },
   "accessibility": {
     "Language Control": "Language Control",
-    "Theme Control": "Theme Control"
+    "Theme Control": "Theme Control",
+    "High Contrast Mode": "High Contrast Mode",
+    "High Contrast Description": "Increase color contrast for improved visibility",
+    "Dyslexia Font": "Dyslexia-Friendly Font",
+    "Dyslexia Font Description": "Use OpenDyslexic font designed for better readability"
   },
   "gender": {
     "male": "Male",

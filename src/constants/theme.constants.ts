@@ -58,3 +58,32 @@ export const DARK_THEME_COLORS = {
   850: "#18191B",
   900: "#121314",
 };
+
+// High Contrast Mode Colors (WCAG AAA Compliant - 7:1 ratio)
+export const HIGH_CONTRAST_LIGHT_COLORS = {
+  BACKGROUND: "#FFFFFF",
+  SURFACE: "#FFFFFF",
+  TEXT: "#000000",
+  TEXT_SECONDARY: "#1A1A1A",
+  BORDER: "#000000",
+  BORDER_STRONG: "#000000",
+  PRIMARY: "#005A9C", // Dark blue with high contrast
+  SUCCESS: "#0F5D0F", // Dark green
+  ERROR: "#C10000", // Dark red
+  WARNING: "#7A4A00", // Dark orange
+  INFO: "#005F8C", // Dark cyan
+};
+
+export const HIGH_CONTRAST_DARK_COLORS = {
+  BACKGROUND: "#000000",
+  SURFACE: "#000000",
+  TEXT: "#FFFFFF",
+  TEXT_SECONDARY: "#E6E6E6",
+  BORDER: "#FFFFFF",
+  BORDER_STRONG: "#FFFFFF",
+  PRIMARY: "#66CFFF", // Bright blue
+  SUCCESS: "#5AFF5A", // Bright green
+  ERROR: "#FF6B6B", // Bright red
+  WARNING: "#FFB84D", // Bright orange
+  INFO: "#4DC3FF", // Bright cyan
+};

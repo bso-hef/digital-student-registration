@@ -55,3 +55,31 @@ export const changeApplicationLocale =
       payload: locale,
     });
   };
+
+export const toggleHighContrast =
+  (highContrastState: boolean) =>
+  (
+    dispatch: (action: {
+      type: typeof TYPES.TOGGLE_HIGH_CONTRAST;
+      payload: boolean;
+    }) => void,
+  ) => {
+    dispatch({
+      type: TYPES.TOGGLE_HIGH_CONTRAST,
+      payload: highContrastState,
+    });
+  };
+
+export const toggleDyslexiaFont =
+  (dyslexiaFontState: boolean) =>
+  (
+    dispatch: (action: {
+      type: typeof TYPES.TOGGLE_DYSLEXIA_FONT;
+      payload: boolean;
+    }) => void,
+  ) => {
+    dispatch({
+      type: TYPES.TOGGLE_DYSLEXIA_FONT,
+      payload: dyslexiaFontState,
+    });
+  };

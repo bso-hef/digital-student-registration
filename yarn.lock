@@ -311,6 +311,11 @@
   resolved "https://registry.yarnpkg.com/@fontsource/inter/-/inter-5.2.6.tgz#2c705ea57d7af283a05bb1ca59fb0f06fc5de3be"
   integrity sha512-CZs9S1CrjD0jPwsNy9W6j0BhsmRSQrgwlTNkgQXTsAeDRM42LBRLo3eo9gCzfH4GvV7zpyf78Ozfl773826csw==
 
+"@fontsource/opendyslexic@^5.2.5":
+  version "5.2.5"
+  resolved "https://registry.yarnpkg.com/@fontsource/opendyslexic/-/opendyslexic-5.2.5.tgz#eaa9e5ba072dcac9ddc07242d4e0e5b0b7e74d31"
+  integrity sha512-NNS9aaPQx2TlaTvb3vTEjw3xz8lKj23mBc+6rM00mSNFDygdoll0/nLMHFtDKKrBT6sMfY6TFFPOR0D9ktdspg==
+
 "@humanfs/core@^0.19.1":
   version "0.19.1"
   resolved "https://registry.yarnpkg.com/@humanfs/core/-/core-0.19.1.tgz#17c55ca7d426733fe3c561906b8173c336b40a77"

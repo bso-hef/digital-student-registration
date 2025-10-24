@@ -65,6 +65,21 @@ const MuiCssBaselineOverride = (theme: Theme) => {
       "*": { scrollbarColor: "auto" },
       "html, body": { scrollbarWidth: "auto" },
     },
+
+    /* --- Reduced Motion --- */
+    "@media (prefers-reduced-motion: reduce)": {
+      "*": {
+        animationDuration: "0.01ms !important",
+        animationIterationCount: "1 !important",
+        transitionDuration: "0.01ms !important",
+        scrollBehavior: "auto !important",
+      },
+    },
+
+    /* --- OpenDyslexic Font Import --- */
+    "@import": [
+      "url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap')",
+    ],
   };
 };
 

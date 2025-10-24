@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+
 import { THEME } from "@/constants/general.constants";
 import { getCookie } from "@/utils/general.utils";
 import { StyledEngineProvider, ThemeProvider } from "@mui/material/styles";
@@ -15,6 +17,10 @@ export default function ThemeWrapper({
   children: React.ReactNode;
 }) {
   const currentTheme = useSelector((state: RootState) => state.ui.theme);
+  const { highContrast, dyslexiaFont } = useSelector((state: RootState) => ({
+    highContrast: state.ui.highContrast,
+    dyslexiaFont: state.ui.dyslexiaFont,
+  }));
 
   const localStorageTheme =
     typeof window !== "undefined" ? localStorage.getItem("theme") : null;
@@ -22,7 +28,16 @@ export default function ThemeWrapper({
   const cookieTheme = getCookie("theme");
 
   const mode = localStorageTheme ?? cookieTheme ?? currentTheme ?? THEME.LIGHT;
-  const theme = getTheme(mode);
+  const theme = getTheme(mode, { highContrast, dyslexiaFont });
+
+  // Load OpenDyslexic font when needed
+  useEffect(() => {
+    if (dyslexiaFont && typeof window !== "undefined") {
+      // Import the font dynamically
+      import("@fontsource/opendyslexic/400.css");
+      import("@fontsource/opendyslexic/700.css");
+    }
+  }, [dyslexiaFont]);
 
   return (
     <StyledEngineProvider injectFirst>

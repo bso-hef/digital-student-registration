@@ -37,7 +37,11 @@
   },
   "accessibility": {
     "Language Control": "Sprachsteuerung",
-    "Theme Control": "Themensteuerung"
+    "Theme Control": "Themensteuerung",
+    "High Contrast Mode": "Hochkontrastmodus",
+    "High Contrast Description": "Erhöhen Sie den Farbkontrast für bessere Sichtbarkeit",
+    "Dyslexia Font": "Legasthenie-freundliche Schriftart",
+    "Dyslexia Font Description": "Verwenden Sie die OpenDyslexic-Schriftart für bessere Lesbarkeit"
   },
   "gender": {
     "male": "Männlich",
