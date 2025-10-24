@@ -1,4 +1,4 @@
-import { LANGUAGES, THEME } from "@/constants/general.constants";
+import { LANGUAGES, THEME, ThemeMode } from "@/constants/general.constants";
 
 import * as TYPES from "../types";
 import { AppAction } from "./index";
@@ -6,7 +6,7 @@ import { AppAction } from "./index";
 export interface UIState {
   documnetDraggedOver: boolean;
   appTouched: boolean;
-  theme: string;
+  theme: ThemeMode;
   locale: string;
   loading: boolean;
   error: Error | null;

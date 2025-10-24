@@ -1,13 +1,15 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { THEME } from "@/constants/general.constants";
 import { getCookie } from "@/utils/general.utils";
+import { PaletteMode } from "@mui/material";
 import { StyledEngineProvider, ThemeProvider } from "@mui/material/styles";
-import { useSelector } from "react-redux";
+import { shallowEqual, useSelector } from "react-redux";
 
 import getTheme from "@/theme";
+import { resolveThemeMode, subscribeToThemeChanges } from "@/utils/theme.utils";
 
 import { RootState } from "@/store/reducers";
 
@@ -17,18 +19,48 @@ export default function ThemeWrapper({
   children: React.ReactNode;
 }) {
   const currentTheme = useSelector((state: RootState) => state.ui.theme);
-  const { highContrast, dyslexiaFont } = useSelector((state: RootState) => ({
-    highContrast: state.ui.highContrast,
-    dyslexiaFont: state.ui.dyslexiaFont,
-  }));
+  const { highContrast, dyslexiaFont } = useSelector(
+    (state: RootState) => ({
+      highContrast: state.ui.highContrast,
+      dyslexiaFont: state.ui.dyslexiaFont,
+    }),
+    shallowEqual,
+  );
 
   const localStorageTheme =
     typeof window !== "undefined" ? localStorage.getItem("theme") : null;
 
   const cookieTheme = getCookie("theme");
 
-  const mode = localStorageTheme ?? cookieTheme ?? currentTheme ?? THEME.LIGHT;
-  const theme = getTheme(mode, { highContrast, dyslexiaFont });
+  const userSelectedMode =
+    localStorageTheme ?? cookieTheme ?? currentTheme ?? THEME.LIGHT;
+
+  // Resolve the actual theme mode (converts "auto" to "light" or "dark")
+  const [resolvedMode, setResolvedMode] = useState<PaletteMode>(
+    () => resolveThemeMode(userSelectedMode) as PaletteMode,
+  );
+
+  // Subscribe to system theme changes when in auto mode
+  useEffect(() => {
+    // Update resolved mode when user selection changes
+    setResolvedMode(resolveThemeMode(userSelectedMode) as PaletteMode);
+
+    // Only subscribe if user selected auto mode
+    if (userSelectedMode !== THEME.AUTO) {
+      return; // No cleanup needed
+    }
+
+    // Subscribe to system theme changes
+    const unsubscribe = subscribeToThemeChanges((newTheme) => {
+      setResolvedMode(newTheme as PaletteMode);
+    });
+
+    // Cleanup subscription on unmount or when theme changes
+    return unsubscribe;
+  }, [userSelectedMode]);
+
+  // Get the theme with accessibility options
+  const theme = getTheme(resolvedMode, { highContrast, dyslexiaFont });
 
   // Load OpenDyslexic font when needed
   useEffect(() => {

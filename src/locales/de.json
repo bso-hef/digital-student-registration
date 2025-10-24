@@ -14,6 +14,9 @@
     "Language": "Sprache",
     "Light": "Hell",
     "Dark": "Dunkel",
+    "Light Theme": "Helles Theme",
+    "Dark Theme": "Dunkles Theme",
+    "System": "System",
     "Rows per page": "Zeilen pro Seite:",
     "Search": "Suche",
     "Imported": "Importiert",
@@ -40,8 +43,8 @@
     "Theme Control": "Themensteuerung",
     "High Contrast Mode": "Hochkontrastmodus",
     "High Contrast Description": "Erhöhen Sie den Farbkontrast für bessere Sichtbarkeit",
-    "Dyslexia Font": "Legasthenie-freundliche Schriftart",
-    "Dyslexia Font Description": "Verwenden Sie die OpenDyslexic-Schriftart für bessere Lesbarkeit"
+    "Dyslexia Font": "Legasthenie Schriftart",
+    "Dyslexia Font Description": "Verwenden Sie die OpenDyslexic für bessere Lesbarkeit"
   },
   "gender": {
     "male": "Männlich",

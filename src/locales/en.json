@@ -14,6 +14,9 @@
     "Language": "Language",
     "Light": "Light",
     "Dark": "Dark",
+    "Light Theme": "Light Theme",
+    "Dark Theme": "Dark Theme",
+    "System": "System",
     "Rows per page": "Rows per page:",
     "Search": "Search",
     "Imported": "Imported",
@@ -40,7 +43,7 @@
     "Theme Control": "Theme Control",
     "High Contrast Mode": "High Contrast Mode",
     "High Contrast Description": "Increase color contrast for improved visibility",
-    "Dyslexia Font": "Dyslexia-Friendly Font",
+    "Dyslexia Font": "Dyslexia Font",
     "Dyslexia Font Description": "Use OpenDyslexic font designed for better readability"
   },
   "gender": {

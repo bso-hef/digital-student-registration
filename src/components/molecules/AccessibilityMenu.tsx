@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useCallback, useState } from "react";
 
 import {
   toggleDyslexiaFont,
@@ -9,13 +9,13 @@ import AccessibilityRoundedIcon from "@mui/icons-material/AccessibilityRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import { Box, Drawer, Typography, styled } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
 
 import AppleSwitch from "../atoms/AppleSwitch";
 
 import SmallIconButton from "../atoms/buttons/SmallIconButton";
-import ThemeChangeButton from "../atoms/buttons/ThemeChangeButton";
 import LanguageDropdown from "../atoms/dropdowns/LanguageDropdown";
+import ThemeDropdown from "../atoms/dropdowns/ThemeDropdown";
 
 const StyledDrawer = styled(Drawer)(({ theme }) => ({
   backdropFilter: "blur(2px)",
@@ -36,7 +36,7 @@ const StyledButtonLabel = styled(Typography)(({ theme }) => ({
   lineHeight: "24px !important",
   fontWeight: 500,
   textTransform: "none",
-  color: theme.palette.text.information,
+  color: theme.palette.text.default,
   marginBottom: theme.spacing(1),
 }));
 
@@ -44,8 +44,15 @@ const StyledDescription = styled(Typography)(({ theme }) => ({
   fontSize: "14px !important",
   lineHeight: "18px !important",
   fontWeight: 400,
-  color: theme.palette.text.secondary,
+  color: theme.palette.text.information,
   marginBottom: theme.spacing(2),
+}));
+
+const StyledMenuBox = styled(Typography)(({ theme }) => ({
+  margin: theme.spacing(2, 0),
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing(3),
 }));
 
 const AccessibilityMenu = () => {
@@ -53,22 +60,36 @@ const AccessibilityMenu = () => {
   const dispatch: AppDispatch = useDispatch();
 
   const { highContrast, dyslexiaFont } = useSelector(
-    (state: RootState) => state.ui,
+    (state: RootState) => ({
+      highContrast: state.ui.highContrast,
+      dyslexiaFont: state.ui.dyslexiaFont,
+    }),
+    shallowEqual,
   );
 
   const [openMenu, setOpenMenu] = useState<boolean>(false);
 
-  const handleToggleMenu = () => {
+  const handleToggleMenu = useCallback(() => {
     setOpenMenu((prev) => !prev);
-  };
+  }, []);
 
-  const handleToggleHighContrast = () => {
-    dispatch(toggleHighContrast(!highContrast));
-  };
+  const handleToggleHighContrast = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>, checked?: boolean) => {
+      const value =
+        typeof checked === "boolean" ? checked : event.target.checked;
+      dispatch(toggleHighContrast(value));
+    },
+    [dispatch],
+  );
 
-  const handleToggleDyslexiaFont = () => {
-    dispatch(toggleDyslexiaFont(!dyslexiaFont));
-  };
+  const handleToggleDyslexiaFont = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>, checked?: boolean) => {
+      const value =
+        typeof checked === "boolean" ? checked : event.target.checked;
+      dispatch(toggleDyslexiaFont(value));
+    },
+    [dispatch],
+  );
 
   return (
     <Fragment>
@@ -93,24 +114,18 @@ const AccessibilityMenu = () => {
             placement="bottom"
             bigIcon
             aria-label={t("general.Close")}
+            noMargin
           />
         </Box>
-
-        <Box mt={2} display="flex" flexDirection="column" gap={3}>
+        <StyledMenuBox>
           {/* Language Control */}
           <Box>
-            <StyledButtonLabel>
-              {t("accessibility.Language Control")}
-            </StyledButtonLabel>
             <LanguageDropdown />
           </Box>
 
           {/* Theme Control */}
           <Box>
-            <StyledButtonLabel>
-              {t("accessibility.Theme Control")}
-            </StyledButtonLabel>
-            <ThemeChangeButton />
+            <ThemeDropdown />
           </Box>
 
           {/* High Contrast Mode */}
@@ -162,7 +177,7 @@ const AccessibilityMenu = () => {
               />
             </Box>
           </Box>
-        </Box>
+        </StyledMenuBox>
       </StyledDrawer>
     </Fragment>
   );

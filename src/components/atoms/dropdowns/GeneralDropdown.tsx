@@ -1,24 +1,34 @@
 import React from "react";
 
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
+import ExpandMoreRoundedIcon from "@mui/icons-material/ExpandMoreRounded";
 import {
+  Box,
   FormControl,
+  FormHelperText,
   InputLabel,
-  ListItemIcon,
-  ListItemText,
   MenuItem,
   Select,
   SelectChangeEvent,
-  useTheme,
+  Typography,
+  styled,
 } from "@mui/material";
-import { styled } from "@mui/material/styles";
 
 type Option = {
   label: string;
   value: string | number;
+  leftIcon?: React.ReactNode;
+  disabled?: boolean;
 };
 
 interface GeneralDropdownProps {
+  defaultValue?: string | number;
+  size?: "small" | "medium";
+  variant?: "outlined" | "filled" | "standard";
+  error?: boolean;
+  invisibleOutline?: boolean;
+  helperText?: string;
+  flagIcon?: boolean;
   label?: string;
   options: Option[];
   value: string | number;
@@ -28,115 +38,158 @@ interface GeneralDropdownProps {
   fullWidth?: boolean;
 }
 
-const StyledFormControl = styled(FormControl)(({ theme }) => ({
-  minWidth: 180,
-  borderRadius: theme.spacing(2),
-  "& .MuiInputLabel-root": {
-    fontSize: "0.9rem",
-    color: theme.palette.text.secondary,
+const StyledDropdown = styled(FormControl)(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing(0.5),
+}));
+
+const StyledLabel = styled(InputLabel, {
+  shouldForwardProp: (prop) => prop !== "disabled",
+})(({ theme, disabled }) => ({
+  fontSize: "16px !important",
+  lineHeight: "20px !important",
+  fontWeight: 400,
+  color: disabled ? theme.palette.text.disabled : theme.palette.text.default,
+}));
+
+const StyledLeftIcon = styled(Box, {
+  shouldForwardProp: (prop) => prop !== "flagIcon",
+})<{ flagIcon?: boolean }>(({ theme, flagIcon }) => ({
+  fontSize: flagIcon ? undefined : "24px",
+  height: flagIcon ? undefined : 28,
+  color: theme.palette.icon.disabled,
+  marginRight: theme.spacing(1),
+  "& svg": {
+    height: 24,
+    width: 24,
+    fontSize: "24px",
   },
-  "& .MuiSelect-outlined": {
-    borderRadius: theme.spacing(2),
-  },
-  "& .MuiList-root": {
-    padding: "0px",
-    borderRadius: theme.spacing(1),
+  "& path": {
+    fill: theme.palette.icon.disabled,
   },
 }));
 
-const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
-  fontSize: "18px !important",
-  fontFamily: "Inter",
-  fontWeight: 500,
-  lineHeight: "24px",
-  height: 50,
+const StyledMenuItemText = styled(Typography)(({ theme }) => ({
+  fontSize: "14px !important",
   color: theme.palette.text.default,
-  padding: theme.spacing(1.2, 2),
-  borderBottom: `1px solid ${theme.palette.border.seperator}`,
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  ":last-child": {
-    border: "none",
+  fontFamily: "Roboto, sans-serif",
+  fontStyle: "normal",
+  fontWeight: 400,
+  lineHeight: "24px !important",
+}));
+
+const StyledCheckIcon = styled(Box)(({ theme }) => ({
+  fontSize: "18px",
+  height: 22,
+  color: theme.palette.icon.primary,
+  marginLeft: theme.spacing(1),
+  "& svg": {
+    height: 18,
+    width: 18,
+    fontSize: "18px",
   },
-  "&:hover": {
-    backgroundColor: theme.palette.surface.button.hoverLight,
-  },
-  "&:active": {
-    backgroundColor: theme.palette.surface.button.focused,
+  "& path": {
+    fill: theme.palette.icon.primary,
   },
 }));
 
 const GeneralDropdown: React.FC<GeneralDropdownProps> = ({
-  label,
-  options,
   value,
+  defaultValue,
   onChange,
+  options = [],
+  label,
   placeholder,
   disabled = false,
-  fullWidth = false,
+  size = "medium",
+  variant = "outlined",
+  fullWidth = true,
+  error = false,
+  invisibleOutline = false,
+  helperText,
+  flagIcon = false,
 }) => {
-  const theme = useTheme();
-
   return (
-    <StyledFormControl
-      variant="outlined"
-      disabled={disabled}
-      fullWidth={fullWidth}
-    >
-      {label && <InputLabel>{label}</InputLabel>}
+    <StyledDropdown fullWidth>
+      <StyledLabel disabled={disabled}>{label}</StyledLabel>
       <Select
         value={value}
+        defaultValue={defaultValue}
         onChange={onChange}
-        label={label}
+        size={size}
+        disabled={disabled}
+        fullWidth={fullWidth}
         displayEmpty
+        error={error}
+        variant={variant}
+        label={label}
+        IconComponent={ExpandMoreRoundedIcon}
+        style={{ maxHeight: 24, height: 24 }}
         renderValue={(selected) => {
-          if (!selected && placeholder) {
-            return <em>{placeholder}</em>;
+          if (selected === "" || selected == null) {
+            return (
+              placeholder && (
+                <MenuItem value="" disabled>
+                  {placeholder}
+                </MenuItem>
+              )
+            );
           }
-          const option = options.find((o) => o.value === selected);
-          return option ? option.label : "";
+          const match = options.find((o) => o.value === selected);
+          if (!match) return "";
+          return (
+            <Box
+              sx={{ display: "flex", alignItems: "center", gap: 1, height: 24 }}
+            >
+              {match.leftIcon && (
+                <StyledLeftIcon>{match.leftIcon}</StyledLeftIcon>
+              )}
+              <StyledMenuItemText>{match.label}</StyledMenuItemText>
+            </Box>
+          );
         }}
-        MenuProps={{
-          PaperProps: {
-            sx: {
-              mt: 1,
-              padding: "0px !important",
-              borderRadius: "8px",
-              color: theme.palette.text.default,
-              border: `1px solid ${theme.palette.border.seperator}`,
-              backgroundColor: theme.palette.surface.interface.base,
-              boxShadow: theme.shadows[3],
-            },
-          },
-          MenuListProps: {
-            sx: {
-              padding: 0,
-            },
-          },
-        }}
+        sx={
+          invisibleOutline
+            ? {
+                "& fieldset": {
+                  border: "none",
+                },
+              }
+            : {}
+        }
       >
         {placeholder && (
-          <StyledMenuItem value="">
-            <em>{placeholder}</em>
-          </StyledMenuItem>
+          <MenuItem value="" disabled>
+            {placeholder}
+          </MenuItem>
         )}
-        {options.map((option) => (
-          <StyledMenuItem
-            key={option.value}
-            value={option.value}
-            color="text.default"
-          >
-            <ListItemText primary={option.label} color="text.default" />
-            {value === option.value && (
-              <ListItemIcon sx={{ minWidth: "28px", color: "icon.primary" }}>
-                <CheckRoundedIcon />
-              </ListItemIcon>
-            )}
-          </StyledMenuItem>
-        ))}
+        {options.map((opt) => {
+          const isSelected = value === opt.value;
+
+          return (
+            <MenuItem key={opt.value} disabled={opt.disabled} value={opt.value}>
+              {opt?.leftIcon && (
+                <StyledLeftIcon flagIcon={flagIcon}>
+                  {opt.leftIcon}
+                </StyledLeftIcon>
+              )}
+              <StyledMenuItemText>{opt.label}</StyledMenuItemText>
+              <Box flexGrow={1} />
+              {isSelected && (
+                <StyledCheckIcon>
+                  <CheckRoundedIcon />
+                </StyledCheckIcon>
+              )}
+            </MenuItem>
+          );
+        })}
       </Select>
-    </StyledFormControl>
+
+      {helperText && (
+        <FormHelperText error={error}>{helperText}</FormHelperText>
+      )}
+    </StyledDropdown>
   );
 };
 
