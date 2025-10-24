@@ -13,6 +13,7 @@ import { shallowEqual, useDispatch, useSelector } from "react-redux";
 
 import AppleSwitch from "../atoms/AppleSwitch";
 
+import OnboardingVersion from "../atoms/OnboardingVersion";
 import SmallIconButton from "../atoms/buttons/SmallIconButton";
 import LanguageDropdown from "../atoms/dropdowns/LanguageDropdown";
 import ThemeDropdown from "../atoms/dropdowns/ThemeDropdown";
@@ -48,7 +49,15 @@ const StyledDescription = styled(Typography)(({ theme }) => ({
   marginBottom: theme.spacing(2),
 }));
 
-const StyledMenuBox = styled(Typography)(({ theme }) => ({
+const StyledMenuBoxWrapper = styled(Box)(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "space-between",
+  height: "100%",
+  marginTop: theme.spacing(2),
+}));
+
+const StyledMenuBox = styled(Box)(({ theme }) => ({
   margin: theme.spacing(2, 0),
   display: "flex",
   flexDirection: "column",
@@ -117,67 +126,70 @@ const AccessibilityMenu = () => {
             noMargin
           />
         </Box>
-        <StyledMenuBox>
-          {/* Language Control */}
-          <Box>
-            <LanguageDropdown />
-          </Box>
-
-          {/* Theme Control */}
-          <Box>
-            <ThemeDropdown />
-          </Box>
-
-          {/* High Contrast Mode */}
-          <Box>
-            <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="space-between"
-            >
-              <Box flex={1}>
-                <StyledButtonLabel sx={{ mb: 0.5 }}>
-                  {t("accessibility.High Contrast Mode")}
-                </StyledButtonLabel>
-                <StyledDescription sx={{ mb: 0 }}>
-                  {t("accessibility.High Contrast Description")}
-                </StyledDescription>
-              </Box>
-              <AppleSwitch
-                checked={highContrast}
-                onChange={handleToggleHighContrast}
-                inputProps={{
-                  "aria-label": t("accessibility.High Contrast Mode"),
-                }}
-              />
+        <StyledMenuBoxWrapper>
+          <StyledMenuBox>
+            {/* Language Control */}
+            <Box>
+              <LanguageDropdown />
             </Box>
-          </Box>
 
-          {/* Dyslexia Font */}
-          <Box>
-            <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="space-between"
-            >
-              <Box flex={1}>
-                <StyledButtonLabel sx={{ mb: 0.5 }}>
-                  {t("accessibility.Dyslexia Font")}
-                </StyledButtonLabel>
-                <StyledDescription sx={{ mb: 0 }}>
-                  {t("accessibility.Dyslexia Font Description")}
-                </StyledDescription>
-              </Box>
-              <AppleSwitch
-                checked={dyslexiaFont}
-                onChange={handleToggleDyslexiaFont}
-                inputProps={{
-                  "aria-label": t("accessibility.Dyslexia Font"),
-                }}
-              />
+            {/* Theme Control */}
+            <Box>
+              <ThemeDropdown />
             </Box>
-          </Box>
-        </StyledMenuBox>
+
+            {/* High Contrast Mode */}
+            <Box>
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="space-between"
+              >
+                <Box flex={1}>
+                  <StyledButtonLabel sx={{ mb: 0.5 }}>
+                    {t("accessibility.High Contrast Mode")}
+                  </StyledButtonLabel>
+                  <StyledDescription sx={{ mb: 0 }}>
+                    {t("accessibility.High Contrast Description")}
+                  </StyledDescription>
+                </Box>
+                <AppleSwitch
+                  checked={highContrast}
+                  onChange={handleToggleHighContrast}
+                  inputProps={{
+                    "aria-label": t("accessibility.High Contrast Mode"),
+                  }}
+                />
+              </Box>
+            </Box>
+
+            {/* Dyslexia Font */}
+            <Box>
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="space-between"
+              >
+                <Box flex={1}>
+                  <StyledButtonLabel sx={{ mb: 0.5 }}>
+                    {t("accessibility.Dyslexia Font")}
+                  </StyledButtonLabel>
+                  <StyledDescription sx={{ mb: 0 }}>
+                    {t("accessibility.Dyslexia Font Description")}
+                  </StyledDescription>
+                </Box>
+                <AppleSwitch
+                  checked={dyslexiaFont}
+                  onChange={handleToggleDyslexiaFont}
+                  inputProps={{
+                    "aria-label": t("accessibility.Dyslexia Font"),
+                  }}
+                />
+              </Box>
+            </Box>
+          </StyledMenuBox>
+          <OnboardingVersion />
+        </StyledMenuBoxWrapper>
       </StyledDrawer>
     </Fragment>
   );

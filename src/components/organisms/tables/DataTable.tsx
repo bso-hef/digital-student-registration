@@ -3,7 +3,6 @@
 import React, { Fragment, memo, useCallback, useEffect, useState } from "react";
 
 import { CHECKBOX_COL_WIDTH } from "@/constants/ui.constants";
-import { applicationScrollbar } from "@/utils/styling.utils";
 import { getComparator, stableSort } from "@/utils/table.utils";
 import ReportGmailerrorredRoundedIcon from "@mui/icons-material/ReportGmailerrorredRounded";
 import {
@@ -33,15 +32,15 @@ const StyledTableWrapper = styled(Box)(() => ({
 
 const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
   width: "100%",
-  display: "flex",
-  alignItems: "flex-start",
-  overflow: "auto",
-  transitionDuration: ".3s",
-  flex: 1,
-  minHeight: 0,
   borderRadius: theme.spacing(0.5),
   color: theme.palette.text.default,
-  ...applicationScrollbar(theme),
+  flex: 1,
+  minHeight: 0,
+  transitionDuration: ".3s",
+  overflow: "hidden",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-start",
 }));
 
 const StyledTable = styled(Table)(({ theme }) => ({
@@ -50,6 +49,32 @@ const StyledTable = styled(Table)(({ theme }) => ({
   color: theme.palette.text.default,
   width: "100%",
   borderRadius: theme.spacing(0.5),
+  display: "flex",
+  flexDirection: "column",
+  flex: 1,
+  minHeight: 0,
+  "& thead": {
+    display: "block",
+    width: "100%",
+  },
+  "& tbody": {
+    display: "block",
+    width: "100%",
+    overflowY: "auto",
+    flex: 1,
+    minHeight: 0,
+    // Hide scrollbar for all browsers while keeping scroll functionality
+    scrollbarWidth: "none", // Firefox
+    msOverflowStyle: "none", // IE and Edge
+    "&::-webkit-scrollbar": {
+      display: "none", // Chrome, Safari, Opera
+    },
+  },
+  "& thead tr, & tbody tr": {
+    display: "table",
+    width: "100%",
+    tableLayout: "fixed",
+  },
 }));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
@@ -65,7 +90,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 const StyledTableCheckBoxCell = styled(TableCell)(({ theme }) => ({
   border: `1px solid ${theme.palette.border.seperator}`,
   padding: 0,
-  width: CHECKBOX_COL_WIDTH,
+  width: `${CHECKBOX_COL_WIDTH}px !important`,
   textAlign: "center",
   verticalAlign: "middle",
   height: 48,
@@ -344,6 +369,7 @@ const DataTable: React.FC<DataTableProps> = ({
               </TableBody>
             </StyledTable>
           </StyledTableContainer>
+
           {!loading && dataSelection && (
             <EnhancedTablePaginationRow
               data={data}

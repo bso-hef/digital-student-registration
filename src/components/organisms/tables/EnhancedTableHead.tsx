@@ -32,9 +32,6 @@ type EnhancedTableHeadProps = {
 };
 
 const StyledTableHead = styled(TableHead)(({ theme }) => ({
-  position: "sticky",
-  top: 0,
-  zIndex: 1,
   "& .MuiTableCell-head": {
     backgroundColor: theme.palette.background.default,
     color: theme.palette.text.default,
@@ -56,7 +53,7 @@ const StyledTableHead = styled(TableHead)(({ theme }) => ({
 const HeadCheckboxCell = styled(TableCell)(({ theme }) => ({
   border: `1px solid ${theme.palette.border.seperator}`,
   padding: theme.spacing(1.5),
-  width: 44,
+  width: "50px !important",
   textAlign: "center",
   "& .MuiCheckbox-root": { padding: 0 },
   "& .MuiSvgIcon-root": { fontSize: 18 },
