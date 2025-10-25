@@ -38,49 +38,37 @@ vi.mock("@/components/organisms/forms/WelcomeForm", () => ({
 }));
 
 vi.mock("@/components/organisms/forms/GeneralForm", () => ({
-  default: ({ data }: any) => (
-    <div data-testid="general-form">General Form</div>
-  ),
+  default: () => <div data-testid="general-form">General Form</div>,
 }));
 
 vi.mock("@/components/organisms/forms/OriginForm", () => ({
-  default: ({ data }: any) => <div data-testid="origin-form">Origin Form</div>,
+  default: () => <div data-testid="origin-form">Origin Form</div>,
 }));
 
 vi.mock("@/components/organisms/forms/AddressForm", () => ({
-  default: ({ data }: any) => (
-    <div data-testid="address-form">Address Form</div>
-  ),
+  default: () => <div data-testid="address-form">Address Form</div>,
 }));
 
 vi.mock("@/components/organisms/forms/ParentsForm", () => ({
-  default: ({ data }: any) => (
-    <div data-testid="parents-form">Parents Form</div>
-  ),
+  default: () => <div data-testid="parents-form">Parents Form</div>,
 }));
 
 vi.mock("@/components/organisms/forms/PreEducationForm", () => ({
-  default: ({ data }: any) => (
-    <div data-testid="pre-education-form">Pre-Education Form</div>
-  ),
+  default: () => <div data-testid="pre-education-form">Pre-Education Form</div>,
 }));
 
 vi.mock("@/components/organisms/forms/TrainingForm", () => ({
-  default: ({ data }: any) => (
-    <div data-testid="training-form">Training Form</div>
-  ),
+  default: () => <div data-testid="training-form">Training Form</div>,
 }));
 
 vi.mock("@/components/organisms/forms/CompanyContactForm", () => ({
-  default: ({ data }: any) => (
+  default: () => (
     <div data-testid="company-contact-form">Company Contact Form</div>
   ),
 }));
 
 vi.mock("@/components/organisms/forms/SummaryForm", () => ({
-  default: ({ data }: any) => (
-    <div data-testid="summary-form">Summary Form</div>
-  ),
+  default: () => <div data-testid="summary-form">Summary Form</div>,
 }));
 
 vi.mock("@/components/organisms/forms/FormCompletion", () => ({
@@ -89,7 +77,7 @@ vi.mock("@/components/organisms/forms/FormCompletion", () => ({
 
 // Mock CustomTitle
 vi.mock("@/components/atoms/CustomTitle", () => ({
-  default: ({ title, subTitle }: any) => (
+  default: ({ title, subTitle }: { title: string; subTitle?: string }) => (
     <div data-testid="custom-title">
       <div data-testid="title">{title}</div>
       <div data-testid="subtitle">{subTitle}</div>
@@ -99,7 +87,17 @@ vi.mock("@/components/atoms/CustomTitle", () => ({
 
 // Mock GeneralButton
 vi.mock("@/components/atoms/buttons/GeneralButton", () => ({
-  default: ({ label, onAction, startIcon, endIcon }: any) => (
+  default: ({
+    label,
+    onAction,
+    startIcon,
+    endIcon,
+  }: {
+    label: string;
+    onAction: () => void;
+    startIcon?: React.ReactNode;
+    endIcon?: React.ReactNode;
+  }) => (
     <button data-testid="general-button" onClick={onAction} data-label={label}>
       {startIcon && <span data-testid="start-icon">{startIcon}</span>}
       {label}
@@ -110,7 +108,7 @@ vi.mock("@/components/atoms/buttons/GeneralButton", () => ({
 
 // Mock getStudentSteps
 vi.mock("@/constants/studentSteps.constants", () => ({
-  getStudentSteps: (t: any) => [
+  getStudentSteps: () => [
     { label: "Welcome", step: 0 },
     { label: "General Information", step: 1 },
     { label: "Origin", step: 2 },
@@ -357,7 +355,7 @@ describe("StepForm", () => {
         },
       });
 
-      const { container } = renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm />, { store });
 
       expect(screen.queryByTestId("welcome-form")).not.toBeInTheDocument();
       expect(screen.queryByTestId("general-form")).not.toBeInTheDocument();
@@ -664,15 +662,8 @@ describe("StepForm", () => {
 
       expect(screen.getByTestId("general-form")).toBeInTheDocument();
 
-      const newStore = createMockStore({
-        student: {
-          currentStep: 2,
-          data: {},
-          students: [],
-          loading: false,
-          error: null,
-        },
-      });
+      // Store updated for step change
+      store.getState().student.currentStep = 2;
 
       rerender(<StepForm />);
 

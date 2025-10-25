@@ -73,7 +73,7 @@ describe("LanguageDropdown", () => {
 
   describe("Current Language Display", () => {
     it("should display current language from i18n", () => {
-      const { i18nInstance } = renderWithProviders(<LanguageDropdown />);
+      renderWithProviders(<LanguageDropdown />);
 
       // Default language in our mock is 'en'
       const combobox = screen.getByRole("combobox");
@@ -120,7 +120,7 @@ describe("LanguageDropdown", () => {
       const user = userEvent.setup();
       const changeLocaleSpy = vi.spyOn(uiActions, "changeApplicationLocale");
 
-      const { i18nInstance } = renderWithProviders(<LanguageDropdown />);
+      renderWithProviders(<LanguageDropdown />);
 
       const combobox = screen.getByRole("combobox");
       await user.click(combobox);

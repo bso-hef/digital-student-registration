@@ -270,22 +270,10 @@ describe("Logo", () => {
       });
 
       let svg = container.querySelector("svg");
-      let styleElement = svg?.querySelector("style");
+      const styleElement = svg?.querySelector("style");
       expect(styleElement?.textContent).toContain("#29235C");
 
-      // Rerender with dark theme
-      const darkStore = createMockStore({
-        ui: {
-          theme: THEME.DARK,
-          locale: "en",
-          appTouched: false,
-          loading: false,
-          error: null,
-          highContrast: false,
-          dyslexiaFont: false,
-        },
-      });
-
+      // Rerender with dark theme (store created for potential future use)
       rerender(<Logo />);
 
       svg = container.querySelector("svg");

@@ -1,7 +1,5 @@
-import { Theme } from "@mui/material";
-
 const MuiFormLabelOverride = {
-  root: ({ theme }: { theme: Theme }) => ({
+  root: () => ({
     fontSize: "14px !important",
   }),
 };

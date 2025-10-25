@@ -1,4 +1,3 @@
-import { NO_AVATAR_FOUND } from "@/constants/general.constants";
 import * as generalUtils from "@/utils/general.utils";
 import * as stringUtils from "@/utils/string.utils";
 import { screen, waitFor } from "@testing-library/react";
@@ -15,7 +14,23 @@ import ProfileAvatar from "./index";
 
 // Mock Next.js Image component
 vi.mock("next/image", () => ({
-  default: ({ src, alt, width, height, loading, onClick, ...props }: any) => (
+  default: ({
+    src,
+    alt,
+    width,
+    height,
+    loading,
+    onClick,
+    ...props
+  }: {
+    src: string;
+    alt: string;
+    width?: number;
+    height?: number;
+    loading?: "lazy" | "eager";
+    onClick?: () => void;
+    [key: string]: unknown;
+  }) => (
     // eslint-disable-next-line @next/next/no-img-element
     <img
       src={src}
@@ -64,7 +79,7 @@ class MockImage {
   }
 }
 
-global.Image = MockImage as any;
+global.Image = MockImage as unknown as typeof Image;
 
 describe("ProfileAvatar", () => {
   beforeEach(() => {

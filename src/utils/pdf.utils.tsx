@@ -32,7 +32,8 @@ export async function buildPdfForStudent(
   const pageH = doc.internal.pageSize.getHeight();
 
   const pad = 12;
-  const innerW = pageW - pad * 2;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _innerW = pageW - pad * 2; // Reserved for future use
   const innerH = pageH - pad * 2;
   const headerH = 10;
   const footerH = 8;

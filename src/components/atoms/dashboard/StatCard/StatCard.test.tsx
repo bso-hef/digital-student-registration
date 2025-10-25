@@ -92,13 +92,8 @@ describe("StatCard", () => {
 
   describe("Icon Prop", () => {
     it("should not render icon wrapper when no icon provided", () => {
-      const { container } = renderWithProviders(
-        <StatCard label="Test" value={1} />,
-      );
+      renderWithProviders(<StatCard label="Test" value={1} />);
 
-      const iconWrapper = container.querySelector(
-        ".MuiBox-root:not(.drag-handle)",
-      );
       // Should only have drag handle box, not icon wrapper
       expect(screen.queryByTestId("custom-icon")).not.toBeInTheDocument();
     });
@@ -116,7 +111,7 @@ describe("StatCard", () => {
     });
 
     it("should render icon wrapper with icon", () => {
-      const { container } = renderWithProviders(
+      renderWithProviders(
         <StatCard label="Test" value={1} icon={<span>📊</span>} />,
       );
 

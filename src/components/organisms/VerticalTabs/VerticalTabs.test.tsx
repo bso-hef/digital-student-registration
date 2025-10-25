@@ -112,9 +112,7 @@ describe("VerticalTabs", () => {
   describe("Tab Selection - Exact Match", () => {
     it("should highlight tab matching current pathname", () => {
       mockPathname = "/admin/settings/general";
-      const { container } = renderWithProviders(
-        <VerticalTabs tabs={mockTabs} />,
-      );
+      renderWithProviders(<VerticalTabs tabs={mockTabs} />);
 
       const generalTab = screen
         .getByText("General")
@@ -124,9 +122,7 @@ describe("VerticalTabs", () => {
 
     it("should highlight different tab when pathname changes", () => {
       mockPathname = "/admin/settings/security";
-      const { container } = renderWithProviders(
-        <VerticalTabs tabs={mockTabs} />,
-      );
+      renderWithProviders(<VerticalTabs tabs={mockTabs} />);
 
       const securityTab = screen
         .getByText("Security")
@@ -372,9 +368,7 @@ describe("VerticalTabs", () => {
     });
 
     it("should render empty right container when no children", () => {
-      const { container } = renderWithProviders(
-        <VerticalTabs tabs={mockTabs} />,
-      );
+      renderWithProviders(<VerticalTabs tabs={mockTabs} />);
 
       expect(screen.getByText("General")).toBeInTheDocument();
     });
@@ -400,7 +394,7 @@ describe("VerticalTabs", () => {
     });
 
     it("should have right content container", () => {
-      const { container } = renderWithProviders(
+      renderWithProviders(
         <VerticalTabs tabs={mockTabs}>
           <div data-testid="content">Content</div>
         </VerticalTabs>,
@@ -430,14 +424,16 @@ describe("VerticalTabs", () => {
 
   describe("Edge Cases", () => {
     it("should handle null pathname", () => {
-      mockPathname = null as any;
+      // @ts-expect-error Testing null behavior
+      mockPathname = null;
       renderWithProviders(<VerticalTabs tabs={mockTabs} />);
 
       expect(screen.getByText("General")).toBeInTheDocument();
     });
 
     it("should handle undefined pathname", () => {
-      mockPathname = undefined as any;
+      // @ts-expect-error Testing undefined behavior
+      mockPathname = undefined;
       renderWithProviders(<VerticalTabs tabs={mockTabs} />);
 
       expect(screen.getByText("General")).toBeInTheDocument();

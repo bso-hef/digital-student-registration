@@ -27,7 +27,15 @@ vi.mock("@/components/atoms/HeaderSearchInput", () => ({
 
 // Mock GeneralButton
 vi.mock("@/components/atoms/buttons/GeneralButton", () => ({
-  default: ({ onAction, disabled, label }: any) => (
+  default: ({
+    onAction,
+    disabled,
+    label,
+  }: {
+    onAction: () => void;
+    disabled?: boolean;
+    label: string;
+  }) => (
     <button data-testid="general-button" onClick={onAction} disabled={disabled}>
       {label}
     </button>

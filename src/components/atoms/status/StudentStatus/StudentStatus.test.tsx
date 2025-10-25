@@ -145,7 +145,8 @@ describe("StudentStatus", () => {
 
     it("should handle undefined status with default", () => {
       const { container } = renderWithProviders(
-        <StudentStatus studentStatus={undefined as any} />,
+        // @ts-expect-error Testing undefined behavior
+        <StudentStatus studentStatus={undefined} />,
       );
 
       const icon = container.querySelector(

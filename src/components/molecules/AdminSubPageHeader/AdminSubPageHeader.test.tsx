@@ -23,7 +23,15 @@ vi.mock("next/navigation", () => ({
 
 // Mock SmallIconButton
 vi.mock("@/components/atoms/buttons/SmallIconButton", () => ({
-  default: ({ icon, onAction, title }: any) => (
+  default: ({
+    icon,
+    onAction,
+    title,
+  }: {
+    icon: React.ReactNode;
+    onAction: () => void;
+    title?: string;
+  }) => (
     <button data-testid="small-icon-button" onClick={onAction} title={title}>
       {icon}
     </button>
@@ -32,7 +40,13 @@ vi.mock("@/components/atoms/buttons/SmallIconButton", () => ({
 
 // Mock GeneralSkeletonLoader
 vi.mock("@/components/atoms/GeneralSkeletonLoader", () => ({
-  GeneralSkeletonLoader: ({ width, height }: any) => (
+  GeneralSkeletonLoader: ({
+    width,
+    height,
+  }: {
+    width?: string | number;
+    height?: string | number;
+  }) => (
     <div data-testid="skeleton-loader" style={{ width, height }}>
       Loading...
     </div>
@@ -201,9 +215,7 @@ describe("AdminSubPageHeader", () => {
     });
 
     it("should render skeleton with correct dimensions", () => {
-      const { container } = renderWithProviders(
-        <AdminSubPageHeader title="Test" loading={true} />,
-      );
+      renderWithProviders(<AdminSubPageHeader title="Test" loading={true} />);
 
       const skeleton = screen.getByTestId("skeleton-loader");
       expect(skeleton).toHaveStyle({ width: "200px", height: "41px" });
@@ -306,9 +318,7 @@ describe("AdminSubPageHeader", () => {
     });
 
     it("should have uppercase title styling", () => {
-      const { container } = renderWithProviders(
-        <AdminSubPageHeader title="title" />,
-      );
+      renderWithProviders(<AdminSubPageHeader title="title" />);
 
       const title = screen.getByText("title");
       expect(title.className).toContain("MuiTypography");

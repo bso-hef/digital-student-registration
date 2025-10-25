@@ -27,7 +27,7 @@ global.window.open = mockOpen;
 
 // Mock child components
 vi.mock("@/components/atoms/ProfileAvatar", () => ({
-  default: ({ size }: any) => (
+  default: ({ size }: { size?: number }) => (
     <div data-testid="profile-avatar" data-size={size}>
       Avatar
     </div>
@@ -39,7 +39,17 @@ vi.mock("@/components/atoms/OnboardingVersion", () => ({
 }));
 
 vi.mock("@/components/atoms/GeneralInput", () => ({
-  default: ({ value, onChange, placeholder, showSearchStartIcon }: any) => (
+  default: ({
+    value,
+    onChange,
+    placeholder,
+    showSearchStartIcon,
+  }: {
+    value: string;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    placeholder?: string;
+    showSearchStartIcon?: boolean;
+  }) => (
     <input
       data-testid="general-input"
       value={value}
@@ -52,7 +62,7 @@ vi.mock("@/components/atoms/GeneralInput", () => ({
 
 // Mock routesConfig
 vi.mock("./routesConfig", () => ({
-  listOfRoutes: (t: any) => [
+  listOfRoutes: (t: (key: string) => string) => [
     {
       path: "/admin/dashboard",
       displayValue: t("navigation.dashboard"),
@@ -166,7 +176,7 @@ describe("LeftNavigation", () => {
     });
 
     it("should not render expand icon for flat route", () => {
-      const { container } = renderWithProviders(<LeftNavigation />);
+      renderWithProviders(<LeftNavigation />);
 
       // Dashboard route should not have expand/collapse icons
       const dashboardItem = screen
@@ -187,7 +197,7 @@ describe("LeftNavigation", () => {
     });
 
     it("should render expand icon for parent route", () => {
-      const { container } = renderWithProviders(<LeftNavigation />);
+      renderWithProviders(<LeftNavigation />);
 
       expect(screen.getByText("navigation.management")).toBeInTheDocument();
       // MUI ExpandMoreIcon or ExpandLessIcon should be present

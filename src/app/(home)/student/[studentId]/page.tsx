@@ -19,7 +19,9 @@ interface StudentIdProps {
 }
 
 const StudentId = ({ params }: StudentIdProps) => {
-  const { studentId } = params;
+  // studentId available for future use when needed
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { studentId: _studentId } = params;
 
   return (
     <Wrapper>

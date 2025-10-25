@@ -28,7 +28,15 @@ vi.mock("@/store/actions/uiActions", () => ({
 
 // Mock child components
 vi.mock("@/components/atoms/AppleSwitch", () => ({
-  default: ({ checked, onChange, inputProps }: any) => (
+  default: ({
+    checked,
+    onChange,
+    inputProps,
+  }: {
+    checked: boolean;
+    onChange: () => void;
+    inputProps?: { "aria-label"?: string };
+  }) => (
     <input
       type="checkbox"
       data-testid="apple-switch"
@@ -44,7 +52,15 @@ vi.mock("@/components/atoms/OnboardingVersion", () => ({
 }));
 
 vi.mock("@/components/atoms/buttons/SmallIconButton", () => ({
-  default: ({ icon, onAction, title }: any) => (
+  default: ({
+    icon,
+    onAction,
+    title,
+  }: {
+    icon: React.ReactNode;
+    onAction: () => void;
+    title?: string;
+  }) => (
     <button data-testid="small-icon-button" onClick={onAction} title={title}>
       {icon}
     </button>

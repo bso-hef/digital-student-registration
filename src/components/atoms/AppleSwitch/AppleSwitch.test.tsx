@@ -254,7 +254,6 @@ describe("AppleSwitch", () => {
       const switchRoot = container.querySelector(
         ".MuiSwitch-root",
       ) as HTMLElement;
-      const styles = window.getComputedStyle(switchRoot);
 
       expect(switchRoot).toBeInTheDocument();
       // Styled component sets width: 50px, height: 28px
@@ -379,27 +378,21 @@ describe("AppleSwitch", () => {
 
   describe("Color Prop", () => {
     it("should support default color", () => {
-      const { container } = renderWithProviders(
-        <AppleSwitch color="default" />,
-      );
+      renderWithProviders(<AppleSwitch color="default" />);
 
       const switchElement = screen.getByRole("checkbox");
       expect(switchElement).toBeInTheDocument();
     });
 
     it("should support primary color", () => {
-      const { container } = renderWithProviders(
-        <AppleSwitch color="primary" />,
-      );
+      renderWithProviders(<AppleSwitch color="primary" />);
 
       const switchElement = screen.getByRole("checkbox");
       expect(switchElement).toBeInTheDocument();
     });
 
     it("should support secondary color", () => {
-      const { container } = renderWithProviders(
-        <AppleSwitch color="secondary" />,
-      );
+      renderWithProviders(<AppleSwitch color="secondary" />);
 
       const switchElement = screen.getByRole("checkbox");
       expect(switchElement).toBeInTheDocument();
@@ -408,14 +401,14 @@ describe("AppleSwitch", () => {
 
   describe("Size Prop", () => {
     it("should support small size", () => {
-      const { container } = renderWithProviders(<AppleSwitch size="small" />);
+      renderWithProviders(<AppleSwitch size="small" />);
 
       const switchElement = screen.getByRole("checkbox");
       expect(switchElement).toBeInTheDocument();
     });
 
     it("should support medium size (default)", () => {
-      const { container } = renderWithProviders(<AppleSwitch size="medium" />);
+      renderWithProviders(<AppleSwitch size="medium" />);
 
       const switchElement = screen.getByRole("checkbox");
       expect(switchElement).toBeInTheDocument();

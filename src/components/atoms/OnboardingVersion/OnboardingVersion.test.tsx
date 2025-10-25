@@ -98,7 +98,7 @@ describe("OnboardingVersion", () => {
       process.env.NEXT_PUBLIC_NAME = "App";
       process.env.NEXT_PUBLIC_VERSION = "1.0.0";
 
-      const { container } = renderWithProviders(<OnboardingVersion />);
+      renderWithProviders(<OnboardingVersion />);
 
       const versionText = screen.getByText("App v1.0.0");
       expect(versionText).toHaveClass("MuiTypography-caption");

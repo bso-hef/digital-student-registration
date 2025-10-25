@@ -230,7 +230,7 @@ describe("HeaderSearchInput", () => {
     });
 
     it("should support error prop", () => {
-      const { container } = renderWithProviders(<HeaderSearchInput error />);
+      renderWithProviders(<HeaderSearchInput error />);
 
       const input = screen.getByRole("textbox");
       expect(input).toHaveAttribute("aria-invalid", "true");
@@ -460,7 +460,7 @@ describe("HeaderSearchInput", () => {
     });
 
     it("should merge inputProps with defaults", () => {
-      const { container } = renderWithProviders(
+      renderWithProviders(
         <HeaderSearchInput
           inputProps={{
             "data-testid": "custom-input",
@@ -490,7 +490,7 @@ describe("HeaderSearchInput", () => {
     });
 
     it("should allow end adornment via InputProps", () => {
-      const { container } = renderWithProviders(
+      renderWithProviders(
         <HeaderSearchInput
           InputProps={{
             endAdornment: <span data-testid="end-adornment">X</span>,
