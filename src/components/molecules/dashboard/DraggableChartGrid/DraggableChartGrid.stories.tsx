@@ -37,6 +37,15 @@ export const Default: Story = {
       status: "healthy",
       uptime: 99.9,
       lastCheck: "2025-01-26T10:00:00Z",
+      meta: {
+        uptimeSec: 86400,
+        version: "1.0.0",
+        system: {
+          cpus: 4,
+          memory: 16384,
+          platform: "linux",
+        },
+      },
       checks: {
         mongo: {
           status: "healthy",

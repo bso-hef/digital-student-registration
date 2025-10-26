@@ -101,3 +101,5 @@ export const AdminSubPageHeader: React.FC<AdminSubPageHeaderProps> = memo(
 );
 
 AdminSubPageHeader.displayName = "AdminSubPageHeader";
+
+export default AdminSubPageHeader;

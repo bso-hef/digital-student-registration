@@ -16,12 +16,20 @@ type Story = StoryObj<typeof VerticalTabs>;
 export const Default: Story = {
   args: {
     tabs: [
-      { label: "Tab 1", content: <div>Content 1</div> },
-      { label: "Tab 2", content: <div>Content 2</div> },
+      {
+        label: "Tab 1",
+        link: "/admin/tab1",
+        component: <div>Tab 1 Content</div>,
+      },
+      {
+        label: "Tab 2",
+        link: "/admin/tab2",
+        component: <div>Tab 2 Content</div>,
+      },
     ],
   },
   play: async ({ canvasElement }) => {
-    const tabs = canvasElement.querySelector(".MuiTabs-root");
+    const tabs = canvasElement.querySelector("ul");
     expect(tabs).toBeInTheDocument();
   },
 };

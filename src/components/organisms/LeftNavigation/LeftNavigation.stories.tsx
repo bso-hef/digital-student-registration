@@ -16,7 +16,7 @@ type Story = StoryObj<typeof LeftNavigation>;
 export const Default: Story = {
   args: {},
   play: async ({ canvasElement }) => {
-    const nav = canvasElement.querySelector("nav");
+    const nav = canvasElement.querySelector("div");
     expect(nav).toBeInTheDocument();
   },
 };

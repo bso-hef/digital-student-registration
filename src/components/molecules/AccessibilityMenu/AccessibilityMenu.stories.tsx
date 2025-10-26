@@ -17,7 +17,7 @@ export const Default: Story = {
   args: {},
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const button = canvas.getByRole("button");
-    expect(button).toBeInTheDocument();
+    const menu = canvas.getByLabelText("Accessibility");
+    expect(menu).toBeInTheDocument();
   },
 };
