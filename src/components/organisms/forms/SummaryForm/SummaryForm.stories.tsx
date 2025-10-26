@@ -14,6 +14,24 @@ export default meta;
 type Story = StoryObj<typeof SummaryForm>;
 
 export const Default: Story = {
+  args: {
+    data: {
+      changedData: "",
+      schuelerId: 12345,
+      datenschutz: true,
+      personenabbild: "ja",
+      teams: "ja",
+      unterricht: "ja",
+      schulordnung: true,
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const element = canvasElement.querySelector("div");
+    expect(element).toBeInTheDocument();
+  },
+};
+
+export const Empty: Story = {
   args: {},
   play: async ({ canvasElement }) => {
     const element = canvasElement.querySelector("div");

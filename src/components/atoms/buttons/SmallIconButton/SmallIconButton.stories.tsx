@@ -22,7 +22,7 @@ export const Default: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const button = canvas.getByRole("button");
-    expect(button).toBeInTheDocument();
+    const iconButton = canvas.getByLabelText("Home");
+    expect(iconButton).toBeInTheDocument();
   },
 };

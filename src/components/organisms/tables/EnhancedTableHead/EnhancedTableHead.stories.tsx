@@ -16,13 +16,17 @@ type Story = StoryObj<typeof EnhancedTableHead>;
 
 export const Default: Story = {
   args: {
-    headCells: [
-      { id: "name", label: "Name", numeric: false },
-      { id: "code", label: "Code", numeric: false },
+    headers: [
+      { id: "name", label: "Name", numeric: false, sortable: true },
+      { id: "code", label: "Code", numeric: false, sortable: true },
     ],
     order: "asc",
     orderBy: "name",
+    numSelected: 0,
+    rowCount: 2,
+    onSelectAllClick: () => {},
     onRequestSort: () => {},
+    dataSelection: true,
   },
   render: (args) => (
     <Table>

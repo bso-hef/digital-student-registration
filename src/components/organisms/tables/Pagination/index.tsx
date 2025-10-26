@@ -175,3 +175,5 @@ export const EnhancedTablePaginationRow = <T,>({
     </StyledPaginationRow>
   );
 };
+
+export default EnhancedTablePaginationRow;

@@ -60,7 +60,7 @@ Object.defineProperty(window, 'matchMedia', {
 /**
  * Mock IntersectionObserver
  */
-global.IntersectionObserver = class IntersectionObserver {
+globalThis.IntersectionObserver = class IntersectionObserver {
   constructor() {}
   disconnect() {}
   observe() {}
@@ -73,7 +73,7 @@ global.IntersectionObserver = class IntersectionObserver {
 /**
  * Mock ResizeObserver
  */
-global.ResizeObserver = class ResizeObserver {
+globalThis.ResizeObserver = class ResizeObserver {
   constructor() {}
   disconnect() {}
   observe() {}
@@ -150,7 +150,7 @@ Object.defineProperty(window, 'sessionStorage', {
 /**
  * Mock fetch (as a fallback in case MSW doesn't catch it)
  */
-global.fetch = vi.fn();
+globalThis.fetch = vi.fn();
 
 /**
  * Mock console methods to reduce noise in test output

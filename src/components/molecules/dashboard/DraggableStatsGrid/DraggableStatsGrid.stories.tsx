@@ -15,7 +15,21 @@ type Story = StoryObj<typeof DraggableStatsGrid>;
 
 export const Default: Story = {
   args: {
-    items: [],
+    stats: {
+      totalStudents: 156,
+      totalClasses: 12,
+      unassignedStudents: 8,
+      activeClasses: 10,
+    },
+    order: [
+      "totalStudents",
+      "totalClasses",
+      "unassignedStudents",
+      "activeClasses",
+    ],
+    onReorder: (newOrder: string[]) => {
+      console.log("Stats reordered:", newOrder);
+    },
   },
   play: async ({ canvasElement }) => {
     const grid = canvasElement.querySelector("div");

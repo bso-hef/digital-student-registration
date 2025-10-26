@@ -1,4 +1,10 @@
+// @ts-expect-error: no types available for @fontsource/inter
+import "@fontsource/inter";
+// @ts-expect-error: no types available for @fontsource/opendyslexic
+import "@fontsource/opendyslexic";
+
 import type { Preview } from "@storybook/nextjs-vite";
+import { withThemeFromJSXProvider } from "@storybook/addon-themes";
 import { Provider } from "react-redux";
 import { I18nextProvider } from "react-i18next";
 import { LocalizationProvider } from "@mui/x-date-pickers";
@@ -23,6 +29,12 @@ const mockStore = configureStore({
     }),
 });
 
+// Define theme options
+const lightTheme = getTheme("light", { highContrast: false, dyslexiaFont: false });
+const darkTheme = getTheme("dark", { highContrast: false, dyslexiaFont: false });
+const highContrastLight = getTheme("light", { highContrast: true, dyslexiaFont: false });
+const highContrastDark = getTheme("dark", { highContrast: true, dyslexiaFont: false });
+
 const preview: Preview = {
   parameters: {
     controls: {
@@ -33,10 +45,12 @@ const preview: Preview = {
     },
 
     a11y: {
-      // 'todo' - show a11y violations in the test UI only
-      // 'error' - fail CI on a11y violations
-      // 'off' - skip a11y checks entirely
       test: "todo",
+    },
+
+    // Configure backgrounds to sync with theme
+    backgrounds: {
+      disable: true, // Disable default Storybook backgrounds
     },
 
     // Add Next.js router mock
@@ -44,16 +58,111 @@ const preview: Preview = {
       appDirectory: true,
       navigation: {
         pathname: "/",
+        push: () => {},
+        replace: () => {},
+        back: () => {},
+        forward: () => {},
+        refresh: () => {},
+        prefetch: () => {},
       },
     },
   },
 
+  // Global types for custom toolbar controls
+  globalTypes: {
+    locale: {
+      description: "Internationalization locale",
+      toolbar: {
+        icon: "globe",
+        items: [
+          { value: "en", title: "English" },
+          { value: "de", title: "Deutsch" },
+        ],
+        title: "Language",
+        dynamicTitle: true,
+      },
+    },
+  },
+
+  // Initial global values
+  initialGlobals: {
+    locale: "en",
+    theme: "light",
+  },
+
   // Global decorators to wrap all stories
   decorators: [
-    (Story) =>
-      React.createElement(
+    // Language switcher decorator
+    (Story, context) => {
+      const locale = context.globals.locale || "en";
+
+      // Change i18n language when locale changes
+      React.useEffect(() => {
+        i18n.changeLanguage(locale);
+      }, [locale]);
+
+      return React.createElement(Story);
+    },
+
+    // Background color decorator - changes canvas background with theme
+    (Story, context) => {
+      const themeMode = context.globals.theme || "light";
+
+      // Select appropriate theme based on toolbar selection
+      let selectedTheme = lightTheme;
+      if (themeMode === "dark") {
+        selectedTheme = darkTheme;
+      } else if (themeMode === "high-contrast-light") {
+        selectedTheme = highContrastLight;
+      } else if (themeMode === "high-contrast-dark") {
+        selectedTheme = highContrastDark;
+      }
+
+      // Get background color from theme
+      const backgroundColor = selectedTheme.palette.background.default;
+      const textColor = selectedTheme.palette.text.primary;
+
+      // Apply background to Storybook canvas
+      React.useEffect(() => {
+        const docsRoot = document.querySelector('.docs-story');
+        const canvasRoot = document.querySelector('#storybook-root');
+
+        if (docsRoot) {
+          (docsRoot as HTMLElement).style.backgroundColor = backgroundColor;
+          (docsRoot as HTMLElement).style.color = textColor;
+        }
+
+        if (canvasRoot) {
+          (canvasRoot as HTMLElement).style.backgroundColor = backgroundColor;
+          (canvasRoot as HTMLElement).style.color = textColor;
+        }
+
+        // Also set body background for full coverage
+        document.body.style.backgroundColor = backgroundColor;
+        document.body.style.color = textColor;
+      }, [backgroundColor, textColor]);
+
+      return React.createElement(Story);
+    },
+
+    // Theme and providers decorator
+    (Story, context) => {
+      // Get theme from context
+      const themeMode = context.globals.theme || "light";
+
+      // Select appropriate theme based on toolbar selection
+      let selectedTheme = lightTheme;
+      if (themeMode === "dark") {
+        selectedTheme = darkTheme;
+      } else if (themeMode === "high-contrast-light") {
+        selectedTheme = highContrastLight;
+      } else if (themeMode === "high-contrast-dark") {
+        selectedTheme = highContrastDark;
+      }
+
+      return React.createElement(
         Provider,
-        { store: mockStore },
+        ({ store: mockStore } as React.ComponentProps<typeof Provider>),
         React.createElement(
           I18nextProvider,
           { i18n },
@@ -62,15 +171,30 @@ const preview: Preview = {
             { dateAdapter: AdapterDayjs },
             React.createElement(
               ThemeProvider,
-              { theme: getTheme("light", { highContrast: false, dyslexiaFont: false }) },
-              React.createElement(React.Fragment, null, [
+              { theme: selectedTheme },
+              React.createElement(
+                React.Fragment,
+                null,
                 React.createElement(CssBaseline, { key: "css-baseline" }),
-                React.createElement(Story, { key: "story" }),
-              ])
+                React.createElement(Story, { key: "story" })
+              )
             )
           )
         )
-      ),
+      );
+    },
+
+    // Theme addon decorator for toolbar
+    withThemeFromJSXProvider({
+      themes: {
+        light: lightTheme,
+        dark: darkTheme,
+        "high-contrast-light": highContrastLight,
+        "high-contrast-dark": highContrastDark,
+      },
+      defaultTheme: "light",
+      Provider: ThemeProvider,
+    }),
   ],
 };
 

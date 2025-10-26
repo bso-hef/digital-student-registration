@@ -16,10 +16,23 @@ type Story = StoryObj<typeof AddClassModal>;
 export const Default: Story = {
   args: {
     open: true,
-    onClose: () => {},
+    onClose: () => {
+      console.log("Modal closed");
+    },
+    onAddClass: (classes) => {
+      console.log("Classes added:", classes);
+    },
   },
   play: async ({ canvasElement }) => {
     const dialog = document.querySelector(".MuiDialog-root");
     expect(dialog).toBeInTheDocument();
+  },
+};
+
+export const Closed: Story = {
+  args: {
+    open: false,
+    onClose: () => {},
+    onAddClass: () => {},
   },
 };

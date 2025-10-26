@@ -15,9 +15,14 @@ type Story = StoryObj<typeof Pagination>;
 
 export const Default: Story = {
   args: {
-    page: 1,
-    totalPages: 10,
-    onPageChange: () => {},
+    data: Array.from({ length: 100 }, (_, i) => ({
+      id: i,
+      name: `Item ${i + 1}`,
+    })),
+    rowsPerPage: 10,
+    page: 0,
+    handleChangePage: () => {},
+    handleChangeRowsPerPage: () => {},
   },
   play: async ({ canvasElement }) => {
     const pagination = canvasElement.querySelector(".MuiPagination-root");

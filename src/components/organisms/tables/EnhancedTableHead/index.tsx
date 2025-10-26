@@ -173,3 +173,5 @@ export const EnhancedTableHead: React.FC<EnhancedTableHeadProps> = ({
     </StyledTableHead>
   );
 };
+
+export default EnhancedTableHead;

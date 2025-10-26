@@ -11,7 +11,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "analyze": "source-map-explorer 'build/static/js/*.js'",
+    "analyze": "source-map-explorer 'build/static/js/*.js/ts/*.ts'",
     "format": "prettier --write src/**/*.{ts,tsx,json,css,scss}",
     "test": "vitest",
     "test:unit": "vitest run --coverage",
