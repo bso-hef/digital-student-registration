@@ -175,3 +175,5 @@ downloads
 **/*-snapshots/*-diff.jpg
 **/*-snapshots/*-actual.jpeg
 **/*-snapshots/*-diff.jpeg
+*storybook.log
+storybook-static

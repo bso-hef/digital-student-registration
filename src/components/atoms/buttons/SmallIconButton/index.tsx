@@ -65,6 +65,13 @@ const IconButton = styled(Box, {
     borderRadius: rounded ? "50%" : theme.spacing(0.5),
     padding: noPadding ? 0 : "4px",
     marginRight: noMargin ? 0 : 8,
+    maxWidth: customIconSize
+      ? customIconSize
+      : hugeIcon
+        ? 48
+        : bigIcon
+          ? 40
+          : 32,
     backgroundColor: disabled
       ? "transparent"
       : fixedBackground
