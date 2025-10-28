@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useMemo } from "react";
 
-import { validateGeneralStudentData } from "@/lib/validate/student.validate";
-import { styled } from "@mui/material";
+import { useOnboardingSettings } from "@/hooks/useOnboardingSettings";
+import {
+  createValidateGeneralStudentData,
+  validateGeneralStudentData,
+} from "@/lib/validate/student.validate";
+import { MenuItem, styled } from "@mui/material";
 import { Field, Form, Formik } from "formik";
-import { TextField } from "formik-mui";
+import { Select, TextField } from "formik-mui";
 
 const StyledForm = styled(Form)(() => ({
   display: "flex",
@@ -34,6 +38,9 @@ interface GeneralFormProps {
 }
 
 const GeneralForm: React.FC<GeneralFormProps> = ({ data }) => {
+  const { genderOptions, getOptionValues, getEnabledOptions, loading } =
+    useOnboardingSettings();
+
   const initialValues: FormValues = {
     eintrittschule: data?.eintrittschule || "",
     klassenname: data?.klassenname || "",
@@ -49,10 +56,22 @@ const GeneralForm: React.FC<GeneralFormProps> = ({ data }) => {
     staatsangehoerigkeit2: data?.staatsangehoerigkeit2 || "",
   };
 
+  // Create dynamic validation schema with settings
+  const validationSchema = useMemo(() => {
+    if (genderOptions.length > 0) {
+      return createValidateGeneralStudentData(getOptionValues(genderOptions));
+    }
+    return validateGeneralStudentData;
+  }, [genderOptions, getOptionValues]);
+
+  if (loading) {
+    return <div>Loading settings...</div>;
+  }
+
   return (
     <Formik<FormValues>
       initialValues={initialValues}
-      validationSchema={validateGeneralStudentData}
+      validationSchema={validationSchema}
       onSubmit={(values) => {
         console.log("✅ Submitted values:", values);
       }}
@@ -66,6 +85,7 @@ const GeneralForm: React.FC<GeneralFormProps> = ({ data }) => {
             label="Vorname"
             variant="outlined"
             margin="normal"
+            fullWidth
             error={touched.vorname && Boolean(errors.vorname)}
             helperText={touched.vorname && errors.vorname}
           />
@@ -77,9 +97,28 @@ const GeneralForm: React.FC<GeneralFormProps> = ({ data }) => {
             label="Nachname"
             variant="outlined"
             margin="normal"
+            fullWidth
             error={touched.nachname && Boolean(errors.nachname)}
             helperText={touched.nachname && errors.nachname}
           />
+
+          {/* Geschlecht - Dynamic Dropdown */}
+          <Field
+            component={Select}
+            name="geschlecht"
+            label="Geschlecht"
+            variant="outlined"
+            margin="normal"
+            fullWidth
+            error={touched.geschlecht && Boolean(errors.geschlecht)}
+            helperText={touched.geschlecht && errors.geschlecht}
+          >
+            {getEnabledOptions(genderOptions).map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </Field>
 
           {/* Geburtsdatum */}
           <Field
@@ -90,6 +129,7 @@ const GeneralForm: React.FC<GeneralFormProps> = ({ data }) => {
             InputLabelProps={{ shrink: true }}
             variant="outlined"
             margin="normal"
+            fullWidth
             error={touched.geburtsdatum && Boolean(errors.geburtsdatum)}
             helperText={touched.geburtsdatum && errors.geburtsdatum}
           />

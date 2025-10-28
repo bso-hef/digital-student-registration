@@ -166,7 +166,13 @@
     "studentsRemovedFromClass": "Schüler erfolgreich aus der Klasse entfernt.",
     "studentsRemoveFromClassFailed": "Entfernen der Schüler aus der Klasse fehlgeschlagen.",
     "dashboardStatsFetchFailed": "Abrufen der Dashboard-Statistiken fehlgeschlagen.",
-    "dashboardHealthFetchFailed": "Abrufen des Systemstatus fehlgeschlagen."
+    "dashboardHealthFetchFailed": "Abrufen des Systemstatus fehlgeschlagen.",
+    "settingsFetchFailed": "Abrufen der Einstellungen fehlgeschlagen.",
+    "onboardingSettingsFetchFailed": "Abrufen der Onboarding-Einstellungen fehlgeschlagen.",
+    "settingsUpdateSuccess": "Einstellungen erfolgreich aktualisiert.",
+    "settingsUpdateFailed": "Aktualisierung der Einstellungen fehlgeschlagen.",
+    "onboardingSettingsUpdateSuccess": "Onboarding-Einstellungen erfolgreich aktualisiert.",
+    "onboardingSettingsUpdateFailed": "Aktualisierung der Onboarding-Einstellungen fehlgeschlagen."
   },
   "dashboard": {
     "title": "Dashboard",
@@ -215,6 +221,67 @@
     "No data found description": "Nachdem mindestens ein Benutzer hinzugefügt wurde, erscheint hier eine Liste."
   },
   "settings": {
+    "onboarding": {
+      "dropdownOptions": "Dropdown-Optionen",
+      "fieldConfiguration": "Feldkonfiguration",
+      "sections": {
+        "gender": {
+          "title": "Geschlechtsoptionen",
+          "subtitle": "Verfügbare Geschlechtsoptionen für die Schülerregistrierung"
+        },
+        "salutation": {
+          "title": "Anredeoptionen",
+          "subtitle": "Anredeoptionen für Kontaktpersonen und Unternehmenskontakte"
+        },
+        "religion": {
+          "title": "Religionsoptionen",
+          "subtitle": "Verfügbare Religionszugehörigkeiten"
+        },
+        "language": {
+          "title": "Sprachoptionen",
+          "subtitle": "Verfügbare Familiensprachoptionen"
+        },
+        "fieldConfig": {
+          "title": "Formularfeldeinstellungen",
+          "subtitle": "Steuern Sie, welche Felder erforderlich, sichtbar sind und benutzerdefinierte Werte zulassen"
+        }
+      },
+      "table": {
+        "field": "Feld",
+        "required": "Erforderlich",
+        "visible": "Sichtbar",
+        "allowCustom": "Benutzerdefiniert erlauben",
+        "requiredTooltip": "Feld muss von Schülern ausgefüllt werden",
+        "visibleTooltip": "Feld ist im Onboarding-Formular sichtbar",
+        "allowCustomTooltip": "Erlauben Sie Schülern, benutzerdefinierte Werte einzugeben, die nicht in der Dropdown-Liste enthalten sind"
+      },
+      "fields": {
+        "geschlecht": {
+          "label": "Geschlecht",
+          "description": "Geschlechtsauswahl des Schülers"
+        },
+        "religion": {
+          "label": "Religion",
+          "description": "Religionszugehörigkeit des Schülers"
+        },
+        "familiensprache": {
+          "label": "Familiensprache",
+          "description": "Hauptsprache, die zu Hause gesprochen wird"
+        }
+      },
+      "dropdownManager": {
+        "value": "Wert",
+        "label": "Bezeichnung",
+        "save": "Speichern",
+        "cancel": "Abbrechen",
+        "newValue": "Neuer Wert",
+        "newLabel": "Neue Bezeichnung",
+        "addOption": "Option hinzufügen",
+        "valuePlaceholder": "männlich",
+        "labelPlaceholder": "Männlich",
+        "valuePrefix": "Wert:"
+      }
+    },
     "csv": {
       "CSV data is empty": "CSV-Daten sind leer.",
       "CSV data should contain both headers and data rows": "CSV-Daten sollten sowohl Kopfzeilen als auch Datenzeilen enthalten.",

@@ -2,6 +2,7 @@ import React from "react";
 
 import HeaderSearchInput from "@/components/atoms/HeaderSearchInput";
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
+import SaveRoundedIcon from "@mui/icons-material/SaveRounded";
 import { Box, LinearProgress, Typography, styled } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
@@ -99,6 +100,7 @@ const AdminSettingsHeader: React.FC<AdminSettingsHeaderProps> = ({
             disabled={disabled}
             type="submit"
             label={t("general.Save")}
+            startIcon={<SaveRoundedIcon />}
           />
         )}
       </StyledToolBox>

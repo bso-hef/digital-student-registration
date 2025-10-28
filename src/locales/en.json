@@ -166,7 +166,13 @@
     "studentsRemovedFromClass": "Students removed from class successfully.",
     "studentsRemoveFromClassFailed": "Failed to remove students from class.",
     "dashboardStatsFetchFailed": "Failed to fetch dashboard statistics.",
-    "dashboardHealthFetchFailed": "Failed to fetch system health status."
+    "dashboardHealthFetchFailed": "Failed to fetch system health status.",
+    "settingsFetchFailed": "Failed to fetch settings.",
+    "onboardingSettingsFetchFailed": "Failed to fetch onboarding settings.",
+    "settingsUpdateSuccess": "Settings updated successfully.",
+    "settingsUpdateFailed": "Failed to update settings.",
+    "onboardingSettingsUpdateSuccess": "Onboarding settings updated successfully.",
+    "onboardingSettingsUpdateFailed": "Failed to update onboarding settings."
   },
   "dashboard": {
     "title": "Dashboard",
@@ -215,6 +221,67 @@
     "No data found description": "After member/members are added, a list will appear here in this section."
   },
   "settings": {
+    "onboarding": {
+      "dropdownOptions": "Dropdown Options",
+      "fieldConfiguration": "Field Configuration",
+      "sections": {
+        "gender": {
+          "title": "Gender Options",
+          "subtitle": "Available gender options for student registration"
+        },
+        "salutation": {
+          "title": "Salutation Options",
+          "subtitle": "Salutation options for contact persons and company contacts"
+        },
+        "religion": {
+          "title": "Religion Options",
+          "subtitle": "Available religious affiliations"
+        },
+        "language": {
+          "title": "Language Options",
+          "subtitle": "Available family language options"
+        },
+        "fieldConfig": {
+          "title": "Form Field Settings",
+          "subtitle": "Control which fields are required, visible, and allow custom values"
+        }
+      },
+      "table": {
+        "field": "Field",
+        "required": "Required",
+        "visible": "Visible",
+        "allowCustom": "Allow Custom",
+        "requiredTooltip": "Field must be filled out by students",
+        "visibleTooltip": "Field is visible in the onboarding form",
+        "allowCustomTooltip": "Allow students to enter custom values not in the dropdown"
+      },
+      "fields": {
+        "geschlecht": {
+          "label": "Gender (Geschlecht)",
+          "description": "Student's gender selection"
+        },
+        "religion": {
+          "label": "Religion",
+          "description": "Student's religious affiliation"
+        },
+        "familiensprache": {
+          "label": "Family Language (Familiensprache)",
+          "description": "Primary language spoken at home"
+        }
+      },
+      "dropdownManager": {
+        "value": "Value",
+        "label": "Label",
+        "save": "Save",
+        "cancel": "Cancel",
+        "newValue": "New Value",
+        "newLabel": "New Label",
+        "addOption": "Add Option",
+        "valuePlaceholder": "männlich",
+        "labelPlaceholder": "Männlich",
+        "valuePrefix": "Value:"
+      }
+    },
     "csv": {
       "CSV data is empty": "CSV data is empty.",
       "CSV data should contain both headers and data rows": "CSV data should contain both headers and data rows.",

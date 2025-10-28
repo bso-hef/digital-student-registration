@@ -164,7 +164,7 @@ const GeneralDropdown: React.FC<GeneralDropdownProps> = ({
             {placeholder}
           </MenuItem>
         )}
-        {options.map((opt) => {
+        {options?.map((opt) => {
           const isSelected = value === opt.value;
 
           return (

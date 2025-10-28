@@ -1,0 +1,116 @@
+import { dbConnect } from "@/lib/config/mongo";
+import Logger from "@/lib/server-logger";
+import { NextRequest, NextResponse } from "next/server";
+
+import AppSettings from "@/models/AppSettings";
+
+export const runtime = "nodejs";
+
+const logger = new Logger("API <<==>> Settings::Onboarding");
+
+/**
+ * PATCH /api/settings/onboarding
+ * Updates onboarding settings specifically
+ */
+export async function PATCH(request: NextRequest) {
+  try {
+    await dbConnect();
+
+    const body = await request.json();
+
+    if (!body || !body.onboarding || typeof body.onboarding !== "object") {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Invalid request body. Expected { onboarding: {...} }",
+        },
+        { status: 400 },
+      );
+    }
+
+    // Get or create settings document
+    let settings = await AppSettings.findOne();
+
+    if (!settings) {
+      logger.info(
+        "No settings found, creating new settings document with onboarding settings",
+      );
+      settings = new AppSettings({ onboarding: body.onboarding });
+    } else {
+      // Deep merge onboarding settings
+      if (!settings.onboarding) {
+        settings.onboarding = body.onboarding;
+      } else {
+        // Update individual onboarding properties
+        Object.keys(body.onboarding).forEach((key) => {
+          if (settings.onboarding) {
+            (settings.onboarding as Record<string, unknown>)[key] =
+              body.onboarding[key];
+          }
+        });
+      }
+
+      settings.markModified("onboarding");
+    }
+
+    await settings.save();
+
+    logger.info("Onboarding settings updated successfully");
+
+    return NextResponse.json(
+      {
+        success: true,
+        data: settings.toObject(),
+      },
+      { status: 200 },
+    );
+  } catch (error) {
+    logger.error("Failed to update onboarding settings", error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Failed to update onboarding settings",
+        details: error instanceof Error ? error.message : String(error),
+      },
+      { status: 500 },
+    );
+  }
+}
+
+/**
+ * GET /api/settings/onboarding
+ * Fetches only the onboarding settings
+ */
+export async function GET() {
+  try {
+    await dbConnect();
+
+    let settings = await AppSettings.findOne().lean();
+
+    if (!settings) {
+      logger.info("No settings found, returning default onboarding settings");
+      const defaultSettings = new AppSettings({});
+      settings = await defaultSettings.save();
+    }
+
+    logger.info("Onboarding settings fetched successfully");
+
+    return NextResponse.json(
+      {
+        success: true,
+        data: settings, // Return full AppSettings object
+      },
+      { status: 200 },
+    );
+  } catch (error) {
+    logger.error("Failed to fetch onboarding settings", error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Failed to fetch onboarding settings",
+        details: error instanceof Error ? error.message : String(error),
+      },
+      { status: 500 },
+    );
+  }
+}

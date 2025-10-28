@@ -16,6 +16,7 @@ import {
 } from "@/store/actions/dashboardActions";
 import { AppDispatch, RootState } from "@/store/store";
 import { DashboardLayout } from "@/types/dashboard";
+import { applicationScrollbar } from "@/utils/styling.utils";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import { Box, CircularProgress, styled } from "@mui/material";
@@ -30,14 +31,18 @@ const Wrapper = styled(Box)(({ theme }) => ({
   width: "100%",
   height: "100%",
   color: theme.palette.text.default,
-  overflow: "auto",
 }));
 
 const ContentWrapper = styled(Box)(({ theme }) => ({
+  width: "100%",
+  maxWidth: "100%",
+  margin: "0 auto",
+  overflow: "hidden",
+  overflowY: "auto",
   padding: theme.spacing(3),
-  [theme.breakpoints.down("md")]: {
-    padding: theme.spacing(2),
-  },
+  flex: 1,
+  minHeight: 0,
+  ...applicationScrollbar(theme),
 }));
 
 const LoadingContainer = styled(Box)({

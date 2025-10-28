@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useMemo } from "react";
 
-import { validateStudentOriginData } from "@/lib/validate/student.validate";
-import { styled } from "@mui/material";
+import { useOnboardingSettings } from "@/hooks/useOnboardingSettings";
+import {
+  createValidateStudentOriginData,
+  validateStudentOriginData,
+} from "@/lib/validate/student.validate";
+import { MenuItem, styled } from "@mui/material";
 import { Field, Form, Formik } from "formik";
-import { TextField } from "formik-mui";
+import { Select, TextField } from "formik-mui";
 
 const StyledForm = styled(Form)(() => ({
   display: "flex",
@@ -25,16 +29,43 @@ interface OriginFormProps {
 }
 
 const OriginForm: React.FC<OriginFormProps> = ({ data }) => {
+  const {
+    languageOptions,
+    fieldConfigs,
+    getOptionValues,
+    getEnabledOptions,
+    loading,
+  } = useOnboardingSettings();
+
   const initialValues: FormValues = {
     herkunftsland: data?.herkunftsland || "",
     zuzugjahr: data?.zuzugjahr || 0,
     familiensprache: data?.familiensprache || "",
   };
 
+  // Create dynamic validation schema with settings
+  const validationSchema = useMemo(() => {
+    if (languageOptions.length > 0) {
+      const allowCustom = fieldConfigs?.familiensprache?.allowCustom ?? true;
+      return createValidateStudentOriginData(
+        getOptionValues(languageOptions),
+        allowCustom,
+      );
+    }
+    return validateStudentOriginData;
+  }, [languageOptions, fieldConfigs, getOptionValues]);
+
+  if (loading) {
+    return <div>Loading settings...</div>;
+  }
+
+  const allowCustomLanguage =
+    fieldConfigs?.familiensprache?.allowCustom ?? true;
+
   return (
     <Formik<FormValues>
       initialValues={initialValues}
-      validationSchema={validateStudentOriginData}
+      validationSchema={validationSchema}
       onSubmit={(values) => {
         console.log("✅ Submitted values:", values);
       }}
@@ -48,6 +79,7 @@ const OriginForm: React.FC<OriginFormProps> = ({ data }) => {
             label="Herkunftsland"
             variant="outlined"
             margin="normal"
+            fullWidth
             error={touched.herkunftsland && Boolean(errors.herkunftsland)}
             helperText={touched.herkunftsland && errors.herkunftsland}
           />
@@ -60,20 +92,40 @@ const OriginForm: React.FC<OriginFormProps> = ({ data }) => {
             type="number"
             variant="outlined"
             margin="normal"
+            fullWidth
             error={touched.zuzugjahr && Boolean(errors.zuzugjahr)}
             helperText={touched.zuzugjahr && errors.zuzugjahr}
           />
 
-          {/* Familiensprache */}
-          <Field
-            component={TextField}
-            name="familiensprache"
-            label="Familiensprache"
-            variant="outlined"
-            margin="normal"
-            error={touched.familiensprache && Boolean(errors.familiensprache)}
-            helperText={touched.familiensprache && errors.familiensprache}
-          />
+          {/* Familiensprache - Dynamic Dropdown or Text Field */}
+          {allowCustomLanguage ? (
+            <Field
+              component={TextField}
+              name="familiensprache"
+              label="Familiensprache"
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              error={touched.familiensprache && Boolean(errors.familiensprache)}
+              helperText={touched.familiensprache && errors.familiensprache}
+            />
+          ) : (
+            <Field
+              component={Select}
+              name="familiensprache"
+              label="Familiensprache"
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              error={touched.familiensprache && Boolean(errors.familiensprache)}
+            >
+              {getEnabledOptions(languageOptions).map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </Field>
+          )}
         </StyledForm>
       )}
     </Formik>

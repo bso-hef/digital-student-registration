@@ -1,5 +1,32 @@
 import * as Yup from "yup";
 
+// Dynamic validation schema builders
+export const createGenderValidation = (
+  allowedValues: string[],
+  required = true,
+) => {
+  const schema = Yup.string().oneOf(allowedValues, "Ungültiges Geschlecht");
+  return required
+    ? schema.required("Geschlecht ist erforderlich")
+    : schema.nullable();
+};
+
+export const createReligionValidation = (
+  allowedValues: string[],
+  required = false,
+  allowCustom = true,
+) => {
+  if (allowCustom) {
+    return required
+      ? Yup.string().required("Religion ist erforderlich")
+      : Yup.string().nullable();
+  }
+  const schema = Yup.string().oneOf(allowedValues, "Ungültige Religion");
+  return required
+    ? schema.required("Religion ist erforderlich")
+    : schema.nullable();
+};
+
 // Step 1: Allgemeine Daten
 export const validateGeneralStudentData = Yup.object({
   eintrittschule: Yup.string().required("Eintrittsschule ist erforderlich"),
@@ -22,6 +49,27 @@ export const validateGeneralStudentData = Yup.object({
   staatsangehoerigkeit2: Yup.string().nullable(),
 });
 
+// Dynamic version of general student data validation
+export const createValidateGeneralStudentData = (genderOptions: string[]) =>
+  Yup.object({
+    eintrittschule: Yup.string().required("Eintrittsschule ist erforderlich"),
+    klassenname: Yup.string().required("Klassenname ist erforderlich"),
+    vorname: Yup.string().required("Vorname ist erforderlich"),
+    nachname: Yup.string().required("Nachname ist erforderlich"),
+    geburtsname: Yup.string().nullable(),
+    geschlecht: createGenderValidation(genderOptions, true),
+    geburtsdatum: Yup.date()
+      .typeError("Ungültiges Datum")
+      .required("Geburtsdatum ist erforderlich"),
+    geburtsland: Yup.string().required("Geburtsland ist erforderlich"),
+    geburtsort: Yup.string().required("Geburtsort ist erforderlich"),
+    religion: Yup.string().nullable(),
+    staatsangehoerigkeit1: Yup.string().required(
+      "Staatsangehörigkeit ist erforderlich",
+    ),
+    staatsangehoerigkeit2: Yup.string().nullable(),
+  });
+
 // Step 2: Herkunft (Optional)
 export const validateStudentOriginData = Yup.object({
   herkunftsland: Yup.string().required("Herkunftsland ist erforderlich"),
@@ -36,6 +84,32 @@ export const validateStudentOriginData = Yup.object({
     .required("Zuzugsjahr ist erforderlich"),
   familiensprache: Yup.string().required("Familiensprache ist erforderlich"),
 });
+
+// Dynamic version with language options
+export const createValidateStudentOriginData = (
+  languageOptions: string[],
+  allowCustom = true,
+) => {
+  const familienspracheValidation = allowCustom
+    ? Yup.string().required("Familiensprache ist erforderlich")
+    : Yup.string()
+        .oneOf(languageOptions, "Ungültige Sprache")
+        .required("Familiensprache ist erforderlich");
+
+  return Yup.object({
+    herkunftsland: Yup.string().required("Herkunftsland ist erforderlich"),
+    zuzugjahr: Yup.number()
+      .typeError("Zuzugsjahr muss eine Zahl sein")
+      .integer("Zuzugsjahr muss eine ganze Zahl sein")
+      .min(1900, "Ungültiges Jahr")
+      .max(
+        new Date().getFullYear(),
+        "Zuzugsjahr darf nicht in der Zukunft liegen",
+      )
+      .required("Zuzugsjahr ist erforderlich"),
+    familiensprache: familienspracheValidation,
+  });
+};
 
 // Step 3: Adresse
 export const validateStudentAddressData = Yup.object({
@@ -95,6 +169,31 @@ export const validateStudentPreviousSchoolData = Yup.object({
   abschluesse: Yup.string().nullable(),
 });
 
+// Dynamic version with school options
+export const createValidateStudentPreviousSchoolData = (
+  schoolLevelOptions: string[],
+  schoolTypeOptions: string[],
+  degreeOptions: string[],
+  allowCustomDegree = true,
+) => {
+  const abschluesseValidation = allowCustomDegree
+    ? Yup.string().nullable()
+    : Yup.string().oneOf(degreeOptions, "Ungültiger Abschluss").nullable();
+
+  return Yup.object({
+    vorhergehendeSchule: Yup.string().required(
+      "Vorhergehende Schule ist erforderlich",
+    ),
+    vorhergehendeStufe: Yup.string()
+      .oneOf(schoolLevelOptions, "Ungültige Stufe")
+      .required("Vorhergehende Stufe ist erforderlich"),
+    vorhergehendeSchulform: Yup.string()
+      .oneOf(schoolTypeOptions, "Ungültige Schulform")
+      .required("Vorhergehende Schulform ist erforderlich"),
+    abschluesse: abschluesseValidation,
+  });
+};
+
 // Step 6: Betrieb (Optional - Wenn admin klasse erstellt, dann checkbox ob Betrieb vorhanden oder nötig)
 // Falls Betriebsangabe pflichtig ist, aber keiner existiert dann optional checkbox "Kein Betrieb vorhanden"
 export const validateStudentCompanyData = Yup.object({
@@ -127,6 +226,49 @@ export const validateStudentCompanyData = Yup.object({
     .matches(/^\+?[0-9 ]{6,20}$/, "Ungültige Telefonnummer")
     .required("Telefonnummer ist erforderlich"),
 });
+
+// Dynamic version with profession and salutation options
+export const createValidateStudentCompanyData = (
+  professionOptions: string[],
+  salutationOptions: string[],
+  allowCustomProfession = true,
+) => {
+  const berufValidation = allowCustomProfession
+    ? Yup.string().required("Beruf ist erforderlich")
+    : Yup.string()
+        .oneOf(professionOptions, "Ungültiger Beruf")
+        .required("Beruf ist erforderlich");
+
+  return Yup.object({
+    beruf: berufValidation,
+    betriebEintritt: Yup.date()
+      .typeError("Ungültiges Datum")
+      .required("Eintrittsdatum ist erforderlich"),
+    betriebName: Yup.string().required("Name des Betriebs ist erforderlich"),
+    betriebStraße: Yup.string().required("Straße ist erforderlich"),
+    betriebHausNr: Yup.string().required("Hausnummer ist erforderlich"),
+    betriebPlz: Yup.string()
+      .matches(/^\d{5}$/, "PLZ muss 5 Ziffern haben")
+      .required("PLZ ist erforderlich"),
+    betriebOrt: Yup.string().required("Ort ist erforderlich"),
+    betriebTel: Yup.string()
+      .matches(/^\+?[0-9 ]{6,20}$/, "Ungültige Telefonnummer")
+      .nullable(),
+    betriebMail: Yup.string().email("Ungültige E-Mail-Adresse").nullable(),
+    betriebAnsprechpartnerAnrede: Yup.string()
+      .oneOf(salutationOptions, "Ungültige Anrede")
+      .required("Anrede ist erforderlich"),
+    betriebAnsprechpartnerVorname: Yup.string().required(
+      "Vorname ist erforderlich",
+    ),
+    betriebAnsprechpartnerNachname: Yup.string().required(
+      "Nachname ist erforderlich",
+    ),
+    betriebAnsprechpartnerTel: Yup.string()
+      .matches(/^\+?[0-9 ]{6,20}$/, "Ungültige Telefonnummer")
+      .required("Telefonnummer ist erforderlich"),
+  });
+};
 
 // Step 8: Datenschutzbestimmungen
 export const validateStudentMetaData = Yup.object({

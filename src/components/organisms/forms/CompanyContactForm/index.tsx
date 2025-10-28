@@ -1,10 +1,11 @@
 import React from "react";
 
+import { useOnboardingSettings } from "@/hooks/useOnboardingSettings";
 import { validateStudentCompanyData } from "@/lib/validate/student.validate";
 import { StudentData } from "@/types/student";
-import { styled } from "@mui/material";
+import { MenuItem, styled } from "@mui/material";
 import { Field, Form, Formik } from "formik";
-import { TextField } from "formik-mui";
+import { Select, TextField } from "formik-mui";
 
 const StyledForm = styled(Form)(() => ({
   display: "flex",
@@ -27,12 +28,19 @@ interface CompanyContactFormProps {
 }
 
 const CompanyContactForm: React.FC<CompanyContactFormProps> = ({ data }) => {
+  const { salutationOptions, getEnabledOptions, loading } =
+    useOnboardingSettings();
+
   const initialValues: FormValues = {
     betriebApAnrede: data?.betriebApAnrede || "",
     betriebApVorname: data?.betriebApVorname || "",
     betriebApNachname: data?.betriebApNachname || "",
     betriebApTelefon1: data?.betriebApTelefon1 || "",
   };
+
+  if (loading) {
+    return <div>Loading settings...</div>;
+  }
 
   return (
     <Formik<FormValues>
@@ -44,16 +52,22 @@ const CompanyContactForm: React.FC<CompanyContactFormProps> = ({ data }) => {
     >
       {({ errors, touched }) => (
         <StyledForm>
-          {/* betriebApAnrede */}
+          {/* betriebApAnrede - Dynamic Dropdown */}
           <Field
-            component={TextField}
+            component={Select}
             name="betriebApAnrede"
             label="Anrede"
             variant="outlined"
             margin="normal"
+            fullWidth
             error={touched.betriebApAnrede && Boolean(errors.betriebApAnrede)}
-            helperText={touched.betriebApAnrede && errors.betriebApAnrede}
-          />
+          >
+            {getEnabledOptions(salutationOptions).map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </Field>
 
           {/* betriebApVorname */}
           <Field
@@ -62,6 +76,7 @@ const CompanyContactForm: React.FC<CompanyContactFormProps> = ({ data }) => {
             label="Vorname"
             variant="outlined"
             margin="normal"
+            fullWidth
             error={touched.betriebApVorname && Boolean(errors.betriebApVorname)}
             helperText={touched.betriebApVorname && errors.betriebApVorname}
           />
@@ -73,6 +88,7 @@ const CompanyContactForm: React.FC<CompanyContactFormProps> = ({ data }) => {
             label="Nachname"
             variant="outlined"
             margin="normal"
+            fullWidth
             error={
               touched.betriebApNachname && Boolean(errors.betriebApNachname)
             }
@@ -86,6 +102,7 @@ const CompanyContactForm: React.FC<CompanyContactFormProps> = ({ data }) => {
             label="Telefon"
             variant="outlined"
             margin="normal"
+            fullWidth
             error={
               touched.betriebApTelefon1 && Boolean(errors.betriebApTelefon1)
             }
