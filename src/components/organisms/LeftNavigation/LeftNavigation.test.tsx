@@ -2,7 +2,10 @@ import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { renderWithProviders } from "../../../../tests/utils/test-utils";
+import {
+  mockRouter,
+  renderWithProviders,
+} from "../../../../tests/utils/test-utils";
 import LeftNavigation from "./index";
 
 /**
@@ -10,16 +13,8 @@ import LeftNavigation from "./index";
  * @file src/components/organisms/LeftNavigation/LeftNavigation.test.tsx
  */
 
-// Mock next/navigation
-const mockPush = vi.fn();
-const mockPathname = "/admin/dashboard";
-
-vi.mock("next/navigation", () => ({
-  useRouter: () => ({
-    push: mockPush,
-  }),
-  usePathname: () => mockPathname,
-}));
+// Use exported mockRouter from test-utils
+const mockPush = mockRouter.push;
 
 // Mock window.open for external links
 const mockOpen = vi.fn();
@@ -104,6 +99,7 @@ describe("LeftNavigation", () => {
   beforeEach(() => {
     mockPush.mockClear();
     mockOpen.mockClear();
+    mockRouter.pathname = "/admin/dashboard";
   });
 
   describe("Basic Rendering", () => {

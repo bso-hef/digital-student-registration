@@ -2,7 +2,10 @@ import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { renderWithProviders } from "../../../../tests/utils/test-utils";
+import {
+  mockRouter,
+  renderWithProviders,
+} from "../../../../tests/utils/test-utils";
 import { AdminSubPageHeader } from "./index";
 
 /**
@@ -10,16 +13,9 @@ import { AdminSubPageHeader } from "./index";
  * @file src/components/molecules/AdminSubPageHeader/AdminSubPageHeader.test.tsx
  */
 
-// Mock next/navigation
-const mockPush = vi.fn();
-const mockBack = vi.fn();
-
-vi.mock("next/navigation", () => ({
-  useRouter: () => ({
-    push: mockPush,
-    back: mockBack,
-  }),
-}));
+// Use exported mockRouter from test-utils
+const mockPush = mockRouter.push;
+const mockBack = mockRouter.back;
 
 // Mock SmallIconButton
 vi.mock("@/components/atoms/buttons/SmallIconButton", () => ({

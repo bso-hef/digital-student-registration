@@ -144,6 +144,7 @@ export default function VerticalTabs({
                 selected={selected}
                 $selected={selected}
                 onClick={() => gotoRoute(tab.link)}
+                aria-selected={selected}
               >
                 <StyledListItemText $selected={selected} primary={tab.label} />
               </StyledListItem>

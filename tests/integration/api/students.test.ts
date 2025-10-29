@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from "vitest";
-import { GET, POST, DELETE } from "@/app/api/students/route";
+import { GET, POST, DELETE } from "../../../src/app/api/students/route";
 import { NextRequest } from "next/server";
 import mongoose from "mongoose";
 import Student from "@/models/Student";

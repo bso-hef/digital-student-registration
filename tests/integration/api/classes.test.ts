@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from "vitest";
-import { GET, POST, DELETE } from "@/app/api/classes/route";
+import { GET, POST, DELETE } from "../../../src/app/api/classes/route";
 import {
   GET as GETById,
   PATCH,
-} from "@/app/api/classes/[classId]/route";
+} from "../../../src/app/api/classes/[classId]/route";
 import { NextRequest } from "next/server";
 import mongoose from "mongoose";
 import Class from "@/models/Class";

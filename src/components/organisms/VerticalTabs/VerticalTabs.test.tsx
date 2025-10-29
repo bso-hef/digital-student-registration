@@ -2,7 +2,10 @@ import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { renderWithProviders } from "../../../../tests/utils/test-utils";
+import {
+  mockRouter,
+  renderWithProviders,
+} from "../../../../tests/utils/test-utils";
 import VerticalTabs, { VerticalTab } from "./index";
 
 /**
@@ -10,16 +13,8 @@ import VerticalTabs, { VerticalTab } from "./index";
  * @file src/components/organisms/VerticalTabs/VerticalTabs.test.tsx
  */
 
-// Mock next/navigation
-const mockReplace = vi.fn();
-let mockPathname = "/admin/settings/general";
-
-vi.mock("next/navigation", () => ({
-  useRouter: () => ({
-    replace: mockReplace,
-  }),
-  usePathname: () => mockPathname,
-}));
+// Use exported mockRouter from test-utils
+const mockReplace = mockRouter.replace;
 
 describe("VerticalTabs", () => {
   const mockTabs: VerticalTab[] = [
@@ -42,7 +37,7 @@ describe("VerticalTabs", () => {
 
   beforeEach(() => {
     mockReplace.mockClear();
-    mockPathname = "/admin/settings/general";
+    mockRouter.pathname = "/admin/settings/general";
   });
 
   describe("Basic Rendering", () => {
@@ -111,27 +106,27 @@ describe("VerticalTabs", () => {
 
   describe("Tab Selection - Exact Match", () => {
     it("should highlight tab matching current pathname", () => {
-      mockPathname = "/admin/settings/general";
+      mockRouter.pathname = "/admin/settings/general";
       renderWithProviders(<VerticalTabs tabs={mockTabs} />);
 
       const generalTab = screen
         .getByText("General")
         .closest(".MuiListItemButton-root");
-      expect(generalTab).toHaveClass("Mui-selected");
+      expect(generalTab).toHaveAttribute("aria-selected", "true");
     });
 
     it("should highlight different tab when pathname changes", () => {
-      mockPathname = "/admin/settings/security";
+      mockRouter.pathname = "/admin/settings/security";
       renderWithProviders(<VerticalTabs tabs={mockTabs} />);
 
       const securityTab = screen
         .getByText("Security")
         .closest(".MuiListItemButton-root");
-      expect(securityTab).toHaveClass("Mui-selected");
+      expect(securityTab).toHaveAttribute("aria-selected", "true");
     });
 
     it("should not highlight non-matching tabs", () => {
-      mockPathname = "/admin/settings/general";
+      mockRouter.pathname = "/admin/settings/general";
       renderWithProviders(<VerticalTabs tabs={mockTabs} />);
 
       const securityTab = screen
@@ -141,47 +136,47 @@ describe("VerticalTabs", () => {
         .getByText("Integrations")
         .closest(".MuiListItemButton-root");
 
-      expect(securityTab).not.toHaveClass("Mui-selected");
-      expect(integrationsTab).not.toHaveClass("Mui-selected");
+      expect(securityTab).not.toHaveAttribute("aria-selected", "true");
+      expect(integrationsTab).not.toHaveAttribute("aria-selected", "true");
     });
   });
 
   describe("Tab Selection - Last Segment Match", () => {
     it("should highlight tab when last segment matches", () => {
-      mockPathname = "/different/path/general";
+      mockRouter.pathname = "/different/path/general";
       renderWithProviders(<VerticalTabs tabs={mockTabs} />);
 
       const generalTab = screen
         .getByText("General")
         .closest(".MuiListItemButton-root");
-      expect(generalTab).toHaveClass("Mui-selected");
+      expect(generalTab).toHaveAttribute("aria-selected", "true");
     });
 
     it("should match last segment even with different base path", () => {
-      mockPathname = "/some/other/route/security";
+      mockRouter.pathname = "/some/other/route/security";
       renderWithProviders(<VerticalTabs tabs={mockTabs} />);
 
       const securityTab = screen
         .getByText("Security")
         .closest(".MuiListItemButton-root");
-      expect(securityTab).toHaveClass("Mui-selected");
+      expect(securityTab).toHaveAttribute("aria-selected", "true");
     });
 
     it("should not match if last segment differs", () => {
-      mockPathname = "/admin/settings/other";
+      mockRouter.pathname = "/admin/settings/other";
       renderWithProviders(<VerticalTabs tabs={mockTabs} />);
 
       const generalTab = screen
         .getByText("General")
         .closest(".MuiListItemButton-root");
-      expect(generalTab).not.toHaveClass("Mui-selected");
+      expect(generalTab).not.toHaveAttribute("aria-selected", "true");
     });
   });
 
   describe("Navigation", () => {
     it("should navigate when tab clicked", async () => {
       const user = userEvent.setup();
-      mockPathname = "/admin/settings/general";
+      mockRouter.pathname = "/admin/settings/general";
       renderWithProviders(<VerticalTabs tabs={mockTabs} />);
 
       const securityTab = screen.getByText("Security");
@@ -425,7 +420,7 @@ describe("VerticalTabs", () => {
   describe("Edge Cases", () => {
     it("should handle null pathname", () => {
       // @ts-expect-error Testing null behavior
-      mockPathname = null;
+      mockRouter.pathname = null;
       renderWithProviders(<VerticalTabs tabs={mockTabs} />);
 
       expect(screen.getByText("General")).toBeInTheDocument();
@@ -433,20 +428,20 @@ describe("VerticalTabs", () => {
 
     it("should handle undefined pathname", () => {
       // @ts-expect-error Testing undefined behavior
-      mockPathname = undefined;
+      mockRouter.pathname = undefined;
       renderWithProviders(<VerticalTabs tabs={mockTabs} />);
 
       expect(screen.getByText("General")).toBeInTheDocument();
     });
 
     it("should handle pathname with trailing slash", () => {
-      mockPathname = "/admin/settings/general/";
+      mockRouter.pathname = "/admin/settings/general/";
       renderWithProviders(<VerticalTabs tabs={mockTabs} />);
 
       const generalTab = screen
         .getByText("General")
         .closest(".MuiListItemButton-root");
-      expect(generalTab).toHaveClass("Mui-selected");
+      expect(generalTab).toHaveAttribute("aria-selected", "true");
     });
 
     it("should handle tab link with trailing slash", () => {
@@ -458,13 +453,13 @@ describe("VerticalTabs", () => {
         },
       ];
 
-      mockPathname = "/admin/settings/general";
+      mockRouter.pathname = "/admin/settings/general";
       renderWithProviders(<VerticalTabs tabs={tabsWithSlash} />);
 
       const generalTab = screen
         .getByText("General")
         .closest(".MuiListItemButton-root");
-      expect(generalTab).toHaveClass("Mui-selected");
+      expect(generalTab).toHaveAttribute("aria-selected", "true");
     });
 
     it("should handle rapid tab clicks", async () => {
@@ -507,7 +502,7 @@ describe("VerticalTabs", () => {
         },
       ];
 
-      mockPathname = "/admin/first/general";
+      mockRouter.pathname = "/admin/first/general";
       renderWithProviders(<VerticalTabs tabs={sameLast} />);
 
       // Both should be selected since they have the same last segment
@@ -518,8 +513,8 @@ describe("VerticalTabs", () => {
         .getByText("Second General")
         .closest(".MuiListItemButton-root");
 
-      expect(firstTab).toHaveClass("Mui-selected");
-      expect(secondTab).toHaveClass("Mui-selected");
+      expect(firstTab).toHaveAttribute("aria-selected", "true");
+      expect(secondTab).toHaveAttribute("aria-selected", "true");
     });
   });
 
@@ -561,13 +556,13 @@ describe("VerticalTabs", () => {
     });
 
     it("should indicate selected state visually", () => {
-      mockPathname = "/admin/settings/general";
+      mockRouter.pathname = "/admin/settings/general";
       renderWithProviders(<VerticalTabs tabs={mockTabs} />);
 
       const generalTab = screen
         .getByText("General")
         .closest(".MuiListItemButton-root");
-      expect(generalTab).toHaveClass("Mui-selected");
+      expect(generalTab).toHaveAttribute("aria-selected", "true");
     });
   });
 

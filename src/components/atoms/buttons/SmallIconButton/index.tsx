@@ -227,19 +227,30 @@ const SmallIconButton: React.FC<SmallIconButtonProps> = ({
 }) => {
   const { isMobile, isTablet } = useDeviceTypeDetection();
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
+    if ((e.key === 'Enter' || e.key === ' ') && !disabled) {
+      e.preventDefault();
+      onAction?.(e as unknown as React.MouseEvent<HTMLElement>);
+    }
+  };
+
   const eventProps =
     isMobile || isTablet
       ? {
           onTouchEnd: (e: React.TouchEvent<HTMLElement>) => onAction?.(e),
           onClick: (e: React.MouseEvent<HTMLElement>) => onAction?.(e),
+          onKeyDown: handleKeyDown,
         }
       : {
           onClick: (e: React.MouseEvent<HTMLElement>) => onAction?.(e),
+          onKeyDown: handleKeyDown,
         };
 
   const content = (
     <IconButton
       {...eventProps}
+      role="button"
+      tabIndex={disabled ? -1 : 0}
       noMargin={noMargin}
       noPadding={noPadding}
       bigIcon={bigIcon}

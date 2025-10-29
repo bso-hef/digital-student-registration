@@ -1,8 +1,6 @@
 import '@testing-library/jest-dom';
 import { cleanup } from '@testing-library/react';
 import { afterEach, vi } from 'vitest';
-// import { server } from './mocks/server'; // Commented out - MSW not compatible with current vitest config
-// import { resetMockData } from './mocks/handlers'; // Commented out - MSW not compatible with current vitest config
 import { resetFactoryCounters } from './utils/factories';
 
 /**
@@ -14,31 +12,20 @@ import { resetFactoryCounters } from './utils/factories';
 process.env.NEXT_PUBLIC_API_URL = 'http://localhost:3000';
 
 /**
- * MSW Server Setup - DISABLED
- * MSW requires "node" condition in vitest.config resolve.conditions
- * Currently disabled to allow tests to run
+ * MSW Setup
+ * Note: MSW is NOT enabled for unit tests because:
+ * - MSW browser worker requires Service Workers (not available in jsdom)
+ * - MSW node server is only for Node.js environment (integration tests)
+ * For unit tests, we mock fetch directly (see below)
+ * For integration tests, MSW server is configured in integration.setup.ts
  */
 
-// Start MSW server before all tests
-// beforeAll(() => {
-//   server.listen({
-//     onUnhandledRequest: 'warn',
-//   });
-// });
-
-// Reset handlers and cleanup after each test
+// Reset and cleanup after each test
 afterEach(() => {
-  // server.resetHandlers(); // Disabled - MSW not active
-  // resetMockData(); // Disabled - MSW not active
   resetFactoryCounters();
   cleanup();
   vi.clearAllMocks();
 });
-
-// Close server after all tests
-// afterAll(() => {
-//   server.close();
-// });
 
 /**
  * Mock window.matchMedia
