@@ -1,5 +1,7 @@
 import { dbConnect } from "@/lib/config/mongo";
+import { tServer } from "@/lib/server-i18n";
 import Logger from "@/lib/server-logger";
+import { createAuditLog } from "@/server/middleware/audit.middleware";
 import { NextRequest, NextResponse } from "next/server";
 
 import AppSettings from "@/models/AppSettings";
@@ -30,6 +32,7 @@ export async function PATCH(request: NextRequest) {
 
     // Get or create settings document
     let settings = await AppSettings.findOne();
+    const oldOnboardingSettings = settings?.onboarding;
 
     if (!settings) {
       logger.info(
@@ -55,6 +58,23 @@ export async function PATCH(request: NextRequest) {
 
     await settings.save();
 
+    // Log audit entry
+    await createAuditLog(
+      {
+        action: "settings.update_onboarding",
+        category: "settings",
+        description: tServer("audit.descriptions.updatedOnboardingSettings"),
+        status: "success",
+        metadata: {
+          settingCategory: "onboarding",
+          changedFields: Object.keys(body.onboarding),
+          oldValues: oldOnboardingSettings,
+          newValues: body.onboarding,
+        },
+      },
+      request,
+    );
+
     logger.info("Onboarding settings updated successfully");
 
     return NextResponse.json(
@@ -66,6 +86,23 @@ export async function PATCH(request: NextRequest) {
     );
   } catch (error) {
     logger.error("Failed to update onboarding settings", error);
+
+    // Log audit entry for failure
+    await createAuditLog(
+      {
+        action: "settings.update_onboarding",
+        category: "settings",
+        description: tServer(
+          "audit.descriptions.failedUpdateOnboardingSettings",
+        ),
+        status: "failure",
+        metadata: {
+          errorMessage: error instanceof Error ? error.message : String(error),
+        },
+      },
+      request,
+    );
+
     return NextResponse.json(
       {
         success: false,

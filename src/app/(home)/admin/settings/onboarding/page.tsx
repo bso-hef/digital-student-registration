@@ -137,19 +137,20 @@ const AdminSettingsOnboardingPage = () => {
       name: "geschlecht",
       label: t("settings.onboarding.fields.geschlecht.label"),
       description: t("settings.onboarding.fields.geschlecht.description"),
-      config: localSettings?.fieldConfigs.geschlecht,
+      config: localSettings?.fieldConfigs?.geschlecht ?? ({} as FieldConfig),
     },
     {
       name: "religion",
       label: t("settings.onboarding.fields.religion.label"),
       description: t("settings.onboarding.fields.religion.description"),
-      config: localSettings?.fieldConfigs.religion,
+      config: localSettings?.fieldConfigs?.religion ?? ({} as FieldConfig),
     },
     {
       name: "familiensprache",
       label: t("settings.onboarding.fields.familiensprache.label"),
       description: t("settings.onboarding.fields.familiensprache.description"),
-      config: localSettings?.fieldConfigs.familiensprache,
+      config:
+        localSettings?.fieldConfigs?.familiensprache ?? ({} as FieldConfig),
     },
   ];
 
@@ -176,7 +177,7 @@ const AdminSettingsOnboardingPage = () => {
             onAction={() => handleCollapseToggle("gender")}
           >
             <DropdownOptionsManager
-              options={localSettings?.genderOptions}
+              options={localSettings?.genderOptions ?? []}
               onChange={(options) =>
                 handleDropdownChange("genderOptions", options)
               }
@@ -191,7 +192,7 @@ const AdminSettingsOnboardingPage = () => {
             onAction={() => handleCollapseToggle("salutation")}
           >
             <DropdownOptionsManager
-              options={localSettings?.salutationOptions}
+              options={localSettings?.salutationOptions ?? []}
               onChange={(options) =>
                 handleDropdownChange("salutationOptions", options)
               }
@@ -206,7 +207,7 @@ const AdminSettingsOnboardingPage = () => {
             onAction={() => handleCollapseToggle("religion")}
           >
             <DropdownOptionsManager
-              options={localSettings?.religionOptions}
+              options={localSettings?.religionOptions ?? []}
               onChange={(options) =>
                 handleDropdownChange("religionOptions", options)
               }
@@ -221,7 +222,7 @@ const AdminSettingsOnboardingPage = () => {
             onAction={() => handleCollapseToggle("language")}
           >
             <DropdownOptionsManager
-              options={localSettings?.languageOptions}
+              options={localSettings?.languageOptions ?? []}
               onChange={(options) =>
                 handleDropdownChange("languageOptions", options)
               }

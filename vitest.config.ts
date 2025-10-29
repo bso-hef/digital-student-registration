@@ -75,8 +75,22 @@ export default defineConfig({
             "**/.next/**",
             "**/e2e/**",
             "**/playwright/**",
+            "**/integration/**",
           ],
           environment: "jsdom",
+        },
+      },
+      {
+        test: {
+          name: "integration",
+          globals: true,
+          include: ["tests/integration/api/**/*.test.ts"],
+          exclude: [...configDefaults.exclude],
+          environment: "node",
+          setupFiles: ["./tests/integration.setup.ts"],
+          fileParallelism: false, // Run integration tests sequentially to avoid DB race conditions
+          testTimeout: 30000,
+          hookTimeout: 30000,
         },
       },
       {

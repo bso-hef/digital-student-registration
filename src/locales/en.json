@@ -28,7 +28,8 @@
     "Yes": "Yes",
     "No": "No",
     "Inactive": "Inactive",
-    "Active": "Active"
+    "Active": "Active",
+    "All": "All"
   },
   "error": {
     "Page not found": "Page not found",
@@ -172,7 +173,13 @@
     "settingsUpdateSuccess": "Settings updated successfully.",
     "settingsUpdateFailed": "Failed to update settings.",
     "onboardingSettingsUpdateSuccess": "Onboarding settings updated successfully.",
-    "onboardingSettingsUpdateFailed": "Failed to update onboarding settings."
+    "onboardingSettingsUpdateFailed": "Failed to update onboarding settings.",
+    "auditLogFetchFailed": "Failed to fetch audit logs.",
+    "auditLogStatsFailed": "Failed to fetch audit log statistics.",
+    "auditLogExportSuccess": "Audit logs exported successfully.",
+    "auditLogExportFailed": "Failed to export audit logs.",
+    "auditLogClearSuccess": "Audit logs cleared successfully.",
+    "auditLogClearFailed": "Failed to clear audit logs."
   },
   "dashboard": {
     "title": "Dashboard",
@@ -334,6 +341,40 @@
         "gender": "Gender",
         "status": "Status"
       }
+    }
+  },
+  "audit": {
+    "title": "Audit Log",
+    "timestamp": "Timestamp",
+    "action": "Action",
+    "description": "Description",
+    "user": "User",
+    "ipAddress": "IP Address",
+    "metadata": "Metadata",
+    "logDetails": "Log Details",
+    "categoryLabel": "Category",
+    "statusLabel": "Status",
+    "filterByCategory": "Filter by Category",
+    "filterByStatus": "Filter by Status",
+    "clearLogs": "Clear Logs",
+    "export": "Export",
+    "clearLogsConfirm": "Clear Audit Logs",
+    "clearLogsWarning": "Are you sure you want to clear old audit logs? This action cannot be undone.",
+    "deleteSelected": "Delete Selected",
+    "deleteSelectedConfirm": "Delete Selected Audit Logs",
+    "deleteSelectedWarning": "Are you sure you want to delete the selected audit log(s)? This action cannot be undone.",
+    "exportSelected": "Export Selected",
+    "category": {
+      "student": "Student",
+      "class": "Class",
+      "settings": "Settings",
+      "auth": "Authentication",
+      "system": "System"
+    },
+    "status": {
+      "success": "Success",
+      "failure": "Failure",
+      "partial": "Partial"
     }
   }
 }

@@ -28,7 +28,8 @@
     "Yes": "Ja",
     "No": "Nein",
     "Inactive": "Inaktiv",
-    "Active": "Aktiv"
+    "Active": "Aktiv",
+    "All": "Alle"
   },
   "error": {
     "Page not found": "Seite nicht gefunden",
@@ -172,7 +173,13 @@
     "settingsUpdateSuccess": "Einstellungen erfolgreich aktualisiert.",
     "settingsUpdateFailed": "Aktualisierung der Einstellungen fehlgeschlagen.",
     "onboardingSettingsUpdateSuccess": "Onboarding-Einstellungen erfolgreich aktualisiert.",
-    "onboardingSettingsUpdateFailed": "Aktualisierung der Onboarding-Einstellungen fehlgeschlagen."
+    "onboardingSettingsUpdateFailed": "Aktualisierung der Onboarding-Einstellungen fehlgeschlagen.",
+    "auditLogFetchFailed": "Abrufen der Audit-Protokolle fehlgeschlagen.",
+    "auditLogStatsFailed": "Abrufen der Audit-Protokoll-Statistiken fehlgeschlagen.",
+    "auditLogExportSuccess": "Audit-Protokolle erfolgreich exportiert.",
+    "auditLogExportFailed": "Export der Audit-Protokolle fehlgeschlagen.",
+    "auditLogClearSuccess": "Audit-Protokolle erfolgreich gelöscht.",
+    "auditLogClearFailed": "Löschen der Audit-Protokolle fehlgeschlagen."
   },
   "dashboard": {
     "title": "Dashboard",
@@ -334,6 +341,40 @@
         "gender": "Geschlecht",
         "status": "Status"
       }
+    }
+  },
+  "audit": {
+    "title": "Audit-Protokoll",
+    "timestamp": "Zeitstempel",
+    "action": "Aktion",
+    "description": "Beschreibung",
+    "user": "Benutzer",
+    "ipAddress": "IP-Adresse",
+    "metadata": "Metadaten",
+    "logDetails": "Protokolldetails",
+    "categoryLabel": "Kategorie",
+    "statusLabel": "Status",
+    "filterByCategory": "Nach Kategorie filtern",
+    "filterByStatus": "Nach Status filtern",
+    "clearLogs": "Protokolle löschen",
+    "export": "Exportieren",
+    "clearLogsConfirm": "Audit-Protokolle löschen",
+    "clearLogsWarning": "Sind Sie sicher, dass Sie alte Audit-Protokolle löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "deleteSelected": "Ausgewählte löschen",
+    "deleteSelectedConfirm": "Ausgewählte Audit-Protokolle löschen",
+    "deleteSelectedWarning": "Sind Sie sicher, dass Sie die ausgewählten Audit-Protokolle löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "exportSelected": "Ausgewählte exportieren",
+    "category": {
+      "student": "Schüler",
+      "class": "Klasse",
+      "settings": "Einstellungen",
+      "auth": "Authentifizierung",
+      "system": "System"
+    },
+    "status": {
+      "success": "Erfolg",
+      "failure": "Fehler",
+      "partial": "Teilweise"
     }
   }
 }

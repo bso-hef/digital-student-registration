@@ -2,6 +2,7 @@
 import { combineReducers } from "redux";
 
 import appSettingsReducer from "./appSettings";
+import auditLogReducer from "./auditLog";
 import classReducer from "./class";
 import dashboardReducer from "./dashboard";
 import studentReducer from "./student";
@@ -15,6 +16,7 @@ export interface AppAction {
 
 const rootReducer = combineReducers({
   appSettings: appSettingsReducer,
+  auditLog: auditLogReducer,
   class: classReducer,
   dashboard: dashboardReducer,
   student: studentReducer,

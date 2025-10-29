@@ -1,5 +1,7 @@
 import { dbConnect } from "@/lib/config/mongo";
+import { tServer } from "@/lib/server-i18n";
 import Logger from "@/lib/server-logger";
+import { createAuditLog } from "@/server/middleware/audit.middleware";
 import { NextRequest, NextResponse } from "next/server";
 
 import AppSettings from "@/models/AppSettings";
@@ -69,6 +71,7 @@ export async function PATCH(request: NextRequest) {
 
     // Get or create settings document
     let settings = await AppSettings.findOne();
+    const oldSettings = settings?.toObject();
 
     if (!settings) {
       logger.info("No settings found, creating new settings document");
@@ -79,6 +82,23 @@ export async function PATCH(request: NextRequest) {
     }
 
     await settings.save();
+
+    // Log audit entry
+    await createAuditLog(
+      {
+        action: "settings.update_general",
+        category: "settings",
+        description: tServer("audit.descriptions.updatedGeneralSettings"),
+        status: "success",
+        metadata: {
+          settingCategory: "general",
+          changedFields: Object.keys(body),
+          oldValues: oldSettings,
+          newValues: body,
+        },
+      },
+      request,
+    );
 
     logger.info("Settings updated successfully");
 
@@ -91,6 +111,21 @@ export async function PATCH(request: NextRequest) {
     );
   } catch (error) {
     logger.error("Failed to update settings", error);
+
+    // Log audit entry for failure
+    await createAuditLog(
+      {
+        action: "settings.update_general",
+        category: "settings",
+        description: tServer("audit.descriptions.failedUpdateGeneralSettings"),
+        status: "failure",
+        metadata: {
+          errorMessage: error instanceof Error ? error.message : String(error),
+        },
+      },
+      request,
+    );
+
     return NextResponse.json(
       {
         success: false,

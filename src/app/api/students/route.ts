@@ -1,7 +1,9 @@
 import { dbConnect } from "@/lib/config/mongo";
 import { norm } from "@/lib/config/norm";
+import { tServer } from "@/lib/server-i18n";
 import Logger from "@/lib/server-logger";
 import Student from "@/models/Student";
+import { createAuditLog } from "@/server/middleware/audit.middleware";
 import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
@@ -146,6 +148,25 @@ export async function POST(request: Request) {
 
     const result = await Student.insertMany(docs, { ordered: false });
 
+    // Log audit entry
+    await createAuditLog(
+      {
+        action: "student.create",
+        category: "student",
+        description: tServer("audit.descriptions.createdStudents", {
+          count: result.length,
+        }),
+        status: "success",
+        metadata: {
+          studentIds: result.map((s) => s._id.toString()),
+          studentNames: result.map((s) => `${s.firstName} ${s.lastName}`),
+          affectedCount: result.length,
+          invalidCount: invalid.length,
+        },
+      },
+      request as NextRequest,
+    );
+
     return NextResponse.json(
       {
         created: result,
@@ -159,6 +180,21 @@ export async function POST(request: Request) {
       "Failed to create Students",
       error instanceof Error ? error.message : String(error),
     );
+
+    // Log audit entry for failure
+    await createAuditLog(
+      {
+        action: "student.create",
+        category: "student",
+        description: tServer("audit.descriptions.failedCreateStudents"),
+        status: "failure",
+        metadata: {
+          errorMessage: error instanceof Error ? error.message : String(error),
+        },
+      },
+      request as NextRequest,
+    );
+
     const isBulkWriteError = (err: unknown): err is { name: string } =>
       typeof err === "object" &&
       err !== null &&
@@ -186,7 +222,31 @@ export async function DELETE(request: Request) {
       );
     }
 
+    // Fetch student names before deletion for audit log
+    const students = await Student.find({ _id: { $in: ids } })
+      .select("firstName lastName")
+      .lean();
+
     const result = await Student.deleteMany({ _id: { $in: ids } });
+
+    // Log audit entry
+    await createAuditLog(
+      {
+        action: "student.delete",
+        category: "student",
+        description: tServer("audit.descriptions.deletedStudents", {
+          count: result.deletedCount,
+        }),
+        status: "success",
+        metadata: {
+          studentIds: ids,
+          studentNames: students.map((s) => `${s.firstName} ${s.lastName}`),
+          affectedCount: result.deletedCount,
+        },
+      },
+      request as NextRequest,
+    );
+
     return NextResponse.json(
       {
         deletedCount: result.deletedCount,
@@ -198,6 +258,21 @@ export async function DELETE(request: Request) {
       "Failed to delete Students",
       error instanceof Error ? error.message : String(error),
     );
+
+    // Log audit entry for failure
+    await createAuditLog(
+      {
+        action: "student.delete",
+        category: "student",
+        description: tServer("audit.descriptions.failedDeleteStudents"),
+        status: "failure",
+        metadata: {
+          errorMessage: error instanceof Error ? error.message : String(error),
+        },
+      },
+      request as NextRequest,
+    );
+
     return NextResponse.json(
       { message: "Internal server error" },
       { status: 500 },

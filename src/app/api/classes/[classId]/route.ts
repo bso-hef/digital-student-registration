@@ -1,6 +1,8 @@
 import { dbConnect } from "@/lib/config/mongo";
+import { tServer } from "@/lib/server-i18n";
 import Logger from "@/lib/server-logger";
 import Class from "@/models/Class";
+import { createAuditLog } from "@/server/middleware/audit.middleware";
 import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -58,6 +60,9 @@ export async function PATCH(
       );
     }
 
+    // Get old values for audit log
+    const oldClass = await Class.findById(classId).lean();
+
     const updatedClass = await Class.findByIdAndUpdate(classId, body, {
       new: true,
     }).lean();
@@ -66,6 +71,26 @@ export async function PATCH(
       return NextResponse.json({ message: "Class not found" }, { status: 404 });
     }
 
+    // Log audit entry
+    await createAuditLog(
+      {
+        action: "class.update",
+        category: "class",
+        description: tServer("audit.descriptions.updatedClass", {
+          name: updatedClass.name,
+        }),
+        status: "success",
+        metadata: {
+          classId: classId,
+          className: updatedClass.name,
+          changedFields: Object.keys(body),
+          oldValues: oldClass,
+          newValues: body,
+        },
+      },
+      request,
+    );
+
     logger.info(`Class ${classId} updated successfully`);
     return NextResponse.json(updatedClass, { status: 200 });
   } catch (error) {
@@ -73,6 +98,22 @@ export async function PATCH(
       `Failed to update Class ${params.classId}`,
       error instanceof Error ? error.message : String(error),
     );
+
+    // Log audit entry for failure
+    await createAuditLog(
+      {
+        action: "class.update",
+        category: "class",
+        description: tServer("audit.descriptions.failedUpdateClass"),
+        status: "failure",
+        metadata: {
+          classId: params.classId,
+          errorMessage: error instanceof Error ? error.message : String(error),
+        },
+      },
+      request,
+    );
+
     return NextResponse.json(
       { message: "Internal server error" },
       { status: 500 },
