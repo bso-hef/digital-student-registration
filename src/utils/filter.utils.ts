@@ -10,7 +10,10 @@ import { Student } from "@/types/db";
  * @param {Array} students - The list of students objects to filter.
  * @returns {Array} A new array of students that match the search criteria.
  ********************************************************************************/
-export const filterStudents = (searchString = "", students = []) => {
+export const filterStudents = (
+  searchString = "",
+  students: Student[] = [],
+): Student[] => {
   if (!searchString || searchString.length < 3) return students;
 
   const filteredUsers = Array.isArray(students)

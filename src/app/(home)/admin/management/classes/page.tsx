@@ -18,7 +18,6 @@ import {
 import { AppDispatch } from "@/store/store";
 import { ClassCreateInput, ClassInterface } from "@/types/class";
 import { filterClasses } from "@/utils/filter.utils";
-import { applicationScrollbar } from "@/utils/styling.utils";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import { Box, styled } from "@mui/material";
 import { debounce, isString } from "lodash";
@@ -33,24 +32,24 @@ import { classTableHeaders } from "./manageTableConfig";
 const Wrapper = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  alignItems: "center",
+  alignItems: "stretch",
   justifyContent: "flex-start",
   textAlign: "center",
   width: "100%",
-  height: "100%",
+  flex: 1,
+  minHeight: 0,
   color: theme.palette.text.default,
+  overflow: "hidden",
 }));
 
 const StyledTableBox = styled(Box)(({ theme }) => ({
-  height: "100%",
   width: "100%",
   display: "flex",
   flexDirection: "column",
-  overflowY: "auto",
-  overflowX: "hidden",
   flex: 1,
+  minHeight: 0,
+  overflow: "hidden",
   padding: theme.spacing(4),
-  ...applicationScrollbar(theme),
 }));
 
 const ClassManagementPage = () => {

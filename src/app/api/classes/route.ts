@@ -1,6 +1,8 @@
 import { dbConnect } from "@/lib/config/mongo";
+import { tServer } from "@/lib/server-i18n";
 import Logger from "@/lib/server-logger";
 import Class from "@/models/Class";
+import { createAuditLog } from "@/server/middleware/audit.middleware";
 import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
@@ -174,6 +176,25 @@ export async function POST(request: NextRequest) {
 
     const result = await Class.insertMany(docs, { ordered: false });
 
+    // Log audit entry
+    await createAuditLog(
+      {
+        action: "class.create",
+        category: "class",
+        description: tServer("audit.descriptions.createdClasses", {
+          count: result.length,
+        }),
+        status: "success",
+        metadata: {
+          classIds: result.map((c) => c._id.toString()),
+          classNames: result.map((c) => c.name),
+          affectedCount: result.length,
+          invalidCount: invalid.length,
+        },
+      },
+      request,
+    );
+
     return NextResponse.json(
       {
         classes: result, // gleiches Feldschema wie GET (einfacher für Reducer)
@@ -188,6 +209,21 @@ export async function POST(request: NextRequest) {
       "Failed to create Classes",
       error instanceof Error ? error.message : String(error),
     );
+
+    // Log audit entry for failure
+    await createAuditLog(
+      {
+        action: "class.create",
+        category: "class",
+        description: tServer("audit.descriptions.failedCreateClasses"),
+        status: "failure",
+        metadata: {
+          errorMessage: error instanceof Error ? error.message : String(error),
+        },
+      },
+      request,
+    );
+
     return NextResponse.json(
       { message: "Internal server error" },
       { status: 500 },
@@ -209,7 +245,31 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
+    // Fetch class names before deletion for audit log
+    const classes = await Class.find({ _id: { $in: ids } })
+      .select("name")
+      .lean();
+
     const res = await Class.deleteMany({ _id: { $in: ids } });
+
+    // Log audit entry
+    await createAuditLog(
+      {
+        action: "class.delete",
+        category: "class",
+        description: tServer("audit.descriptions.deletedClasses", {
+          count: res.deletedCount || 0,
+        }),
+        status: "success",
+        metadata: {
+          classIds: ids,
+          classNames: classes.map((c) => c.name),
+          affectedCount: res.deletedCount || 0,
+        },
+      },
+      request,
+    );
+
     return NextResponse.json(
       { deletedCount: res.deletedCount || 0 },
       { status: 200 },
@@ -219,6 +279,21 @@ export async function DELETE(request: NextRequest) {
       "Failed to delete Classes",
       error instanceof Error ? error.message : String(error),
     );
+
+    // Log audit entry for failure
+    await createAuditLog(
+      {
+        action: "class.delete",
+        category: "class",
+        description: tServer("audit.descriptions.failedDeleteClasses"),
+        status: "failure",
+        metadata: {
+          errorMessage: error instanceof Error ? error.message : String(error),
+        },
+      },
+      request,
+    );
+
     return NextResponse.json(
       { message: "Internal server error" },
       { status: 500 },

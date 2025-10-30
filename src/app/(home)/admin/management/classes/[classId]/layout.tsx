@@ -17,13 +17,15 @@ import { RootState } from "@/store/reducers";
 const Wrapper = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  alignItems: "center",
+  alignItems: "stretch",
   justifyContent: "flex-start",
   textAlign: "center",
   width: "100%",
-  height: "100%",
+  flex: 1,
+  minHeight: 0,
   borderRadius: theme.spacing(2),
   color: theme.palette.text.default,
+  overflow: "hidden",
 }));
 
 const configureClassTabs = (t: TFunction) => {
@@ -36,11 +38,6 @@ const configureClassTabs = (t: TFunction) => {
     {
       label: t("settings.manageClass.classSettings.students"),
       link: "students",
-      component: null,
-    },
-    {
-      label: t("settings.manageClass.classSettings.options"),
-      link: "settings",
       component: null,
     },
   ];

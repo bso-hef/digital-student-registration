@@ -58,3 +58,64 @@ export const DARK_THEME_COLORS = {
   850: "#18191B",
   900: "#121314",
 };
+
+// High Contrast Mode Colors (WCAG AAA Compliant - 7:1 ratio)
+export const HIGH_CONTRAST_LIGHT_COLORS = {
+  BACKGROUND: "#FFFFFF",
+  SURFACE: "#FFFFFF",
+  TEXT: "#000000",
+  TEXT_SECONDARY: "#1A1A1A",
+  BORDER: "#000000",
+  BORDER_STRONG: "#000000",
+  PRIMARY: "#005A9C", // Dark blue with high contrast
+  SUCCESS: "#0F5D0F", // Dark green
+  ERROR: "#C10000", // Dark red
+  WARNING: "#7A4A00", // Dark orange
+  INFO: "#005F8C", // Dark cyan
+};
+
+export const HIGH_CONTRAST_DARK_COLORS = {
+  BACKGROUND: "#000000",
+  SURFACE: "#000000",
+  TEXT: "#FFFFFF",
+  TEXT_SECONDARY: "#E6E6E6",
+  BORDER: "#FFFFFF",
+  BORDER_STRONG: "#FFFFFF",
+  PRIMARY: "#66CFFF", // Bright blue
+  SUCCESS: "#5AFF5A", // Bright green
+  ERROR: "#FF6B6B", // Bright red
+  WARNING: "#FFB84D", // Bright orange
+  INFO: "#4DC3FF", // Bright cyan
+};
+
+// Dashboard Gradient Colors (Modern Style)
+export const DASHBOARD_GRADIENTS = {
+  TOTAL_STUDENTS: {
+    gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    solid: "#667eea",
+    light: "#8b95ee",
+    dark: "#5661c4",
+  },
+  TOTAL_CLASSES: {
+    gradient: "linear-gradient(135deg, #667eea 0%, #4fc3f7 100%)",
+    solid: "#5aa0f1",
+    light: "#7eb2f4",
+    dark: "#4685d4",
+  },
+  UNASSIGNED: {
+    gradient: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
+    solid: "#f375b3",
+    light: "#f693c7",
+    dark: "#d95e9a",
+  },
+  ACTIVE_CLASSES: {
+    gradient: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+    solid: "#27cfff",
+    light: "#52d9ff",
+    dark: "#1eb8e6",
+  },
+  CHART_PRIMARY: "#667eea",
+  CHART_SECONDARY: "#4fc3f7",
+  CHART_ACCENT: "#f093fb",
+  CHART_SUCCESS: "#27cfff",
+};

@@ -44,7 +44,7 @@ const validationSchema = Yup.object({
 });
 
 export default function StudentPage() {
-  const initalValues: FormValues = {
+  const initialValues: FormValues = {
     firstName: "",
     lastName: "",
     uniqueIdentifier: "",
@@ -58,7 +58,7 @@ export default function StudentPage() {
       />
       <Formik<FormValues>
         enableReinitialize
-        initialValues={initalValues}
+        initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={(values) => {
           console.log("✅ Submitted values:", values);

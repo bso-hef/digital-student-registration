@@ -3,11 +3,11 @@ import { Theme } from "@mui/material";
 const MuiTextFieldOverride = {
   root: ({ theme }: { theme: Theme }) => ({
     color: theme.palette.text.information,
-    textTransform: "none",
+    textTransform: "none" as const,
 
     "& .MuiOutlinedInput-root": {
       color: theme.palette.text.default,
-      textTransform: "none !important",
+      textTransform: "none" as const,
     },
 
     "& .MuiInputBase-input::placeholder": {

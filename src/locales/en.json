@@ -14,6 +14,9 @@
     "Language": "Language",
     "Light": "Light",
     "Dark": "Dark",
+    "Light Theme": "Light Theme",
+    "Dark Theme": "Dark Theme",
+    "System": "System",
     "Rows per page": "Rows per page:",
     "Search": "Search",
     "Imported": "Imported",
@@ -25,7 +28,8 @@
     "Yes": "Yes",
     "No": "No",
     "Inactive": "Inactive",
-    "Active": "Active"
+    "Active": "Active",
+    "All": "All"
   },
   "error": {
     "Page not found": "Page not found",
@@ -37,7 +41,17 @@
   },
   "accessibility": {
     "Language Control": "Language Control",
-    "Theme Control": "Theme Control"
+    "Theme Control": "Theme Control",
+    "High Contrast Mode": "High Contrast Mode",
+    "High Contrast Description": "Increase color contrast for improved visibility",
+    "Dyslexia Font": "Dyslexia Font",
+    "Dyslexia Font Description": "Use OpenDyslexic font designed for better readability"
+  },
+  "gender": {
+    "male": "Male",
+    "female": "Female",
+    "diverse": "Diverse",
+    "unknown": "Unknown"
   },
   "student": {
     "home": {
@@ -128,6 +142,14 @@
       "schoolYearFrom": "School Year From",
       "schoolYearTo": "School Year To",
       "yearOrderError": "Must be after 'from'"
+    },
+    "addStudentsToClass": {
+      "title": "Add Students to Class",
+      "subtitle": "Select students to add to this class",
+      "searchPlaceholder": "Search students...",
+      "noOptions": "No unassigned students available",
+      "addButton": "Add Students",
+      "selectedCount": "{{count}} student(s) selected"
     }
   },
   "actions": {
@@ -138,13 +160,135 @@
     "studentDeleteFailed": "Failed to delete students.",
     "classFetchFailed": "Failed to fetch classes.",
     "classAddSuccess": "Classes added successfully.",
-    "classAddFailed": "Failed to add Classes."
+    "classAddFailed": "Failed to add Classes.",
+    "classDeleteSuccess": "Classes deleted successfully.",
+    "studentsAddedToClass": "Students added to class successfully.",
+    "studentsAddToClassFailed": "Failed to add students to class.",
+    "studentsRemovedFromClass": "Students removed from class successfully.",
+    "studentsRemoveFromClassFailed": "Failed to remove students from class.",
+    "dashboardStatsFetchFailed": "Failed to fetch dashboard statistics.",
+    "dashboardHealthFetchFailed": "Failed to fetch system health status.",
+    "settingsFetchFailed": "Failed to fetch settings.",
+    "onboardingSettingsFetchFailed": "Failed to fetch onboarding settings.",
+    "settingsUpdateSuccess": "Settings updated successfully.",
+    "settingsUpdateFailed": "Failed to update settings.",
+    "onboardingSettingsUpdateSuccess": "Onboarding settings updated successfully.",
+    "onboardingSettingsUpdateFailed": "Failed to update onboarding settings.",
+    "auditLogFetchFailed": "Failed to fetch audit logs.",
+    "auditLogStatsFailed": "Failed to fetch audit log statistics.",
+    "auditLogExportSuccess": "Audit logs exported successfully.",
+    "auditLogExportFailed": "Failed to export audit logs.",
+    "auditLogClearSuccess": "Audit logs cleared successfully.",
+    "auditLogClearFailed": "Failed to clear audit logs."
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "resetLayout": "Reset Layout",
+    "quickStats": {
+      "totalStudents": "Total Students",
+      "totalClasses": "Total Classes",
+      "unassignedStudents": "Unassigned Students",
+      "activeClasses": "Active Classes"
+    },
+    "charts": {
+      "registrationTrend": "Registration Trend (Last 7 Days)",
+      "studentStatus": "Students by Status",
+      "classDistribution": "Classes by Grade",
+      "systemMetrics": "System Metrics"
+    },
+    "status": {
+      "imported": "Imported",
+      "invited": "Invited",
+      "onboarded": "Onboarded",
+      "other": "Other"
+    },
+    "health": {
+      "title": "System Health",
+      "status": "Status",
+      "up": "Operational",
+      "down": "Down",
+      "database": "Database",
+      "uptime": "Uptime",
+      "memory": "Memory Usage",
+      "cpu": "CPU Cores",
+      "loadAverage": "Load Average",
+      "hostname": "Hostname",
+      "platform": "Platform",
+      "nodeVersion": "Node Version",
+      "lastUpdated": "Last Updated",
+      "refresh": "Refresh"
+    },
+    "errors": {
+      "loadFailed": "Failed to load dashboard data",
+      "retry": "Retry"
+    }
   },
   "table": {
     "No data found": "No Data to Show",
     "No data found description": "After member/members are added, a list will appear here in this section."
   },
   "settings": {
+    "onboarding": {
+      "dropdownOptions": "Dropdown Options",
+      "fieldConfiguration": "Field Configuration",
+      "sections": {
+        "gender": {
+          "title": "Gender Options",
+          "subtitle": "Available gender options for student registration"
+        },
+        "salutation": {
+          "title": "Salutation Options",
+          "subtitle": "Salutation options for contact persons and company contacts"
+        },
+        "religion": {
+          "title": "Religion Options",
+          "subtitle": "Available religious affiliations"
+        },
+        "language": {
+          "title": "Language Options",
+          "subtitle": "Available family language options"
+        },
+        "fieldConfig": {
+          "title": "Form Field Settings",
+          "subtitle": "Control which fields are required, visible, and allow custom values"
+        }
+      },
+      "table": {
+        "field": "Field",
+        "required": "Required",
+        "visible": "Visible",
+        "allowCustom": "Allow Custom",
+        "requiredTooltip": "Field must be filled out by students",
+        "visibleTooltip": "Field is visible in the onboarding form",
+        "allowCustomTooltip": "Allow students to enter custom values not in the dropdown"
+      },
+      "fields": {
+        "geschlecht": {
+          "label": "Gender (Geschlecht)",
+          "description": "Student's gender selection"
+        },
+        "religion": {
+          "label": "Religion",
+          "description": "Student's religious affiliation"
+        },
+        "familiensprache": {
+          "label": "Family Language (Familiensprache)",
+          "description": "Primary language spoken at home"
+        }
+      },
+      "dropdownManager": {
+        "value": "Value",
+        "label": "Label",
+        "save": "Save",
+        "cancel": "Cancel",
+        "newValue": "New Value",
+        "newLabel": "New Label",
+        "addOption": "Add Option",
+        "valuePlaceholder": "männlich",
+        "labelPlaceholder": "Männlich",
+        "valuePrefix": "Value:"
+      }
+    },
     "csv": {
       "CSV data is empty": "CSV data is empty.",
       "CSV data should contain both headers and data rows": "CSV data should contain both headers and data rows.",
@@ -182,12 +326,55 @@
       "schoolYearTo": "School Year To",
       "isVocational": "Is Vocational",
       "requiresEmployerInfo": "Requires Employer Info",
+      "removeFromClass": "Remove from Class",
+      "removeFromClassConfirmation": "Are you sure you want to remove the selected student(s) from this class?",
       "classSettings": {
         "settings": "Class Settings",
         "general": "General",
         "students": "Students",
         "options": "Settings"
+      },
+      "student": {
+        "firstName": "First name",
+        "lastName": "Last name",
+        "dateOfBirth": "Date of birth",
+        "gender": "Gender",
+        "status": "Status"
       }
+    }
+  },
+  "audit": {
+    "title": "Audit Log",
+    "timestamp": "Timestamp",
+    "action": "Action",
+    "description": "Description",
+    "user": "User",
+    "ipAddress": "IP Address",
+    "metadata": "Metadata",
+    "logDetails": "Log Details",
+    "categoryLabel": "Category",
+    "statusLabel": "Status",
+    "filterByCategory": "Filter by Category",
+    "filterByStatus": "Filter by Status",
+    "clearLogs": "Clear Logs",
+    "export": "Export",
+    "clearLogsConfirm": "Clear Audit Logs",
+    "clearLogsWarning": "Are you sure you want to clear old audit logs? This action cannot be undone.",
+    "deleteSelected": "Delete Selected",
+    "deleteSelectedConfirm": "Delete Selected Audit Logs",
+    "deleteSelectedWarning": "Are you sure you want to delete the selected audit log(s)? This action cannot be undone.",
+    "exportSelected": "Export Selected",
+    "category": {
+      "student": "Student",
+      "class": "Class",
+      "settings": "Settings",
+      "auth": "Authentication",
+      "system": "System"
+    },
+    "status": {
+      "success": "Success",
+      "failure": "Failure",
+      "partial": "Partial"
     }
   }
 }

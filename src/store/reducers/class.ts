@@ -1,4 +1,5 @@
 import { ClassInterface } from "@/types/class";
+import { Student } from "@/types/db";
 
 import * as TYPES from "../types";
 import { AppAction } from "./index";
@@ -13,6 +14,11 @@ interface CurrentClassState {
 interface ClassState {
   classes: ClassInterface[];
   currentClass: CurrentClassState;
+  currentClassStudents: {
+    students: Student[];
+    loading: boolean;
+    error: string | null;
+  };
   byId: { [key: string]: ClassInterface };
   loading: boolean;
   error: string | null;
@@ -29,6 +35,11 @@ const initialState: ClassState = {
     loading: false,
     error: null,
     success: false,
+  },
+  currentClassStudents: {
+    students: [] as Student[],
+    loading: false,
+    error: null,
   },
   byId: {},
   loading: false,
@@ -95,12 +106,19 @@ const classReducer = (state = initialState, action: AppAction): ClassState => {
       };
     }
 
-    case TYPES.ADD_CLASS_SUCCESS:
+    case TYPES.ADD_CLASS_SUCCESS: {
+      const newClasses = action.payload;
+      const updatedById = { ...state.byId };
+      newClasses.forEach((c: ClassInterface) => {
+        updatedById[c._id] = c;
+      });
       return {
         ...state,
         loading: false,
-        classes: [...state.classes, action.payload],
+        classes: [...state.classes, ...newClasses],
+        byId: updatedById,
       };
+    }
 
     case TYPES.DELETE_CLASSES_SUCCESS:
       return {
@@ -111,8 +129,9 @@ const classReducer = (state = initialState, action: AppAction): ClassState => {
         ),
       };
 
-    case TYPES.UPDATE_CLASS_SUCCESS:
+    case TYPES.UPDATE_CLASS_SUCCESS: {
       const updated = action.payload;
+      const isCurrentClass = state.currentClass.data?._id === updated._id;
       return {
         ...state,
         loading: false,
@@ -123,7 +142,17 @@ const classReducer = (state = initialState, action: AppAction): ClassState => {
           ...state.byId,
           [updated._id]: { ...(state.byId[updated._id] || {}), ...updated },
         },
+        currentClass: isCurrentClass
+          ? {
+              ...state.currentClass,
+              data: {
+                ...state.currentClass.data,
+                ...updated,
+              } as ClassInterface,
+            }
+          : state.currentClass,
       };
+    }
 
     case TYPES.GET_CLASSES_FAILURE:
     case TYPES.ADD_CLASS_FAILURE:
@@ -144,6 +173,68 @@ const classReducer = (state = initialState, action: AppAction): ClassState => {
       return {
         ...state,
         currentClass: initialState.currentClass,
+        currentClassStudents: initialState.currentClassStudents,
+      };
+
+    case TYPES.GET_CLASS_STUDENTS_REQUEST:
+      return {
+        ...state,
+        currentClassStudents: {
+          ...state.currentClassStudents,
+          loading: true,
+          error: null,
+        },
+      };
+
+    case TYPES.GET_CLASS_STUDENTS_SUCCESS:
+      return {
+        ...state,
+        currentClassStudents: {
+          students: action.payload,
+          loading: false,
+          error: null,
+        },
+      };
+
+    case TYPES.GET_CLASS_STUDENTS_FAILURE:
+      return {
+        ...state,
+        currentClassStudents: {
+          ...state.currentClassStudents,
+          loading: false,
+          error: action.payload,
+        },
+      };
+
+    case TYPES.ADD_STUDENTS_TO_CLASS_REQUEST:
+    case TYPES.REMOVE_STUDENTS_FROM_CLASS_REQUEST:
+      return {
+        ...state,
+        currentClassStudents: {
+          ...state.currentClassStudents,
+          loading: true,
+        },
+      };
+
+    case TYPES.ADD_STUDENTS_TO_CLASS_SUCCESS:
+    case TYPES.REMOVE_STUDENTS_FROM_CLASS_SUCCESS:
+      return {
+        ...state,
+        currentClassStudents: {
+          ...state.currentClassStudents,
+          loading: false,
+        },
+      };
+
+    case TYPES.ADD_STUDENTS_TO_CLASS_FAILURE:
+    case TYPES.REMOVE_STUDENTS_FROM_CLASS_FAILURE:
+      return {
+        ...state,
+        currentClassStudents: {
+          ...state.currentClassStudents,
+          loading: false,
+          error: action.payload,
+        },
       };
 
     default:

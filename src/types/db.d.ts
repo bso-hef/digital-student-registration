@@ -3,6 +3,7 @@ export interface Student {
   firstName: string;
   lastName: string;
   dateOfBirth: Date | null;
+  gender: "male" | "female" | "diverse" | undefined;
   class?: string;
   email?: string;
   phone?: string;

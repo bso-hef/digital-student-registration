@@ -20,6 +20,17 @@ const classService = {
   patch: (id: string, patch: ClassPatch) => {
     return http.patch(`/api/classes/${id}`, patch);
   },
+  getStudentsInClass: (classId: string) => {
+    return http.get(`/api/classes/${classId}/students`);
+  },
+  addStudentsToClass: (classId: string, studentIds: string[]) => {
+    return http.post(`/api/classes/${classId}/students`, { studentIds });
+  },
+  removeStudentsFromClass: (classId: string, studentIds: string[]) => {
+    return http.delete(`/api/classes/${classId}/students`, {
+      data: { studentIds },
+    });
+  },
 };
 
 export default classService;

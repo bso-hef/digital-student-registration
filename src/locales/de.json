@@ -14,6 +14,9 @@
     "Language": "Sprache",
     "Light": "Hell",
     "Dark": "Dunkel",
+    "Light Theme": "Helles Theme",
+    "Dark Theme": "Dunkles Theme",
+    "System": "System",
     "Rows per page": "Zeilen pro Seite:",
     "Search": "Suche",
     "Imported": "Importiert",
@@ -25,7 +28,8 @@
     "Yes": "Ja",
     "No": "Nein",
     "Inactive": "Inaktiv",
-    "Active": "Aktiv"
+    "Active": "Aktiv",
+    "All": "Alle"
   },
   "error": {
     "Page not found": "Seite nicht gefunden",
@@ -37,7 +41,17 @@
   },
   "accessibility": {
     "Language Control": "Sprachsteuerung",
-    "Theme Control": "Themensteuerung"
+    "Theme Control": "Themensteuerung",
+    "High Contrast Mode": "Hochkontrastmodus",
+    "High Contrast Description": "Erhöhen Sie den Farbkontrast für bessere Sichtbarkeit",
+    "Dyslexia Font": "Legasthenie Schriftart",
+    "Dyslexia Font Description": "Verwenden Sie die OpenDyslexic für bessere Lesbarkeit"
+  },
+  "gender": {
+    "male": "Männlich",
+    "female": "Weiblich",
+    "diverse": "Divers",
+    "unknown": "Unbekannt"
   },
   "student": {
     "home": {
@@ -128,6 +142,14 @@
       "schoolYearFrom": "Schuljahr von",
       "schoolYearTo": "Schuljahr bis",
       "yearOrderError": "Das Endjahr muss größer als das Startjahr sein"
+    },
+    "addStudentsToClass": {
+      "title": "Schüler zur Klasse hinzufügen",
+      "subtitle": "Wählen Sie Schüler aus, die zu dieser Klasse hinzugefügt werden sollen",
+      "searchPlaceholder": "Schüler suchen...",
+      "noOptions": "Keine nicht zugewiesenen Schüler verfügbar",
+      "addButton": "Schüler hinzufügen",
+      "selectedCount": "{{count}} Schüler ausgewählt"
     }
   },
   "actions": {
@@ -138,13 +160,135 @@
     "studentDeleteFailed": "Löschen der Schüler fehlgeschlagen.",
     "classFetchFailed": "Abrufen der Klassen fehlgeschlagen.",
     "classAddSuccess": "Klassen erfolgreich hinzugefügt.",
-    "classAddFailed": "Hinzufügen der Klassen fehlgeschlagen."
+    "classAddFailed": "Hinzufügen der Klassen fehlgeschlagen.",
+    "classDeleteSuccess": "Klassen erfolgreich gelöscht.",
+    "studentsAddedToClass": "Schüler erfolgreich zur Klasse hinzugefügt.",
+    "studentsAddToClassFailed": "Hinzufügen der Schüler zur Klasse fehlgeschlagen.",
+    "studentsRemovedFromClass": "Schüler erfolgreich aus der Klasse entfernt.",
+    "studentsRemoveFromClassFailed": "Entfernen der Schüler aus der Klasse fehlgeschlagen.",
+    "dashboardStatsFetchFailed": "Abrufen der Dashboard-Statistiken fehlgeschlagen.",
+    "dashboardHealthFetchFailed": "Abrufen des Systemstatus fehlgeschlagen.",
+    "settingsFetchFailed": "Abrufen der Einstellungen fehlgeschlagen.",
+    "onboardingSettingsFetchFailed": "Abrufen der Onboarding-Einstellungen fehlgeschlagen.",
+    "settingsUpdateSuccess": "Einstellungen erfolgreich aktualisiert.",
+    "settingsUpdateFailed": "Aktualisierung der Einstellungen fehlgeschlagen.",
+    "onboardingSettingsUpdateSuccess": "Onboarding-Einstellungen erfolgreich aktualisiert.",
+    "onboardingSettingsUpdateFailed": "Aktualisierung der Onboarding-Einstellungen fehlgeschlagen.",
+    "auditLogFetchFailed": "Abrufen der Audit-Protokolle fehlgeschlagen.",
+    "auditLogStatsFailed": "Abrufen der Audit-Protokoll-Statistiken fehlgeschlagen.",
+    "auditLogExportSuccess": "Audit-Protokolle erfolgreich exportiert.",
+    "auditLogExportFailed": "Export der Audit-Protokolle fehlgeschlagen.",
+    "auditLogClearSuccess": "Audit-Protokolle erfolgreich gelöscht.",
+    "auditLogClearFailed": "Löschen der Audit-Protokolle fehlgeschlagen."
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "resetLayout": "Layout zurücksetzen",
+    "quickStats": {
+      "totalStudents": "Schüler gesamt",
+      "totalClasses": "Klassen gesamt",
+      "unassignedStudents": "Nicht zugeordnete Schüler",
+      "activeClasses": "Aktive Klassen"
+    },
+    "charts": {
+      "registrationTrend": "Anmeldungstrend (letzte 7 Tage)",
+      "studentStatus": "Schüler nach Status",
+      "classDistribution": "Klassen nach Jahrgang",
+      "systemMetrics": "Systemmetriken"
+    },
+    "status": {
+      "imported": "Importiert",
+      "invited": "Eingeladen",
+      "onboarded": "Angemeldet",
+      "other": "Sonstige"
+    },
+    "health": {
+      "title": "Systemstatus",
+      "status": "Status",
+      "up": "Betriebsbereit",
+      "down": "Ausgefallen",
+      "database": "Datenbank",
+      "uptime": "Betriebszeit",
+      "memory": "Speichernutzung",
+      "cpu": "CPU-Kerne",
+      "loadAverage": "Systemlast",
+      "hostname": "Hostname",
+      "platform": "Plattform",
+      "nodeVersion": "Node-Version",
+      "lastUpdated": "Zuletzt aktualisiert",
+      "refresh": "Aktualisieren"
+    },
+    "errors": {
+      "loadFailed": "Laden der Dashboard-Daten fehlgeschlagen",
+      "retry": "Erneut versuchen"
+    }
   },
   "table": {
     "No data found": "Keine Daten gefunden",
     "No data found description": "Nachdem mindestens ein Benutzer hinzugefügt wurde, erscheint hier eine Liste."
   },
   "settings": {
+    "onboarding": {
+      "dropdownOptions": "Dropdown-Optionen",
+      "fieldConfiguration": "Feldkonfiguration",
+      "sections": {
+        "gender": {
+          "title": "Geschlechtsoptionen",
+          "subtitle": "Verfügbare Geschlechtsoptionen für die Schülerregistrierung"
+        },
+        "salutation": {
+          "title": "Anredeoptionen",
+          "subtitle": "Anredeoptionen für Kontaktpersonen und Unternehmenskontakte"
+        },
+        "religion": {
+          "title": "Religionsoptionen",
+          "subtitle": "Verfügbare Religionszugehörigkeiten"
+        },
+        "language": {
+          "title": "Sprachoptionen",
+          "subtitle": "Verfügbare Familiensprachoptionen"
+        },
+        "fieldConfig": {
+          "title": "Formularfeldeinstellungen",
+          "subtitle": "Steuern Sie, welche Felder erforderlich, sichtbar sind und benutzerdefinierte Werte zulassen"
+        }
+      },
+      "table": {
+        "field": "Feld",
+        "required": "Erforderlich",
+        "visible": "Sichtbar",
+        "allowCustom": "Benutzerdefiniert erlauben",
+        "requiredTooltip": "Feld muss von Schülern ausgefüllt werden",
+        "visibleTooltip": "Feld ist im Onboarding-Formular sichtbar",
+        "allowCustomTooltip": "Erlauben Sie Schülern, benutzerdefinierte Werte einzugeben, die nicht in der Dropdown-Liste enthalten sind"
+      },
+      "fields": {
+        "geschlecht": {
+          "label": "Geschlecht",
+          "description": "Geschlechtsauswahl des Schülers"
+        },
+        "religion": {
+          "label": "Religion",
+          "description": "Religionszugehörigkeit des Schülers"
+        },
+        "familiensprache": {
+          "label": "Familiensprache",
+          "description": "Hauptsprache, die zu Hause gesprochen wird"
+        }
+      },
+      "dropdownManager": {
+        "value": "Wert",
+        "label": "Bezeichnung",
+        "save": "Speichern",
+        "cancel": "Abbrechen",
+        "newValue": "Neuer Wert",
+        "newLabel": "Neue Bezeichnung",
+        "addOption": "Option hinzufügen",
+        "valuePlaceholder": "männlich",
+        "labelPlaceholder": "Männlich",
+        "valuePrefix": "Wert:"
+      }
+    },
     "csv": {
       "CSV data is empty": "CSV-Daten sind leer.",
       "CSV data should contain both headers and data rows": "CSV-Daten sollten sowohl Kopfzeilen als auch Datenzeilen enthalten.",
@@ -178,12 +322,59 @@
       "schoolYear": "Schuljahr",
       "grade": "Jahrgang",
       "class": "Klasse",
+      "schoolYearFrom": "Schuljahr von",
+      "schoolYearTo": "Schuljahr bis",
+      "isVocational": "Ist Berufsklasse",
+      "requiresEmployerInfo": "Benötigt Informationen zum Ausbildungsbetrieb",
+      "removeFromClass": "Aus Klasse entfernen",
+      "removeFromClassConfirmation": "Sind Sie sicher, dass Sie die ausgewählten Schüler aus dieser Klasse entfernen möchten?",
       "classSettings": {
         "settings": "Klasseneinstellungen",
         "general": "Allgemein",
         "students": "Schüler",
         "options": "Einstellungen"
+      },
+      "student": {
+        "firstName": "Vorname",
+        "lastName": "Nachname",
+        "dateOfBirth": "Geburtsdatum",
+        "gender": "Geschlecht",
+        "status": "Status"
       }
+    }
+  },
+  "audit": {
+    "title": "Audit-Protokoll",
+    "timestamp": "Zeitstempel",
+    "action": "Aktion",
+    "description": "Beschreibung",
+    "user": "Benutzer",
+    "ipAddress": "IP-Adresse",
+    "metadata": "Metadaten",
+    "logDetails": "Protokolldetails",
+    "categoryLabel": "Kategorie",
+    "statusLabel": "Status",
+    "filterByCategory": "Nach Kategorie filtern",
+    "filterByStatus": "Nach Status filtern",
+    "clearLogs": "Protokolle löschen",
+    "export": "Exportieren",
+    "clearLogsConfirm": "Audit-Protokolle löschen",
+    "clearLogsWarning": "Sind Sie sicher, dass Sie alte Audit-Protokolle löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "deleteSelected": "Ausgewählte löschen",
+    "deleteSelectedConfirm": "Ausgewählte Audit-Protokolle löschen",
+    "deleteSelectedWarning": "Sind Sie sicher, dass Sie die ausgewählten Audit-Protokolle löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "exportSelected": "Ausgewählte exportieren",
+    "category": {
+      "student": "Schüler",
+      "class": "Klasse",
+      "settings": "Einstellungen",
+      "auth": "Authentifizierung",
+      "system": "System"
+    },
+    "status": {
+      "success": "Erfolg",
+      "failure": "Fehler",
+      "partial": "Teilweise"
     }
   }
 }

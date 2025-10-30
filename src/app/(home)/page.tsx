@@ -7,13 +7,10 @@ import SchoolRoundedIcon from "@mui/icons-material/SchoolRounded";
 import StartRoundedIcon from "@mui/icons-material/StartRounded";
 import { Box, Stack, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { useDeviceTypeDetection } from "device-type-detection";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 
-const Wrapper = styled(Box, {
-  shouldForwardProp: (prop) => prop !== "showMobileView",
-})<{ showMobileView: boolean }>(({ theme, showMobileView }) => ({
+const Wrapper = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
@@ -29,9 +26,6 @@ const Wrapper = styled(Box, {
 export default function Home() {
   const router = useRouter();
   const { t } = useTranslation();
-  const { isMobile, isTabletVertical } = useDeviceTypeDetection();
-
-  const showMobileView = isMobile || isTabletVertical;
 
   const handleVisitDocs = () => {
     if (typeof window !== "undefined") {
@@ -51,7 +45,7 @@ export default function Home() {
   };
 
   return (
-    <Wrapper showMobileView={showMobileView}>
+    <Wrapper>
       <SchoolRoundedIcon sx={{ fontSize: 120, color: "primary.main", mb: 2 }} />
       <Typography variant="h3" component="h1" color="text.default">
         {t("student.home.Title")}

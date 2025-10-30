@@ -138,3 +138,42 @@ dist
 # keys
 keys/
 certificates/
+
+# AI Services
+GEMINI.md
+CLAUDE.md
+CODEX.md
+OPENAI.md
+
+.claude
+
+# Playwright
+playwright-report
+playwright-report/*
+test-results
+*.webm
+*.mp4
+downloads
+
+# Playwright Snapshots Strategy:
+# - Ignore all snapshot folders throughout the project
+# - Re-include baseline snapshot images (for version control)
+# - Exclude actual/diff images from failed tests
+
+# Ignore all folders ending with "-snapshots" anywhere in project
+**/*-snapshots/
+
+# Re-include baseline snapshot images
+!**/*-snapshots/*.png
+!**/*-snapshots/*.jpg
+!**/*-snapshots/*.jpeg
+
+# But exclude actual and diff images from failed tests
+**/*-snapshots/*-actual.png
+**/*-snapshots/*-diff.png
+**/*-snapshots/*-actual.jpg
+**/*-snapshots/*-diff.jpg
+**/*-snapshots/*-actual.jpeg
+**/*-snapshots/*-diff.jpeg
+*storybook.log
+storybook-static

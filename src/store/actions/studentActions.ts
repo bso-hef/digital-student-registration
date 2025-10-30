@@ -43,6 +43,8 @@ export const addStudents =
       });
 
       successNotification(i18n.t("actions.studentAddSuccess"));
+      // Refetch students to get populated class data
+      dispatch(getStudents());
     } catch (error) {
       errorNotification(i18n.t("actions.studentAddFailed"));
       dispatch({ type: TYPES.ADD_STUDENTS_FAILURE, payload: error });
@@ -58,6 +60,8 @@ export const deleteStudents =
 
       dispatch({ type: TYPES.DELETE_STUDENTS_SUCCESS, payload: ids });
       successNotification(i18n.t("actions.studentDeleteSuccess"));
+      // Refetch students for consistency
+      dispatch(getStudents());
     } catch (error) {
       errorNotification(i18n.t("actions.studentDeleteFailed"));
       dispatch({ type: TYPES.DELETE_STUDENTS_FAILURE, payload: error });
