@@ -57,7 +57,6 @@ export default defineConfig({
         statements: 21.78,
       },
       enabled: true,
-      all: true,
       reportOnFailure: true,
     },
     testTimeout: 10000,

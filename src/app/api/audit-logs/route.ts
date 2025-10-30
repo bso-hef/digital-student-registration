@@ -164,7 +164,10 @@ export async function DELETE(request: NextRequest) {
 
     // Get retention period from settings
     const settings = await AppSettings.findOne().lean();
-    const retentionDays = settings?.audit?.retentionPeriodDays || 90;
+    const retentionDays =
+      settings && !Array.isArray(settings)
+        ? (settings as any).audit?.retentionPeriodDays || 90
+        : 90;
 
     // Calculate cutoff date
     const cutoffDate = new Date();

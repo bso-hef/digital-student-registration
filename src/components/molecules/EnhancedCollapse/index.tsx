@@ -77,7 +77,7 @@ interface EnhancedCollapseProps {
   title: string;
   subtitle?: string;
   children: React.ReactNode;
-  onAction?: (() => void) | null;
+  onAction?: (() => void) | undefined;
   withArrow?: boolean;
   expanded?: boolean;
   disablePadding?: boolean;
@@ -87,7 +87,7 @@ const EnhancedCollapse: React.FC<EnhancedCollapseProps> = ({
   title,
   subtitle,
   children,
-  onAction = null,
+  onAction = undefined,
   withArrow = true,
   expanded = true,
   disablePadding = false,

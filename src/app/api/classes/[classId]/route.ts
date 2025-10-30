@@ -67,7 +67,7 @@ export async function PATCH(
       new: true,
     }).lean();
 
-    if (!updatedClass) {
+    if (!updatedClass || Array.isArray(updatedClass)) {
       return NextResponse.json({ message: "Class not found" }, { status: 404 });
     }
 
@@ -77,12 +77,12 @@ export async function PATCH(
         action: "class.update",
         category: "class",
         description: tServer("audit.descriptions.updatedClass", {
-          name: updatedClass.name,
+          name: (updatedClass as any).name,
         }),
         status: "success",
         metadata: {
           classId: classId,
-          className: updatedClass.name,
+          className: (updatedClass as any).name,
           changedFields: Object.keys(body),
           oldValues: oldClass,
           newValues: body,
