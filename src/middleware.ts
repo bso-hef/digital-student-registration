@@ -1,34 +1,50 @@
-import { NextRequest, NextResponse } from "next/server";
+import { authEdgeConfig } from "@/lib/auth/auth.edge.config";
+import { getSetupCookieValue } from "@/lib/auth/setupCookie";
+import NextAuth from "next-auth";
+import { NextResponse } from "next/server";
 
-// import { verifyToken } from "./src/lib/auth";
-// TODO: Create good flow for middleware
+// Initialize NextAuth with edge-safe config for middleware
+const { auth } = NextAuth(authEdgeConfig);
 
-const PUBLIC_PATHS = [
-  "/",
-  "/api/auth/register",
-  "/favicon.ico",
-  "/_next/",
-  "/static/",
-];
-
-function isPublic(path: string) {
-  return PUBLIC_PATHS.some(
-    (publicPath) => path === publicPath || path.startsWith(publicPath),
-  );
-}
-
-// **Als default** exportieren**
-export default async function middleware(req: NextRequest) {
+// Wrap NextAuth's auth middleware with our custom logic
+export default auth((req) => {
+  // Check if system setup is complete via cookie
+  const isSetupComplete = getSetupCookieValue(req.cookies);
   const { pathname } = req.nextUrl;
 
-  if (isPublic(pathname)) {
-    return NextResponse.next();
+  // If setup is NOT complete
+  if (!isSetupComplete) {
+    // Allow access to setup page
+    if (pathname === "/setup") {
+      return NextResponse.next();
+    }
+    // Redirect all other routes to setup
+    return NextResponse.redirect(new URL("/setup", req.url));
   }
-}
+
+  // If setup IS complete and user tries to access setup page
+  if (isSetupComplete && pathname === "/setup") {
+    // Redirect to login page
+    return NextResponse.redirect(new URL("/login", req.url));
+  }
+
+  // For all other routes, NextAuth middleware handles authentication checks
+  // NextAuth will handle:
+  // - Protecting /admin/* routes (redirect to /login if not authenticated)
+  // - Redirecting authenticated users from /login to /admin/dashboard
+  // - Allowing public access to /, /student/*, etc.
+  // (handled by the authorized callback in authEdgeConfig)
+});
 
 export const config = {
   matcher: [
-    // Alle Pfade, ausgenommen _next, static, favicon und /api/auth
-    "/((?!_next|static|favicon.ico|api/auth).*)",
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (ALL API routes - they handle their own logic)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    "/((?!api|_next/static|_next/image|favicon.ico).*)",
   ],
 };

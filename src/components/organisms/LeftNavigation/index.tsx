@@ -5,8 +5,13 @@ import React, { Fragment, memo, useCallback, useEffect, useState } from "react";
 import GeneralInput from "@/components/atoms/GeneralInput";
 import OnboardingVersion from "@/components/atoms/OnboardingVersion";
 import ProfileAvatar from "@/components/atoms/ProfileAvatar";
+import GeneralButton from "@/components/atoms/buttons/GeneralButton";
+import { logoutUser } from "@/store/actions/authActions";
+import { AppDispatch, RootState } from "@/store/store";
+import { getName } from "@/utils/string.utils";
 import ExpandLessRoundedIcon from "@mui/icons-material/ExpandLessRounded";
 import ExpandMoreRoundedIcon from "@mui/icons-material/ExpandMoreRounded";
+import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import OpenInNewRoundedIcon from "@mui/icons-material/OpenInNewRounded";
 import {
   Box,
@@ -23,6 +28,7 @@ import {
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
 
 import { listOfRoutes } from "./routesConfig";
 
@@ -101,13 +107,38 @@ const StyledListItemText = styled(ListItemText, {
   fontWeight: selected ? 600 : 400,
 }));
 
-const StyledLabel = styled(Typography)(({ theme }) => ({
-  fontSize: "22px !important",
-  lineHeight: "28px !important",
-  letterSpacing: "0.02em !important",
-  fontWeight: "500 !important",
-  color: theme.palette.text.default,
+const WelcomeContainer = styled(Box)({
+  display: "flex",
+  flexDirection: "column",
+  width: "100%",
+});
+
+const WelcomeText = styled(Typography)(({ theme }) => ({
+  fontSize: "14px",
+  lineHeight: "20px",
+  fontWeight: 400,
+  color: theme.palette.text.secondary,
   marginTop: theme.spacing(1),
+}));
+
+const NameText = styled(Typography)(({ theme }) => ({
+  fontSize: "22px",
+  lineHeight: "28px",
+  letterSpacing: "0.02em",
+  fontWeight: 500,
+  color: theme.palette.text.default,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+  maxWidth: "100%",
+}));
+
+const LogoutContainer = styled(Box)(({ theme }) => ({
+  width: "100%",
+  marginBottom: theme.spacing(2),
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
 }));
 
 const LeftNavigation = () => {
@@ -115,6 +146,8 @@ const LeftNavigation = () => {
   const pathname = usePathname();
   const router = useRouter();
   const theme = useTheme();
+  const dispatch = useDispatch<AppDispatch>();
+  const { user } = useSelector((state: RootState) => state.auth);
 
   const [open, setOpen] = useState<boolean[]>([]);
 
@@ -189,9 +222,12 @@ const LeftNavigation = () => {
       <StyledNavigation>
         <Box width="100%">
           <ProfileAvatar size={80} />
-          <StyledLabel>
-            {t("navigation.welcome", { name: "Admin" })}
-          </StyledLabel>
+          <WelcomeContainer>
+            <WelcomeText>
+              {t("navigation.welcome", { name: "" }).trim()}
+            </WelcomeText>
+            <NameText>{getName(user) || "Admin"}</NameText>
+          </WelcomeContainer>
           <Divider sx={{ my: 2 }} />
         </Box>
         <Box mb={2} width="100%">
@@ -311,6 +347,24 @@ const LeftNavigation = () => {
           })}
         </List>
       </StyledNavigation>
+      {user && (
+        <LogoutContainer>
+          <GeneralButton
+            label={t("navigation.Logout")}
+            startIcon={<LogoutRoundedIcon />}
+            onAction={async () => {
+              const result = await dispatch(logoutUser());
+              if (result.success) {
+                router.push("/login");
+                router.refresh();
+              }
+            }}
+            fullWidth={false}
+            fullHeight={false}
+            isPrimary={false}
+          />
+        </LogoutContainer>
+      )}
       <OnboardingVersion />
     </StyledWrapper>
   );

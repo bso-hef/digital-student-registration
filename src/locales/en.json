@@ -29,7 +29,8 @@
     "No": "No",
     "Inactive": "Inactive",
     "Active": "Active",
-    "All": "All"
+    "All": "All",
+    "generatePassword": "Generate secure password"
   },
   "error": {
     "Page not found": "Page not found",
@@ -90,7 +91,11 @@
     "integrationSettings": "Integrations",
     "auditLog": "Audit Log",
     "Browse settings": "Browse settings",
-    "welcome": "Welcome {{name}}"
+    "welcome": "Welcome {{name}}",
+    "Logged in as": "Logged in as",
+    "Logout": "Logout",
+    "Logged out successfully": "Logged out successfully",
+    "Failed to logout": "Failed to logout"
   },
   "modals": {
     "addStudent": {
@@ -375,6 +380,151 @@
       "success": "Success",
       "failure": "Failure",
       "partial": "Partial"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Admin Login",
+      "subtitle": "Digital Student Registration",
+      "emailLabel": "Email Address",
+      "passwordLabel": "Password",
+      "forgotPassword": "Forgot password?",
+      "signInButton": "Sign In",
+      "signingIn": "Signing in...",
+      "invalidCredentials": "Invalid email or password",
+      "loginSuccess": "Login successful!",
+      "loginError": "An error occurred during login"
+    },
+    "setup": {
+      "title": "Admin Setup",
+      "subtitle": "First-time setup wizard for Digital Student Registration",
+      "steps": {
+        "welcome": "Welcome",
+        "email": "Admin Email",
+        "password": "Set Password",
+        "recovery": "Recovery Code",
+        "confirmation": "Confirmation"
+      },
+      "welcome": {
+        "title": "Welcome to Digital Student Registration",
+        "description": "This is the first-time setup wizard for your admin account. You will:",
+        "step1": "Set up your admin email address",
+        "step2": "Create a secure password",
+        "step3": "Receive a recovery code for password reset",
+        "warning": "Important: Make sure to save your recovery code in a safe place. You will need it to reset your password if you forget it.",
+        "startButton": "Get Started"
+      },
+      "email": {
+        "title": "Admin Email",
+        "description": "Enter the email address for the admin account. This will be used to log in to the system.",
+        "emailLabel": "Email Address"
+      },
+      "password": {
+        "title": "Set Password",
+        "description": "Create a strong password for your admin account. Your password must:",
+        "requirement1": "Be at least 8 characters long",
+        "requirement2": "Contain at least one uppercase letter",
+        "requirement3": "Contain at least one lowercase letter",
+        "requirement4": "Contain at least one number",
+        "passwordLabel": "Password",
+        "confirmPasswordLabel": "Confirm Password",
+        "strengthLabel": "Password Strength:",
+        "strengthWeak": "Weak",
+        "strengthMedium": "Medium",
+        "strengthStrong": "Strong",
+        "creatingAccount": "Creating Account...",
+        "createButton": "Create Account"
+      },
+      "recovery": {
+        "title": "Recovery Code",
+        "warning": "IMPORTANT: This is your only chance to save this recovery code. It cannot be retrieved later. You will need this code to reset your password if you forget it.",
+        "codeLabel": "Your recovery code is:",
+        "copyButton": "Copy Code",
+        "copied": "Copied!",
+        "downloadButton": "Download",
+        "continueButton": "I Have Saved My Recovery Code"
+      },
+      "confirmation": {
+        "title": "Confirm Setup",
+        "description": "Before completing the setup, please confirm that you have saved your recovery code.",
+        "warning": "Without your recovery code, you will not be able to reset your password if you forget it. The only way to recover access would be to manually reset it through the database.",
+        "checkboxLabel": "I confirm that I have saved my recovery code in a safe place",
+        "completeButton": "Complete Setup"
+      },
+      "messages": {
+        "accountCreated": "Admin account created successfully!",
+        "setupComplete": "Setup complete! Redirecting to login...",
+        "setupFailed": "Failed to complete setup",
+        "codeCopied": "Recovery code copied to clipboard!",
+        "codeDownloaded": "Recovery code downloaded!"
+      }
+    },
+    "resetPassword": {
+      "title": "Reset Password",
+      "subtitle": "Enter your email, recovery code, and new password to reset your account.",
+      "backToLogin": "Back to Login",
+      "infoMessage": "You will need the recovery code that was provided when you first set up your admin account.",
+      "emailLabel": "Email Address",
+      "recoveryCodeLabel": "Recovery Code",
+      "recoveryCodePlaceholder": "XXXX-XXXX-XXXX-XXXX",
+      "recoveryCodeHelper": "Enter the 16-character recovery code from your initial setup",
+      "newPasswordLabel": "New Password",
+      "confirmPasswordLabel": "Confirm New Password",
+      "strengthLabel": "Password Strength:",
+      "strengthWeak": "Weak",
+      "strengthMedium": "Medium",
+      "strengthStrong": "Strong",
+      "resettingButton": "Resetting Password...",
+      "resetButton": "Reset Password",
+      "resetSuccess": "Password reset successful!",
+      "resetFailed": "Failed to reset password"
+    },
+    "validation": {
+      "emailRequired": "Email is required",
+      "emailInvalid": "Invalid email address",
+      "passwordRequired": "Password is required",
+      "passwordMin": "Password must be at least 8 characters",
+      "passwordUppercase": "Password must contain at least one uppercase letter",
+      "passwordLowercase": "Password must contain at least one lowercase letter",
+      "passwordNumber": "Password must contain at least one number",
+      "passwordSpecialChar": "Password must contain at least one special character (!@#$%^&*)",
+      "passwordMatch": "Passwords must match",
+      "confirmPasswordRequired": "Please confirm your password",
+      "recoveryCodeRequired": "Recovery code is required",
+      "recoveryCodeFormat": "Recovery code must be in format: XXXX-XXXX-XXXX-XXXX",
+      "recoveryCodeConfirmRequired": "You must confirm that you have saved your recovery code"
+    },
+    "errors": {
+      "setupAlreadyCompleted": "Setup has already been completed",
+      "emailPasswordRequired": "Email and password are required",
+      "invalidEmailFormat": "Invalid email format",
+      "passwordTooShort": "Password must be at least 8 characters long",
+      "passwordNeedsUppercase": "Password must contain at least one uppercase letter",
+      "passwordNeedsLowercase": "Password must contain at least one lowercase letter",
+      "passwordNeedsNumber": "Password must contain at least one number",
+      "emailExists": "User with this email already exists",
+      "invalidCredentials": "Invalid email or recovery code",
+      "recoveryFieldsRequired": "Email, recovery code, and new password are required",
+      "invalidRecoveryFormat": "Invalid recovery code format",
+      "unknownError": "Unknown error",
+      "setupFailed": "Failed to complete setup",
+      "resetFailed": "Failed to reset password",
+      "checkSetupFailed": "Failed to check setup status"
+    },
+    "common": {
+      "back": "Back",
+      "next": "Next",
+      "copyright": "© 2025 Beruflichen Schulen Obersberg"
+    },
+    "passwordInput": {
+      "guidelines": "Password Guidelines",
+      "guidelinesText": "Your password must meet the following requirements:",
+      "hasUpperCase": "At least one uppercase letter",
+      "hasLowerCase": "At least one lowercase letter",
+      "hasNumbers": "At least one number",
+      "hasSpecialChar": "At least one special character (!@#$%^&*)",
+      "hasMinLength": "Minimum 8 characters",
+      "generatePassword": "Generate secure password"
     }
   }
 }

@@ -60,6 +60,7 @@ const AuditSettingsSchema = new Schema(
 
 const AppSettingsSchema = new Schema(
   {
+    isSystemSetup: { type: Boolean, default: false, required: true },
     onboarding: {
       // Dropdown Options
       genderOptions: {

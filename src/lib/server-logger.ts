@@ -46,13 +46,24 @@ class Logger {
   constructor(route: string) {
     this.log_data = null;
     this.route = route;
-    const logger = winston.createLogger({
-      transports: [
-        new winston.transports.Console(),
+
+    // Check if we're in edge runtime (no process.version in edge)
+    const isEdgeRuntime = typeof process === "undefined" || !process.version;
+
+    // In edge runtime, only use Console transport
+    // In Node.js runtime, use both Console and File transports
+    const transports: winston.transport[] = [new winston.transports.Console()];
+
+    if (!isEdgeRuntime) {
+      transports.push(
         new winston.transports.File({
           filename: `./logs/server-logs/${route}.log`,
         }),
-      ],
+      );
+    }
+
+    const logger = winston.createLogger({
+      transports,
       format: winston.format.printf((info) => {
         const color = levelColors[info.level as keyof typeof levelColors] || "";
         const level = `${color}${info.level.toUpperCase()}${resetColor}`;

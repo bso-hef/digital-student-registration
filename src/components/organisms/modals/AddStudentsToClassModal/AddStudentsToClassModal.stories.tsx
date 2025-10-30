@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, within } from "@storybook/test";
+import { expect } from "@storybook/test";
 
 import AddStudentsToClassModal from "./index";
 
@@ -19,7 +19,7 @@ export const Default: Story = {
     onClose: () => {},
     classId: "test-class-id",
   },
-  play: async ({ canvasElement }) => {
+  play: async () => {
     const dialog = document.querySelector(".MuiDialog-root");
     expect(dialog).toBeInTheDocument();
   },

@@ -156,3 +156,11 @@ globalThis.fetch = vi.fn();
  * Set up timezone for consistent date testing
  */
 process.env.TZ = 'UTC';
+
+/**
+ * Mock device-type-detection package
+ * This package uses lodash internally which causes CommonJS issues in Vitest
+ */
+vi.mock('device-type-detection', () => ({
+  useDeviceTypeDetection: vi.fn(() => ({ isMobile: false })),
+}));

@@ -228,7 +228,7 @@ const SmallIconButton: React.FC<SmallIconButtonProps> = ({
   const { isMobile, isTablet } = useDeviceTypeDetection();
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
-    if ((e.key === 'Enter' || e.key === ' ') && !disabled) {
+    if ((e.key === "Enter" || e.key === " ") && !disabled) {
       e.preventDefault();
       onAction?.(e as unknown as React.MouseEvent<HTMLElement>);
     }

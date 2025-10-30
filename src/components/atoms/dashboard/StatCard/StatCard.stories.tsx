@@ -1,6 +1,6 @@
 import GroupIcon from "@mui/icons-material/Group";
 import { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, within } from "@storybook/test";
+import { expect } from "@storybook/test";
 
 import StatCard from "./index";
 
@@ -22,7 +22,6 @@ export const Default: Story = {
     gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
     const card = canvasElement.querySelector(".MuiCard-root");
     expect(card).toBeInTheDocument();
   },

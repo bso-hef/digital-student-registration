@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, within } from "@storybook/test";
+import { expect } from "@storybook/test";
 
 import ClassStatus from "./index";
 
@@ -19,7 +19,6 @@ export const Default: Story = {
     showLabel: true,
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
     const icon = canvasElement.querySelector("svg");
     expect(icon).toBeInTheDocument();
   },

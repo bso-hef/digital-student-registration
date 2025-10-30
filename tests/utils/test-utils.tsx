@@ -16,6 +16,8 @@ import studentReducer from '@/store/reducers/student';
 import classReducer from '@/store/reducers/class';
 import dashboardReducer from '@/store/reducers/dashboard';
 import appSettingsReducer from '@/store/reducers/appSettings';
+import authReducer from '@/store/reducers/auth';
+import auditLogReducer from '@/store/reducers/auditLog';
 
 // Import ThemeWrapper for proper theme context
 import ThemeWrapper from '@/theme/ThemeWrapper';
@@ -42,6 +44,17 @@ mockI18n.use(initReactI18next).init({
         'common.cancel': 'Cancel',
         'common.save': 'Save',
         'common.delete': 'Delete',
+        // Navigation translations
+        'navigation.dashboard': 'Dashboard',
+        'navigation.management': 'Management',
+        'navigation.studentManagement': 'Students',
+        'navigation.classManagement': 'Classes',
+        'navigation.settings': 'Settings',
+        'navigation.onboardingSettings': 'Onboarding',
+        'navigation.welcomeLabel': 'Welcome',
+        'navigation.logoutButton': 'Logout',
+        'navigation.Browse settings': 'Browse settings',
+        'navigation.welcome': 'Welcome, {{name}}',
       },
     },
     de: {
@@ -54,6 +67,17 @@ mockI18n.use(initReactI18next).init({
         'common.cancel': 'Abbrechen',
         'common.save': 'Speichern',
         'common.delete': 'Löschen',
+        // Navigation translations
+        'navigation.dashboard': 'Dashboard',
+        'navigation.management': 'Verwaltung',
+        'navigation.studentManagement': 'Schüler',
+        'navigation.classManagement': 'Klassen',
+        'navigation.settings': 'Einstellungen',
+        'navigation.onboardingSettings': 'Onboarding',
+        'navigation.welcomeLabel': 'Willkommen',
+        'navigation.logoutButton': 'Abmelden',
+        'navigation.Browse settings': 'Einstellungen durchsuchen',
+        'navigation.welcome': 'Willkommen, {{name}}',
       },
     },
   },
@@ -66,11 +90,13 @@ mockI18n.use(initReactI18next).init({
  * Root reducer combining all slices
  */
 const rootReducer = combineReducers({
-  ui: uiReducer,
-  student: studentReducer,
+  appSettings: appSettingsReducer,
+  auditLog: auditLogReducer,
+  auth: authReducer,
   class: classReducer,
   dashboard: dashboardReducer,
-  appSettings: appSettingsReducer,
+  student: studentReducer,
+  ui: uiReducer,
 });
 
 /**

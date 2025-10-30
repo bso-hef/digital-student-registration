@@ -169,7 +169,8 @@ export async function DELETE(request: NextRequest) {
     await dbConnect();
 
     // Get retention period from settings
-    const settings = (await AppSettings.findOne().lean()) as AppSettingsLean | null;
+    const settings =
+      (await AppSettings.findOne().lean()) as AppSettingsLean | null;
     const retentionDays =
       settings && !Array.isArray(settings)
         ? settings.audit?.retentionPeriodDays || 90
