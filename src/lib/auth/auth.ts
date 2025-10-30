@@ -1,6 +1,7 @@
 import { dbConnect } from "@/lib/config/mongo";
-import AppSettings from "@/models/AppSettings";
 import NextAuth from "next-auth";
+
+import AppSettings from "@/models/AppSettings";
 
 import { authConfig } from "./auth.config";
 

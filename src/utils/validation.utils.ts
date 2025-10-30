@@ -11,8 +11,7 @@
  * - Requires at least one dot in domain
  * - Domain extension must be 2-6 characters
  */
-export const EMAIL_REGEX =
-  /^[a-zA-Z0-9._+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+export const EMAIL_REGEX = /^[a-zA-Z0-9._+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
 
 /**
  * Password validation regex patterns
@@ -52,7 +51,8 @@ export const PASSWORD_REGEX = {
    * - At least one number
    * - At least one special character
    */
-  STRONG: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{}|;:,.<>?]).{8,}$/,
+  STRONG:
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{}|;:,.<>?]).{8,}$/,
 };
 
 /**
@@ -61,7 +61,8 @@ export const PASSWORD_REGEX = {
  * - Each group contains uppercase letters and numbers only
  * - Groups separated by hyphens
  */
-export const RECOVERY_CODE_REGEX = /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/;
+export const RECOVERY_CODE_REGEX =
+  /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/;
 
 /**
  * Helper function to validate email

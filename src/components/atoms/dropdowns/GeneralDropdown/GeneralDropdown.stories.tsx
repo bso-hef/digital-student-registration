@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, within } from "@storybook/test";
+import { expect } from "@storybook/test";
 
 import GeneralDropdown from "./index";
 
@@ -26,7 +26,6 @@ export const Default: Story = {
     fullWidth: true,
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
     const select = canvasElement.querySelector(".MuiSelect-select");
     expect(select).toBeInTheDocument();
   },

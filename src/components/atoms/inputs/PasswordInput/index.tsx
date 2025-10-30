@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 
 import {
   calculatePasswordStrength,
@@ -99,16 +99,19 @@ const PasswordInput: React.FC<PasswordInputProps> = memo(
       );
     };
 
-    const checkValidations = (password: string) => {
-      const validation = validatePasswordStrength(password);
-      setPasswordValidation({
-        hasUpperCase: validation.hasUppercase,
-        hasLowerCase: validation.hasLowercase,
-        hasNumbers: validation.hasNumber,
-        hasSpecialChar: validation.hasSpecialChar,
-        hasMinLength: password.length >= minLength,
-      });
-    };
+    const checkValidations = useCallback(
+      (password: string) => {
+        const validation = validatePasswordStrength(password);
+        setPasswordValidation({
+          hasUpperCase: validation.hasUppercase,
+          hasLowerCase: validation.hasLowercase,
+          hasNumbers: validation.hasNumber,
+          hasSpecialChar: validation.hasSpecialChar,
+          hasMinLength: password.length >= minLength,
+        });
+      },
+      [minLength],
+    );
 
     const generatePassword = () => {
       const characters = {
@@ -121,33 +124,55 @@ const PasswordInput: React.FC<PasswordInputProps> = memo(
       const getRandomChar = (str: string): string =>
         str[Math.floor(Math.random() * str.length)];
 
-      let password: string[] = [
-        getRandomChar(characters.upper),
-        getRandomChar(characters.upper),
-        getRandomChar(characters.lower),
-        getRandomChar(characters.lower),
-        getRandomChar(characters.numbers),
-        getRandomChar(characters.special),
-      ];
+      let attempts = 0;
+      const maxAttempts = 50;
 
-      let tries = 0;
-      const passwordString = password.join("");
+      while (attempts < maxAttempts) {
+        // Generate a strong password with guaranteed 100% strength
+        // Minimum 16 characters with balanced character distribution
+        const password: string[] = [
+          // 4 uppercase letters
+          getRandomChar(characters.upper),
+          getRandomChar(characters.upper),
+          getRandomChar(characters.upper),
+          getRandomChar(characters.upper),
+          // 4 lowercase letters
+          getRandomChar(characters.lower),
+          getRandomChar(characters.lower),
+          getRandomChar(characters.lower),
+          getRandomChar(characters.lower),
+          // 3 numbers
+          getRandomChar(characters.numbers),
+          getRandomChar(characters.numbers),
+          getRandomChar(characters.numbers),
+          // 3 special characters
+          getRandomChar(characters.special),
+          getRandomChar(characters.special),
+          getRandomChar(characters.special),
+        ];
 
-      while (!isValidPassword(passwordString) && password.length < minLength) {
+        // Add 2 more random characters from all categories
         const allCharacters = Object.values(characters).join("");
         password.push(getRandomChar(allCharacters));
+        password.push(getRandomChar(allCharacters));
 
-        tries++;
-        if (tries > 100) {
-          onValidationFail?.();
+        // Shuffle the password randomly
+        const finalPassword = password.sort(() => Math.random() - 0.5).join("");
+
+        // Verify the password meets all requirements and has 100% strength
+        const strength = calculatePasswordStrength(finalPassword);
+        if (strength === 100 && isValidPassword(finalPassword)) {
+          onChange({
+            target: { value: finalPassword },
+          } as React.ChangeEvent<HTMLInputElement>);
           return;
         }
+
+        attempts++;
       }
 
-      const finalPassword = password.sort(() => Math.random() - 0.5).join("");
-      onChange({
-        target: { value: finalPassword },
-      } as React.ChangeEvent<HTMLInputElement>);
+      // Fallback: If we couldn't generate a 100% password, notify
+      onValidationFail?.();
     };
 
     const getProgressBarColor = (strength: number): string => {
@@ -161,7 +186,7 @@ const PasswordInput: React.FC<PasswordInputProps> = memo(
       checkValidations(value);
       const strength = calculatePasswordStrength(value);
       onStrengthChange?.(strength);
-    }, [value, onStrengthChange, minLength]);
+    }, [value, onStrengthChange, minLength, checkValidations]);
 
     return (
       <>
@@ -195,7 +220,9 @@ const PasswordInput: React.FC<PasswordInputProps> = memo(
           InputProps={{
             startAdornment: showPasswordStartIcon ? (
               <InputAdornment position="start">
-                <HttpsIcon sx={{ color: (theme) => theme.palette.text.secondary }} />
+                <HttpsIcon
+                  sx={{ color: (theme) => theme.palette.text.secondary }}
+                />
               </InputAdornment>
             ) : undefined,
             endAdornment: (
@@ -234,7 +261,8 @@ const PasswordInput: React.FC<PasswordInputProps> = memo(
               borderRadius: "6px",
               marginTop: "10px",
               height: 6,
-              backgroundColor: (theme) => theme.palette.surface.interface.background,
+              backgroundColor: (theme) =>
+                theme.palette.surface.interface.background,
               "& .MuiLinearProgress-bar": {
                 backgroundColor: getProgressBarColor(
                   calculatePasswordStrength(value),
@@ -286,9 +314,13 @@ const PasswordInput: React.FC<PasswordInputProps> = memo(
                   }}
                 >
                   {passwordValidation[key] ? (
-                    <CheckIcon sx={{ color: "success.main", mr: 1, fontSize: 20 }} />
+                    <CheckIcon
+                      sx={{ color: "success.main", mr: 1, fontSize: 20 }}
+                    />
                   ) : (
-                    <CloseIcon sx={{ color: "error.main", mr: 1, fontSize: 20 }} />
+                    <CloseIcon
+                      sx={{ color: "error.main", mr: 1, fontSize: 20 }}
+                    />
                   )}
                   <Typography
                     sx={{

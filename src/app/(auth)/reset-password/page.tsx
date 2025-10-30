@@ -2,9 +2,6 @@
 
 import { useState } from "react";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-
 import {
   AuthActions,
   AuthCard,
@@ -16,17 +13,88 @@ import PasswordInput from "@/components/atoms/inputs/PasswordInput";
 import { resetPassword } from "@/store/actions/authActions";
 import { AppDispatch, RootState } from "@/store/store";
 import {
-  calculatePasswordStrength,
   EMAIL_REGEX,
   PASSWORD_REGEX,
   RECOVERY_CODE_REGEX,
 } from "@/utils/validation.utils";
 import { ArrowBack } from "@mui/icons-material";
-import { Alert, Box, TextField, Typography } from "@mui/material";
+import { Alert, Box, TextField, Typography, styled } from "@mui/material";
 import { Field, Form, Formik } from "formik";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
+
+// Styled components
+const StyledForm = styled(Form)({
+  width: "100%",
+  display: "flex",
+  flexDirection: "column",
+});
+
+const BackToLoginContainer = styled(Box)(({ theme }) => ({
+  marginBottom: theme.spacing(2),
+}));
+
+const StyledLink = styled(Link)({
+  textDecoration: "none",
+});
+
+const BackToLoginTypography = styled(Typography)({
+  display: "flex",
+  alignItems: "center",
+  gap: "4px",
+  "&:hover": {
+    textDecoration: "underline",
+  },
+});
+
+const FormFieldsContainer = styled(Box)(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing(2),
+}));
+
+const StyledTextField = styled(TextField)(({ theme }) => ({
+  marginBottom: theme.spacing(3),
+}));
+
+const MonospaceTextField = styled(TextField)(({ theme }) => ({
+  marginBottom: theme.spacing(3),
+  "& input": {
+    textTransform: "uppercase",
+    fontFamily: "monospace",
+  },
+}));
+
+const PasswordStrengthContainer = styled(Box)(({ theme }) => ({
+  marginTop: theme.spacing(2),
+}));
+
+const PasswordStrengthHeader = styled(Box)(({ theme }) => ({
+  display: "flex",
+  justifyContent: "space-between",
+  marginBottom: theme.spacing(0.5),
+}));
+
+const PasswordStrengthBarBackground = styled(Box)(({ theme }) => ({
+  width: "100%",
+  height: 6,
+  borderRadius: "6px",
+  backgroundColor: theme.palette.surface.interface.background,
+  overflow: "hidden",
+}));
+
+const PasswordStrengthBarFill = styled(Box)<{
+  strength: number;
+  color: string;
+}>(({ strength, color }) => ({
+  width: `${strength}%`,
+  height: "100%",
+  backgroundColor: color,
+  transition: "all 0.3s ease",
+}));
 
 export default function ResetPasswordPage() {
   const { t } = useTranslation();
@@ -53,9 +121,6 @@ export default function ResetPasswordPage() {
         t("auth.validation.passwordSpecialChar"),
       )
       .required(t("auth.validation.passwordRequired")),
-    confirmPassword: Yup.string()
-      .oneOf([Yup.ref("newPassword")], t("auth.validation.passwordMatch"))
-      .required(t("auth.validation.confirmPasswordRequired")),
   });
 
   const getPasswordStrengthColor = (strength: number): string => {
@@ -75,7 +140,6 @@ export default function ResetPasswordPage() {
     email: string;
     recoveryCode: string;
     newPassword: string;
-    confirmPassword: string;
   }) => {
     const result = await dispatch(
       resetPassword(values.email, values.recoveryCode, values.newPassword),
@@ -102,41 +166,29 @@ export default function ResetPasswordPage() {
           email: "",
           recoveryCode: "",
           newPassword: "",
-          confirmPassword: "",
         }}
         validationSchema={resetSchema}
         onSubmit={handleSubmit}
       >
         {({ values, errors, touched, setFieldValue, submitForm }) => (
-          <Form
-            style={{ width: "100%", display: "flex", flexDirection: "column" }}
-          >
+          <StyledForm>
             <AuthContent>
-              <Box sx={{ mb: 2 }}>
-                <Link href="/login" style={{ textDecoration: "none" }}>
-                  <Typography
-                    variant="body2"
-                    color="primary"
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 0.5,
-                      "&:hover": { textDecoration: "underline" },
-                    }}
-                  >
+              <BackToLoginContainer>
+                <StyledLink href="/login">
+                  <BackToLoginTypography variant="body2" color="primary">
                     <ArrowBack fontSize="small" />
                     {t("auth.resetPassword.backToLogin")}
-                  </Typography>
-                </Link>
-              </Box>
+                  </BackToLoginTypography>
+                </StyledLink>
+              </BackToLoginContainer>
 
               <Alert severity="info">
-                {t("auth.resetPassword.infoAlert")}
+                {t("auth.resetPassword.infoMessage")}
               </Alert>
 
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              <FormFieldsContainer>
                 <Field
-                  as={TextField}
+                  as={StyledTextField}
                   fullWidth
                   name="email"
                   label={t("auth.resetPassword.emailLabel")}
@@ -145,11 +197,10 @@ export default function ResetPasswordPage() {
                   autoFocus
                   error={touched.email && Boolean(errors.email)}
                   helperText={touched.email && errors.email}
-                  sx={{ mb: 3 }}
                 />
 
                 <Field
-                  as={TextField}
+                  as={MonospaceTextField}
                   fullWidth
                   name="recoveryCode"
                   label={t("auth.resetPassword.recoveryCodeLabel")}
@@ -160,10 +211,6 @@ export default function ResetPasswordPage() {
                       ? errors.recoveryCode
                       : t("auth.resetPassword.recoveryCodeHelper")
                   }
-                  sx={{ mb: 3 }}
-                  inputProps={{
-                    style: { textTransform: "uppercase", fontFamily: "monospace" },
-                  }}
                 />
 
                 <PasswordInput
@@ -184,70 +231,25 @@ export default function ResetPasswordPage() {
                   required
                 />
 
-                <PasswordInput
-                  value={values.confirmPassword}
-                  onChange={(e) =>
-                    setFieldValue("confirmPassword", e.target.value)
-                  }
-                  label={t("auth.resetPassword.confirmNewPasswordLabel")}
-                  placeholder={t("auth.resetPassword.confirmNewPasswordLabel")}
-                  error={
-                    touched.confirmPassword && Boolean(errors.confirmPassword)
-                  }
-                  helperText={
-                    touched.confirmPassword
-                      ? errors.confirmPassword
-                      : undefined
-                  }
-                  showCubeIcon={false}
-                  showEyeIcon={true}
-                  showProgressBar={false}
-                  showGuidelines={false}
-                  autoComplete="new-password"
-                  required
-                />
-
                 {values.newPassword && (
-                  <Box sx={{ mt: 2 }}>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        mb: 0.5,
-                      }}
-                    >
+                  <PasswordStrengthContainer>
+                    <PasswordStrengthHeader>
                       <Typography variant="caption">
                         {t("auth.setup.password.strengthLabel")}
                       </Typography>
                       <Typography variant="caption">
                         {getPasswordStrengthLabel(passwordStrength)}
                       </Typography>
-                    </Box>
-                    <Box
-                      sx={{
-                        width: "100%",
-                        height: 6,
-                        borderRadius: "6px",
-                        backgroundColor: (theme) =>
-                          theme.palette.surface.interface.background,
-                        overflow: "hidden",
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          width: `${passwordStrength}%`,
-                          height: "100%",
-                          backgroundColor: getPasswordStrengthColor(
-                            passwordStrength,
-                          ),
-                          transition: "all 0.3s ease",
-                        }}
+                    </PasswordStrengthHeader>
+                    <PasswordStrengthBarBackground>
+                      <PasswordStrengthBarFill
+                        strength={passwordStrength}
+                        color={getPasswordStrengthColor(passwordStrength)}
                       />
-                    </Box>
-                  </Box>
+                    </PasswordStrengthBarBackground>
+                  </PasswordStrengthContainer>
                 )}
-
-              </Box>
+              </FormFieldsContainer>
             </AuthContent>
 
             <AuthActions>
@@ -263,15 +265,13 @@ export default function ResetPasswordPage() {
                   !values.email ||
                   !values.recoveryCode ||
                   !values.newPassword ||
-                  !values.confirmPassword ||
                   Boolean(errors.email) ||
                   Boolean(errors.recoveryCode) ||
-                  Boolean(errors.newPassword) ||
-                  Boolean(errors.confirmPassword)
+                  Boolean(errors.newPassword)
                 }
               />
             </AuthActions>
-          </Form>
+          </StyledForm>
         )}
       </Formik>
     </AuthCard>

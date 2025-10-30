@@ -1,23 +1,7 @@
-import { auth, isSystemSetup } from "@/lib/auth/auth";
-import { redirect } from "next/navigation";
+import Home from "./(home)/page";
 
-export default async function RootPage() {
-  // Check if system setup is complete
-  const setupComplete = await isSystemSetup();
-
-  // If setup is not complete, redirect to setup wizard
-  if (!setupComplete) {
-    redirect("/setup");
-  }
-
-  // Check if user is authenticated
-  const session = await auth();
-
-  // If authenticated, redirect to admin dashboard
-  if (session) {
-    redirect("/admin/dashboard");
-  }
-
-  // Otherwise, redirect to login
-  redirect("/login");
+export default function RootPage() {
+  // Setup check is handled by root layout
+  // This page just shows the public landing page
+  return <Home />;
 }

@@ -2,9 +2,6 @@
 
 import { useState } from "react";
 
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-
 import {
   AuthActions,
   AuthCard,
@@ -23,11 +20,39 @@ import {
   InputAdornment,
   TextField,
   Typography,
+  styled,
 } from "@mui/material";
 import { Field, Form, Formik } from "formik";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
+
+// Styled components
+const StyledForm = styled(Form)({
+  width: "100%",
+  display: "flex",
+  flexDirection: "column",
+});
+
+const ForgotPasswordContainer = styled(Box)(({ theme }) => ({
+  display: "flex",
+  justifyContent: "flex-end",
+  marginTop: theme.spacing(1),
+}));
+
+const StyledLink = styled(Link)({
+  textDecoration: "none",
+  color: "inherit",
+  fontSize: "0.875rem",
+});
+
+const HoverableTypography = styled(Typography)({
+  "&:hover": {
+    textDecoration: "underline",
+  },
+});
 
 export default function LoginPage() {
   const { t } = useTranslation();
@@ -71,7 +96,7 @@ export default function LoginPage() {
         onSubmit={handleSubmit}
       >
         {({ values, errors, touched, submitForm }) => (
-          <Form style={{ width: "100%", display: "flex", flexDirection: "column" }}>
+          <StyledForm>
             <AuthContent>
               {error && (
                 <Alert severity="error">
@@ -89,6 +114,7 @@ export default function LoginPage() {
                 type="email"
                 autoComplete="email"
                 autoFocus
+                margin="normal"
                 error={touched.email && Boolean(errors.email)}
                 helperText={touched.email && errors.email}
               />
@@ -97,6 +123,7 @@ export default function LoginPage() {
                 as={TextField}
                 fullWidth
                 name="password"
+                margin="normal"
                 label={t("auth.login.passwordLabel")}
                 type={showPassword ? "text" : "password"}
                 autoComplete="current-password"
@@ -116,36 +143,13 @@ export default function LoginPage() {
                 }}
               />
 
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  mt: 1,
-                }}
-              >
-                <Link
-                  href="/reset-password"
-                  style={{
-                    textDecoration: "none",
-                    color: "inherit",
-                    fontSize: "0.875rem",
-                  }}
-                >
-                  <Typography
-                    variant="body2"
-                    color="primary"
-                    sx={{ "&:hover": { textDecoration: "underline" } }}
-                  >
+              <ForgotPasswordContainer>
+                <StyledLink href="/reset-password">
+                  <HoverableTypography variant="body2" color="primary">
                     {t("auth.login.forgotPassword")}
-                  </Typography>
-                </Link>
-              </Box>
-
-              <Box sx={{ mt: 2, textAlign: "center" }}>
-                <Typography variant="caption" color="text.secondary">
-                  {t("auth.common.copyright")}
-                </Typography>
-              </Box>
+                  </HoverableTypography>
+                </StyledLink>
+              </ForgotPasswordContainer>
             </AuthContent>
 
             <AuthActions>
@@ -165,7 +169,7 @@ export default function LoginPage() {
                 }
               />
             </AuthActions>
-          </Form>
+          </StyledForm>
         )}
       </Formik>
     </AuthCard>

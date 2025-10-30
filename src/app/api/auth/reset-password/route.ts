@@ -1,7 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
-
 import { dbConnect } from "@/lib/config/mongo";
 import User from "@/models/User";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
@@ -28,7 +27,8 @@ export async function POST(req: NextRequest) {
     }
 
     // Validate recovery code format
-    const recoveryCodeRegex = /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/;
+    const recoveryCodeRegex =
+      /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/;
     if (!recoveryCodeRegex.test(recoveryCode)) {
       return NextResponse.json(
         { error: "Invalid recovery code format" },

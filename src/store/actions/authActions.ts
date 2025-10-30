@@ -1,10 +1,9 @@
-import { signIn, signOut } from "next-auth/react";
-
 import {
   errorNotification,
   successNotification,
 } from "@/utils/notification.utils";
 import i18n from "i18next";
+import { signIn, signOut } from "next-auth/react";
 
 import { AppThunk } from "../store";
 import * as TYPES from "../types";
@@ -64,24 +63,24 @@ export const loginUser =
 export const logoutUser =
   (): AppThunk<Promise<{ success: boolean; error?: string }>> =>
   async (dispatch) => {
-  dispatch({ type: TYPES.AUTH_LOGOUT_REQUEST });
-  try {
-    await signOut({ redirect: false });
+    dispatch({ type: TYPES.AUTH_LOGOUT_REQUEST });
+    try {
+      await signOut({ redirect: false });
 
-    successNotification(i18n.t("navigation.Logged out successfully"));
-    dispatch({ type: TYPES.AUTH_LOGOUT_SUCCESS });
-    return { success: true };
-  } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Unknown error";
-    errorNotification(i18n.t("navigation.Failed to logout"));
-    dispatch({
-      type: TYPES.AUTH_LOGOUT_FAILURE,
-      payload: errorMessage,
-    });
-    return { success: false, error: errorMessage };
-  }
-};
+      successNotification(i18n.t("navigation.Logged out successfully"));
+      dispatch({ type: TYPES.AUTH_LOGOUT_SUCCESS });
+      return { success: true };
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
+      errorNotification(i18n.t("navigation.Failed to logout"));
+      dispatch({
+        type: TYPES.AUTH_LOGOUT_FAILURE,
+        payload: errorMessage,
+      });
+      return { success: false, error: errorMessage };
+    }
+  };
 
 /**
  * Setup admin account action
@@ -189,23 +188,23 @@ export const resetPassword =
 export const checkSetupStatus =
   (): AppThunk<Promise<{ success: boolean; setupCompleted: boolean }>> =>
   async (dispatch) => {
-  dispatch({ type: TYPES.AUTH_CHECK_SETUP_REQUEST });
-  try {
-    const response = await fetch("/api/auth/setup");
-    const data = await response.json();
+    dispatch({ type: TYPES.AUTH_CHECK_SETUP_REQUEST });
+    try {
+      const response = await fetch("/api/auth/setup");
+      const data = await response.json();
 
-    const setupCompleted = data.setupCompleted === true;
+      const setupCompleted = data.setupCompleted === true;
 
-    dispatch({
-      type: TYPES.AUTH_CHECK_SETUP_SUCCESS,
-      payload: setupCompleted,
-    });
-    return { success: true, setupCompleted };
-  } catch (error) {
-    dispatch({ type: TYPES.AUTH_CHECK_SETUP_FAILURE });
-    return { success: false, setupCompleted: false };
-  }
-};
+      dispatch({
+        type: TYPES.AUTH_CHECK_SETUP_SUCCESS,
+        payload: setupCompleted,
+      });
+      return { success: true, setupCompleted };
+    } catch {
+      dispatch({ type: TYPES.AUTH_CHECK_SETUP_FAILURE });
+      return { success: false, setupCompleted: false };
+    }
+  };
 
 /**
  * Sync session with Redux state

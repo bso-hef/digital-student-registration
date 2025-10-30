@@ -12,16 +12,8 @@ import GeneralButton from "@/components/atoms/buttons/GeneralButton";
 import PasswordInput from "@/components/atoms/inputs/PasswordInput";
 import { setupAdmin } from "@/store/actions/authActions";
 import { AppDispatch, RootState } from "@/store/store";
-import {
-  calculatePasswordStrength,
-  EMAIL_REGEX,
-  PASSWORD_REGEX,
-} from "@/utils/validation.utils";
-import {
-  CheckCircle,
-  ContentCopy,
-  Download,
-} from "@mui/icons-material";
+import { EMAIL_REGEX, PASSWORD_REGEX } from "@/utils/validation.utils";
+import { CheckCircle, ContentCopy, Download } from "@mui/icons-material";
 import {
   Alert,
   Box,
@@ -32,12 +24,191 @@ import {
   Stepper,
   TextField,
   Typography,
+  styled,
 } from "@mui/material";
 import { Field, Form, Formik } from "formik";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
+
+const StyledStepper = styled(Stepper)(({ theme }) => ({
+  marginTop: theme.spacing(2),
+  width: "100%",
+  [theme.breakpoints.up("sm")]: {
+    marginTop: theme.spacing(2.5),
+  },
+  [theme.breakpoints.up("md")]: {
+    marginTop: theme.spacing(3),
+  },
+  "& .MuiStep-root": {
+    padding: 0,
+    [theme.breakpoints.up("sm")]: {
+      padding: "0 8px",
+    },
+  },
+  "& .MuiStepLabel-root": {
+    "& .MuiStepLabel-iconContainer": {
+      paddingRight: 0,
+    },
+    "& .MuiSvgIcon-root": {
+      width: 28,
+      height: 28,
+      color: theme.palette.border.seperator,
+      transition: "all 0.3s ease",
+      [theme.breakpoints.up("sm")]: {
+        width: 32,
+        height: 32,
+      },
+      [theme.breakpoints.up("md")]: {
+        width: 36,
+        height: 36,
+      },
+      "&.Mui-active": {
+        color: theme.palette.surface.button.primary,
+        transform: "scale(1.1)",
+      },
+      "&.Mui-completed": {
+        color: theme.palette.surface.button.primary,
+      },
+    },
+    "& .MuiStepIcon-text": {
+      fill: theme.palette.text.contrast,
+      fontSize: "0.875rem",
+      fontWeight: 600,
+    },
+    "& .MuiStepLabel-label": {
+      marginTop: theme.spacing(0.5),
+      fontSize: "0.65rem",
+      fontWeight: 500,
+      color: theme.palette.text.secondary,
+      transition: "all 0.3s ease",
+      [theme.breakpoints.up("sm")]: {
+        marginTop: theme.spacing(1),
+        fontSize: "0.75rem",
+      },
+      [theme.breakpoints.up("md")]: {
+        fontSize: "0.875rem",
+      },
+      "&.Mui-active": {
+        color: theme.palette.text.primary,
+        fontWeight: 600,
+      },
+      "&.Mui-completed": {
+        color: theme.palette.text.primary,
+        fontWeight: 500,
+      },
+    },
+  },
+}));
+
+const StyledForm = styled(Form)({
+  width: "100%",
+  display: "flex",
+  flexDirection: "column",
+});
+
+const StepList = styled(Box)(({ theme }) => ({
+  paddingLeft: theme.spacing(2),
+  marginBottom: theme.spacing(2),
+  [theme.breakpoints.up("sm")]: {
+    paddingLeft: theme.spacing(3),
+  },
+}));
+
+const StepListItem = styled(Typography)(({ theme }) => ({
+  fontSize: "0.9rem",
+  [theme.breakpoints.up("sm")]: {
+    fontSize: "1rem",
+  },
+}));
+
+const StyledAlert = styled(Alert)(({ theme }) => ({
+  marginTop: theme.spacing(2),
+}));
+
+const StyledAlertError = styled(Alert)(({ theme }) => ({
+  marginBottom: theme.spacing(3),
+}));
+
+const StyledAlertWarning = styled(Alert)(({ theme }) => ({
+  marginTop: theme.spacing(3),
+  marginBottom: theme.spacing(3),
+}));
+
+const ButtonContainer = styled(Box)(({ theme }) => ({
+  marginTop: theme.spacing(3),
+  display: "flex",
+  justifyContent: "flex-end",
+  [theme.breakpoints.up("sm")]: {
+    marginTop: theme.spacing(3.5),
+  },
+  [theme.breakpoints.up("md")]: {
+    marginTop: theme.spacing(4),
+  },
+}));
+
+const ButtonContainerSpaceBetween = styled(Box)(({ theme }) => ({
+  marginTop: theme.spacing(3),
+  display: "flex",
+  flexDirection: "column-reverse",
+  justifyContent: "space-between",
+  gap: theme.spacing(1.5),
+  [theme.breakpoints.up("sm")]: {
+    marginTop: theme.spacing(3.5),
+    flexDirection: "row",
+    gap: theme.spacing(2),
+  },
+  [theme.breakpoints.up("md")]: {
+    marginTop: theme.spacing(4),
+  },
+}));
+
+const StyledTextField = styled(TextField)(({ theme }) => ({
+  marginTop: theme.spacing(2),
+}));
+
+const RecoveryCodeBox = styled(Box)(({ theme }) => ({
+  backgroundColor: theme.palette.background.default,
+  padding: theme.spacing(2),
+  borderRadius: theme.spacing(2),
+  border: `1px solid ${theme.palette.divider}`,
+  textAlign: "center",
+  position: "relative",
+  [theme.breakpoints.up("sm")]: {
+    padding: theme.spacing(2.5),
+  },
+  [theme.breakpoints.up("md")]: {
+    padding: theme.spacing(3),
+  },
+}));
+
+const RecoveryCodeTypography = styled(Typography)(({ theme }) => ({
+  fontFamily: "monospace",
+  letterSpacing: 1,
+  fontSize: "1.25rem",
+  wordBreak: "break-all",
+  [theme.breakpoints.up("sm")]: {
+    letterSpacing: 1.5,
+    fontSize: "1.75rem",
+  },
+  [theme.breakpoints.up("md")]: {
+    letterSpacing: 2,
+    fontSize: "2.125rem",
+  },
+}));
+
+const RecoveryButtonContainer = styled(Box)(({ theme }) => ({
+  marginTop: theme.spacing(2),
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing(1.5),
+  justifyContent: "center",
+  [theme.breakpoints.up("sm")]: {
+    flexDirection: "row",
+    gap: theme.spacing(2),
+  },
+}));
 
 export default function SetupPage() {
   const { t } = useTranslation();
@@ -47,7 +218,7 @@ export default function SetupPage() {
   const [activeStep, setActiveStep] = useState(0);
   const [recoveryCode, setRecoveryCode] = useState<string>("");
   const [copied, setCopied] = useState(false);
-  const [passwordStrength, setPasswordStrength] = useState(0);
+  const [adminEmail, setAdminEmail] = useState<string>("");
 
   // Steps array with i18n
   const steps = [
@@ -73,9 +244,6 @@ export default function SetupPage() {
         t("auth.validation.passwordSpecialChar"),
       )
       .required(t("auth.validation.passwordRequired")),
-    confirmPassword: Yup.string()
-      .oneOf([Yup.ref("password")], t("auth.validation.passwordMatch"))
-      .required(t("auth.validation.confirmPasswordRequired")),
     recoveryCodeSaved: Yup.boolean()
       .oneOf([true], t("auth.validation.recoveryCodeConfirmRequired"))
       .required(),
@@ -113,38 +281,52 @@ export default function SetupPage() {
     document.body.removeChild(element);
   };
 
-  const getPasswordStrengthColor = (strength: number): string => {
-    if (strength < 50) return "#FF0000"; // Red
-    if (strength < 75) return "#FF8800"; // Orange
-    if (strength < 100) return "#FFA500"; // Light orange
-    return "#008000"; // Green
-  };
+  const handlePasswordSubmit = async (email: string, password: string) => {
+    const result = await dispatch(setupAdmin(email, password));
 
-  const getPasswordStrengthLabel = (strength: number): string => {
-    if (strength < 50) return t("auth.setup.password.strengthWeak");
-    if (strength < 75) return t("auth.setup.password.strengthMedium");
-    return t("auth.setup.password.strengthStrong");
+    if (result.success && result.recoveryCode) {
+      // Store the recovery code to display in step 3
+      setRecoveryCode(result.recoveryCode);
+      setAdminEmail(email); // Store email for final setup completion
+      handleNext(); // Move to recovery code step
+    }
   };
 
   const handleSubmit = async (values: {
     email: string;
     password: string;
-    confirmPassword: string;
     recoveryCodeSaved: boolean;
   }) => {
-    const result = await dispatch(setupAdmin(values.email, values.password));
-
-    if (result.success && result.recoveryCode) {
-      // Store the recovery code to display in step 3
-      setRecoveryCode(result.recoveryCode);
-      handleNext(); // Move to recovery code step
-    }
+    // This is for final submission if needed
+    await handlePasswordSubmit(values.email, values.password);
   };
 
-  const finalizeSetup = () => {
-    setTimeout(() => {
-      router.push("/login");
-    }, 1500);
+  const finalizeSetup = async () => {
+    try {
+      // Call the complete setup endpoint to mark system as setup
+      const response = await fetch("/api/auth/setup/complete", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: adminEmail }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to complete setup");
+      }
+
+      // Wait a bit then redirect to login
+      setTimeout(() => {
+        router.push("/login");
+      }, 1500);
+    } catch (error) {
+      console.error("Error completing setup:", error);
+      // Still redirect even if there's an error
+      setTimeout(() => {
+        router.push("/login");
+      }, 1500);
+    }
   };
 
   return (
@@ -152,78 +334,30 @@ export default function SetupPage() {
       <AuthHeader>
         <Typography variant="h4">{t("auth.setup.title")}</Typography>
         <Typography variant="body1">{t("auth.setup.subtitle")}</Typography>
-        <Stepper
+        <StyledStepper
           activeStep={activeStep}
           alternativeLabel
           connector={null}
-          sx={{
-            mt: { xs: 2, sm: 2.5, md: 3 },
-            width: "100%",
-            "& .MuiStep-root": {
-              padding: { xs: 0, sm: "0 8px" },
-            },
-            "& .MuiStepLabel-root": {
-              "& .MuiStepLabel-iconContainer": {
-                paddingRight: 0,
-              },
-              "& .MuiSvgIcon-root": {
-                width: { xs: 28, sm: 32, md: 36 },
-                height: { xs: 28, sm: 32, md: 36 },
-                color: (theme) => theme.palette.border.seperator,
-                transition: "all 0.3s ease",
-                "&.Mui-active": {
-                  color: (theme) => theme.palette.surface.button.primary,
-                  transform: "scale(1.1)",
-                },
-                "&.Mui-completed": {
-                  color: (theme) => theme.palette.surface.button.primary,
-                },
-              },
-              "& .MuiStepIcon-text": {
-                fill: (theme) => theme.palette.text.contrast,
-                fontSize: "0.875rem",
-                fontWeight: 600,
-              },
-              "& .MuiStepLabel-label": {
-                marginTop: { xs: 0.5, sm: 1 },
-                fontSize: { xs: "0.65rem", sm: "0.75rem", md: "0.875rem" },
-                fontWeight: 500,
-                color: (theme) => theme.palette.text.secondary,
-                transition: "all 0.3s ease",
-                "&.Mui-active": {
-                  color: (theme) => theme.palette.text.primary,
-                  fontWeight: 600,
-                },
-                "&.Mui-completed": {
-                  color: (theme) => theme.palette.text.primary,
-                  fontWeight: 500,
-                },
-              },
-            },
-          }}
         >
           {steps.map((label) => (
             <Step key={label}>
               <StepLabel>{label}</StepLabel>
             </Step>
           ))}
-        </Stepper>
+        </StyledStepper>
       </AuthHeader>
 
       <Formik
         initialValues={{
           email: "",
           password: "",
-          confirmPassword: "",
           recoveryCodeSaved: false,
         }}
         validationSchema={setupSchema}
         onSubmit={handleSubmit}
       >
         {({ values, errors, touched, setFieldValue }) => (
-          <Form
-            style={{ width: "100%", display: "flex", flexDirection: "column" }}
-          >
+          <StyledForm>
             <AuthContent>
               {/* Step 0: Welcome */}
               {activeStep === 0 && (
@@ -231,51 +365,30 @@ export default function SetupPage() {
                   <Typography variant="h5" gutterBottom>
                     {t("auth.setup.welcome.title")}
                   </Typography>
-                  <Typography variant="body1" paragraph>
+                  <Typography variant="body1">
                     {t("auth.setup.welcome.description")}
                   </Typography>
-                  <Box component="ul" sx={{ pl: { xs: 2, sm: 3 }, mb: 2 }}>
-                    <Typography
-                      component="li"
-                      variant="body1"
-                      paragraph
-                      sx={{ fontSize: { xs: "0.9rem", sm: "1rem" } }}
-                    >
+                  <StepList>
+                    <StepListItem variant="body1">
                       {t("auth.setup.welcome.step1")}
-                    </Typography>
-                    <Typography
-                      component="li"
-                      variant="body1"
-                      paragraph
-                      sx={{ fontSize: { xs: "0.9rem", sm: "1rem" } }}
-                    >
+                    </StepListItem>
+                    <StepListItem variant="body1">
                       {t("auth.setup.welcome.step2")}
-                    </Typography>
-                    <Typography
-                      component="li"
-                      variant="body1"
-                      paragraph
-                      sx={{ fontSize: { xs: "0.9rem", sm: "1rem" } }}
-                    >
+                    </StepListItem>
+                    <StepListItem variant="body1">
                       {t("auth.setup.welcome.step3")}
-                    </Typography>
-                  </Box>
-                  <Alert severity="warning" sx={{ mt: 2 }}>
+                    </StepListItem>
+                  </StepList>
+                  <StyledAlert severity="warning">
                     {t("auth.setup.welcome.warning")}
-                  </Alert>
-                  <Box
-                    sx={{
-                      mt: { xs: 3, sm: 3.5, md: 4 },
-                      display: "flex",
-                      justifyContent: "flex-end",
-                    }}
-                  >
+                  </StyledAlert>
+                  <ButtonContainer>
                     <GeneralButton
                       onAction={handleNext}
                       label={t("auth.setup.welcome.startButton")}
                       maxWidth="auto"
                     />
-                  </Box>
+                  </ButtonContainer>
                 </Box>
               )}
 
@@ -289,24 +402,15 @@ export default function SetupPage() {
                     {t("auth.setup.email.description")}
                   </Typography>
                   <Field
-                    as={TextField}
+                    as={StyledTextField}
                     fullWidth
                     name="email"
                     label={t("auth.setup.email.emailLabel")}
                     type="email"
                     error={touched.email && Boolean(errors.email)}
                     helperText={touched.email && errors.email}
-                    sx={{ mt: 2 }}
                   />
-                  <Box
-                    sx={{
-                      mt: { xs: 3, sm: 3.5, md: 4 },
-                      display: "flex",
-                      flexDirection: { xs: "column-reverse", sm: "row" },
-                      justifyContent: "space-between",
-                      gap: { xs: 1.5, sm: 2 },
-                    }}
-                  >
+                  <ButtonContainerSpaceBetween>
                     <GeneralButton
                       onAction={handleBack}
                       label={t("auth.common.back")}
@@ -319,7 +423,7 @@ export default function SetupPage() {
                       disabled={!values.email || Boolean(errors.email)}
                       maxWidth="auto"
                     />
-                  </Box>
+                  </ButtonContainerSpaceBetween>
                 </Box>
               )}
 
@@ -335,93 +439,20 @@ export default function SetupPage() {
                   <PasswordInput
                     value={values.password}
                     onChange={(e) => setFieldValue("password", e.target.value)}
-                    onStrengthChange={(strength) =>
-                      setPasswordStrength(strength)
-                    }
                     label={t("auth.setup.password.passwordLabel")}
                     placeholder={t("auth.setup.password.passwordLabel")}
                     error={touched.password && Boolean(errors.password)}
                     helperText={touched.password ? errors.password : undefined}
-                    showCubeIcon={true}
-                    showEyeIcon={true}
-                    showProgressBar={false}
-                    showGuidelines={false}
+                    showCubeIcon
+                    showEyeIcon
+                    showProgressBar
+                    showGuidelines
+                    fullWidth
                     autoComplete="new-password"
                     required
                   />
 
-                  <PasswordInput
-                    value={values.confirmPassword}
-                    onChange={(e) =>
-                      setFieldValue("confirmPassword", e.target.value)
-                    }
-                    label={t("auth.setup.password.confirmPasswordLabel")}
-                    placeholder={t("auth.setup.password.confirmPasswordLabel")}
-                    error={
-                      touched.confirmPassword && Boolean(errors.confirmPassword)
-                    }
-                    helperText={
-                      touched.confirmPassword
-                        ? errors.confirmPassword
-                        : undefined
-                    }
-                    showCubeIcon={false}
-                    showEyeIcon={true}
-                    showProgressBar={false}
-                    showGuidelines={false}
-                    autoComplete="new-password"
-                    required
-                  />
-
-                  {values.password && (
-                    <Box sx={{ mt: 2 }}>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          mb: 0.5,
-                        }}
-                      >
-                        <Typography variant="caption">
-                          {t("auth.setup.password.strengthLabel")}
-                        </Typography>
-                        <Typography variant="caption">
-                          {getPasswordStrengthLabel(passwordStrength)}
-                        </Typography>
-                      </Box>
-                      <Box
-                        sx={{
-                          width: "100%",
-                          height: 6,
-                          borderRadius: "6px",
-                          backgroundColor: (theme) =>
-                            theme.palette.surface.interface.background,
-                          overflow: "hidden",
-                        }}
-                      >
-                        <Box
-                          sx={{
-                            width: `${passwordStrength}%`,
-                            height: "100%",
-                            backgroundColor: getPasswordStrengthColor(
-                              passwordStrength,
-                            ),
-                            transition: "all 0.3s ease",
-                          }}
-                        />
-                      </Box>
-                    </Box>
-                  )}
-
-                  <Box
-                    sx={{
-                      mt: { xs: 3, sm: 3.5, md: 4 },
-                      display: "flex",
-                      flexDirection: { xs: "column-reverse", sm: "row" },
-                      justifyContent: "space-between",
-                      gap: { xs: 1.5, sm: 2 },
-                    }}
-                  >
+                  <ButtonContainerSpaceBetween>
                     <GeneralButton
                       onAction={handleBack}
                       label={t("auth.common.back")}
@@ -429,7 +460,6 @@ export default function SetupPage() {
                       maxWidth="auto"
                     />
                     <GeneralButton
-                      type="submit"
                       label={
                         isLoading
                           ? t("auth.setup.password.creatingAccount")
@@ -437,14 +467,15 @@ export default function SetupPage() {
                       }
                       disabled={
                         !values.password ||
-                        !values.confirmPassword ||
                         Boolean(errors.password) ||
-                        Boolean(errors.confirmPassword) ||
                         isLoading
                       }
                       maxWidth="auto"
+                      onAction={() =>
+                        handlePasswordSubmit(values.email, values.password)
+                      }
                     />
-                  </Box>
+                  </ButtonContainerSpaceBetween>
                 </Box>
               )}
 
@@ -454,49 +485,19 @@ export default function SetupPage() {
                   <Typography variant="h5" gutterBottom>
                     {t("auth.setup.recovery.title")}
                   </Typography>
-                  <Alert severity="error" sx={{ mb: 3 }}>
+                  <StyledAlertError severity="error">
                     {t("auth.setup.recovery.warning")}
-                  </Alert>
+                  </StyledAlertError>
 
                   <Typography variant="body1" paragraph>
                     {t("auth.setup.recovery.codeLabel")}
                   </Typography>
 
-                  <Box
-                    sx={{
-                      bgcolor: "background.default",
-                      p: { xs: 2, sm: 2.5, md: 3 },
-                      borderRadius: 2,
-                      border: 1,
-                      borderColor: "divider",
-                      textAlign: "center",
-                      position: "relative",
-                    }}
-                  >
-                    <Typography
-                      variant="h4"
-                      sx={{
-                        fontFamily: "monospace",
-                        letterSpacing: { xs: 1, sm: 1.5, md: 2 },
-                        fontSize: {
-                          xs: "1.25rem",
-                          sm: "1.75rem",
-                          md: "2.125rem",
-                        },
-                        wordBreak: "break-all",
-                      }}
-                    >
+                  <RecoveryCodeBox>
+                    <RecoveryCodeTypography variant="h4">
                       {recoveryCode}
-                    </Typography>
-                    <Box
-                      sx={{
-                        mt: 2,
-                        display: "flex",
-                        flexDirection: { xs: "column", sm: "row" },
-                        gap: { xs: 1.5, sm: 2 },
-                        justifyContent: "center",
-                      }}
-                    >
+                    </RecoveryCodeTypography>
+                    <RecoveryButtonContainer>
                       <GeneralButton
                         onAction={copyRecoveryCode}
                         label={
@@ -515,22 +516,16 @@ export default function SetupPage() {
                         isPrimary={false}
                         maxWidth="auto"
                       />
-                    </Box>
-                  </Box>
+                    </RecoveryButtonContainer>
+                  </RecoveryCodeBox>
 
-                  <Box
-                    sx={{
-                      mt: { xs: 3, sm: 3.5, md: 4 },
-                      display: "flex",
-                      justifyContent: "flex-end",
-                    }}
-                  >
+                  <ButtonContainer>
                     <GeneralButton
                       onAction={handleNext}
                       label={t("auth.setup.recovery.continueButton")}
                       maxWidth="auto"
                     />
-                  </Box>
+                  </ButtonContainer>
                 </Box>
               )}
 
@@ -544,9 +539,9 @@ export default function SetupPage() {
                     {t("auth.setup.confirmation.description")}
                   </Typography>
 
-                  <Alert severity="warning" sx={{ my: 3 }}>
+                  <StyledAlertWarning severity="warning">
                     {t("auth.setup.confirmation.warning")}
-                  </Alert>
+                  </StyledAlertWarning>
 
                   <FormControlLabel
                     control={
@@ -576,7 +571,7 @@ export default function SetupPage() {
                 />
               </AuthActions>
             )}
-          </Form>
+          </StyledForm>
         )}
       </Formik>
     </AuthCard>

@@ -11,22 +11,25 @@ export const authEdgeConfig = {
   callbacks: {
     async authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
-      const isOnAdmin = nextUrl.pathname.startsWith("/admin");
-      const isOnAuth = ["/login", "/setup", "/reset-password"].includes(
-        nextUrl.pathname,
-      );
+      const pathname = nextUrl.pathname;
 
-      // Protect admin routes
-      if (isOnAdmin) {
+      // Protect admin routes - require authentication
+      if (pathname.startsWith("/admin")) {
         if (isLoggedIn) return true;
-        return false; // Redirect to login page
+        return false; // NextAuth will redirect to /login
       }
 
-      // Redirect logged-in users away from auth pages
-      if (isOnAuth && isLoggedIn) {
+      // Redirect logged-in users away from login page to dashboard
+      // (They're already authenticated, no need to log in again)
+      if (pathname === "/login" && isLoggedIn) {
         return Response.redirect(new URL("/admin/dashboard", nextUrl));
       }
 
+      // Allow public access to all other routes:
+      // - / (home page)
+      // - /student/* (student onboarding)
+      // - /reset-password (password reset)
+      // Note: /setup is handled by middleware
       return true;
     },
     async jwt({ token, user }) {

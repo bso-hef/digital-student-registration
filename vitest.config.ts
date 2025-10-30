@@ -48,10 +48,10 @@ export default defineConfig({
       ],
       thresholds: {
         autoUpdate: true,
-        branches: 29.21,
-        functions: 22.51,
-        lines: 22.03,
-        statements: 21.78,
+        branches: 30.8,
+        functions: 22.58,
+        lines: 23.34,
+        statements: 22.93,
       },
       enabled: true,
       reportOnFailure: true,
@@ -130,6 +130,8 @@ export default defineConfig({
       "@/lib": path.resolve(__dirnameCompat, "./src/lib"),
       "@/models": path.resolve(__dirnameCompat, "./src/models"),
       "@/app": path.resolve(__dirnameCompat, "./src/app"),
+      // Replace lodash with lodash-es for ESM compatibility in tests
+      lodash: "lodash-es",
     },
     extensions: [".mjs", ".js", ".jsx", ".json", ".ts", ".tsx"],
     conditions: ["node", "import", "module", "browser", "default"],

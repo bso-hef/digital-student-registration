@@ -1,8 +1,7 @@
-import type { NextAuthConfig } from "next-auth";
-import Credentials from "next-auth/providers/credentials";
-
 import { dbConnect } from "@/lib/config/mongo";
 import User from "@/models/User";
+import type { NextAuthConfig } from "next-auth";
+import Credentials from "next-auth/providers/credentials";
 
 export const authConfig = {
   providers: [

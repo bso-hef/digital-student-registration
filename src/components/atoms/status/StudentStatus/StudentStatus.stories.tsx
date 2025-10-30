@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, within } from "@storybook/test";
+import { expect } from "@storybook/test";
 
 import StudentStatus from "./index";
 
@@ -18,7 +18,6 @@ export const Default: Story = {
     studentStatus: "onboarded",
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
     const icon = canvasElement.querySelector("svg");
     expect(icon).toBeInTheDocument();
   },

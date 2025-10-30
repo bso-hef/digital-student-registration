@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, within } from "@storybook/test";
+import { expect } from "@storybook/test";
 
 import HealthIndicator from "./index";
 
@@ -19,7 +19,6 @@ export const Default: Story = {
     label: "Operational",
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
     const chip = canvasElement.querySelector(".MuiChip-root");
     expect(chip).toBeInTheDocument();
   },

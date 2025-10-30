@@ -1,9 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
-
 import { generateRecoveryCode, isSystemSetup } from "@/lib/auth/auth";
 import { dbConnect } from "@/lib/config/mongo";
-import AppSettings from "@/models/AppSettings";
 import User from "@/models/User";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
@@ -80,27 +78,15 @@ export async function POST(req: NextRequest) {
     const plainRecoveryCode = generateRecoveryCode();
 
     // Create admin user (password and recoveryCode will be hashed by pre-save hooks)
+    // NOTE: We DON'T mark isSystemSetup as true yet - only after user confirms they saved recovery code
     const user = await User.create({
       email: email.toLowerCase(),
       password: password, // Will be hashed by pre-save hook
       recoveryCode: plainRecoveryCode, // Will be hashed by pre-save hook
-      isSetup: true,
+      isSetup: false, // Not marked as setup yet - will be true after confirmation
       role: "admin",
       active: true,
     });
-
-    // Update or create AppSettings to mark setup as complete
-    let settings = await AppSettings.findOne();
-    if (!settings) {
-      // Create new settings document if it doesn't exist
-      settings = await AppSettings.create({
-        isSystemSetup: true,
-      });
-    } else {
-      // Update existing settings
-      settings.isSystemSetup = true;
-      await settings.save();
-    }
 
     // Return success with the plain recovery code
     // IMPORTANT: This is the ONLY time the recovery code is sent in plain text

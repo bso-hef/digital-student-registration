@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, within } from "@storybook/test";
+import { expect } from "@storybook/test";
 
 import AddClassModal from "./index";
 
@@ -23,7 +23,7 @@ export const Default: Story = {
       console.log("Classes added:", classes);
     },
   },
-  play: async ({ canvasElement }) => {
+  play: async () => {
     const dialog = document.querySelector(".MuiDialog-root");
     expect(dialog).toBeInTheDocument();
   },

@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, within } from "@storybook/test";
+import { expect } from "@storybook/test";
 
 import LanguageDropdown from "./index";
 
@@ -16,7 +16,6 @@ type Story = StoryObj<typeof LanguageDropdown>;
 export const Default: Story = {
   args: {},
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
     const select = canvasElement.querySelector(".MuiSelect-select");
     expect(select).toBeInTheDocument();
   },

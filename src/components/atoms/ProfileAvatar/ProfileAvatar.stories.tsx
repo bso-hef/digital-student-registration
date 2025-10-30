@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, within } from "@storybook/test";
+import { expect } from "@storybook/test";
 
 import ProfileAvatar from "./index";
 
@@ -19,7 +19,6 @@ export const Default: Story = {
     size: 100,
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
     const avatar = canvasElement.querySelector(".MuiAvatar-root");
     expect(avatar).toBeInTheDocument();
   },

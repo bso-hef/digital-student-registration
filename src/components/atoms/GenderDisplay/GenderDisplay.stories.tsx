@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, within } from "@storybook/test";
+import { expect } from "@storybook/test";
 
 import GenderDisplay from "./index";
 
@@ -18,7 +18,6 @@ export const Default: Story = {
     gender: "male",
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
     const element = canvasElement.querySelector("svg");
     expect(element).toBeInTheDocument();
   },
