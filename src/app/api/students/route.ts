@@ -195,11 +195,18 @@ export async function POST(request: Request) {
       request as NextRequest,
     );
 
-    const isBulkWriteError = (err: unknown): err is { name: string } =>
+    interface BulkWriteError {
+      name: string;
+      code?: number;
+      writeErrors?: unknown[];
+    }
+
+    const isBulkWriteError = (err: unknown): err is BulkWriteError =>
       typeof err === "object" &&
       err !== null &&
       "name" in err &&
-      (err as { name?: unknown }).name === "BulkWriteError";
+      (err as { name?: unknown }).name === "BulkWriteError" &&
+      ("code" in err || "writeErrors" in err);
 
     const message = isBulkWriteError(error)
       ? "Bulk insert completed with duplicates or errors"

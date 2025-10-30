@@ -24,7 +24,7 @@ const HeaderSearchInput: React.FC<HeaderSearchInputProps> = ({
         style: { padding: "10px 16px 10px 0", fontSize: 14 },
       }}
       onChange={onChange}
-      placeholder={placeholder ? placeholder : t("general.Search")}
+      placeholder={placeholder || t("general.Search")}
       InputProps={{
         startAdornment: (
           <InputAdornment style={{ color: "#F4F6F8" }} position="start">
