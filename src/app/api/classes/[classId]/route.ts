@@ -6,6 +6,17 @@ import { createAuditLog } from "@/server/middleware/audit.middleware";
 import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
+interface ClassLean {
+  name: string;
+  schoolYearFrom: Date;
+  schoolYearTo: Date;
+  grade?: number | null;
+  isVocational?: boolean;
+  requiresEmployerInfo?: boolean;
+  studentCount?: number;
+  active?: boolean;
+}
+
 export const runtime = "nodejs";
 
 const logger = new Logger("API <<==>> Classes");
@@ -63,9 +74,9 @@ export async function PATCH(
     // Get old values for audit log
     const oldClass = await Class.findById(classId).lean();
 
-    const updatedClass = await Class.findByIdAndUpdate(classId, body, {
+    const updatedClass = (await Class.findByIdAndUpdate(classId, body, {
       new: true,
-    }).lean();
+    }).lean()) as ClassLean | null;
 
     if (!updatedClass || Array.isArray(updatedClass)) {
       return NextResponse.json({ message: "Class not found" }, { status: 404 });
@@ -77,12 +88,12 @@ export async function PATCH(
         action: "class.update",
         category: "class",
         description: tServer("audit.descriptions.updatedClass", {
-          name: (updatedClass as any).name,
+          name: updatedClass.name,
         }),
         status: "success",
         metadata: {
           classId: classId,
-          className: (updatedClass as any).name,
+          className: updatedClass.name,
           changedFields: Object.keys(body),
           oldValues: oldClass,
           newValues: body,

@@ -1,12 +1,9 @@
-/// <reference types="vitest/config" />
-import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
 import react from "@vitejs/plugin-react";
-import { playwright } from "@vitest/browser-playwright";
 import { fileURLToPath } from "node:url";
 import path from "path";
 import { configDefaults, defineConfig } from "vitest/config";
 
-const dirname =
+const __dirnameCompat =
   typeof __dirname !== "undefined"
     ? __dirname
     : path.dirname(fileURLToPath(import.meta.url));
@@ -128,11 +125,11 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
-      "@/tests": path.resolve(__dirname, "./tests"),
-      "@/lib": path.resolve(__dirname, "./src/lib"),
-      "@/models": path.resolve(__dirname, "./src/models"),
-      "@/app": path.resolve(__dirname, "./src/app"),
+      "@": path.resolve(__dirnameCompat, "./src"),
+      "@/tests": path.resolve(__dirnameCompat, "./tests"),
+      "@/lib": path.resolve(__dirnameCompat, "./src/lib"),
+      "@/models": path.resolve(__dirnameCompat, "./src/models"),
+      "@/app": path.resolve(__dirnameCompat, "./src/app"),
     },
     extensions: [".mjs", ".js", ".jsx", ".json", ".ts", ".tsx"],
     conditions: ["node", "import", "module", "browser", "default"],

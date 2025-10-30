@@ -7,6 +7,12 @@ import { NextRequest, NextResponse } from "next/server";
 
 import AppSettings from "@/models/AppSettings";
 
+interface AppSettingsLean {
+  audit?: {
+    retentionPeriodDays?: number;
+  };
+}
+
 export const runtime = "nodejs";
 
 const logger = new Logger("API <<==>> AuditLogs");
@@ -163,10 +169,10 @@ export async function DELETE(request: NextRequest) {
     await dbConnect();
 
     // Get retention period from settings
-    const settings = await AppSettings.findOne().lean();
+    const settings = (await AppSettings.findOne().lean()) as AppSettingsLean | null;
     const retentionDays =
       settings && !Array.isArray(settings)
-        ? (settings as any).audit?.retentionPeriodDays || 90
+        ? settings.audit?.retentionPeriodDays || 90
         : 90;
 
     // Calculate cutoff date
