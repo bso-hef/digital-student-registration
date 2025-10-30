@@ -3,4 +3,5 @@ export const SCHEMA = {
   STUDENT: "Student",
   CLASS: "Class",
   AUDIT_LOG: "AuditLog",
+  USER: "User",
 } as const;

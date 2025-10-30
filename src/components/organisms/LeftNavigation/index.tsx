@@ -5,11 +5,15 @@ import React, { Fragment, memo, useCallback, useEffect, useState } from "react";
 import GeneralInput from "@/components/atoms/GeneralInput";
 import OnboardingVersion from "@/components/atoms/OnboardingVersion";
 import ProfileAvatar from "@/components/atoms/ProfileAvatar";
+import { logoutUser } from "@/store/actions/authActions";
+import { AppDispatch, RootState } from "@/store/store";
 import ExpandLessRoundedIcon from "@mui/icons-material/ExpandLessRounded";
 import ExpandMoreRoundedIcon from "@mui/icons-material/ExpandMoreRounded";
+import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import OpenInNewRoundedIcon from "@mui/icons-material/OpenInNewRounded";
 import {
   Box,
+  Button,
   Collapse,
   Divider,
   List,
@@ -23,6 +27,7 @@ import {
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
 
 import { listOfRoutes } from "./routesConfig";
 
@@ -115,6 +120,8 @@ const LeftNavigation = () => {
   const pathname = usePathname();
   const router = useRouter();
   const theme = useTheme();
+  const dispatch = useDispatch<AppDispatch>();
+  const { user, isAuthenticated } = useSelector((state: RootState) => state.auth);
 
   const [open, setOpen] = useState<boolean[]>([]);
 
@@ -311,6 +318,56 @@ const LeftNavigation = () => {
           })}
         </List>
       </StyledNavigation>
+
+      {/* User Info and Logout */}
+      {user && (
+        <Box sx={{ width: "100%", mt: 2 }}>
+          <Divider sx={{ mb: 2 }} />
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 1,
+              px: 2,
+            }}
+          >
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ fontSize: "12px" }}
+            >
+              {t("navigation.Logged in as")}
+            </Typography>
+            <Typography
+              variant="body2"
+              color="text.primary"
+              sx={{
+                fontWeight: 500,
+                fontSize: "14px",
+                wordBreak: "break-all",
+              }}
+            >
+              {user.email}
+            </Typography>
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={<LogoutRoundedIcon />}
+              onClick={async () => {
+                const result = await dispatch(logoutUser());
+                if (result.success) {
+                  router.push("/login");
+                  router.refresh();
+                }
+              }}
+              sx={{ mt: 1 }}
+            >
+              {t("navigation.Logout")}
+            </Button>
+          </Box>
+        </Box>
+      )}
+
       <OnboardingVersion />
     </StyledWrapper>
   );

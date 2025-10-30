@@ -8,7 +8,7 @@ import rootReducer from "../store/reducers";
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["ui", "student", "class", "dashboard", "appSettings"],
+  whitelist: ["ui", "student", "class", "dashboard", "appSettings", "auth"],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -40,6 +40,12 @@ const persistor = persistStore(store);
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
-export type AppThunk = ThunkAction<void, RootState, unknown, Action<string>>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type AppThunk<ReturnType = any> = ThunkAction<
+  ReturnType,
+  RootState,
+  unknown,
+  Action<string>
+>;
 
 export { store, persistor };

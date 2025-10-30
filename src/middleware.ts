@@ -1,34 +1,23 @@
-import { NextRequest, NextResponse } from "next/server";
+import NextAuth from "next-auth";
 
-// import { verifyToken } from "./src/lib/auth";
-// TODO: Create good flow for middleware
+import { authEdgeConfig } from "@/lib/auth/auth.edge.config";
 
-const PUBLIC_PATHS = [
-  "/",
-  "/api/auth/register",
-  "/favicon.ico",
-  "/_next/",
-  "/static/",
-];
+// Initialize NextAuth with edge-safe config for middleware
+const { auth } = NextAuth(authEdgeConfig);
 
-function isPublic(path: string) {
-  return PUBLIC_PATHS.some(
-    (publicPath) => path === publicPath || path.startsWith(publicPath),
-  );
-}
-
-// **Als default** exportieren**
-export default async function middleware(req: NextRequest) {
-  const { pathname } = req.nextUrl;
-
-  if (isPublic(pathname)) {
-    return NextResponse.next();
-  }
-}
+// Middleware runs in Edge Runtime and cannot use Node.js APIs like mongoose
+// Setup check is handled in the setup page itself (Server Component with Node.js runtime)
+export default auth;
 
 export const config = {
   matcher: [
-    // Alle Pfade, ausgenommen _next, static, favicon und /api/auth
-    "/((?!_next|static|favicon.ico|api/auth).*)",
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api/auth (NextAuth API routes - handled by NextAuth)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    "/((?!api/auth|_next/static|_next/image|favicon.ico).*)",
   ],
 };
