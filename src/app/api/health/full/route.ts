@@ -1,3 +1,4 @@
+import { auth } from "@/lib/auth/auth";
 import { dbConnect, getMongoState } from "@/lib/config/mongo";
 import { formatBytes } from "@/server/utils/server.utils";
 import os from "os";
@@ -7,6 +8,15 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export async function GET() {
+  // Check authentication - full health endpoint contains sensitive system info
+  const session = await auth();
+  if (!session) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401,
+      headers: { "content-type": "application/json" },
+    });
+  }
+
   const checks: Record<string, unknown> = {};
 
   try {

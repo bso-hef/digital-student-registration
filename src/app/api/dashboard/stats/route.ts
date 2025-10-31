@@ -1,3 +1,4 @@
+import { auth } from "@/lib/auth/auth";
 import { dbConnect } from "@/lib/config/mongo";
 import Logger from "@/lib/server-logger";
 import Class from "@/models/Class";
@@ -12,6 +13,12 @@ const logger = new Logger("API <<==>> Dashboard Stats");
 
 export async function GET() {
   try {
+    // Check authentication
+    const session = await auth();
+    if (!session) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
     await dbConnect();
 
     // Calculate date for "last 7 days"

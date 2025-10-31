@@ -1,3 +1,4 @@
+import { auth } from "@/lib/auth/auth";
 import { dbConnect } from "@/lib/config/mongo";
 import { tServer } from "@/lib/server-i18n";
 import Logger from "@/lib/server-logger";
@@ -102,6 +103,12 @@ const shapeClass = (row: ClassInput): ShapedClass => {
 // ---------- GET ----------
 export async function GET(request: NextRequest) {
   try {
+    // Check authentication
+    const session = await auth();
+    if (!session) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
     await dbConnect();
 
     const { searchParams } = new URL(request.url);
@@ -140,6 +147,12 @@ export async function GET(request: NextRequest) {
 // ---------- POST (Batch Create) ----------
 export async function POST(request: NextRequest) {
   try {
+    // Check authentication
+    const session = await auth();
+    if (!session) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
     await dbConnect();
     const body = await request.json();
 
@@ -234,6 +247,12 @@ export async function POST(request: NextRequest) {
 // ---------- DELETE (Batch) ----------
 export async function DELETE(request: NextRequest) {
   try {
+    // Check authentication
+    const session = await auth();
+    if (!session) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
     await dbConnect();
     const body = await request.json();
     const ids: string[] = body?.ids;

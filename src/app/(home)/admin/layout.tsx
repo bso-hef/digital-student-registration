@@ -1,9 +1,13 @@
 "use client";
 
+import { useEffect } from "react";
+
 import LeftNavigation from "@/components/organisms/LeftNavigation";
+import { useAuth } from "@/lib/auth/useAuth";
 import { applicationScrollbar } from "@/utils/styling.utils";
-import { Box, styled } from "@mui/material";
+import { Box, CircularProgress, styled } from "@mui/material";
 import { useDeviceTypeDetection } from "device-type-detection";
+import { useRouter } from "next/navigation";
 
 const StyledBox = styled(Box)({
   position: "relative",
@@ -69,14 +73,58 @@ const LayoutBox = styled(Box, {
   ...applicationScrollbar(theme),
 }));
 
+const LoadingContainer = styled(Box)(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  height: "100vh",
+  width: "100%",
+  gap: theme.spacing(2),
+  color: theme.palette.text.primary,
+}));
+
 export default function StudentLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const { isMobile, isTabletVertical } = useDeviceTypeDetection();
+  const { isAuthenticated, isLoading } = useAuth();
+  const router = useRouter();
 
   const showMobileView = isMobile || isTabletVertical;
+
+  // Immediate redirect if not authenticated
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      // Use hard navigation to clear all state
+      window.location.href = "/login";
+    }
+  }, [isAuthenticated, isLoading, router]);
+
+  // Show loading state while checking authentication
+  if (isLoading) {
+    return (
+      <StyledBox className="admin-layout">
+        <LoadingContainer>
+          <CircularProgress size={48} />
+        </LoadingContainer>
+      </StyledBox>
+    );
+  }
+
+  // Don't render admin content if not authenticated
+  // (redirect will happen via useEffect)
+  if (!isAuthenticated) {
+    return (
+      <StyledBox className="admin-layout">
+        <LoadingContainer>
+          <CircularProgress size={48} />
+        </LoadingContainer>
+      </StyledBox>
+    );
+  }
 
   return (
     <StyledBox className="student-layout">

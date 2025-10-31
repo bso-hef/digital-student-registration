@@ -179,6 +179,9 @@
     "settingsUpdateFailed": "Aktualisierung der Einstellungen fehlgeschlagen.",
     "onboardingSettingsUpdateSuccess": "Onboarding-Einstellungen erfolgreich aktualisiert.",
     "onboardingSettingsUpdateFailed": "Aktualisierung der Onboarding-Einstellungen fehlgeschlagen.",
+    "agreementSettingsFetchFailed": "Abrufen der Vereinbarungseinstellungen fehlgeschlagen.",
+    "agreementSettingsUpdateSuccess": "Vereinbarungseinstellungen erfolgreich aktualisiert.",
+    "agreementSettingsUpdateFailed": "Aktualisierung der Vereinbarungseinstellungen fehlgeschlagen.",
     "auditLogFetchFailed": "Abrufen der Audit-Protokolle fehlgeschlagen.",
     "auditLogStatsFailed": "Abrufen der Audit-Protokoll-Statistiken fehlgeschlagen.",
     "auditLogExportSuccess": "Audit-Protokolle erfolgreich exportiert.",
@@ -346,6 +349,35 @@
         "gender": "Geschlecht",
         "status": "Status"
       }
+    },
+    "agreements": {
+      "title": "Vereinbarungen",
+      "description": "Verwalten Sie Schulvereinbarungen, die während der Schüleranmeldung angezeigt werden",
+      "schoolAgreements": "Schulvereinbarungen",
+      "schoolAgreementsSubtitle": "Konfigurieren Sie, welche Vereinbarungen Schüler während der Registrierung akzeptieren müssen",
+      "addAgreement": "Vereinbarung hinzufügen",
+      "editAgreement": "Vereinbarung bearbeiten",
+      "deleteConfirm": "Vereinbarung löschen",
+      "deleteWarning": "Sind Sie sicher, dass Sie diese Vereinbarung löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+      "noAgreements": "Noch keine Vereinbarungen konfiguriert",
+      "clickAddToStart": "Klicken Sie auf 'Vereinbarung hinzufügen', um Ihre erste Vereinbarung zu erstellen",
+      "required": "Erforderlich",
+      "fields": {
+        "key": "Schlüssel",
+        "labelEn": "Bezeichnung (Englisch)",
+        "labelDe": "Bezeichnung (Deutsch)",
+        "enabled": "Aktiviert",
+        "required": "Erforderlich"
+      },
+      "keyPlaceholder": "Automatisch aus englischer Bezeichnung generiert",
+      "keyHelperText": "Eindeutiger Bezeichner (automatisch aus englischer Bezeichnung generiert)",
+      "labelEnPlaceholder": "z.B. Data Protection",
+      "labelDePlaceholder": "z.B. Datenschutz",
+      "validation": {
+        "keyRequired": "Schlüssel ist erforderlich",
+        "keyExists": "Eine Vereinbarung mit diesem Schlüssel existiert bereits",
+        "labelRequired": "Bezeichnung ist in beiden Sprachen erforderlich"
+      }
     }
   },
   "audit": {
@@ -380,6 +412,10 @@
       "success": "Erfolg",
       "failure": "Fehler",
       "partial": "Teilweise"
+    },
+    "descriptions": {
+      "updatedAgreementSettings": "Vereinbarungseinstellungen aktualisiert",
+      "failedUpdateAgreementSettings": "Aktualisierung der Vereinbarungseinstellungen fehlgeschlagen"
     }
   },
   "auth": {

@@ -179,6 +179,9 @@
     "settingsUpdateFailed": "Failed to update settings.",
     "onboardingSettingsUpdateSuccess": "Onboarding settings updated successfully.",
     "onboardingSettingsUpdateFailed": "Failed to update onboarding settings.",
+    "agreementSettingsFetchFailed": "Failed to fetch agreement settings.",
+    "agreementSettingsUpdateSuccess": "Agreement settings updated successfully.",
+    "agreementSettingsUpdateFailed": "Failed to update agreement settings.",
     "auditLogFetchFailed": "Failed to fetch audit logs.",
     "auditLogStatsFailed": "Failed to fetch audit log statistics.",
     "auditLogExportSuccess": "Audit logs exported successfully.",
@@ -346,6 +349,35 @@
         "gender": "Gender",
         "status": "Status"
       }
+    },
+    "agreements": {
+      "title": "Agreements",
+      "description": "Manage school agreements shown during student onboarding",
+      "schoolAgreements": "School Agreements",
+      "schoolAgreementsSubtitle": "Configure which agreements students must accept during registration",
+      "addAgreement": "Add Agreement",
+      "editAgreement": "Edit Agreement",
+      "deleteConfirm": "Delete Agreement",
+      "deleteWarning": "Are you sure you want to delete this agreement? This action cannot be undone.",
+      "noAgreements": "No agreements configured yet",
+      "clickAddToStart": "Click 'Add Agreement' to create your first agreement",
+      "required": "Required",
+      "fields": {
+        "key": "Key",
+        "labelEn": "Label (English)",
+        "labelDe": "Label (German)",
+        "enabled": "Enabled",
+        "required": "Required"
+      },
+      "keyPlaceholder": "Auto-generated from English label",
+      "keyHelperText": "Unique identifier (auto-generated from English label)",
+      "labelEnPlaceholder": "e.g., Data Protection",
+      "labelDePlaceholder": "e.g., Datenschutz",
+      "validation": {
+        "keyRequired": "Key is required",
+        "keyExists": "An agreement with this key already exists",
+        "labelRequired": "Label is required in both languages"
+      }
     }
   },
   "audit": {
@@ -380,6 +412,10 @@
       "success": "Success",
       "failure": "Failure",
       "partial": "Partial"
+    },
+    "descriptions": {
+      "updatedAgreementSettings": "Updated agreement settings",
+      "failedUpdateAgreementSettings": "Failed to update agreement settings"
     }
   },
   "auth": {

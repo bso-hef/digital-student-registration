@@ -23,9 +23,30 @@ const FieldConfigSchema = new Schema(
   { _id: false },
 );
 
+// Agreement item schema (for configurable agreements)
+const AgreementItemSchema = new Schema(
+  {
+    id: { type: String, required: true },
+    key: { type: String, required: true },
+    enabled: { type: Boolean, default: true },
+    required: { type: Boolean, default: false },
+    order: { type: Number, required: true },
+    labels: {
+      en: { type: String, required: true },
+      de: { type: String, required: true },
+    },
+  },
+  { _id: false },
+);
+
 // Agreements settings schema
 const AgreementSettingsSchema = new Schema(
   {
+    agreements: {
+      type: [AgreementItemSchema],
+      default: [],
+    },
+    // Old fields kept temporarily for migration
     privacyPolicyEnabled: { type: Boolean, default: false },
     termsOfServiceEnabled: { type: Boolean, default: false },
     parentalConsentEnabled: { type: Boolean, default: true },
@@ -292,6 +313,7 @@ const AppSettingsSchema = new Schema(
     agreements: {
       type: AgreementSettingsSchema,
       default: {
+        agreements: [],
         privacyPolicyEnabled: false,
         termsOfServiceEnabled: false,
         parentalConsentEnabled: true,

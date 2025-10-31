@@ -115,7 +115,8 @@ export const authConfig = {
         httpOnly: true,
         sameSite: "lax",
         path: "/",
-        secure: process.env.NODE_ENV === "production",
+        // Always use secure cookies since app uses HTTPS in both dev and production
+        secure: true,
       },
     },
   },

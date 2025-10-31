@@ -355,8 +355,9 @@ const LeftNavigation = () => {
             onAction={async () => {
               const result = await dispatch(logoutUser());
               if (result.success) {
-                router.push("/login");
-                router.refresh();
+                // Use hard navigation to ensure complete state clearing
+                // This prevents any cached data from being displayed
+                window.location.href = "/login";
               }
             }}
             fullWidth={false}

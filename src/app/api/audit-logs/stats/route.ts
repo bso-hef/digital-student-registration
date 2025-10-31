@@ -1,3 +1,4 @@
+import { auth } from "@/lib/auth/auth";
 import { dbConnect } from "@/lib/config/mongo";
 import Logger from "@/lib/server-logger";
 import AuditLog from "@/models/AuditLog";
@@ -13,6 +14,12 @@ const logger = new Logger("API <<==>> AuditLogsStats");
  */
 export async function GET() {
   try {
+    // Check authentication
+    const session = await auth();
+    if (!session) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
     await dbConnect();
 
     // Get total count
