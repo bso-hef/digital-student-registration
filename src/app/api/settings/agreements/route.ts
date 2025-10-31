@@ -82,7 +82,7 @@ export async function GET() {
 
     // Get or create settings document
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let settings = await AppSettings.findOne().lean() as any;
+    let settings = (await AppSettings.findOne().lean()) as any;
 
     if (!settings) {
       logger.info(

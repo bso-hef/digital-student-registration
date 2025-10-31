@@ -27,6 +27,16 @@ export const createReligionValidation = (
     : schema.nullable();
 };
 
+export const createCountryValidation = (
+  allowedValues: string[],
+  required = true,
+) => {
+  const schema = Yup.string().oneOf(allowedValues, "Ungültiges Land");
+  return required
+    ? schema.required("Geburtsland ist erforderlich")
+    : schema.nullable();
+};
+
 // Step 1: Allgemeine Daten
 export const validateGeneralStudentData = Yup.object({
   eintrittschule: Yup.string().required("Eintrittsschule ist erforderlich"),
@@ -50,7 +60,10 @@ export const validateGeneralStudentData = Yup.object({
 });
 
 // Dynamic version of general student data validation
-export const createValidateGeneralStudentData = (genderOptions: string[]) =>
+export const createValidateGeneralStudentData = (
+  genderOptions: string[],
+  countryOptions: string[] = [],
+) =>
   Yup.object({
     eintrittschule: Yup.string().required("Eintrittsschule ist erforderlich"),
     klassenname: Yup.string().required("Klassenname ist erforderlich"),
@@ -61,7 +74,10 @@ export const createValidateGeneralStudentData = (genderOptions: string[]) =>
     geburtsdatum: Yup.date()
       .typeError("Ungültiges Datum")
       .required("Geburtsdatum ist erforderlich"),
-    geburtsland: Yup.string().required("Geburtsland ist erforderlich"),
+    geburtsland:
+      countryOptions.length > 0
+        ? createCountryValidation(countryOptions, true)
+        : Yup.string().required("Geburtsland ist erforderlich"),
     geburtsort: Yup.string().required("Geburtsort ist erforderlich"),
     religion: Yup.string().nullable(),
     staatsangehoerigkeit1: Yup.string().required(

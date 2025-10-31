@@ -9,7 +9,14 @@ import {
 } from "@/lib/validate/student.validate";
 import { updateStudentOnboardingData } from "@/store/actions/studentActions";
 import { useAppDispatch, useAppSelector } from "@/store/store";
-import { Autocomplete, Box, MenuItem, Typography, styled } from "@mui/material";
+import {
+  Autocomplete,
+  Box,
+  TextField as MUITextField,
+  MenuItem,
+  Typography,
+  styled,
+} from "@mui/material";
 import dayjs from "dayjs";
 import { Field, Form, Formik } from "formik";
 import { Select, TextField } from "formik-mui";
@@ -84,7 +91,7 @@ const GeneralForm: React.FC<GeneralFormProps> = ({ onSubmit }) => {
     geburtsdatum: studentData.geburtsdatum
       ? dayjs(studentData.geburtsdatum)
       : null,
-    geburtsland: studentData.geburtsland || "",
+    geburtsland: studentData.geburtsland || "DE",
     geburtsort: studentData.geburtsort || "",
     religion: studentData.religion || "",
     staatsangehoerigkeit1: studentData.staatsangehoerigkeit1 || "",
@@ -93,11 +100,14 @@ const GeneralForm: React.FC<GeneralFormProps> = ({ onSubmit }) => {
 
   // Create dynamic validation schema with settings
   const validationSchema = useMemo(() => {
-    if (genderOptions.length > 0) {
-      return createValidateGeneralStudentData(getOptionValues(genderOptions));
+    if (genderOptions.length > 0 || countryOptions.length > 0) {
+      return createValidateGeneralStudentData(
+        getOptionValues(genderOptions),
+        getOptionValues(countryOptions),
+      );
     }
     return validateGeneralStudentData;
-  }, [genderOptions, getOptionValues]);
+  }, [genderOptions, countryOptions, getOptionValues]);
 
   const handleSubmit = (values: FormValues) => {
     // Convert Dayjs objects to ISO strings for Redux storage
@@ -131,7 +141,7 @@ const GeneralForm: React.FC<GeneralFormProps> = ({ onSubmit }) => {
       onSubmit={handleSubmit}
       enableReinitialize
     >
-      {({ setFieldValue, values, errors, touched }) => (
+      {({ setFieldValue, values, setFieldTouched }) => (
         <StyledForm>
           <Typography variant="h6" gutterBottom>
             {t("onboarding.general.title", "Allgemeine Daten")}
@@ -246,28 +256,32 @@ const GeneralForm: React.FC<GeneralFormProps> = ({ onSubmit }) => {
             />
           </FormSection>
 
-          <FullWidthField>
-            {/* Geburtsland - Autocomplete */}
-            <Autocomplete
-              options={getEnabledOptions(countryOptions).map((c) => c.label)}
-              value={values.geburtsland || null}
-              onChange={(_, newValue) => {
-                setFieldValue("geburtsland", newValue || "");
-              }}
-              renderInput={(params) => (
-                <Field
-                  component={TextField}
-                  {...params}
-                  name="geburtsland"
-                  label={t("onboarding.general.birthCountry", "Geburtsland")}
-                  variant="outlined"
-                  required
-                  error={touched.geburtsland && Boolean(errors.geburtsland)}
-                  helperText={touched.geburtsland && errors.geburtsland}
-                />
-              )}
-            />
-          </FullWidthField>
+          <Autocomplete
+            options={getEnabledOptions(countryOptions)}
+            getOptionLabel={(option) => option.label}
+            isOptionEqualToValue={(option, value) =>
+              option.value === value.value
+            }
+            value={
+              getEnabledOptions(countryOptions).find(
+                (opt) => opt.value === values.geburtsland,
+              ) || null
+            }
+            onChange={(_, newValue) => {
+              setFieldValue("geburtsland", newValue?.value || "");
+            }}
+            onBlur={() => setFieldTouched("geburtsland", true)}
+            fullWidth
+            renderInput={(params) => (
+              <MUITextField
+                {...params}
+                label={t("onboarding.general.birthCountry", "Geburtsland")}
+                variant="outlined"
+                fullWidth
+                required
+              />
+            )}
+          />
 
           <Typography variant="subtitle1" sx={{ mt: 2 }}>
             {t("onboarding.general.additionalInfo", "Weitere Angaben")}

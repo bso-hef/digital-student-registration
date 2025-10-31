@@ -19,7 +19,7 @@ const settingsService = {
    * Fetches only onboarding settings
    */
   getOnboarding: () => {
-    return http.get<{ success: boolean; data: OnboardingSettings }>(
+    return http.get<{ success: boolean; data: AppSettings }>(
       "/api/settings/onboarding",
     );
   },
