@@ -2,6 +2,8 @@ import React from "react";
 
 import { useOnboardingSettings } from "@/hooks/useOnboardingSettings";
 import { validateStudentContactPersonData } from "@/lib/validate/student.validate";
+import { updateStudentOnboardingData } from "@/store/actions/studentActions";
+import { useAppDispatch } from "@/store/store";
 import { StudentData } from "@/types/student";
 import { MenuItem, styled } from "@mui/material";
 import { Field, Form, Formik } from "formik";
@@ -30,9 +32,11 @@ interface FormValues {
 
 interface ParentsFormProps {
   data?: Partial<StudentData>;
+  onSubmit?: (values: FormValues) => void;
 }
 
-const ParentsForm: React.FC<ParentsFormProps> = ({ data }) => {
+const ParentsForm: React.FC<ParentsFormProps> = ({ data, onSubmit }) => {
+  const dispatch = useAppDispatch();
   const { contactPersonTypeOptions, getEnabledOptions, loading } =
     useOnboardingSettings();
 
@@ -57,7 +61,8 @@ const ParentsForm: React.FC<ParentsFormProps> = ({ data }) => {
       initialValues={initialValues}
       validationSchema={validateStudentContactPersonData}
       onSubmit={(values) => {
-        console.log("✅ Submitted values:", values);
+        dispatch(updateStudentOnboardingData(values));
+        if (onSubmit) onSubmit(values);
       }}
     >
       {({ errors, touched }) => (

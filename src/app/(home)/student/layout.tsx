@@ -1,10 +1,17 @@
 "use client";
 
+import { useMemo } from "react";
+
 import Logo from "@/components/atoms/Logo";
+import {
+  getActiveSteps,
+  getStudentSteps,
+} from "@/constants/studentSteps.constants";
 import { applicationScrollbar } from "@/utils/styling.utils";
 import { Box, styled, useTheme } from "@mui/material";
 import { useDeviceTypeDetection } from "device-type-detection";
 import { usePathname } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 
 import { RootState } from "@/store/reducers";
@@ -52,6 +59,7 @@ const LayoutBox = styled(Box, {
   width: "100%",
   maxWidth: "1200px",
   textAlign: "center",
+  // overflowY: "auto",
   padding: showMobileView ? theme.spacing(4, 4, 0, 4) : theme.spacing(4),
   backgroundColor: theme.palette.surface.interface.base,
   backgroundImage: "unset",
@@ -83,8 +91,11 @@ export default function StudentLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { currentStep } = useSelector((state: RootState) => state.student);
+  const { currentStep, data, currentClass } = useSelector(
+    (state: RootState) => state.student,
+  );
   const theme = useTheme();
+  const { t } = useTranslation();
   const { isMobile, isTabletVertical } = useDeviceTypeDetection();
   const pathname = usePathname();
 
@@ -92,6 +103,12 @@ export default function StudentLayout({
     pathname.includes("/student/") && !pathname.endsWith("/student");
 
   const showMobileView = isMobile || isTabletVertical;
+
+  // Calculate active steps based on student data and class
+  const activeSteps = useMemo(() => {
+    const allSteps = getStudentSteps(t);
+    return getActiveSteps(allSteps, data, currentClass);
+  }, [t, data, currentClass]);
 
   return (
     <StyledBox>
@@ -106,7 +123,7 @@ export default function StudentLayout({
       />
       <StudentLayoutContainer showMobileView={showMobileView}>
         {isStudentPage && !showMobileView ? (
-          <DynamicPageStepper activeStep={currentStep} />
+          <DynamicPageStepper activeStep={currentStep} steps={activeSteps} />
         ) : showMobileView ? (
           <StyledImageBox>
             <Logo width={250} height={250} />

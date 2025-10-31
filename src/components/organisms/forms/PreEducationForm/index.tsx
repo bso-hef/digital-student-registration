@@ -5,6 +5,8 @@ import {
   createValidateStudentPreviousSchoolData,
   validateStudentPreviousSchoolData,
 } from "@/lib/validate/student.validate";
+import { updateStudentOnboardingData } from "@/store/actions/studentActions";
+import { useAppDispatch } from "@/store/store";
 import { MenuItem, styled } from "@mui/material";
 import { Field, Form, Formik } from "formik";
 import { Select, TextField } from "formik-mui";
@@ -27,9 +29,14 @@ interface FormValues {
 
 interface PreEducationFormProps {
   data?: Partial<FormValues>;
+  onSubmit?: (values: FormValues) => void;
 }
 
-const PreEducationForm: React.FC<PreEducationFormProps> = ({ data }) => {
+const PreEducationForm: React.FC<PreEducationFormProps> = ({
+  data,
+  onSubmit,
+}) => {
+  const dispatch = useAppDispatch();
   const {
     schoolLevelOptions,
     schoolTypeOptions,
@@ -82,7 +89,8 @@ const PreEducationForm: React.FC<PreEducationFormProps> = ({ data }) => {
       initialValues={initialValues}
       validationSchema={validationSchema}
       onSubmit={(values) => {
-        console.log("✅ Submitted values:", values);
+        dispatch(updateStudentOnboardingData(values));
+        if (onSubmit) onSubmit(values);
       }}
     >
       {({ errors, touched }) => (

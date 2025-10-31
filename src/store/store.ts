@@ -1,4 +1,5 @@
 import { Action, ThunkAction, configureStore } from "@reduxjs/toolkit";
+import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { createLogger } from "redux-logger";
 import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
@@ -47,5 +48,9 @@ export type AppThunk<ReturnType = any> = ThunkAction<
   unknown,
   Action<string>
 >;
+
+// Use throughout your app instead of plain `useDispatch` and `useSelector`
+export const useAppDispatch = () => useDispatch<AppDispatch>();
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 export { store, persistor };

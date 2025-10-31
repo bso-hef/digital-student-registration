@@ -30,7 +30,9 @@
     "Inactive": "Inaktiv",
     "Active": "Aktiv",
     "All": "Alle",
-    "generatePassword": "Sicheres Passwort generieren"
+    "generatePassword": "Sicheres Passwort generieren",
+    "of": "von",
+    "none": "Keine Angabe"
   },
   "error": {
     "Page not found": "Seite nicht gefunden",
@@ -234,6 +236,31 @@
   "table": {
     "No data found": "Keine Daten gefunden",
     "No data found description": "Nachdem mindestens ein Benutzer hinzugefügt wurde, erscheint hier eine Liste."
+  },
+  "onboarding": {
+    "general": {
+      "title": "Allgemeine Daten",
+      "schoolEntry": "Eintritt Schule",
+      "className": "Klassenname",
+      "personalInfo": "Persönliche Daten",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "birthName": "Geburtsname",
+      "gender": "Geschlecht",
+      "birthInfo": "Geburtsinformationen",
+      "birthDate": "Geburtsdatum",
+      "birthPlace": "Geburtsort",
+      "birthCountry": "Geburtsland",
+      "additionalInfo": "Weitere Angaben",
+      "religion": "Religion",
+      "nationality1": "Staatsangehörigkeit 1",
+      "nationality2": "Staatsangehörigkeit 2 (optional)"
+    },
+    "origin": {
+      "countryOfOrigin": "Herkunftsland",
+      "yearOfImmigration": "Zuzugsjahr",
+      "familyLanguage": "Familiensprache"
+    }
   },
   "settings": {
     "onboarding": {

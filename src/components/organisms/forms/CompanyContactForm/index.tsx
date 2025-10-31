@@ -2,6 +2,8 @@ import React from "react";
 
 import { useOnboardingSettings } from "@/hooks/useOnboardingSettings";
 import { validateStudentCompanyData } from "@/lib/validate/student.validate";
+import { updateStudentOnboardingData } from "@/store/actions/studentActions";
+import { useAppDispatch } from "@/store/store";
 import { StudentData } from "@/types/student";
 import { MenuItem, styled } from "@mui/material";
 import { Field, Form, Formik } from "formik";
@@ -25,9 +27,14 @@ interface FormValues {
 
 interface CompanyContactFormProps {
   data?: Partial<StudentData>;
+  onSubmit?: (values: FormValues) => void;
 }
 
-const CompanyContactForm: React.FC<CompanyContactFormProps> = ({ data }) => {
+const CompanyContactForm: React.FC<CompanyContactFormProps> = ({
+  data,
+  onSubmit,
+}) => {
+  const dispatch = useAppDispatch();
   const { salutationOptions, getEnabledOptions, loading } =
     useOnboardingSettings();
 
@@ -47,7 +54,8 @@ const CompanyContactForm: React.FC<CompanyContactFormProps> = ({ data }) => {
       initialValues={initialValues}
       validationSchema={validateStudentCompanyData}
       onSubmit={(values) => {
-        console.log("✅ Submitted values:", values);
+        dispatch(updateStudentOnboardingData(values));
+        if (onSubmit) onSubmit(values);
       }}
     >
       {({ errors, touched }) => (

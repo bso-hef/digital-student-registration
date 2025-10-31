@@ -1,23 +1,43 @@
+"use client";
+
 import React from "react";
 
 import { validateStudentAddressData } from "@/lib/validate/student.validate";
-import { styled } from "@mui/material";
+import { updateStudentOnboardingData } from "@/store/actions/studentActions";
+import { useAppDispatch, useAppSelector } from "@/store/store";
+import { Box, Typography, styled } from "@mui/material";
 import { Field, Form, Formik } from "formik";
 import { TextField } from "formik-mui";
+import { useTranslation } from "react-i18next";
 
-const StyledForm = styled(Form)(() => ({
+const StyledForm = styled(Form)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "flex-start",
   justifyContent: "center",
   width: "100%",
   height: "auto",
+  gap: theme.spacing(2),
+}));
+
+const FormSection = styled(Box)(({ theme }) => ({
+  width: "100%",
+  display: "grid",
+  gridTemplateColumns: "1fr 1fr",
+  gap: theme.spacing(2),
+  [theme.breakpoints.down("md")]: {
+    gridTemplateColumns: "1fr",
+  },
+}));
+
+const FullWidthField = styled(Box)(() => ({
+  gridColumn: "1 / -1",
 }));
 
 interface FormValues {
   straße: string;
-  hausnr: number;
-  plz: number;
+  hausnr: string;
+  plz: string;
   ort: string;
   mobil: string;
   tel: string;
@@ -25,63 +45,173 @@ interface FormValues {
 }
 
 interface AddressFormProps {
-  data?: Partial<FormValues>;
+  onSubmit?: (values: FormValues) => void;
 }
 
-const AddressForm: React.FC<AddressFormProps> = ({ data }) => {
+const AddressForm: React.FC<AddressFormProps> = ({ onSubmit }) => {
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const studentData = useAppSelector((state) => state.student.data);
+
   const initialValues: FormValues = {
-    straße: data?.straße || "",
-    hausnr: data?.hausnr || 0,
-    plz: data?.plz || 0,
-    ort: data?.ort || "",
-    mobil: data?.mobil || "",
-    tel: data?.tel || "",
-    mail: data?.mail || "",
+    straße: studentData.straße || "",
+    hausnr: studentData.hausNr || "",
+    plz: studentData.postleitzahl || "",
+    ort: studentData.ort || "",
+    mobil: studentData.mobil || "",
+    tel: studentData.telefon1 || "",
+    mail: studentData.email || "",
+  };
+
+  const handleSubmit = (values: FormValues) => {
+    // Map form values to Redux state field names
+    const mappedValues = {
+      straße: values.straße,
+      hausNr: values.hausnr,
+      postleitzahl: values.plz,
+      ort: values.ort,
+      mobil: values.mobil,
+      telefon1: values.tel,
+      email: values.mail,
+    };
+
+    // Update Redux state with mapped values
+    dispatch(updateStudentOnboardingData(mappedValues));
+
+    // Call parent onSubmit if provided
+    if (onSubmit) {
+      onSubmit(values);
+    }
   };
 
   return (
     <Formik<FormValues>
       initialValues={initialValues}
       validationSchema={validateStudentAddressData}
-      onSubmit={(values) => {
-        console.log("✅ Submitted values:", values);
-      }}
+      onSubmit={handleSubmit}
+      enableReinitialize
     >
-      {({ errors, touched }) => (
+      {() => (
         <StyledForm>
-          {/* straße */}
-          <Field
-            component={TextField}
-            name="herkunftsland"
-            label="Herkunftsland"
-            variant="outlined"
-            margin="normal"
-            error={touched.straße && Boolean(errors.straße)}
-            helperText={touched.straße && errors.straße}
-          />
+          <Typography variant="h6" gutterBottom>
+            {t("onboarding.address.title", "Adresse und Kontaktdaten")}
+          </Typography>
 
-          {/* hausnr */}
-          <Field
-            component={TextField}
-            name="zuzugjahr"
-            label="Zuzugsjahr"
-            type="number"
-            variant="outlined"
-            margin="normal"
-            error={touched.hausnr && Boolean(errors.hausnr)}
-            helperText={touched.hausnr && errors.hausnr}
-          />
+          <FormSection>
+            {/* Straße */}
+            <Field
+              component={TextField}
+              name="straße"
+              label={t("onboarding.address.street", "Straße")}
+              variant="outlined"
+              fullWidth
+              required
+            />
 
-          {/* plz */}
-          <Field
-            component={TextField}
-            name="familiensprache"
-            label="Familiensprache"
-            variant="outlined"
-            margin="normal"
-            error={touched.plz && Boolean(errors.plz)}
-            helperText={touched.plz && errors.plz}
-          />
+            {/* Hausnummer */}
+            <Field
+              component={TextField}
+              name="hausnr"
+              label={t("onboarding.address.houseNumber", "Hausnummer")}
+              variant="outlined"
+              fullWidth
+              required
+            />
+          </FormSection>
+
+          <FormSection>
+            {/* PLZ */}
+            <Field
+              component={TextField}
+              name="plz"
+              label={t("onboarding.address.postalCode", "Postleitzahl")}
+              variant="outlined"
+              fullWidth
+              required
+            />
+
+            {/* Ort */}
+            <Field
+              component={TextField}
+              name="ort"
+              label={t("onboarding.address.city", "Ort")}
+              variant="outlined"
+              fullWidth
+              required
+            />
+          </FormSection>
+
+          <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
+            {t("onboarding.address.contactTitle", "Kontaktinformationen")}
+          </Typography>
+
+          <FormSection>
+            {/* Mobilnummer */}
+            <Field
+              component={TextField}
+              name="mobil"
+              label={t("onboarding.address.mobile", "Mobilnummer")}
+              variant="outlined"
+              fullWidth
+              placeholder="+49 123 456789"
+            />
+
+            {/* Festnetz */}
+            <Field
+              component={TextField}
+              name="tel"
+              label={t("onboarding.address.phone", "Telefon (Festnetz)")}
+              variant="outlined"
+              fullWidth
+              placeholder="+49 123 456789"
+            />
+          </FormSection>
+
+          <FullWidthField>
+            {/* E-Mail */}
+            <Field
+              component={TextField}
+              name="mail"
+              label={t("onboarding.address.email", "E-Mail-Adresse")}
+              type="email"
+              variant="outlined"
+              fullWidth
+              required
+            />
+          </FullWidthField>
+
+          {/* Submit button */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              width: "100%",
+              mt: 2,
+            }}
+          >
+            <button
+              type="submit"
+              style={{
+                padding: "12px 32px",
+                fontSize: "16px",
+                fontWeight: 600,
+                borderRadius: "8px",
+                border: "none",
+                backgroundColor: "#1976d2",
+                color: "white",
+                cursor: "pointer",
+                transition: "background-color 0.2s",
+              }}
+              onMouseOver={(e) =>
+                (e.currentTarget.style.backgroundColor = "#1565c0")
+              }
+              onMouseOut={(e) =>
+                (e.currentTarget.style.backgroundColor = "#1976d2")
+              }
+            >
+              {t("general.Next", "Weiter")}
+            </button>
+          </Box>
         </StyledForm>
       )}
     </Formik>

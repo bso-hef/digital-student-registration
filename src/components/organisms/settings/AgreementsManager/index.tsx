@@ -25,7 +25,6 @@ import {
   Paper,
   Typography,
   styled,
-  useTheme,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
@@ -137,8 +136,7 @@ const AgreementsManager: React.FC<AgreementsManagerProps> = ({
   agreements,
   onChange,
 }) => {
-  const { t, i18n } = useTranslation();
-  const theme = useTheme();
+  const { t } = useTranslation();
   const [modalOpen, setModalOpen] = useState(false);
   const [editingAgreement, setEditingAgreement] =
     useState<AgreementItem | null>(null);
@@ -167,15 +165,6 @@ const AgreementsManager: React.FC<AgreementsManagerProps> = ({
     const updated = agreements.map((agreement) =>
       agreement.id === id
         ? { ...agreement, enabled: !agreement.enabled }
-        : agreement,
-    );
-    onChange(updated);
-  };
-
-  const handleToggleRequired = (id: string) => {
-    const updated = agreements.map((agreement) =>
-      agreement.id === id
-        ? { ...agreement, required: !agreement.required }
         : agreement,
     );
     onChange(updated);

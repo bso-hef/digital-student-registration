@@ -36,6 +36,7 @@ export interface OnboardingSettings {
   degreeOptions: DropdownOption[];
   languageOptions: DropdownOption[];
   professionOptions: DropdownOption[];
+  countryOptions: DropdownOption[];
 
   // Field Configurations
   fieldConfigs: {

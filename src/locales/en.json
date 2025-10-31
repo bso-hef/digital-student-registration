@@ -30,7 +30,9 @@
     "Inactive": "Inactive",
     "Active": "Active",
     "All": "All",
-    "generatePassword": "Generate secure password"
+    "generatePassword": "Generate secure password",
+    "of": "of",
+    "none": "None"
   },
   "error": {
     "Page not found": "Page not found",
@@ -234,6 +236,31 @@
   "table": {
     "No data found": "No Data to Show",
     "No data found description": "After member/members are added, a list will appear here in this section."
+  },
+  "onboarding": {
+    "general": {
+      "title": "General Information",
+      "schoolEntry": "School Entry Date",
+      "className": "Class Name",
+      "personalInfo": "Personal Information",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "birthName": "Birth Name",
+      "gender": "Gender",
+      "birthInfo": "Birth Information",
+      "birthDate": "Date of Birth",
+      "birthPlace": "Place of Birth",
+      "birthCountry": "Country of Birth",
+      "additionalInfo": "Additional Information",
+      "religion": "Religion",
+      "nationality1": "Nationality 1",
+      "nationality2": "Nationality 2 (optional)"
+    },
+    "origin": {
+      "countryOfOrigin": "Country of Origin",
+      "yearOfImmigration": "Year of Immigration",
+      "familyLanguage": "Family Language"
+    }
   },
   "settings": {
     "onboarding": {

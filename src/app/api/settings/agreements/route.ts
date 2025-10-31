@@ -81,7 +81,8 @@ export async function GET() {
     await dbConnect();
 
     // Get or create settings document
-    let settings: any = await AppSettings.findOne().lean();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let settings = await AppSettings.findOne().lean() as any;
 
     if (!settings) {
       logger.info(

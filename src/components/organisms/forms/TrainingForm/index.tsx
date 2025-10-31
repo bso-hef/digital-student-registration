@@ -5,6 +5,8 @@ import {
   createValidateStudentCompanyData,
   validateStudentCompanyData,
 } from "@/lib/validate/student.validate";
+import { updateStudentOnboardingData } from "@/store/actions/studentActions";
+import { useAppDispatch } from "@/store/store";
 import { MenuItem, styled } from "@mui/material";
 import { Field, Form, Formik } from "formik";
 import { Select, TextField } from "formik-mui";
@@ -32,9 +34,11 @@ interface FormValues {
 
 interface TrainingFormProps {
   data?: Partial<FormValues>;
+  onSubmit?: (values: FormValues) => void;
 }
 
-const TrainingForm: React.FC<TrainingFormProps> = ({ data }) => {
+const TrainingForm: React.FC<TrainingFormProps> = ({ data, onSubmit }) => {
+  const dispatch = useAppDispatch();
   const {
     professionOptions,
     salutationOptions,
@@ -80,7 +84,8 @@ const TrainingForm: React.FC<TrainingFormProps> = ({ data }) => {
       initialValues={initialValues}
       validationSchema={validationSchema}
       onSubmit={(values) => {
-        console.log("✅ Submitted values:", values);
+        dispatch(updateStudentOnboardingData(values));
+        if (onSubmit) onSubmit(values);
       }}
     >
       {({ errors, touched }) => (

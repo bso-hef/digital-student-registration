@@ -1,6 +1,6 @@
 "use client";
 
-import { memo } from "react";
+import { memo, useMemo, useState } from "react";
 
 import CustomTitle from "@/components/atoms/CustomTitle";
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
@@ -14,13 +14,20 @@ import PreEducationForm from "@/components/organisms/forms/PreEducationForm";
 import SummaryForm from "@/components/organisms/forms/SummaryForm";
 import TrainingForm from "@/components/organisms/forms/TrainingForm";
 import WelcomeForm from "@/components/organisms/forms/WelcomeForm";
-import { getStudentSteps } from "@/constants/studentSteps.constants";
-import { setCurrentStudentOnboardingStep } from "@/store/actions/studentActions";
+import {
+  getActiveSteps,
+  getStudentSteps,
+} from "@/constants/studentSteps.constants";
+import {
+  saveOnboardingProgress,
+  setCurrentStudentOnboardingStep,
+  submitOnboarding,
+} from "@/store/actions/studentActions";
 import { AppDispatch } from "@/store/store";
 import DoneRoundedIcon from "@mui/icons-material/DoneRounded";
 import KeyboardArrowLeftRoundedIcon from "@mui/icons-material/KeyboardArrowLeftRounded";
 import KeyboardArrowRightRoundedIcon from "@mui/icons-material/KeyboardArrowRightRounded";
-import { Box, styled } from "@mui/material";
+import { Box, CircularProgress, styled } from "@mui/material";
 import { useDeviceTypeDetection } from "device-type-detection";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
@@ -47,49 +54,137 @@ const StyledMenuOptions = styled(Box)(({ theme }) => ({
   gap: theme.spacing(2),
 }));
 
-const StyledFormBox = styled(Box)(() => ({
+const StyledFormBox = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "flex-start",
-  justifyContent: "center",
+  justifyContent: "flex-start",
   width: "100%",
   height: "auto",
+  maxHeight: "calc(100vh - 400px)",
+  overflowY: "auto",
+  overflowX: "hidden",
+  padding: theme.spacing(2, 1),
+  "&::-webkit-scrollbar": {
+    width: "8px",
+  },
+  "&::-webkit-scrollbar-track": {
+    background: "transparent",
+  },
+  "&::-webkit-scrollbar-thumb": {
+    background: theme.palette.divider,
+    borderRadius: "4px",
+  },
+  "&::-webkit-scrollbar-thumb:hover": {
+    background: theme.palette.text.secondary,
+  },
 }));
 
-const StepForm = () => {
-  const { currentStep, data } = useSelector(
+interface StepFormProps {
+  studentId: string;
+}
+
+const StepForm = ({ studentId }: StepFormProps) => {
+  const { currentStep, data, loading, currentClass } = useSelector(
     (state: RootState) => state.student,
   );
   const dispatch: AppDispatch = useDispatch();
   const { t } = useTranslation();
+  const [isSaving, setIsSaving] = useState(false);
 
   const { isMobile, isTabletVertical } = useDeviceTypeDetection();
 
   const showMobileView = isMobile || isTabletVertical;
 
-  const steps = getStudentSteps(t);
-  const currentStepDef = steps[currentStep];
+  const allSteps = getStudentSteps(t);
+
+  // Calculate active steps based on student data and class
+  const activeSteps = useMemo(() => {
+    return getActiveSteps(allSteps, data, currentClass);
+  }, [allSteps, data, currentClass]);
+
+  // Find current step definition from all steps (not active steps)
+  const currentStepDef = allSteps[currentStep];
+
+  // Find the index of current step in active steps array (for step counter)
+  const activeStepIndex = activeSteps.findIndex(
+    (step) => step.id === currentStep,
+  );
+
+  // Auto-save handler
+  const handleAutoSave = async () => {
+    if (!studentId || currentStep === 0 || currentStep === 9) {
+      // Skip auto-save for welcome and completion screens
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      await dispatch(saveOnboardingProgress(studentId, data));
+    } catch (error) {
+      console.error("Auto-save failed:", error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Get next active step ID
+  const getNextActiveStepId = () => {
+    const currentIndex = activeSteps.findIndex(
+      (step) => step.id === currentStep,
+    );
+    if (currentIndex < activeSteps.length - 1) {
+      return activeSteps[currentIndex + 1].id;
+    }
+    return currentStep; // Stay on current if no next
+  };
+
+  // Get previous active step ID
+  const getPreviousActiveStepId = () => {
+    const currentIndex = activeSteps.findIndex(
+      (step) => step.id === currentStep,
+    );
+    if (currentIndex > 0) {
+      return activeSteps[currentIndex - 1].id;
+    }
+    return currentStep; // Stay on current if no previous
+  };
+
+  // Form submit handler passed to forms
+  const handleFormSubmit = async () => {
+    // Auto-save current data
+    await handleAutoSave();
+    // Move to next active step
+    const nextStepId = getNextActiveStepId();
+    dispatch(setCurrentStudentOnboardingStep(nextStepId));
+  };
 
   function renderFormByStep(step: number) {
     switch (step) {
       case 0:
         return <WelcomeForm />;
       case 1:
-        return <GeneralForm data={data} />;
+        return <GeneralForm onSubmit={handleFormSubmit} />;
       case 2:
-        return <OriginForm data={data} />;
+        return <OriginForm onSubmit={handleFormSubmit} />;
       case 3:
-        return <AddressForm data={data} />;
+        return <AddressForm onSubmit={handleFormSubmit} />;
       case 4:
-        return <ParentsForm data={data} />;
+        return <ParentsForm onSubmit={handleFormSubmit} />;
       case 5:
-        return <PreEducationForm data={data} />;
+        return <PreEducationForm onSubmit={handleFormSubmit} />;
       case 6:
-        return <TrainingForm data={data} />;
+        return <TrainingForm onSubmit={handleFormSubmit} />;
       case 7:
-        return <CompanyContactForm data={data} />;
+        return <CompanyContactForm onSubmit={handleFormSubmit} />;
       case 8:
-        return <SummaryForm data={data} />;
+        return (
+          <SummaryForm
+            onGoToStep={(step) =>
+              dispatch(setCurrentStudentOnboardingStep(step))
+            }
+          />
+        );
       case 9:
         return <FormCompletion />;
       default:
@@ -99,22 +194,33 @@ const StepForm = () => {
 
   const isFirstStep = currentStep === 0;
   const isLastStep = currentStep === 9;
+  const isSummaryStep = currentStep === 8;
+  const isFormStep = currentStep >= 1 && currentStep <= 7; // Steps with forms
 
   const handleNextStep = () => {
-    // Handle the logic for the next step
-    console.log("Next step");
-    dispatch(setCurrentStudentOnboardingStep(currentStep + 1));
+    // Welcome screen - move to next active step
+    const nextStepId = getNextActiveStepId();
+    dispatch(setCurrentStudentOnboardingStep(nextStepId));
   };
 
   const handlePreviousStep = () => {
-    // Handle the logic for the previous step
-    console.log("Previous step");
-    dispatch(setCurrentStudentOnboardingStep(currentStep - 1));
+    // Go back to previous active step without validation
+    const prevStepId = getPreviousActiveStepId();
+    dispatch(setCurrentStudentOnboardingStep(prevStepId));
   };
 
-  const handleConfirm = () => {
-    // Handle the logic for the confirm step
-    console.log("Confirm step");
+  const handleConfirm = async () => {
+    // Final submission
+    setIsSaving(true);
+    try {
+      await dispatch(submitOnboarding(studentId, data));
+      // Move to completion screen
+      dispatch(setCurrentStudentOnboardingStep(9));
+    } catch (error) {
+      console.error("Submission failed:", error);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -122,38 +228,115 @@ const StepForm = () => {
       {!isFirstStep && !showMobileView && (
         <CustomTitle
           title={currentStepDef?.label}
-          subTitle={`${t("general.Step")} ${currentStep + 1}`}
+          subTitle={`${t("general.Step")} ${activeStepIndex + 1} ${t("general.of", "von")} ${activeSteps.length}`}
         />
       )}
       <StyledFormBox>{renderFormByStep(currentStep)}</StyledFormBox>
-      <StyledMenuOptions>
-        {!isFirstStep && (
+      {/* Only show navigation for non-form steps */}
+      {!isFormStep && !isLastStep && (
+        <StyledMenuOptions>
+          {!isFirstStep && (
+            <GeneralButton
+              label={t("general.Previous")}
+              isPrimary={false}
+              fullHeight={false}
+              fullWidth={false}
+              startIcon={<KeyboardArrowLeftRoundedIcon />}
+              onAction={handlePreviousStep}
+              disabled={isSaving || loading}
+            />
+          )}
+
+          {isFirstStep && (
+            <GeneralButton
+              label={t("general.Start")}
+              isPrimary={true}
+              fullHeight={false}
+              fullWidth={false}
+              endIcon={<KeyboardArrowRightRoundedIcon />}
+              onAction={handleNextStep}
+            />
+          )}
+        </StyledMenuOptions>
+      )}
+
+      {/* Summary step has its own submit button */}
+      {isSummaryStep && (
+        <StyledMenuOptions>
           <GeneralButton
-            label={isLastStep ? t("general.Confirm") : t("general.Previous")}
+            label={t("general.Previous")}
             isPrimary={false}
+            fullHeight={false}
+            fullWidth={false}
+            startIcon={<KeyboardArrowLeftRoundedIcon />}
+            onAction={handlePreviousStep}
+            disabled={isSaving || loading}
+          />
+
+          <GeneralButton
+            label={
+              isSaving
+                ? t("general.Submitting", "Wird übermittelt...")
+                : t("general.Submit", "Absenden")
+            }
+            isPrimary={true}
             fullHeight={false}
             fullWidth={false}
             startIcon={
-              isLastStep ? (
-                <DoneRoundedIcon />
+              isSaving ? (
+                <CircularProgress size={20} color="inherit" />
               ) : (
-                <KeyboardArrowLeftRoundedIcon />
+                <DoneRoundedIcon />
               )
             }
-            onAction={isLastStep ? handleConfirm : handlePreviousStep}
+            onAction={handleConfirm}
+            disabled={isSaving || loading}
           />
-        )}
-        {!isLastStep && (
+        </StyledMenuOptions>
+      )}
+
+      {/* Show auto-save indicator for form steps */}
+      {isFormStep && isSaving && (
+        <StyledMenuOptions>
           <GeneralButton
-            label={isFirstStep ? t("general.Start") : t("general.Next")}
+            label={t("general.Previous")}
             isPrimary={false}
             fullHeight={false}
             fullWidth={false}
-            endIcon={<KeyboardArrowRightRoundedIcon />}
-            onAction={handleNextStep}
+            startIcon={<KeyboardArrowLeftRoundedIcon />}
+            onAction={handlePreviousStep}
+            disabled={isSaving || loading}
           />
-        )}
-      </StyledMenuOptions>
+
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              color: "text.secondary",
+              fontSize: 14,
+            }}
+          >
+            <CircularProgress size={16} />
+            {t("general.Saving", "Speichern...")}
+          </Box>
+        </StyledMenuOptions>
+      )}
+
+      {/* Show just back button for form steps when not saving */}
+      {isFormStep && !isSaving && (
+        <StyledMenuOptions>
+          <GeneralButton
+            label={t("general.Previous")}
+            isPrimary={false}
+            fullHeight={false}
+            fullWidth={false}
+            startIcon={<KeyboardArrowLeftRoundedIcon />}
+            onAction={handlePreviousStep}
+            disabled={loading}
+          />
+        </StyledMenuOptions>
+      )}
     </Wrapper>
   );
 };

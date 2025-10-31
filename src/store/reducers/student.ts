@@ -1,3 +1,4 @@
+import { ClassInterface } from "@/types/class.d";
 import { Student } from "@/types/db";
 import { StudentData } from "@/types/student";
 
@@ -10,6 +11,8 @@ interface StudentState {
   students: Student[];
   loading: boolean;
   error: Error | null;
+  currentClass: ClassInterface | null;
+  studentStatus: string | null;
 }
 
 const initialStudentState: StudentState = {
@@ -71,6 +74,8 @@ const initialStudentState: StudentState = {
   students: [],
   loading: false,
   error: null,
+  currentClass: null,
+  studentStatus: null,
 };
 
 const studentReducer = (state = initialStudentState, action: AppAction) => {
@@ -109,6 +114,60 @@ const studentReducer = (state = initialStudentState, action: AppAction) => {
     case TYPES.GET_STUDENTS_FAILURE:
     case TYPES.DELETE_STUDENTS_FAILURE:
       return { ...state, loading: false, error: action.payload };
+
+    // Onboarding actions
+    case TYPES.UPDATE_STUDENT_ONBOARDING_DATA:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          ...action.payload,
+        },
+      };
+
+    case TYPES.CLEAR_STUDENT_ONBOARDING_DATA:
+      return {
+        ...state,
+        data: initialStudentState.data,
+        currentStep: 0,
+      };
+
+    case TYPES.LOAD_STUDENT_FOR_ONBOARDING_REQUEST:
+    case TYPES.SAVE_ONBOARDING_PROGRESS_REQUEST:
+    case TYPES.SUBMIT_ONBOARDING_REQUEST:
+      return { ...state, loading: true, error: null };
+
+    case TYPES.LOAD_STUDENT_FOR_ONBOARDING_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        data: {
+          ...state.data,
+          ...action.payload.formData,
+        },
+        currentClass: action.payload.currentClass || null,
+        studentStatus: action.payload.status || null,
+      };
+
+    case TYPES.SAVE_ONBOARDING_PROGRESS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+      };
+
+    case TYPES.SUBMIT_ONBOARDING_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        currentStep: 0,
+        data: initialStudentState.data,
+      };
+
+    case TYPES.LOAD_STUDENT_FOR_ONBOARDING_FAILURE:
+    case TYPES.SAVE_ONBOARDING_PROGRESS_FAILURE:
+    case TYPES.SUBMIT_ONBOARDING_FAILURE:
+      return { ...state, loading: false, error: action.payload };
+
     default:
       return state;
   }
