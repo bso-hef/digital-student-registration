@@ -13,6 +13,8 @@ interface StudentState {
   error: Error | null;
   currentClass: ClassInterface | null;
   studentStatus: string | null;
+  currentStudentId: string | null;
+  currentStudent: Student | null;
 }
 
 const initialStudentState: StudentState = {
@@ -76,6 +78,8 @@ const initialStudentState: StudentState = {
   error: null,
   currentClass: null,
   studentStatus: null,
+  currentStudentId: null,
+  currentStudent: null,
 };
 
 const studentReducer = (state = initialStudentState, action: AppAction) => {
@@ -130,6 +134,16 @@ const studentReducer = (state = initialStudentState, action: AppAction) => {
         ...state,
         data: initialStudentState.data,
         currentStep: 0,
+        currentStudentId: null,
+        currentStudent: null,
+        currentClass: null,
+        studentStatus: null,
+      };
+
+    case TYPES.CLEAR_STUDENT_ERROR:
+      return {
+        ...state,
+        error: null,
       };
 
     case TYPES.LOAD_STUDENT_FOR_ONBOARDING_REQUEST:
@@ -138,16 +152,35 @@ const studentReducer = (state = initialStudentState, action: AppAction) => {
       return { ...state, loading: true, error: null };
 
     case TYPES.LOAD_STUDENT_FOR_ONBOARDING_SUCCESS:
-      return {
+      console.log("[Student Reducer] LOAD_STUDENT_FOR_ONBOARDING_SUCCESS");
+      console.log(
+        "[Student Reducer] Payload formData:",
+        action.payload.formData,
+      );
+      console.log("[Student Reducer] Previous state.data:", state.data);
+
+      const newState = {
         ...state,
         loading: false,
         data: {
           ...state.data,
           ...action.payload.formData,
         },
+        currentStep: action.payload.onboardingStep || 0,
         currentClass: action.payload.currentClass || null,
         studentStatus: action.payload.status || null,
+        currentStudentId: action.payload.studentId || null,
+        currentStudent: action.payload.student || null,
       };
+
+      console.log("[Student Reducer] New state.data:", newState.data);
+      console.log("[Student Reducer] Basic fields:", {
+        vorname: newState.data.vorname,
+        nachname: newState.data.nachname,
+        geburtsdatum: newState.data.geburtsdatum,
+      });
+
+      return newState;
 
     case TYPES.SAVE_ONBOARDING_PROGRESS_SUCCESS:
       return {

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 
 import { useOnboardingSettings } from "@/hooks/useOnboardingSettings";
 import {
@@ -14,10 +14,12 @@ import {
   Box,
   TextField as MUITextField,
   MenuItem,
+  Skeleton,
   Typography,
   styled,
 } from "@mui/material";
 import dayjs from "dayjs";
+import { FormikProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import { Select, TextField } from "formik-mui";
 import { DatePicker } from "formik-mui-x-date-pickers";
@@ -64,9 +66,15 @@ interface FormValues {
 
 interface GeneralFormProps {
   onSubmit?: (values: FormValues) => void;
+  formikRef?: React.RefObject<FormikProps<FormValues> | null>;
+  onValidationChange?: (isValid: boolean) => void;
 }
 
-const GeneralForm: React.FC<GeneralFormProps> = ({ onSubmit }) => {
+const GeneralForm: React.FC<GeneralFormProps> = ({
+  onSubmit,
+  formikRef,
+  onValidationChange,
+}) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const studentData = useAppSelector((state) => state.student.data);
@@ -80,10 +88,8 @@ const GeneralForm: React.FC<GeneralFormProps> = ({ onSubmit }) => {
   } = useOnboardingSettings();
 
   const initialValues: FormValues = {
-    eintrittschule: studentData.eintrittschule
-      ? dayjs(studentData.eintrittschule)
-      : null,
-    klassenname: studentData.klassenname || "",
+    eintrittschule: null,
+    klassenname: "",
     vorname: studentData.vorname || "",
     nachname: studentData.nachname || "",
     geburtsname: studentData.geburtsname || "",
@@ -130,8 +136,31 @@ const GeneralForm: React.FC<GeneralFormProps> = ({ onSubmit }) => {
     }
   };
 
+  // Track validation state changes (must be before early return)
+  useEffect(() => {
+    if (formikRef?.current && onValidationChange) {
+      const { isValid, isValidating, values } = formikRef.current;
+      if (!isValidating) {
+        onValidationChange(isValid);
+      }
+    }
+  }, [formikRef, onValidationChange]);
+
+  // Show loading skeleton while settings are loading
   if (loading) {
-    return <div>Loading settings...</div>;
+    return (
+      <Box
+        sx={{ width: "100%", display: "flex", flexDirection: "column", gap: 2 }}
+      >
+        <Typography variant="h6" gutterBottom>
+          <Skeleton width="60%" />
+        </Typography>
+        <Skeleton variant="rectangular" height={56} />
+        <Skeleton variant="rectangular" height={56} />
+        <Skeleton variant="rectangular" height={56} />
+        <Skeleton variant="rectangular" height={56} />
+      </Box>
+    );
   }
 
   return (
@@ -140,38 +169,13 @@ const GeneralForm: React.FC<GeneralFormProps> = ({ onSubmit }) => {
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
       enableReinitialize
+      innerRef={formikRef}
     >
       {({ setFieldValue, values, setFieldTouched }) => (
         <StyledForm>
           <Typography variant="h6" gutterBottom>
             {t("onboarding.general.title", "Allgemeine Daten")}
           </Typography>
-
-          <FormSection>
-            {/* Eintrittschule */}
-            <Field
-              component={DatePicker}
-              name="eintrittschule"
-              label={t("onboarding.general.schoolEntry", "Eintritt Schule")}
-              slotProps={{
-                textField: {
-                  variant: "outlined",
-                  fullWidth: true,
-                  required: true,
-                },
-              }}
-            />
-
-            {/* Klassenname */}
-            <Field
-              component={TextField}
-              name="klassenname"
-              label={t("onboarding.general.className", "Klassenname")}
-              variant="outlined"
-              fullWidth
-              required
-            />
-          </FormSection>
 
           <Typography variant="subtitle1" sx={{ mt: 2 }}>
             {t("onboarding.general.personalInfo", "Persönliche Daten")}
@@ -333,39 +337,6 @@ const GeneralForm: React.FC<GeneralFormProps> = ({ onSubmit }) => {
               fullWidth
             />
           </FullWidthField>
-
-          {/* Submit button */}
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              width: "100%",
-              mt: 2,
-            }}
-          >
-            <button
-              type="submit"
-              style={{
-                padding: "12px 32px",
-                fontSize: "16px",
-                fontWeight: 600,
-                borderRadius: "8px",
-                border: "none",
-                backgroundColor: "#1976d2",
-                color: "white",
-                cursor: "pointer",
-                transition: "background-color 0.2s",
-              }}
-              onMouseOver={(e) =>
-                (e.currentTarget.style.backgroundColor = "#1565c0")
-              }
-              onMouseOut={(e) =>
-                (e.currentTarget.style.backgroundColor = "#1976d2")
-              }
-            >
-              {t("general.Next", "Weiter")}
-            </button>
-          </Box>
         </StyledForm>
       )}
     </Formik>

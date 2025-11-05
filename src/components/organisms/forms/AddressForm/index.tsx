@@ -1,11 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 
 import { validateStudentAddressData } from "@/lib/validate/student.validate";
 import { updateStudentOnboardingData } from "@/store/actions/studentActions";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { Box, Typography, styled } from "@mui/material";
+import { FormikProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import { TextField } from "formik-mui";
 import { useTranslation } from "react-i18next";
@@ -46,9 +47,15 @@ interface FormValues {
 
 interface AddressFormProps {
   onSubmit?: (values: FormValues) => void;
+  formikRef?: React.RefObject<FormikProps<any> | null>;
+  onValidationChange?: (isValid: boolean) => void;
 }
 
-const AddressForm: React.FC<AddressFormProps> = ({ onSubmit }) => {
+const AddressForm: React.FC<AddressFormProps> = ({
+  onSubmit,
+  formikRef,
+  onValidationChange,
+}) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const studentData = useAppSelector((state) => state.student.data);
@@ -84,12 +91,20 @@ const AddressForm: React.FC<AddressFormProps> = ({ onSubmit }) => {
     }
   };
 
+  // Track validation state changes (no early returns, so safe here)
+  useEffect(() => {
+    if (formikRef?.current && onValidationChange) {
+      onValidationChange(formikRef.current.isValid);
+    }
+  });
+
   return (
     <Formik<FormValues>
       initialValues={initialValues}
       validationSchema={validateStudentAddressData}
       onSubmit={handleSubmit}
       enableReinitialize
+      innerRef={formikRef}
     >
       {() => (
         <StyledForm>
@@ -179,39 +194,6 @@ const AddressForm: React.FC<AddressFormProps> = ({ onSubmit }) => {
               required
             />
           </FullWidthField>
-
-          {/* Submit button */}
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              width: "100%",
-              mt: 2,
-            }}
-          >
-            <button
-              type="submit"
-              style={{
-                padding: "12px 32px",
-                fontSize: "16px",
-                fontWeight: 600,
-                borderRadius: "8px",
-                border: "none",
-                backgroundColor: "#1976d2",
-                color: "white",
-                cursor: "pointer",
-                transition: "background-color 0.2s",
-              }}
-              onMouseOver={(e) =>
-                (e.currentTarget.style.backgroundColor = "#1565c0")
-              }
-              onMouseOut={(e) =>
-                (e.currentTarget.style.backgroundColor = "#1976d2")
-              }
-            >
-              {t("general.Next", "Weiter")}
-            </button>
-          </Box>
         </StyledForm>
       )}
     </Formik>

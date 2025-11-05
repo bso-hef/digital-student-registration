@@ -1,4 +1,5 @@
 import studentService from "@/lib/services/studentService";
+import { OnboardingErrorCode, ValidationError } from "@/types/errors";
 import { CreateStudentInput, StudentData } from "@/types/student";
 import {
   errorNotification,
@@ -96,32 +97,85 @@ export const clearStudentOnboardingData = (): AppThunk => (dispatch) => {
 };
 
 /**
+ * Clears student error state
+ * Called when retrying after an error or when error should be dismissed
+ */
+export const clearStudentError = (): AppThunk => (dispatch) => {
+  dispatch({ type: TYPES.CLEAR_STUDENT_ERROR });
+};
+
+/**
+ * Validates MongoDB ObjectId format
+ * @param id - String to validate
+ * @returns true if valid ObjectId format
+ */
+function isValidObjectId(id: string): boolean {
+  return /^[a-f\d]{24}$/i.test(id);
+}
+
+/**
  * Loads student data for onboarding
  * Fetches student from database and pre-fills form data
- * Checks if student is already onboarded and blocks if so
+ * Performs comprehensive validation before allowing onboarding
  */
 export const loadStudentForOnboarding =
   (studentId: string): AppThunk =>
   async (dispatch) => {
     dispatch({ type: TYPES.LOAD_STUDENT_FOR_ONBOARDING_REQUEST });
     try {
-      const { data } = await studentService.getById(studentId);
-
-      if (!data) {
-        throw new Error("Student not found");
+      // Validation 1: Check if studentId is valid MongoDB ObjectId format
+      if (!isValidObjectId(studentId)) {
+        throw new ValidationError(
+          "Invalid student ID format",
+          OnboardingErrorCode.INVALID_STUDENT_ID,
+        );
       }
 
-      // Check if student has already completed onboarding
+      const response = await studentService.getById(studentId);
+      const data = response.data.data;
+
+      // Validation 2: Check if student exists in system
+      if (!data) {
+        throw new ValidationError(
+          "Student not found",
+          OnboardingErrorCode.STUDENT_NOT_FOUND,
+        );
+      }
+
+      // Validation 3: Check if student has already completed onboarding
       if (data.status === "onboarded") {
-        throw new Error("Student has already completed onboarding");
+        throw new ValidationError(
+          "Student has already completed onboarding",
+          OnboardingErrorCode.ALREADY_ONBOARDED,
+        );
+      }
+
+      // Extract currentClass from populated field (if available)
+      const currentClass =
+        typeof data.currentClass === "object" && data.currentClass !== null
+          ? data.currentClass
+          : null;
+
+      if (!data.currentClass || !currentClass) {
+        throw new ValidationError(
+          "Student is not assigned to a class",
+          OnboardingErrorCode.NO_CLASS_ASSIGNED,
+        );
+      }
+
+      // Validation 5: Check if assigned class is active
+      if (!currentClass.active) {
+        throw new ValidationError(
+          "The assigned class is not active",
+          OnboardingErrorCode.CLASS_INACTIVE,
+        );
       }
 
       // Convert database model (English) to form data (German)
       const formData = mapModelToFormData(data);
 
-      // Extract currentClass from populated field (if available)
-      const currentClass =
-        typeof data.currentClass === "object" ? data.currentClass : null;
+      // Get onboarding step from database (default to 0 if not set)
+      const onboardingStep = data.onboardingStep || 0;
 
       dispatch({
         type: TYPES.LOAD_STUDENT_FOR_ONBOARDING_SUCCESS,
@@ -130,6 +184,8 @@ export const loadStudentForOnboarding =
           formData,
           currentClass,
           status: data.status,
+          onboardingStep,
+          studentId, // Include studentId in payload
         },
       });
     } catch (error) {
@@ -146,16 +202,26 @@ export const loadStudentForOnboarding =
  * Called after each step to persist data
  */
 export const saveOnboardingProgress =
-  (studentId: string, formData: Partial<StudentData>): AppThunk =>
+  (
+    studentId: string,
+    formData: Partial<StudentData>,
+    currentStep?: number,
+  ): AppThunk =>
   async (dispatch) => {
     dispatch({ type: TYPES.SAVE_ONBOARDING_PROGRESS_REQUEST });
     try {
       // Convert form data (German) to database model (English)
       const modelData = mapFormDataToModel(formData);
 
+      // Add current step if provided
+      const dataToSave =
+        currentStep !== undefined
+          ? { ...modelData, onboardingStep: currentStep }
+          : modelData;
+
       const { data } = await studentService.updateOnboarding(
         studentId,
-        modelData,
+        dataToSave,
       );
 
       dispatch({

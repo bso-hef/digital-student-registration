@@ -18,7 +18,7 @@ export async function GET(
   try {
     await dbConnect();
 
-    const { id } = params;
+    const { id } = await params;
 
     if (!id) {
       return NextResponse.json(
@@ -71,7 +71,7 @@ export async function PATCH(
   try {
     await dbConnect();
 
-    const { id } = params;
+    const { id } = await params;
 
     if (!id) {
       return NextResponse.json(
@@ -81,8 +81,9 @@ export async function PATCH(
     }
 
     const body = (await request.json()) as Record<string, unknown>;
-    const { finalSubmit, ...updateData } = body as {
+    const { finalSubmit, onboardingStep, ...updateData } = body as {
       finalSubmit?: boolean;
+      onboardingStep?: number;
     } & Record<string, unknown>;
 
     // Find student by ID
@@ -92,6 +93,29 @@ export async function PATCH(
       return NextResponse.json({ error: "Student not found" }, { status: 404 });
     }
 
+    // Step validation: User can only advance one step at a time
+    const studentDoc = student as unknown as {
+      onboardingStep?: number;
+      status?: string;
+    };
+    const currentStep = studentDoc.onboardingStep || 0;
+
+    if (onboardingStep !== undefined) {
+      // Allow going back to previous steps
+      if (onboardingStep > currentStep + 1) {
+        logger.warn(
+          `Student ${id} attempted to skip steps: ${currentStep} -> ${onboardingStep}`,
+        );
+        return NextResponse.json(
+          {
+            error: "Invalid step progression",
+            message: "You must complete steps in order",
+          },
+          { status: 400 },
+        );
+      }
+    }
+
     // Update student fields
     Object.keys(updateData).forEach((key) => {
       if (key !== "_id" && key !== "createdAt" && key !== "updatedAt") {
@@ -99,6 +123,12 @@ export async function PATCH(
         (student as unknown as Record<string, unknown>)[key] = updateData[key];
       }
     });
+
+    // Update onboarding step if provided
+    if (onboardingStep !== undefined) {
+      (student as unknown as Record<string, unknown>)["onboardingStep"] =
+        onboardingStep;
+    }
 
     // If final submit, change status to "onboarded"
     if (finalSubmit) {

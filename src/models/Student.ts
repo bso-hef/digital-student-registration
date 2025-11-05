@@ -152,6 +152,9 @@ const StudentSchema = new Schema(
     // Agreements and consents
     agreements: { type: AgreementsSchema, default: undefined },
 
+    // Onboarding progress
+    onboardingStep: { type: Number, default: 0 },
+
     // System fields
     firstNameNorm: { type: String, required: true, index: true },
     lastNameNorm: { type: String, required: true, index: true },

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { useOnboardingSettings } from "@/hooks/useOnboardingSettings";
 import { validateStudentContactPersonData } from "@/lib/validate/student.validate";
@@ -6,6 +6,7 @@ import { updateStudentOnboardingData } from "@/store/actions/studentActions";
 import { useAppDispatch } from "@/store/store";
 import { StudentData } from "@/types/student";
 import { MenuItem, styled } from "@mui/material";
+import { FormikProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import { Select, TextField } from "formik-mui";
 
@@ -33,9 +34,16 @@ interface FormValues {
 interface ParentsFormProps {
   data?: Partial<StudentData>;
   onSubmit?: (values: FormValues) => void;
+  formikRef?: React.RefObject<FormikProps<any> | null>;
+  onValidationChange?: (isValid: boolean) => void;
 }
 
-const ParentsForm: React.FC<ParentsFormProps> = ({ data, onSubmit }) => {
+const ParentsForm: React.FC<ParentsFormProps> = ({
+  data,
+  onSubmit,
+  formikRef,
+  onValidationChange,
+}) => {
   const dispatch = useAppDispatch();
   const { contactPersonTypeOptions, getEnabledOptions, loading } =
     useOnboardingSettings();
@@ -52,6 +60,13 @@ const ParentsForm: React.FC<ParentsFormProps> = ({ data, onSubmit }) => {
     ansprechpartner1Telefon1: data?.ansprechpartner1Telefon1 || "",
   };
 
+  // Track validation state changes (must be before early return)
+  useEffect(() => {
+    if (formikRef?.current && onValidationChange) {
+      onValidationChange(formikRef.current.isValid);
+    }
+  });
+
   if (loading) {
     return <div>Loading settings...</div>;
   }
@@ -64,6 +79,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({ data, onSubmit }) => {
         dispatch(updateStudentOnboardingData(values));
         if (onSubmit) onSubmit(values);
       }}
+      innerRef={formikRef}
     >
       {({ errors, touched }) => (
         <StyledForm>

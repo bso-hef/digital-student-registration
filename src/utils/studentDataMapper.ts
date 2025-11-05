@@ -192,6 +192,12 @@ export function mapFormDataToModel(
 export function mapModelToFormData(
   student: Partial<Student>,
 ): Partial<StudentData> {
+  console.log("[mapModelToFormData] Input student:", {
+    firstName: student.firstName,
+    lastName: student.lastName,
+    dateOfBirth: student.dateOfBirth,
+  });
+
   const mapped: Partial<StudentData> = {};
 
   // Basic personal information
@@ -204,6 +210,12 @@ export function mapModelToFormData(
         ? student.dateOfBirth.toISOString().split("T")[0]
         : new Date(student.dateOfBirth).toISOString().split("T")[0];
   }
+
+  console.log("[mapModelToFormData] Mapped basic fields:", {
+    vorname: mapped.vorname,
+    nachname: mapped.nachname,
+    geburtsdatum: mapped.geburtsdatum,
+  });
   if (student.gender) {
     // Map English gender values to German
     const genderMap: Record<string, string> = {

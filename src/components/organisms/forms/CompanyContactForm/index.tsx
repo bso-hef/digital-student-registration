@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { useOnboardingSettings } from "@/hooks/useOnboardingSettings";
 import { validateStudentCompanyData } from "@/lib/validate/student.validate";
@@ -6,6 +6,7 @@ import { updateStudentOnboardingData } from "@/store/actions/studentActions";
 import { useAppDispatch } from "@/store/store";
 import { StudentData } from "@/types/student";
 import { MenuItem, styled } from "@mui/material";
+import { FormikProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import { Select, TextField } from "formik-mui";
 
@@ -28,11 +29,15 @@ interface FormValues {
 interface CompanyContactFormProps {
   data?: Partial<StudentData>;
   onSubmit?: (values: FormValues) => void;
+  formikRef?: React.RefObject<FormikProps<any> | null>;
+  onValidationChange?: (isValid: boolean) => void;
 }
 
 const CompanyContactForm: React.FC<CompanyContactFormProps> = ({
   data,
   onSubmit,
+  formikRef,
+  onValidationChange,
 }) => {
   const dispatch = useAppDispatch();
   const { salutationOptions, getEnabledOptions, loading } =
@@ -44,6 +49,13 @@ const CompanyContactForm: React.FC<CompanyContactFormProps> = ({
     betriebApNachname: data?.betriebApNachname || "",
     betriebApTelefon1: data?.betriebApTelefon1 || "",
   };
+
+  // Track validation state changes (must be before early return)
+  useEffect(() => {
+    if (formikRef?.current && onValidationChange) {
+      onValidationChange(formikRef.current.isValid);
+    }
+  });
 
   if (loading) {
     return <div>Loading settings...</div>;
@@ -57,6 +69,7 @@ const CompanyContactForm: React.FC<CompanyContactFormProps> = ({
         dispatch(updateStudentOnboardingData(values));
         if (onSubmit) onSubmit(values);
       }}
+      innerRef={formikRef}
     >
       {({ errors, touched }) => (
         <StyledForm>

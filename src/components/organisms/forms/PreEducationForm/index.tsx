@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 
 import { useOnboardingSettings } from "@/hooks/useOnboardingSettings";
 import {
@@ -8,6 +8,7 @@ import {
 import { updateStudentOnboardingData } from "@/store/actions/studentActions";
 import { useAppDispatch } from "@/store/store";
 import { MenuItem, styled } from "@mui/material";
+import { FormikProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import { Select, TextField } from "formik-mui";
 
@@ -30,11 +31,15 @@ interface FormValues {
 interface PreEducationFormProps {
   data?: Partial<FormValues>;
   onSubmit?: (values: FormValues) => void;
+  formikRef?: React.RefObject<FormikProps<any> | null>;
+  onValidationChange?: (isValid: boolean) => void;
 }
 
 const PreEducationForm: React.FC<PreEducationFormProps> = ({
   data,
   onSubmit,
+  formikRef,
+  onValidationChange,
 }) => {
   const dispatch = useAppDispatch();
   const {
@@ -78,6 +83,13 @@ const PreEducationForm: React.FC<PreEducationFormProps> = ({
     getOptionValues,
   ]);
 
+  // Track validation state changes (must be before early return)
+  useEffect(() => {
+    if (formikRef?.current && onValidationChange) {
+      onValidationChange(formikRef.current.isValid);
+    }
+  });
+
   if (loading) {
     return <div>Loading settings...</div>;
   }
@@ -92,6 +104,7 @@ const PreEducationForm: React.FC<PreEducationFormProps> = ({
         dispatch(updateStudentOnboardingData(values));
         if (onSubmit) onSubmit(values);
       }}
+      innerRef={formikRef}
     >
       {({ errors, touched }) => (
         <StyledForm>

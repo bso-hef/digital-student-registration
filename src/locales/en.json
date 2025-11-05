@@ -260,6 +260,33 @@
       "countryOfOrigin": "Country of Origin",
       "yearOfImmigration": "Year of Immigration",
       "familyLanguage": "Family Language"
+    },
+    "error": {
+      "invalidStudentId": {
+        "title": "Invalid Student ID",
+        "message": "The provided student ID has an invalid format. Please check the URL."
+      },
+      "studentNotFound": {
+        "title": "Student Not Found",
+        "message": "No student was found with this ID. Please contact the administrator."
+      },
+      "noClassAssigned": {
+        "title": "No Class Assigned",
+        "message": "You have not been assigned to a class yet. Please contact the administrator to be assigned to a class."
+      },
+      "classInactive": {
+        "title": "Class Inactive",
+        "message": "Your assigned class is currently not active. Please contact the administrator."
+      },
+      "alreadyOnboarded": {
+        "title": "Onboarding Already Completed",
+        "message": "You have already completed the onboarding process. If you need to make changes, please contact the administrator."
+      },
+      "generic": {
+        "title": "Loading Error",
+        "message": "The student data could not be loaded. Please check the URL or contact the administrator."
+      },
+      "retry": "Retry"
     }
   },
   "settings": {

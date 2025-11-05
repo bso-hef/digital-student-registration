@@ -90,6 +90,9 @@ export interface Student {
   // Agreements and consents
   agreements?: Agreements;
 
+  // Onboarding progress
+  onboardingStep?: number;
+
   // System fields
   collisionGroup?: string;
   ordinal?: number;

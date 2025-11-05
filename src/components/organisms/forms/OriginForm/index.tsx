@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 
 import { useOnboardingSettings } from "@/hooks/useOnboardingSettings";
 import {
@@ -8,6 +8,7 @@ import {
 import { updateStudentOnboardingData } from "@/store/actions/studentActions";
 import { useAppDispatch } from "@/store/store";
 import { Autocomplete, MenuItem, styled } from "@mui/material";
+import { FormikProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import { Select, TextField } from "formik-mui";
 import { useTranslation } from "react-i18next";
@@ -30,9 +31,16 @@ interface FormValues {
 interface OriginFormProps {
   data?: Partial<FormValues>;
   onSubmit?: (values: FormValues) => void;
+  formikRef?: React.RefObject<FormikProps<any> | null>;
+  onValidationChange?: (isValid: boolean) => void;
 }
 
-const OriginForm: React.FC<OriginFormProps> = ({ data, onSubmit }) => {
+const OriginForm: React.FC<OriginFormProps> = ({
+  data,
+  onSubmit,
+  formikRef,
+  onValidationChange,
+}) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const {
@@ -62,6 +70,13 @@ const OriginForm: React.FC<OriginFormProps> = ({ data, onSubmit }) => {
     return validateStudentOriginData;
   }, [languageOptions, fieldConfigs, getOptionValues]);
 
+  // Track validation state changes (must be before early return)
+  useEffect(() => {
+    if (formikRef?.current && onValidationChange) {
+      onValidationChange(formikRef.current.isValid);
+    }
+  });
+
   if (loading) {
     return <div>Loading settings...</div>;
   }
@@ -77,6 +92,7 @@ const OriginForm: React.FC<OriginFormProps> = ({ data, onSubmit }) => {
         dispatch(updateStudentOnboardingData(values));
         if (onSubmit) onSubmit(values);
       }}
+      innerRef={formikRef}
     >
       {({ setFieldValue, values, errors, touched }) => {
         const enabledCountries = getEnabledOptions(countryOptions);

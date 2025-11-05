@@ -2,9 +2,14 @@
 
 import { useEffect } from "react";
 
+import GeneralButton from "@/components/atoms/buttons/GeneralButton";
 import StepForm from "@/components/organisms/StepForm";
-import { loadStudentForOnboarding } from "@/store/actions/studentActions";
+import {
+  clearStudentError,
+  loadStudentForOnboarding,
+} from "@/store/actions/studentActions";
 import { useAppDispatch, useAppSelector } from "@/store/store";
+import { OnboardingErrorCode, isValidationError } from "@/types/errors";
 import {
   Alert,
   Box,
@@ -38,6 +43,110 @@ interface StudentIdProps {
   params: { studentId: string };
 }
 
+/**
+ * Maps error codes to specific error details (title, message, severity)
+ */
+function getErrorDetails(
+  error: unknown,
+  t: ReturnType<typeof useTranslation>["t"],
+) {
+  // Check if it's a ValidationError with error code
+  if (isValidationError(error)) {
+    switch (error.code) {
+      case OnboardingErrorCode.INVALID_STUDENT_ID:
+        return {
+          severity: "error" as const,
+          title: t(
+            "onboarding.error.invalidStudentId.title",
+            "Ungültige Schüler-ID",
+          ),
+          message: t(
+            "onboarding.error.invalidStudentId.message",
+            "Die angegebene Schüler-ID hat ein ungültiges Format. Bitte überprüfen Sie die URL.",
+          ),
+        };
+
+      case OnboardingErrorCode.STUDENT_NOT_FOUND:
+        return {
+          severity: "error" as const,
+          title: t(
+            "onboarding.error.studentNotFound.title",
+            "Schüler nicht gefunden",
+          ),
+          message: t(
+            "onboarding.error.studentNotFound.message",
+            "Es wurde kein Schüler mit dieser ID gefunden. Bitte kontaktieren Sie den Administrator.",
+          ),
+        };
+
+      case OnboardingErrorCode.NO_CLASS_ASSIGNED:
+        return {
+          severity: "warning" as const,
+          title: t(
+            "onboarding.error.noClassAssigned.title",
+            "Keine Klasse zugewiesen",
+          ),
+          message: t(
+            "onboarding.error.noClassAssigned.message",
+            "Sie sind noch keiner Klasse zugeordnet. Bitte wenden Sie sich an den Administrator, um einer Klasse zugewiesen zu werden.",
+          ),
+        };
+
+      case OnboardingErrorCode.CLASS_INACTIVE:
+        return {
+          severity: "warning" as const,
+          title: t(
+            "onboarding.error.classInactive.title",
+            "Klasse nicht aktiv",
+          ),
+          message: t(
+            "onboarding.error.classInactive.message",
+            "Die Ihnen zugewiesene Klasse ist derzeit nicht aktiv. Bitte kontaktieren Sie den Administrator.",
+          ),
+        };
+
+      case OnboardingErrorCode.ALREADY_ONBOARDED:
+        return {
+          severity: "info" as const,
+          title: t(
+            "onboarding.error.alreadyOnboarded.title",
+            "Einschreibung bereits abgeschlossen",
+          ),
+          message: t(
+            "onboarding.error.alreadyOnboarded.message",
+            "Sie haben die Einschreibung bereits abgeschlossen. Wenn Sie Änderungen vornehmen müssen, wenden Sie sich bitte an den Administrator.",
+          ),
+        };
+
+      default:
+        // Fallback for unknown validation errors
+        return {
+          severity: "error" as const,
+          title: t("onboarding.error.generic.title", "Fehler beim Laden"),
+          message:
+            error.message ||
+            t(
+              "onboarding.error.generic.message",
+              "Die Schülerdaten konnten nicht geladen werden. Bitte überprüfen Sie die URL oder kontaktieren Sie den Administrator.",
+            ),
+        };
+    }
+  }
+
+  // Fallback for generic errors
+  return {
+    severity: "error" as const,
+    title: t("onboarding.error.generic.title", "Fehler beim Laden"),
+    message:
+      error instanceof Error
+        ? error.message
+        : t(
+            "onboarding.error.generic.message",
+            "Die Schülerdaten konnten nicht geladen werden. Bitte überprüfen Sie die URL oder kontaktieren Sie den Administrator.",
+          ),
+  };
+}
+
 const StudentId = ({ params }: StudentIdProps) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
@@ -58,46 +167,46 @@ const StudentId = ({ params }: StudentIdProps) => {
         <LoadingContainer>
           <CircularProgress size={60} />
           <Typography variant="h6">
-            {t("onboarding.loading", "Lade Daten...")}
+            {t("onboarding.loadingProfile", "Loading your student profile...")}
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+            {t(
+              "onboarding.loadingDetails",
+              "We're retrieving your information from our database",
+            )}
           </Typography>
         </LoadingContainer>
       </Wrapper>
     );
   }
 
-  // Error state - check if it's because student already completed onboarding
+  // Error state - display specific error based on error code
   if (error) {
-    const isAlreadyOnboarded = error.message?.includes(
-      "already completed onboarding",
-    );
+    const errorDetails = getErrorDetails(error, t);
+
+    const handleRetry = () => {
+      // Clear the error first
+      dispatch(clearStudentError());
+      // Then retry loading
+      dispatch(loadStudentForOnboarding(studentId));
+    };
 
     return (
       <Wrapper>
         <LoadingContainer>
-          <Alert
-            severity={isAlreadyOnboarded ? "info" : "error"}
-            sx={{ maxWidth: 600 }}
-          >
+          <Alert severity={errorDetails.severity} sx={{ maxWidth: 600 }}>
             <Typography variant="h6" gutterBottom>
-              {isAlreadyOnboarded
-                ? t(
-                    "onboarding.alreadyCompleted",
-                    "Einschreibung bereits abgeschlossen",
-                  )
-                : t("onboarding.error", "Fehler beim Laden")}
+              {errorDetails.title}
             </Typography>
-            <Typography variant="body2">
-              {isAlreadyOnboarded
-                ? t(
-                    "onboarding.alreadyCompletedDetails",
-                    "Diese Einschreibung wurde bereits abgeschlossen. Wenn Sie Änderungen vornehmen müssen, wenden Sie sich bitte an den Administrator.",
-                  )
-                : error.message ||
-                  t(
-                    "onboarding.errorDetails",
-                    "Die Schülerdaten konnten nicht geladen werden. Bitte überprüfen Sie die URL oder kontaktieren Sie den Administrator.",
-                  )}
+            <Typography variant="body2" sx={{ mb: 2 }}>
+              {errorDetails.message}
             </Typography>
+            <GeneralButton
+              onAction={handleRetry}
+              label={t("onboarding.error.retry", "Erneut versuchen")}
+              variant="contained"
+              isPrimary={true}
+            />
           </Alert>
         </LoadingContainer>
       </Wrapper>

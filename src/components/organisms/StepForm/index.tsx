@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useMemo, useState } from "react";
+import { memo, useMemo, useRef, useState } from "react";
 
 import CustomTitle from "@/components/atoms/CustomTitle";
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
@@ -24,11 +24,13 @@ import {
   submitOnboarding,
 } from "@/store/actions/studentActions";
 import { AppDispatch } from "@/store/store";
+import { applicationScrollbar } from "@/utils/styling.utils";
 import DoneRoundedIcon from "@mui/icons-material/DoneRounded";
 import KeyboardArrowLeftRoundedIcon from "@mui/icons-material/KeyboardArrowLeftRounded";
 import KeyboardArrowRightRoundedIcon from "@mui/icons-material/KeyboardArrowRightRounded";
 import { Box, CircularProgress, styled } from "@mui/material";
 import { useDeviceTypeDetection } from "device-type-detection";
+import { FormikProps } from "formik";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -65,19 +67,7 @@ const StyledFormBox = styled(Box)(({ theme }) => ({
   overflowY: "auto",
   overflowX: "hidden",
   padding: theme.spacing(2, 1),
-  "&::-webkit-scrollbar": {
-    width: "8px",
-  },
-  "&::-webkit-scrollbar-track": {
-    background: "transparent",
-  },
-  "&::-webkit-scrollbar-thumb": {
-    background: theme.palette.divider,
-    borderRadius: "4px",
-  },
-  "&::-webkit-scrollbar-thumb:hover": {
-    background: theme.palette.text.secondary,
-  },
+  ...applicationScrollbar(theme),
 }));
 
 interface StepFormProps {
@@ -91,6 +81,12 @@ const StepForm = ({ studentId }: StepFormProps) => {
   const dispatch: AppDispatch = useDispatch();
   const { t } = useTranslation();
   const [isSaving, setIsSaving] = useState(false);
+  const [isFormValid, setIsFormValid] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Ref to access Formik instance of current form
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const formikRef = useRef<FormikProps<any> | null>(null);
 
   const { isMobile, isTabletVertical } = useDeviceTypeDetection();
 
@@ -120,7 +116,8 @@ const StepForm = ({ studentId }: StepFormProps) => {
 
     setIsSaving(true);
     try {
-      await dispatch(saveOnboardingProgress(studentId, data));
+      // Save form data and current step to database
+      await dispatch(saveOnboardingProgress(studentId, data, currentStep));
     } catch (error) {
       console.error("Auto-save failed:", error);
     } finally {
@@ -150,13 +147,52 @@ const StepForm = ({ studentId }: StepFormProps) => {
     return currentStep; // Stay on current if no previous
   };
 
+  // Validate that user can navigate to target step
+  // User can only navigate to next step or previous steps
+  const canNavigateToStep = (targetStep: number): boolean => {
+    // Can always go back to previous steps
+    if (targetStep <= currentStep) {
+      return true;
+    }
+
+    // Can only advance one step at a time
+    // This ensures sequential completion
+    const nextStepId = getNextActiveStepId();
+    return targetStep === nextStepId;
+  };
+
   // Form submit handler passed to forms
   const handleFormSubmit = async () => {
-    // Auto-save current data
-    await handleAutoSave();
-    // Move to next active step
-    const nextStepId = getNextActiveStepId();
-    dispatch(setCurrentStudentOnboardingStep(nextStepId));
+    setIsSubmitting(true);
+    try {
+      // Auto-save current data
+      await handleAutoSave();
+      // Move to next active step
+      const nextStepId = getNextActiveStepId();
+
+      // Validate navigation
+      if (!canNavigateToStep(nextStepId)) {
+        console.error("Cannot skip to step", nextStepId);
+        return;
+      }
+
+      dispatch(setCurrentStudentOnboardingStep(nextStepId));
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Handle Next button click for form steps
+  const handleNextClick = async () => {
+    if (formikRef.current) {
+      // Trigger Formik validation and submission
+      await formikRef.current.submitForm();
+    }
+  };
+
+  // Callback to receive validation state from forms
+  const handleValidationChange = (isValid: boolean) => {
+    setIsFormValid(isValid);
   };
 
   function renderFormByStep(step: number) {
@@ -164,19 +200,61 @@ const StepForm = ({ studentId }: StepFormProps) => {
       case 0:
         return <WelcomeForm />;
       case 1:
-        return <GeneralForm onSubmit={handleFormSubmit} />;
+        return (
+          <GeneralForm
+            onSubmit={handleFormSubmit}
+            formikRef={formikRef}
+            onValidationChange={handleValidationChange}
+          />
+        );
       case 2:
-        return <OriginForm onSubmit={handleFormSubmit} />;
+        return (
+          <OriginForm
+            onSubmit={handleFormSubmit}
+            formikRef={formikRef}
+            onValidationChange={handleValidationChange}
+          />
+        );
       case 3:
-        return <AddressForm onSubmit={handleFormSubmit} />;
+        return (
+          <AddressForm
+            onSubmit={handleFormSubmit}
+            formikRef={formikRef}
+            onValidationChange={handleValidationChange}
+          />
+        );
       case 4:
-        return <ParentsForm onSubmit={handleFormSubmit} />;
+        return (
+          <ParentsForm
+            onSubmit={handleFormSubmit}
+            formikRef={formikRef}
+            onValidationChange={handleValidationChange}
+          />
+        );
       case 5:
-        return <PreEducationForm onSubmit={handleFormSubmit} />;
+        return (
+          <PreEducationForm
+            onSubmit={handleFormSubmit}
+            formikRef={formikRef}
+            onValidationChange={handleValidationChange}
+          />
+        );
       case 6:
-        return <TrainingForm onSubmit={handleFormSubmit} />;
+        return (
+          <TrainingForm
+            onSubmit={handleFormSubmit}
+            formikRef={formikRef}
+            onValidationChange={handleValidationChange}
+          />
+        );
       case 7:
-        return <CompanyContactForm onSubmit={handleFormSubmit} />;
+        return (
+          <CompanyContactForm
+            onSubmit={handleFormSubmit}
+            formikRef={formikRef}
+            onValidationChange={handleValidationChange}
+          />
+        );
       case 8:
         return (
           <SummaryForm
@@ -225,42 +303,64 @@ const StepForm = ({ studentId }: StepFormProps) => {
 
   return (
     <Wrapper>
-      {!isFirstStep && !showMobileView && (
+      {!isFirstStep && (
         <CustomTitle
           title={currentStepDef?.label}
-          subTitle={`${t("general.Step")} ${activeStepIndex + 1} ${t("general.of", "von")} ${activeSteps.length}`}
+          subTitle={`${t("general.Step")} ${activeStepIndex + 1} ${t("general.of")} ${activeSteps.length}`}
         />
       )}
       <StyledFormBox>{renderFormByStep(currentStep)}</StyledFormBox>
-      {/* Only show navigation for non-form steps */}
-      {!isFormStep && !isLastStep && (
+      {/* Welcome step (Step 0) - Start button only */}
+      {isFirstStep && (
         <StyledMenuOptions>
-          {!isFirstStep && (
-            <GeneralButton
-              label={t("general.Previous")}
-              isPrimary={false}
-              fullHeight={false}
-              fullWidth={false}
-              startIcon={<KeyboardArrowLeftRoundedIcon />}
-              onAction={handlePreviousStep}
-              disabled={isSaving || loading}
-            />
-          )}
-
-          {isFirstStep && (
-            <GeneralButton
-              label={t("general.Start")}
-              isPrimary={true}
-              fullHeight={false}
-              fullWidth={false}
-              endIcon={<KeyboardArrowRightRoundedIcon />}
-              onAction={handleNextStep}
-            />
-          )}
+          <Box /> {/* Spacer for flexbox layout */}
+          <GeneralButton
+            label={t("general.Start")}
+            isPrimary={true}
+            fullHeight={false}
+            fullWidth={false}
+            endIcon={<KeyboardArrowRightRoundedIcon />}
+            onAction={handleNextStep}
+          />
         </StyledMenuOptions>
       )}
 
-      {/* Summary step has its own submit button */}
+      {/* Form steps (1-7) - Previous and Next buttons */}
+      {isFormStep && (
+        <StyledMenuOptions>
+          <GeneralButton
+            label={t("general.Previous")}
+            isPrimary={false}
+            fullHeight={false}
+            fullWidth={false}
+            startIcon={<KeyboardArrowLeftRoundedIcon />}
+            onAction={handlePreviousStep}
+            disabled={isSaving || loading || isSubmitting}
+          />
+
+          <GeneralButton
+            label={
+              isSubmitting || isSaving
+                ? t("general.Submitting", "Wird übermittelt...")
+                : t("general.Next", "Weiter")
+            }
+            isPrimary={true}
+            fullHeight={false}
+            fullWidth={false}
+            endIcon={
+              isSubmitting || isSaving ? (
+                <CircularProgress size={20} color="inherit" />
+              ) : (
+                <KeyboardArrowRightRoundedIcon />
+              )
+            }
+            onAction={handleNextClick}
+            disabled={!isFormValid || isSaving || loading || isSubmitting}
+          />
+        </StyledMenuOptions>
+      )}
+
+      {/* Summary step (Step 8) - Previous and Submit buttons */}
       {isSummaryStep && (
         <StyledMenuOptions>
           <GeneralButton
@@ -291,49 +391,6 @@ const StepForm = ({ studentId }: StepFormProps) => {
             }
             onAction={handleConfirm}
             disabled={isSaving || loading}
-          />
-        </StyledMenuOptions>
-      )}
-
-      {/* Show auto-save indicator for form steps */}
-      {isFormStep && isSaving && (
-        <StyledMenuOptions>
-          <GeneralButton
-            label={t("general.Previous")}
-            isPrimary={false}
-            fullHeight={false}
-            fullWidth={false}
-            startIcon={<KeyboardArrowLeftRoundedIcon />}
-            onAction={handlePreviousStep}
-            disabled={isSaving || loading}
-          />
-
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 1,
-              color: "text.secondary",
-              fontSize: 14,
-            }}
-          >
-            <CircularProgress size={16} />
-            {t("general.Saving", "Speichern...")}
-          </Box>
-        </StyledMenuOptions>
-      )}
-
-      {/* Show just back button for form steps when not saving */}
-      {isFormStep && !isSaving && (
-        <StyledMenuOptions>
-          <GeneralButton
-            label={t("general.Previous")}
-            isPrimary={false}
-            fullHeight={false}
-            fullWidth={false}
-            startIcon={<KeyboardArrowLeftRoundedIcon />}
-            onAction={handlePreviousStep}
-            disabled={loading}
           />
         </StyledMenuOptions>
       )}

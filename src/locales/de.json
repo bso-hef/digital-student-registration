@@ -260,6 +260,33 @@
       "countryOfOrigin": "Herkunftsland",
       "yearOfImmigration": "Zuzugsjahr",
       "familyLanguage": "Familiensprache"
+    },
+    "error": {
+      "invalidStudentId": {
+        "title": "Ungültige Schüler-ID",
+        "message": "Die angegebene Schüler-ID hat ein ungültiges Format. Bitte überprüfen Sie die URL."
+      },
+      "studentNotFound": {
+        "title": "Schüler nicht gefunden",
+        "message": "Es wurde kein Schüler mit dieser ID gefunden. Bitte kontaktieren Sie den Administrator."
+      },
+      "noClassAssigned": {
+        "title": "Keine Klasse zugewiesen",
+        "message": "Sie sind noch keiner Klasse zugeordnet. Bitte wenden Sie sich an den Administrator, um einer Klasse zugewiesen zu werden."
+      },
+      "classInactive": {
+        "title": "Klasse nicht aktiv",
+        "message": "Die Ihnen zugewiesene Klasse ist derzeit nicht aktiv. Bitte kontaktieren Sie den Administrator."
+      },
+      "alreadyOnboarded": {
+        "title": "Einschreibung bereits abgeschlossen",
+        "message": "Sie haben die Einschreibung bereits abgeschlossen. Wenn Sie Änderungen vornehmen müssen, wenden Sie sich bitte an den Administrator."
+      },
+      "generic": {
+        "title": "Fehler beim Laden",
+        "message": "Die Schülerdaten konnten nicht geladen werden. Bitte überprüfen Sie die URL oder kontaktieren Sie den Administrator."
+      },
+      "retry": "Erneut versuchen"
     }
   },
   "settings": {

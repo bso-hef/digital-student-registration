@@ -9,7 +9,7 @@ import rootReducer from "../store/reducers";
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["ui", "student", "class", "dashboard", "appSettings", "auth"],
+  whitelist: ["ui", "class", "dashboard", "appSettings", "auth"],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

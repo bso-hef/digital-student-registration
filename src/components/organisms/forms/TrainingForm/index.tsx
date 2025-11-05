@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 
 import { useOnboardingSettings } from "@/hooks/useOnboardingSettings";
 import {
@@ -8,6 +8,7 @@ import {
 import { updateStudentOnboardingData } from "@/store/actions/studentActions";
 import { useAppDispatch } from "@/store/store";
 import { MenuItem, styled } from "@mui/material";
+import { FormikProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import { Select, TextField } from "formik-mui";
 
@@ -35,9 +36,16 @@ interface FormValues {
 interface TrainingFormProps {
   data?: Partial<FormValues>;
   onSubmit?: (values: FormValues) => void;
+  formikRef?: React.RefObject<FormikProps<any> | null>;
+  onValidationChange?: (isValid: boolean) => void;
 }
 
-const TrainingForm: React.FC<TrainingFormProps> = ({ data, onSubmit }) => {
+const TrainingForm: React.FC<TrainingFormProps> = ({
+  data,
+  onSubmit,
+  formikRef,
+  onValidationChange,
+}) => {
   const dispatch = useAppDispatch();
   const {
     professionOptions,
@@ -73,6 +81,13 @@ const TrainingForm: React.FC<TrainingFormProps> = ({ data, onSubmit }) => {
     return validateStudentCompanyData;
   }, [professionOptions, salutationOptions, fieldConfigs, getOptionValues]);
 
+  // Track validation state changes (must be before early return)
+  useEffect(() => {
+    if (formikRef?.current && onValidationChange) {
+      onValidationChange(formikRef.current.isValid);
+    }
+  });
+
   if (loading) {
     return <div>Loading settings...</div>;
   }
@@ -87,6 +102,7 @@ const TrainingForm: React.FC<TrainingFormProps> = ({ data, onSubmit }) => {
         dispatch(updateStudentOnboardingData(values));
         if (onSubmit) onSubmit(values);
       }}
+      innerRef={formikRef}
     >
       {({ errors, touched }) => (
         <StyledForm>
