@@ -4,6 +4,7 @@ import { useEffect } from "react";
 
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
 import StepForm from "@/components/organisms/StepForm";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import {
   clearStudentError,
   loadStudentForOnboarding,
@@ -17,6 +18,7 @@ import {
   Typography,
   styled,
 } from "@mui/material";
+import { useParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
 
 const Wrapper = styled(Box)(({ theme }) => ({
@@ -38,10 +40,6 @@ const LoadingContainer = styled(Box)(({ theme }) => ({
   gap: theme.spacing(2),
   minHeight: "50vh",
 }));
-
-interface StudentIdProps {
-  params: { studentId: string };
-}
 
 /**
  * Maps error codes to specific error details (title, message, severity)
@@ -147,11 +145,13 @@ function getErrorDetails(
   };
 }
 
-const StudentId = ({ params }: StudentIdProps) => {
+const StudentId = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const { studentId } = params;
+  const { studentId } = useParams<{ studentId: string }>();
   const { loading, error } = useAppSelector((state) => state.student);
+
+  useDocumentTitle("Digital Student Onboarding");
 
   useEffect(() => {
     // Load student data when component mounts

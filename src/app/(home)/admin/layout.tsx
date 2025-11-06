@@ -95,16 +95,10 @@ export default function AdminLayout({
 
   const showMobileView = isMobile || isTabletVertical;
 
-  // Set page title for all admin routes
-  useEffect(() => {
-    document.title = "Admin | DSR";
-  }, []);
-
   // Immediate redirect if not authenticated
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      // Use hard navigation to clear all state
-      window.location.href = "/login";
+      router.push("/login");
     }
   }, [isAuthenticated, isLoading, router]);
 

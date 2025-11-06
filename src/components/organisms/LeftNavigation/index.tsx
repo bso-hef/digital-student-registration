@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Fragment, memo, useCallback, useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 
 import GeneralInput from "@/components/atoms/GeneralInput";
 import OnboardingVersion from "@/components/atoms/OnboardingVersion";
@@ -355,9 +355,7 @@ const LeftNavigation = () => {
             onAction={async () => {
               const result = await dispatch(logoutUser());
               if (result.success) {
-                // Use hard navigation to ensure complete state clearing
-                // This prevents any cached data from being displayed
-                window.location.href = "/login";
+                router.push("/login");
               }
             }}
             fullWidth={false}
@@ -371,4 +369,4 @@ const LeftNavigation = () => {
   );
 };
 
-export default memo(LeftNavigation);
+export default LeftNavigation;

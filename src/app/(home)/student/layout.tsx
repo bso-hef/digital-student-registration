@@ -104,11 +104,6 @@ export default function StudentLayout({
 
   const showMobileView = isMobile || isTabletVertical;
 
-  // Set page title for all student routes
-  useEffect(() => {
-    document.title = "Digital Student Onboarding";
-  }, []);
-
   // Calculate active steps based on student data and class
   const activeSteps = useMemo(() => {
     const allSteps = getStudentSteps(t);

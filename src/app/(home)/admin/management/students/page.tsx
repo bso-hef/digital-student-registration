@@ -5,6 +5,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
 import StudentStatus from "@/components/atoms/status/StudentStatus";
 import AdminSettingsHeader from "@/components/molecules/AdminSettingsHeader";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import AddStudentModal from "@/components/organisms/modals/AddStudentModal";
 import ConfirmationModal from "@/components/organisms/modals/ConfirmationModal";
 import GenerateQrDialog from "@/components/organisms/modals/GenerateQrModal";
@@ -60,6 +61,8 @@ const StudentManagementPage = () => {
   const { students, loading } = useSelector(
     (state: RootState) => state.student,
   );
+
+  useDocumentTitle("Student Management | Admin | DSR");
 
   const [openStudentAddModal, setOpenStudentAddModal] = useState(false);
   const [openStudentDeleteModal, setOpenStudentDeleteModal] = useState(false);
