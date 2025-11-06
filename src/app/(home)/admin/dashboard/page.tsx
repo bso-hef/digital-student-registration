@@ -4,7 +4,6 @@ import React, { useEffect } from "react";
 
 import SmallIconButton from "@/components/atoms/buttons/SmallIconButton";
 import AdminSettingsHeader from "@/components/molecules/AdminSettingsHeader";
-import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import DraggableChartGrid from "@/components/molecules/dashboard/DraggableChartGrid";
 import DraggableStatsGrid from "@/components/molecules/dashboard/DraggableStatsGrid";
 import {
@@ -56,8 +55,6 @@ const LoadingContainer = styled(Box)({
 const DashboardPage = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
-
-  useDocumentTitle("Dashboard | Admin | DSR");
 
   const { stats, health, loading, error, layout } = useSelector(
     (state: RootState) => state.dashboard,

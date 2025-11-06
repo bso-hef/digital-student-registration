@@ -1,6 +1,7 @@
 "use client";
 
 import AccessibilityMenu from "@/components/molecules/AccessibilityMenu";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { applicationScrollbar } from "@/utils/styling.utils";
 import { Box, styled } from "@mui/material";
 
@@ -64,6 +65,8 @@ export default function HomeLayout({
 }: {
   children: React.ReactNode;
 }) {
+  useDocumentTitle("Auth | Digitale Schüleranmeldung");
+
   return (
     <AuthLayoutContainer>
       <AuthLayoutBox>{children}</AuthLayoutBox>

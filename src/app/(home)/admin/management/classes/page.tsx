@@ -5,7 +5,6 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
 import ClassStatus from "@/components/atoms/status/ClassStatus";
 import AdminSettingsHeader from "@/components/molecules/AdminSettingsHeader";
-import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import AddClassModal from "@/components/organisms/modals/AddClassModal";
 import ConfirmationModal from "@/components/organisms/modals/ConfirmationModal";
 import DataTable from "@/components/organisms/tables/DataTable";
@@ -57,8 +56,6 @@ const ClassManagementPage = () => {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const { classes, loading } = useSelector((state: RootState) => state.class);
-
-  useDocumentTitle("Class Management | Admin | DSR");
 
   const [openClassAddModal, setOpenClassAddModal] = useState(false);
   const [openClassDeleteModal, setOpenClassDeleteModal] = useState(false);

@@ -28,7 +28,7 @@ export default function Home() {
   const router = useRouter();
   const { t } = useTranslation();
 
-  useDocumentTitle("Home | DSR");
+  useDocumentTitle("Home | Digitale Schüleranmeldung");
 
   const handleVisitDocs = () => {
     if (typeof window !== "undefined") {

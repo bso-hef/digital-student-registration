@@ -4,7 +4,6 @@ import { useEffect } from "react";
 
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
 import StepForm from "@/components/organisms/StepForm";
-import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import {
   clearStudentError,
   loadStudentForOnboarding,
@@ -150,8 +149,6 @@ const StudentId = () => {
   const dispatch = useAppDispatch();
   const { studentId } = useParams<{ studentId: string }>();
   const { loading, error } = useAppSelector((state) => state.student);
-
-  useDocumentTitle("Digital Student Onboarding");
 
   useEffect(() => {
     // Load student data when component mounts

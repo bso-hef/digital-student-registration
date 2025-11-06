@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 
 import LeftNavigation from "@/components/organisms/LeftNavigation";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { useAuth } from "@/lib/auth/useAuth";
 import { applicationScrollbar } from "@/utils/styling.utils";
 import { Box, CircularProgress, styled } from "@mui/material";
@@ -94,6 +95,8 @@ export default function AdminLayout({
   const router = useRouter();
 
   const showMobileView = isMobile || isTabletVertical;
+
+  useDocumentTitle("Admin | Digitale Schüleranmeldung");
 
   // Immediate redirect if not authenticated
   useEffect(() => {

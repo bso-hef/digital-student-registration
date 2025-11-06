@@ -13,11 +13,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Digital Student Onboarding",
+  title: "Digitale Schüleranmeldung",
   description: "A platform for students to onboard digitally.",
-  icons: {
-    icon: "/icon-light.png",
-  },
 };
 
 export default async function RootLayout({
