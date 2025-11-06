@@ -22,6 +22,22 @@ export type StepDef = {
   requiresNonGerman?: boolean;
 };
 
+/**
+ * Semantic step names for type-safe step references
+ */
+export enum StepName {
+  WELCOME = "welcome",
+  GENERAL = "general",
+  ORIGIN = "origin",
+  ADDRESS = "address",
+  PARENTS = "parents",
+  PRE_EDUCATION = "pre_education",
+  TRAINING = "training",
+  COMPANY_CONTACT = "company_contact",
+  SUMMARY = "summary",
+  COMPLETION = "completion",
+}
+
 export const getStudentSteps = (t: TFunction): StepDef[] => [
   { id: 0, label: t("student.steps.Welcome"), icon: <HomeRoundedIcon /> },
   { id: 1, label: t("student.steps.General"), icon: <InfoRoundedIcon /> },
@@ -101,4 +117,55 @@ export const getActiveSteps = (
     // Include all non-conditional steps
     return true;
   });
+};
+
+/**
+ * Maps semantic step names to their numeric IDs
+ */
+const STEP_NAME_TO_ID_MAP: Record<StepName, number> = {
+  [StepName.WELCOME]: 0,
+  [StepName.GENERAL]: 1,
+  [StepName.ORIGIN]: 2,
+  [StepName.ADDRESS]: 3,
+  [StepName.PARENTS]: 4,
+  [StepName.PRE_EDUCATION]: 5,
+  [StepName.TRAINING]: 6,
+  [StepName.COMPANY_CONTACT]: 7,
+  [StepName.SUMMARY]: 8,
+  [StepName.COMPLETION]: 9,
+};
+
+/**
+ * Gets the numeric step ID for a semantic step name
+ * Only returns the ID if the step is currently active
+ * @param stepName - Semantic name of the step
+ * @param activeSteps - Currently active steps based on conditions
+ * @returns Step ID if active, null if step is hidden
+ */
+export const getStepIdByName = (
+  stepName: StepName,
+  activeSteps: StepDef[],
+): number | null => {
+  const stepId = STEP_NAME_TO_ID_MAP[stepName];
+
+  if (stepId === undefined) {
+    console.error(`Unknown step name: ${stepName}`);
+    return null;
+  }
+
+  const isActive = activeSteps.some((step) => step.id === stepId);
+  return isActive ? stepId : null;
+};
+
+/**
+ * Checks if a specific step ID is currently active
+ * @param stepId - Numeric step ID to check
+ * @param activeSteps - Currently active steps based on conditions
+ * @returns true if step is active, false if hidden
+ */
+export const isStepActive = (
+  stepId: number,
+  activeSteps: StepDef[],
+): boolean => {
+  return activeSteps.some((step) => step.id === stepId);
 };

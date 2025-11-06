@@ -11,6 +11,7 @@ import { MenuItem, styled } from "@mui/material";
 import { FormikProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import { Select, TextField } from "formik-mui";
+import { useTranslation } from "react-i18next";
 
 const StyledForm = styled(Form)(() => ({
   display: "flex",
@@ -46,6 +47,7 @@ const TrainingForm: React.FC<TrainingFormProps> = ({
   formikRef,
   onValidationChange,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const {
     professionOptions,
@@ -111,7 +113,7 @@ const TrainingForm: React.FC<TrainingFormProps> = ({
             <Field
               component={TextField}
               name="beruf"
-              label="Beruf"
+              label={t("onboarding.training.profession")}
               variant="outlined"
               margin="normal"
               fullWidth
@@ -122,7 +124,7 @@ const TrainingForm: React.FC<TrainingFormProps> = ({
             <Field
               component={Select}
               name="beruf"
-              label="Beruf"
+              label={t("onboarding.training.profession")}
               variant="outlined"
               margin="normal"
               fullWidth
@@ -140,7 +142,7 @@ const TrainingForm: React.FC<TrainingFormProps> = ({
           <Field
             component={TextField}
             name="betriebEintritt"
-            label="Betriebseintritt"
+            label={t("onboarding.training.companyStartDate")}
             type="date"
             InputLabelProps={{ shrink: true }}
             variant="outlined"
@@ -154,7 +156,7 @@ const TrainingForm: React.FC<TrainingFormProps> = ({
           <Field
             component={TextField}
             name="betriebName"
-            label="Betriebsname"
+            label={t("onboarding.training.companyName")}
             variant="outlined"
             margin="normal"
             fullWidth
@@ -166,7 +168,7 @@ const TrainingForm: React.FC<TrainingFormProps> = ({
           <Field
             component={TextField}
             name="betriebStraße"
-            label="Straße"
+            label={t("onboarding.training.street")}
             variant="outlined"
             margin="normal"
             fullWidth
@@ -178,7 +180,7 @@ const TrainingForm: React.FC<TrainingFormProps> = ({
           <Field
             component={TextField}
             name="betriebHausNr"
-            label="Hausnummer"
+            label={t("onboarding.training.houseNumber")}
             variant="outlined"
             margin="normal"
             fullWidth
@@ -190,7 +192,7 @@ const TrainingForm: React.FC<TrainingFormProps> = ({
           <Field
             component={TextField}
             name="betriebPlz"
-            label="PLZ"
+            label={t("onboarding.training.postalCode")}
             variant="outlined"
             margin="normal"
             fullWidth
@@ -202,7 +204,7 @@ const TrainingForm: React.FC<TrainingFormProps> = ({
           <Field
             component={TextField}
             name="betriebOrt"
-            label="Ort"
+            label={t("onboarding.training.city")}
             variant="outlined"
             margin="normal"
             fullWidth
@@ -214,7 +216,7 @@ const TrainingForm: React.FC<TrainingFormProps> = ({
           <Field
             component={TextField}
             name="betriebTel"
-            label="Telefon"
+            label={t("onboarding.training.phone")}
             variant="outlined"
             margin="normal"
             fullWidth
@@ -226,7 +228,7 @@ const TrainingForm: React.FC<TrainingFormProps> = ({
           <Field
             component={TextField}
             name="betriebMail"
-            label="E-Mail"
+            label={t("onboarding.training.email")}
             type="email"
             variant="outlined"
             margin="normal"

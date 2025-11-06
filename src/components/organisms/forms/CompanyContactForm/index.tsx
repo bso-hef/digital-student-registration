@@ -9,6 +9,7 @@ import { MenuItem, styled } from "@mui/material";
 import { FormikProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import { Select, TextField } from "formik-mui";
+import { useTranslation } from "react-i18next";
 
 const StyledForm = styled(Form)(() => ({
   display: "flex",
@@ -39,6 +40,7 @@ const CompanyContactForm: React.FC<CompanyContactFormProps> = ({
   formikRef,
   onValidationChange,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { salutationOptions, getEnabledOptions, loading } =
     useOnboardingSettings();
@@ -77,7 +79,7 @@ const CompanyContactForm: React.FC<CompanyContactFormProps> = ({
           <Field
             component={Select}
             name="betriebApAnrede"
-            label="Anrede"
+            label={t("onboarding.companyContact.salutation")}
             variant="outlined"
             margin="normal"
             fullWidth
@@ -94,7 +96,7 @@ const CompanyContactForm: React.FC<CompanyContactFormProps> = ({
           <Field
             component={TextField}
             name="betriebApVorname"
-            label="Vorname"
+            label={t("onboarding.companyContact.firstName")}
             variant="outlined"
             margin="normal"
             fullWidth
@@ -106,7 +108,7 @@ const CompanyContactForm: React.FC<CompanyContactFormProps> = ({
           <Field
             component={TextField}
             name="betriebApNachname"
-            label="Nachname"
+            label={t("onboarding.companyContact.lastName")}
             variant="outlined"
             margin="normal"
             fullWidth
@@ -120,7 +122,7 @@ const CompanyContactForm: React.FC<CompanyContactFormProps> = ({
           <Field
             component={TextField}
             name="betriebApTelefon1"
-            label="Telefon"
+            label={t("onboarding.companyContact.phone")}
             variant="outlined"
             margin="normal"
             fullWidth

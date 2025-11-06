@@ -2,6 +2,11 @@
 
 import React from "react";
 
+import {
+  StepDef,
+  StepName,
+  getStepIdByName,
+} from "@/constants/studentSteps.constants";
 import { useAppSelector } from "@/store/store";
 import EditIcon from "@mui/icons-material/Edit";
 import {
@@ -50,11 +55,32 @@ const DataRow = styled(Box)(({ theme }) => ({
 
 interface SummaryFormProps {
   onGoToStep?: (step: number) => void;
+  activeSteps: StepDef[];
 }
 
-const SummaryForm: React.FC<SummaryFormProps> = ({ onGoToStep }) => {
+const SummaryForm: React.FC<SummaryFormProps> = ({
+  onGoToStep,
+  activeSteps,
+}) => {
   const { t } = useTranslation();
   const studentData = useAppSelector((state) => state.student.data);
+
+  /**
+   * Handles edit button clicks by mapping semantic step names to step IDs
+   * Only navigates if the step is currently active
+   */
+  const handleEditStep = (stepName: StepName) => {
+    if (!onGoToStep) return;
+
+    const stepId = getStepIdByName(stepName, activeSteps);
+    if (stepId !== null) {
+      onGoToStep(stepId);
+    } else {
+      console.warn(
+        `Cannot navigate to ${stepName}: step is not active or does not exist`,
+      );
+    }
+  };
 
   const renderDataRow = (label: string, value: string | undefined) => {
     if (!value) return null;
@@ -75,70 +101,55 @@ const SummaryForm: React.FC<SummaryFormProps> = ({ onGoToStep }) => {
   return (
     <SummaryContainer>
       <Typography variant="h5" gutterBottom>
-        {t("onboarding.summary.title", "Zusammenfassung")}
+        {t("onboarding.summary.title")}
       </Typography>
       <Typography variant="body2" color="text.secondary" gutterBottom>
-        {t(
-          "onboarding.summary.description",
-          "Bitte überprüfen Sie Ihre Angaben vor der Übermittlung.",
-        )}
+        {t("onboarding.summary.description")}
       </Typography>
 
       {/* General Information */}
       <SectionPaper elevation={1}>
         <SectionHeader>
           <Typography variant="h6">
-            {t("onboarding.summary.generalInfo", "Allgemeine Daten")}
+            {t("onboarding.summary.generalInfo")}
           </Typography>
           {onGoToStep && (
             <IconButton
               size="small"
-              onClick={() => onGoToStep(1)}
-              title={t("general.Edit", "Bearbeiten")}
+              onClick={() => handleEditStep(StepName.GENERAL)}
+              title={t("general.Edit")}
             >
               <EditIcon fontSize="small" />
             </IconButton>
           )}
         </SectionHeader>
         <Divider />
+        {renderDataRow(t("onboarding.general.firstName"), studentData.vorname)}
+        {renderDataRow(t("onboarding.general.lastName"), studentData.nachname)}
         {renderDataRow(
-          t("onboarding.general.firstName", "Vorname"),
-          studentData.vorname,
-        )}
-        {renderDataRow(
-          t("onboarding.general.lastName", "Nachname"),
-          studentData.nachname,
-        )}
-        {renderDataRow(
-          t("onboarding.general.birthName", "Geburtsname"),
+          t("onboarding.general.birthName"),
           studentData.geburtsname,
         )}
+        {renderDataRow(t("onboarding.general.gender"), studentData.geschlecht)}
         {renderDataRow(
-          t("onboarding.general.gender", "Geschlecht"),
-          studentData.geschlecht,
-        )}
-        {renderDataRow(
-          t("onboarding.general.birthDate", "Geburtsdatum"),
+          t("onboarding.general.birthDate"),
           studentData.geburtsdatum,
         )}
         {renderDataRow(
-          t("onboarding.general.birthPlace", "Geburtsort"),
+          t("onboarding.general.birthPlace"),
           studentData.geburtsort,
         )}
         {renderDataRow(
-          t("onboarding.general.birthCountry", "Geburtsland"),
+          t("onboarding.general.birthCountry"),
           studentData.geburtsland,
         )}
+        {renderDataRow(t("onboarding.general.religion"), studentData.religion)}
         {renderDataRow(
-          t("onboarding.general.religion", "Religion"),
-          studentData.religion,
-        )}
-        {renderDataRow(
-          t("onboarding.general.nationality1", "Staatsangehörigkeit 1"),
+          t("onboarding.general.nationality1"),
           studentData.staatsangehoerigkeit1,
         )}
         {renderDataRow(
-          t("onboarding.general.nationality2", "Staatsangehörigkeit 2"),
+          t("onboarding.general.nationality2"),
           studentData.staatsangehoerigkeit2,
         )}
       </SectionPaper>
@@ -147,13 +158,13 @@ const SummaryForm: React.FC<SummaryFormProps> = ({ onGoToStep }) => {
       <SectionPaper elevation={1}>
         <SectionHeader>
           <Typography variant="h6">
-            {t("onboarding.summary.address", "Adresse und Kontakt")}
+            {t("onboarding.summary.address")}
           </Typography>
           {onGoToStep && (
             <IconButton
               size="small"
-              onClick={() => onGoToStep(3)}
-              title={t("general.Edit", "Bearbeiten")}
+              onClick={() => handleEditStep(StepName.ADDRESS)}
+              title={t("general.Edit")}
             >
               <EditIcon fontSize="small" />
             </IconButton>
@@ -161,25 +172,16 @@ const SummaryForm: React.FC<SummaryFormProps> = ({ onGoToStep }) => {
         </SectionHeader>
         <Divider />
         {renderDataRow(
-          t("onboarding.address.street", "Straße"),
+          t("onboarding.address.street"),
           `${studentData.straße} ${studentData.hausNr}`,
         )}
         {renderDataRow(
-          t("onboarding.address.city", "Ort"),
+          t("onboarding.address.city"),
           `${studentData.postleitzahl} ${studentData.ort}`,
         )}
-        {renderDataRow(
-          t("onboarding.address.mobile", "Mobilnummer"),
-          studentData.mobil,
-        )}
-        {renderDataRow(
-          t("onboarding.address.phone", "Telefon"),
-          studentData.telefon1,
-        )}
-        {renderDataRow(
-          t("onboarding.address.email", "E-Mail"),
-          studentData.email,
-        )}
+        {renderDataRow(t("onboarding.address.mobile"), studentData.mobil)}
+        {renderDataRow(t("onboarding.address.phone"), studentData.telefon1)}
+        {renderDataRow(t("onboarding.address.email"), studentData.email)}
       </SectionPaper>
 
       {/* Contact Person */}
@@ -187,13 +189,13 @@ const SummaryForm: React.FC<SummaryFormProps> = ({ onGoToStep }) => {
         <SectionPaper elevation={1}>
           <SectionHeader>
             <Typography variant="h6">
-              {t("onboarding.summary.contactPerson", "Ansprechpartner")}
+              {t("onboarding.summary.contactPerson")}
             </Typography>
             {onGoToStep && (
               <IconButton
                 size="small"
-                onClick={() => onGoToStep(4)}
-                title={t("general.Edit", "Bearbeiten")}
+                onClick={() => handleEditStep(StepName.PARENTS)}
+                title={t("general.Edit")}
               >
                 <EditIcon fontSize="small" />
               </IconButton>
@@ -201,23 +203,23 @@ const SummaryForm: React.FC<SummaryFormProps> = ({ onGoToStep }) => {
           </SectionHeader>
           <Divider />
           {renderDataRow(
-            t("onboarding.parents.type", "Art"),
+            t("onboarding.parents.type"),
             studentData.ansprechpartner1Art,
           )}
           {renderDataRow(
-            t("onboarding.parents.name", "Name"),
+            t("onboarding.parents.name"),
             `${studentData.ansprechpartner1Vorname} ${studentData.ansprechpartner1Nachname}`,
           )}
           {renderDataRow(
-            t("onboarding.parents.address", "Adresse"),
+            t("onboarding.parents.address"),
             `${studentData.ansprechpartner1Straße} ${studentData.ansprechpartner1HausNr}, ${studentData.ansprechpartner1Plz} ${studentData.ansprechpartner1Ort}`,
           )}
           {renderDataRow(
-            t("onboarding.parents.mobile", "Mobilnummer"),
+            t("onboarding.parents.mobile"),
             studentData.ansprechpartner1Mobil,
           )}
           {renderDataRow(
-            t("onboarding.parents.phone", "Telefon"),
+            t("onboarding.parents.phone"),
             studentData.ansprechpartner1Telefon1,
           )}
         </SectionPaper>
@@ -228,13 +230,13 @@ const SummaryForm: React.FC<SummaryFormProps> = ({ onGoToStep }) => {
         <SectionPaper elevation={1}>
           <SectionHeader>
             <Typography variant="h6">
-              {t("onboarding.summary.education", "Vorbildung")}
+              {t("onboarding.summary.education")}
             </Typography>
             {onGoToStep && (
               <IconButton
                 size="small"
-                onClick={() => onGoToStep(5)}
-                title={t("general.Edit", "Bearbeiten")}
+                onClick={() => handleEditStep(StepName.PRE_EDUCATION)}
+                title={t("general.Edit")}
               >
                 <EditIcon fontSize="small" />
               </IconButton>
@@ -242,19 +244,19 @@ const SummaryForm: React.FC<SummaryFormProps> = ({ onGoToStep }) => {
           </SectionHeader>
           <Divider />
           {renderDataRow(
-            t("onboarding.preEducation.previousSchool", "Vorherige Schule"),
+            t("onboarding.preEducation.previousSchool"),
             studentData.vorhergehendeSchule,
           )}
           {renderDataRow(
-            t("onboarding.preEducation.schoolType", "Schulform"),
+            t("onboarding.preEducation.schoolType"),
             studentData.vorhergehendeSchulform,
           )}
           {renderDataRow(
-            t("onboarding.preEducation.level", "Stufe"),
+            t("onboarding.preEducation.level"),
             studentData.vorhergehendeStufe,
           )}
           {renderDataRow(
-            t("onboarding.preEducation.degrees", "Abschlüsse"),
+            t("onboarding.preEducation.degrees"),
             studentData.abschlüsse,
           )}
         </SectionPaper>
@@ -265,13 +267,13 @@ const SummaryForm: React.FC<SummaryFormProps> = ({ onGoToStep }) => {
         <SectionPaper elevation={1}>
           <SectionHeader>
             <Typography variant="h6">
-              {t("onboarding.summary.training", "Ausbildung")}
+              {t("onboarding.summary.training")}
             </Typography>
             {onGoToStep && (
               <IconButton
                 size="small"
-                onClick={() => onGoToStep(6)}
-                title={t("general.Edit", "Bearbeiten")}
+                onClick={() => handleEditStep(StepName.TRAINING)}
+                title={t("general.Edit")}
               >
                 <EditIcon fontSize="small" />
               </IconButton>
@@ -279,15 +281,15 @@ const SummaryForm: React.FC<SummaryFormProps> = ({ onGoToStep }) => {
           </SectionHeader>
           <Divider />
           {renderDataRow(
-            t("onboarding.training.profession", "Beruf"),
+            t("onboarding.training.profession"),
             studentData.beruf,
           )}
           {renderDataRow(
-            t("onboarding.training.startDate", "Ausbildungsbeginn"),
+            t("onboarding.training.startDate"),
             studentData.betriebEintritt,
           )}
           {renderDataRow(
-            t("onboarding.training.company", "Betrieb"),
+            t("onboarding.training.company"),
             studentData.betriebName,
           )}
         </SectionPaper>

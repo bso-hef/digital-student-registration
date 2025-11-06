@@ -174,11 +174,11 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
       {({ setFieldValue, values, setFieldTouched }) => (
         <StyledForm>
           <Typography variant="h6" gutterBottom>
-            {t("onboarding.general.title", "Allgemeine Daten")}
+            {t("onboarding.general.title")}
           </Typography>
 
           <Typography variant="subtitle1" sx={{ mt: 2 }}>
-            {t("onboarding.general.personalInfo", "Persönliche Daten")}
+            {t("onboarding.general.personalInfo")}
           </Typography>
 
           <FormSection>
@@ -186,7 +186,7 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
             <Field
               component={TextField}
               name="vorname"
-              label={t("onboarding.general.firstName", "Vorname")}
+              label={t("onboarding.general.firstName")}
               variant="outlined"
               fullWidth
               required
@@ -196,7 +196,7 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
             <Field
               component={TextField}
               name="nachname"
-              label={t("onboarding.general.lastName", "Nachname")}
+              label={t("onboarding.general.lastName")}
               variant="outlined"
               fullWidth
               required
@@ -208,7 +208,7 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
             <Field
               component={TextField}
               name="geburtsname"
-              label={t("onboarding.general.birthName", "Geburtsname")}
+              label={t("onboarding.general.birthName")}
               variant="outlined"
               fullWidth
             />
@@ -217,7 +217,7 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
             <Field
               component={Select}
               name="geschlecht"
-              label={t("onboarding.general.gender", "Geschlecht")}
+              label={t("onboarding.general.gender")}
               variant="outlined"
               fullWidth
               required
@@ -231,7 +231,7 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
           </FormSection>
 
           <Typography variant="subtitle1" sx={{ mt: 2 }}>
-            {t("onboarding.general.birthInfo", "Geburtsinformationen")}
+            {t("onboarding.general.birthInfo")}
           </Typography>
 
           <FormSection>
@@ -239,7 +239,7 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
             <Field
               component={DatePicker}
               name="geburtsdatum"
-              label={t("onboarding.general.birthDate", "Geburtsdatum")}
+              label={t("onboarding.general.birthDate")}
               slotProps={{
                 textField: {
                   variant: "outlined",
@@ -253,7 +253,7 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
             <Field
               component={TextField}
               name="geburtsort"
-              label={t("onboarding.general.birthPlace", "Geburtsort")}
+              label={t("onboarding.general.birthPlace")}
               variant="outlined"
               fullWidth
               required
@@ -279,7 +279,7 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
             renderInput={(params) => (
               <MUITextField
                 {...params}
-                label={t("onboarding.general.birthCountry", "Geburtsland")}
+                label={t("onboarding.general.birthCountry")}
                 variant="outlined"
                 fullWidth
                 required
@@ -288,7 +288,7 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
           />
 
           <Typography variant="subtitle1" sx={{ mt: 2 }}>
-            {t("onboarding.general.additionalInfo", "Weitere Angaben")}
+            {t("onboarding.general.additionalInfo")}
           </Typography>
 
           <FormSection>
@@ -296,12 +296,12 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
             <Field
               component={Select}
               name="religion"
-              label={t("onboarding.general.religion", "Religion")}
+              label={t("onboarding.general.religion")}
               variant="outlined"
               fullWidth
             >
               <MenuItem value="">
-                <em>{t("general.none", "Keine Angabe")}</em>
+                <em>{t("general.none")}</em>
               </MenuItem>
               {getEnabledOptions(religionOptions).map((option) => (
                 <MenuItem key={option.value} value={option.value}>

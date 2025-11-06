@@ -109,7 +109,7 @@ const AddressForm: React.FC<AddressFormProps> = ({
       {() => (
         <StyledForm>
           <Typography variant="h6" gutterBottom>
-            {t("onboarding.address.title", "Adresse und Kontaktdaten")}
+            {t("onboarding.address.title")}
           </Typography>
 
           <FormSection>
@@ -117,7 +117,7 @@ const AddressForm: React.FC<AddressFormProps> = ({
             <Field
               component={TextField}
               name="straße"
-              label={t("onboarding.address.street", "Straße")}
+              label={t("onboarding.address.street")}
               variant="outlined"
               fullWidth
               required
@@ -127,7 +127,7 @@ const AddressForm: React.FC<AddressFormProps> = ({
             <Field
               component={TextField}
               name="hausnr"
-              label={t("onboarding.address.houseNumber", "Hausnummer")}
+              label={t("onboarding.address.houseNumber")}
               variant="outlined"
               fullWidth
               required
@@ -139,7 +139,7 @@ const AddressForm: React.FC<AddressFormProps> = ({
             <Field
               component={TextField}
               name="plz"
-              label={t("onboarding.address.postalCode", "Postleitzahl")}
+              label={t("onboarding.address.postalCode")}
               variant="outlined"
               fullWidth
               required
@@ -149,7 +149,7 @@ const AddressForm: React.FC<AddressFormProps> = ({
             <Field
               component={TextField}
               name="ort"
-              label={t("onboarding.address.city", "Ort")}
+              label={t("onboarding.address.city")}
               variant="outlined"
               fullWidth
               required
@@ -157,7 +157,7 @@ const AddressForm: React.FC<AddressFormProps> = ({
           </FormSection>
 
           <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
-            {t("onboarding.address.contactTitle", "Kontaktinformationen")}
+            {t("onboarding.address.contactTitle")}
           </Typography>
 
           <FormSection>
@@ -165,7 +165,7 @@ const AddressForm: React.FC<AddressFormProps> = ({
             <Field
               component={TextField}
               name="mobil"
-              label={t("onboarding.address.mobile", "Mobilnummer")}
+              label={t("onboarding.address.mobile")}
               variant="outlined"
               fullWidth
               placeholder="+49 123 456789"
@@ -175,7 +175,7 @@ const AddressForm: React.FC<AddressFormProps> = ({
             <Field
               component={TextField}
               name="tel"
-              label={t("onboarding.address.phone", "Telefon (Festnetz)")}
+              label={t("onboarding.address.phone")}
               variant="outlined"
               fullWidth
               placeholder="+49 123 456789"
@@ -187,7 +187,7 @@ const AddressForm: React.FC<AddressFormProps> = ({
             <Field
               component={TextField}
               name="mail"
-              label={t("onboarding.address.email", "E-Mail-Adresse")}
+              label={t("onboarding.address.email")}
               type="email"
               variant="outlined"
               fullWidth

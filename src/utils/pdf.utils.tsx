@@ -42,7 +42,7 @@ export async function buildPdfForStudent(
 
   // Header
   doc.setFontSize(11);
-  doc.setFont("helvetica", "bold");
+  doc.setFont("helvetica");
   doc.text("Onboarding-Wizard", pad, pad + 7);
 
   // URL + QR
@@ -61,13 +61,13 @@ export async function buildPdfForStudent(
   const textX = qrX + qrSize + 8;
   const textMaxW = pageW - pad - textX;
 
-  doc.setFont("helvetica", "bold");
+  doc.setFont("helvetica");
   doc.setFontSize(18);
   doc.text(`${s.firstName} ${s.lastName}`, textX, qrY + 6, {
     maxWidth: textMaxW,
   });
 
-  doc.setFont("helvetica", "normal");
+  doc.setFont("helvetica");
   doc.setFontSize(12);
   let ty = qrY + 14;
 

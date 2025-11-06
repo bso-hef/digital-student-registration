@@ -111,10 +111,7 @@ const OriginForm: React.FC<OriginFormProps> = ({
                   component={TextField}
                   {...params}
                   name="herkunftsland"
-                  label={t(
-                    "onboarding.origin.countryOfOrigin",
-                    "Herkunftsland",
-                  )}
+                  label={t("onboarding.origin.countryOfOrigin")}
                   variant="outlined"
                   margin="normal"
                   error={touched.herkunftsland && Boolean(errors.herkunftsland)}

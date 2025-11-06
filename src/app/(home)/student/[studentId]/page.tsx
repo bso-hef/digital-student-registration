@@ -53,79 +53,44 @@ function getErrorDetails(
       case OnboardingErrorCode.INVALID_STUDENT_ID:
         return {
           severity: "error" as const,
-          title: t(
-            "onboarding.error.invalidStudentId.title",
-            "Ungültige Schüler-ID",
-          ),
-          message: t(
-            "onboarding.error.invalidStudentId.message",
-            "Die angegebene Schüler-ID hat ein ungültiges Format. Bitte überprüfen Sie die URL.",
-          ),
+          title: t("onboarding.error.invalidStudentId.title"),
+          message: t("onboarding.error.invalidStudentId.message"),
         };
 
       case OnboardingErrorCode.STUDENT_NOT_FOUND:
         return {
           severity: "error" as const,
-          title: t(
-            "onboarding.error.studentNotFound.title",
-            "Schüler nicht gefunden",
-          ),
-          message: t(
-            "onboarding.error.studentNotFound.message",
-            "Es wurde kein Schüler mit dieser ID gefunden. Bitte kontaktieren Sie den Administrator.",
-          ),
+          title: t("onboarding.error.studentNotFound.title"),
+          message: t("onboarding.error.studentNotFound.message"),
         };
 
       case OnboardingErrorCode.NO_CLASS_ASSIGNED:
         return {
           severity: "warning" as const,
-          title: t(
-            "onboarding.error.noClassAssigned.title",
-            "Keine Klasse zugewiesen",
-          ),
-          message: t(
-            "onboarding.error.noClassAssigned.message",
-            "Sie sind noch keiner Klasse zugeordnet. Bitte wenden Sie sich an den Administrator, um einer Klasse zugewiesen zu werden.",
-          ),
+          title: t("onboarding.error.noClassAssigned.title"),
+          message: t("onboarding.error.noClassAssigned.message"),
         };
 
       case OnboardingErrorCode.CLASS_INACTIVE:
         return {
           severity: "warning" as const,
-          title: t(
-            "onboarding.error.classInactive.title",
-            "Klasse nicht aktiv",
-          ),
-          message: t(
-            "onboarding.error.classInactive.message",
-            "Die Ihnen zugewiesene Klasse ist derzeit nicht aktiv. Bitte kontaktieren Sie den Administrator.",
-          ),
+          title: t("onboarding.error.classInactive.title"),
+          message: t("onboarding.error.classInactive.message"),
         };
 
       case OnboardingErrorCode.ALREADY_ONBOARDED:
         return {
           severity: "info" as const,
-          title: t(
-            "onboarding.error.alreadyOnboarded.title",
-            "Einschreibung bereits abgeschlossen",
-          ),
-          message: t(
-            "onboarding.error.alreadyOnboarded.message",
-            "Sie haben die Einschreibung bereits abgeschlossen. Wenn Sie Änderungen vornehmen müssen, wenden Sie sich bitte an den Administrator.",
-          ),
+          title: t("onboarding.error.alreadyOnboarded.title"),
+          message: t("onboarding.error.alreadyOnboarded.message"),
         };
 
       default:
         // Fallback for unknown validation errors
         return {
           severity: "error" as const,
-          title: t("onboarding.error.generic.title", "Fehler beim Laden"),
-          message:
-            error.message ||
-            t(
-              "onboarding.error.generic.message",
-              "Die Schülerdaten konnten nicht geladen werden. Bitte überprüfen Sie die URL oder kontaktieren Sie den Administrator.",
-            ),
+          title: t("onboarding.error.generic.title"),
+          message: error.message || t("onboarding.error.generic.message"),
         };
     }
   }
@@ -133,14 +98,11 @@ function getErrorDetails(
   // Fallback for generic errors
   return {
     severity: "error" as const,
-    title: t("onboarding.error.generic.title", "Fehler beim Laden"),
+    title: t("onboarding.error.generic.title"),
     message:
       error instanceof Error
         ? error.message
-        : t(
-            "onboarding.error.generic.message",
-            "Die Schülerdaten konnten nicht geladen werden. Bitte überprüfen Sie die URL oder kontaktieren Sie den Administrator.",
-          ),
+        : t("onboarding.error.generic.message"),
   };
 }
 
@@ -163,14 +125,9 @@ const StudentId = () => {
       <Wrapper>
         <LoadingContainer>
           <CircularProgress size={60} />
-          <Typography variant="h6">
-            {t("onboarding.loadingProfile", "Loading your student profile...")}
-          </Typography>
+          <Typography variant="h6">{t("onboarding.loadingProfile")}</Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-            {t(
-              "onboarding.loadingDetails",
-              "We're retrieving your information from our database",
-            )}
+            {t("onboarding.loadingDetails")}
           </Typography>
         </LoadingContainer>
       </Wrapper>
@@ -200,7 +157,7 @@ const StudentId = () => {
             </Typography>
             <GeneralButton
               onAction={handleRetry}
-              label={t("onboarding.error.retry", "Erneut versuchen")}
+              label={t("onboarding.error.retry")}
               variant="contained"
               isPrimary={true}
             />

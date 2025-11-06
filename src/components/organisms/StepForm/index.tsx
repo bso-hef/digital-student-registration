@@ -17,6 +17,7 @@ import WelcomeForm from "@/components/organisms/forms/WelcomeForm";
 import {
   getActiveSteps,
   getStudentSteps,
+  isStepActive,
 } from "@/constants/studentSteps.constants";
 import {
   saveOnboardingProgress,
@@ -161,6 +162,32 @@ const StepForm = ({ studentId }: StepFormProps) => {
     return targetStep === nextStepId;
   };
 
+  /**
+   * Safe navigation function that validates step is active before navigating
+   * Used by SummaryForm edit buttons to prevent navigation to hidden steps
+   * @param targetStepId - The step ID to navigate to
+   */
+  const navigateToStepSafely = (targetStepId: number) => {
+    // Check if the target step is in the active steps array
+    if (!isStepActive(targetStepId, activeSteps)) {
+      console.warn(
+        `Cannot navigate to step ${targetStepId}: step is not active`,
+      );
+      return;
+    }
+
+    // Additional validation: can only go to previous steps or next step
+    if (!canNavigateToStep(targetStepId)) {
+      console.warn(
+        `Cannot navigate to step ${targetStepId}: navigation validation failed`,
+      );
+      return;
+    }
+
+    // Navigation is valid, dispatch the action
+    dispatch(setCurrentStudentOnboardingStep(targetStepId));
+  };
+
   // Form submit handler passed to forms
   const handleFormSubmit = async () => {
     setIsSubmitting(true);
@@ -258,9 +285,8 @@ const StepForm = ({ studentId }: StepFormProps) => {
       case 8:
         return (
           <SummaryForm
-            onGoToStep={(step) =>
-              dispatch(setCurrentStudentOnboardingStep(step))
-            }
+            onGoToStep={navigateToStepSafely}
+            activeSteps={activeSteps}
           />
         );
       case 9:
@@ -341,8 +367,8 @@ const StepForm = ({ studentId }: StepFormProps) => {
           <GeneralButton
             label={
               isSubmitting || isSaving
-                ? t("general.Submitting", "Wird übermittelt...")
-                : t("general.Next", "Weiter")
+                ? t("general.Submitting")
+                : t("general.Next")
             }
             isPrimary={true}
             fullHeight={false}
@@ -374,11 +400,7 @@ const StepForm = ({ studentId }: StepFormProps) => {
           />
 
           <GeneralButton
-            label={
-              isSaving
-                ? t("general.Submitting", "Wird übermittelt...")
-                : t("general.Submit", "Absenden")
-            }
+            label={isSaving ? t("general.Submitting") : t("general.Submit")}
             isPrimary={true}
             fullHeight={false}
             fullWidth={false}

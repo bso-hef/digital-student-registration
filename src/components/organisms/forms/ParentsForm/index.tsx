@@ -9,6 +9,7 @@ import { MenuItem, styled } from "@mui/material";
 import { FormikProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import { Select, TextField } from "formik-mui";
+import { useTranslation } from "react-i18next";
 
 const StyledForm = styled(Form)(() => ({
   display: "flex",
@@ -44,6 +45,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
   formikRef,
   onValidationChange,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { contactPersonTypeOptions, getEnabledOptions, loading } =
     useOnboardingSettings();
@@ -87,7 +89,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
           <Field
             component={Select}
             name="ansprechpartner1Art"
-            label="Ansprechpartner Art"
+            label={t("onboarding.parents.contactType")}
             variant="outlined"
             margin="normal"
             fullWidth
@@ -106,7 +108,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
           <Field
             component={TextField}
             name="ansprechpartner1Vorname"
-            label="Vorname"
+            label={t("onboarding.parents.firstName")}
             variant="outlined"
             margin="normal"
             fullWidth
@@ -123,7 +125,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
           <Field
             component={TextField}
             name="ansprechpartner1Nachname"
-            label="Nachname"
+            label={t("onboarding.parents.lastName")}
             variant="outlined"
             margin="normal"
             fullWidth
@@ -141,7 +143,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
           <Field
             component={TextField}
             name="ansprechpartner1Plz"
-            label="PLZ"
+            label={t("onboarding.parents.postalCode")}
             variant="outlined"
             margin="normal"
             fullWidth
@@ -157,7 +159,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
           <Field
             component={TextField}
             name="ansprechpartner1Ort"
-            label="Ort"
+            label={t("onboarding.parents.city")}
             variant="outlined"
             margin="normal"
             fullWidth
@@ -173,7 +175,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
           <Field
             component={TextField}
             name="ansprechpartner1Straße"
-            label="Straße"
+            label={t("onboarding.parents.street")}
             variant="outlined"
             margin="normal"
             fullWidth
@@ -190,7 +192,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
           <Field
             component={TextField}
             name="ansprechpartner1HausNr"
-            label="Hausnummer"
+            label={t("onboarding.parents.houseNumber")}
             variant="outlined"
             margin="normal"
             fullWidth
@@ -207,7 +209,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
           <Field
             component={TextField}
             name="ansprechpartner1Mobil"
-            label="Mobilnummer"
+            label={t("onboarding.parents.mobileNumber")}
             variant="outlined"
             margin="normal"
             fullWidth
@@ -224,7 +226,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
           <Field
             component={TextField}
             name="ansprechpartner1Telefon1"
-            label="Telefon"
+            label={t("onboarding.parents.phoneNumber")}
             variant="outlined"
             margin="normal"
             fullWidth

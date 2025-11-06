@@ -50,21 +50,15 @@ const FormCompletion = () => {
       </IconContainer>
 
       <Typography variant="h3" gutterBottom sx={{ fontWeight: 600 }}>
-        {t("onboarding.completion.title", "Einschreibung abgeschlossen!")}
+        {t("onboarding.completion.title")}
       </Typography>
 
       <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
-        {t(
-          "onboarding.completion.subtitle",
-          "Ihre Daten wurden erfolgreich übermittelt.",
-        )}
+        {t("onboarding.completion.subtitle")}
       </Typography>
 
       <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-        {t(
-          "onboarding.completion.message",
-          "Vielen Dank für die Einschreibung. Sie erhalten in Kürze eine Bestätigungsmail mit weiteren Informationen. Bei Fragen können Sie sich jederzeit an das Sekretariat wenden.",
-        )}
+        {t("onboarding.completion.message")}
       </Typography>
 
       <ActionsContainer>
@@ -74,14 +68,11 @@ const FormCompletion = () => {
           onClick={handleGoHome}
           sx={{ textTransform: "none", fontSize: "16px", padding: "12px 32px" }}
         >
-          {t("onboarding.completion.backToHome", "Zur Startseite")}
+          {t("onboarding.completion.backToHome")}
         </Button>
 
         <Typography variant="caption" color="text.secondary" sx={{ mt: 2 }}>
-          {t(
-            "onboarding.completion.footer",
-            "Sie können dieses Fenster jetzt schließen.",
-          )}
+          {t("onboarding.completion.footer")}
         </Typography>
       </ActionsContainer>
     </CompletionContainer>

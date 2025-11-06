@@ -32,7 +32,10 @@
     "All": "Alle",
     "generatePassword": "Sicheres Passwort generieren",
     "of": "von",
-    "none": "Keine Angabe"
+    "none": "Keine Angabe",
+    "loadingSettings": "Lade Einstellungen...",
+    "Submit": "Absenden",
+    "Submitting": "Wird übermittelt..."
   },
   "error": {
     "Page not found": "Seite nicht gefunden",
@@ -261,6 +264,87 @@
       "yearOfImmigration": "Zuzugsjahr",
       "familyLanguage": "Familiensprache"
     },
+    "address": {
+      "title": "Adresse und Kontaktdaten",
+      "street": "Straße",
+      "houseNumber": "Hausnummer",
+      "postalCode": "Postleitzahl",
+      "city": "Ort",
+      "contactTitle": "Kontaktinformationen",
+      "mobile": "Mobilnummer",
+      "phone": "Telefon (Festnetz)",
+      "email": "E-Mail-Adresse"
+    },
+    "parents": {
+      "type": "Art",
+      "name": "Name",
+      "address": "Adresse",
+      "mobile": "Mobilnummer",
+      "phone": "Telefon",
+      "contactType": "Ansprechpartner Art",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "postalCode": "PLZ",
+      "city": "Ort",
+      "street": "Straße",
+      "houseNumber": "Hausnummer",
+      "mobileNumber": "Mobilnummer",
+      "phoneNumber": "Telefon"
+    },
+    "preEducation": {
+      "previousSchool": "Vorherige Schule",
+      "schoolType": "Schulform",
+      "level": "Stufe",
+      "degrees": "Abschlüsse",
+      "previousSchoolName": "Vorhergehende Schule",
+      "previousLevel": "Vorhergehende Stufe",
+      "previousSchoolType": "Vorhergehende Schulform",
+      "qualifications": "Abschlüsse"
+    },
+    "training": {
+      "profession": "Beruf",
+      "startDate": "Ausbildungsbeginn",
+      "company": "Betrieb",
+      "companyStartDate": "Betriebseintritt",
+      "companyName": "Betriebsname",
+      "street": "Straße",
+      "houseNumber": "Hausnummer",
+      "postalCode": "PLZ",
+      "city": "Ort",
+      "phone": "Telefon",
+      "email": "E-Mail"
+    },
+    "companyContact": {
+      "salutation": "Anrede",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "phone": "Telefon"
+    },
+    "welcome": {
+      "title": "Anmeldung der BSO",
+      "subtitle": "Schließen Sie in 10 Schritten ihre Anmeldung ab.",
+      "paragraph1": "In den nachfolgenden Schritten wirst du durch deine Schuleinschreibung geführt.",
+      "paragraph2": "Dort werden dir deine eigenen Daten angezeigt, und du kannst einfach veraltete oder fehlerhaft Daten bearbeiten.",
+      "paragraph3": "Solltest du bemerken, dass du etwas versehentlich geändert hast, kannst du einfach zurück gehen und es erneut ändern.",
+      "paragraph4": "Solltest du dennoch Hilfe brauchen, wende dich einfach an deinen Lehrer."
+    },
+    "summary": {
+      "title": "Zusammenfassung",
+      "description": "Bitte überprüfen Sie Ihre Angaben vor der Übermittlung.",
+      "generalInfo": "Allgemeine Daten",
+      "address": "Adresse und Kontakt",
+      "contactPerson": "Ansprechpartner",
+      "education": "Vorbildung",
+      "training": "Ausbildung"
+    },
+    "completion": {
+      "title": "Einschreibung abgeschlossen!",
+      "subtitle": "Ihre Daten wurden erfolgreich übermittelt.",
+      "message": "Vielen Dank für die Einschreibung. Ihre Daten wurden erfolgreich in unserem System gespeichert. Sie erhalten weitere Informationen von Ihrer Schule.",
+      "backToHome": "Zur Startseite",
+      "footer": "Sie können dieses Fenster jetzt schließen."
+    },
+    "loadingProfile": "Lade Schülerprofil...",
     "error": {
       "invalidStudentId": {
         "title": "Ungültige Schüler-ID",

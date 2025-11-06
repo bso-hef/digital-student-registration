@@ -11,6 +11,7 @@ import { MenuItem, styled } from "@mui/material";
 import { FormikProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import { Select, TextField } from "formik-mui";
+import { useTranslation } from "react-i18next";
 
 const StyledForm = styled(Form)(() => ({
   display: "flex",
@@ -41,6 +42,7 @@ const PreEducationForm: React.FC<PreEducationFormProps> = ({
   formikRef,
   onValidationChange,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const {
     schoolLevelOptions,
@@ -112,7 +114,7 @@ const PreEducationForm: React.FC<PreEducationFormProps> = ({
           <Field
             component={TextField}
             name="vorhergehendeSchule"
-            label="Vorhergehende Schule"
+            label={t("onboarding.preEducation.previousSchoolName")}
             variant="outlined"
             margin="normal"
             fullWidth
@@ -128,7 +130,7 @@ const PreEducationForm: React.FC<PreEducationFormProps> = ({
           <Field
             component={Select}
             name="vorhergehendeStufe"
-            label="Vorhergehende Stufe"
+            label={t("onboarding.preEducation.previousLevel")}
             variant="outlined"
             margin="normal"
             fullWidth
@@ -147,7 +149,7 @@ const PreEducationForm: React.FC<PreEducationFormProps> = ({
           <Field
             component={Select}
             name="vorhergehendeSchulform"
-            label="Vorhergehende Schulform"
+            label={t("onboarding.preEducation.previousSchoolType")}
             variant="outlined"
             margin="normal"
             fullWidth
@@ -168,7 +170,7 @@ const PreEducationForm: React.FC<PreEducationFormProps> = ({
             <Field
               component={TextField}
               name="abschluesse"
-              label="Abschlüsse"
+              label={t("onboarding.preEducation.qualifications")}
               variant="outlined"
               margin="normal"
               fullWidth
@@ -179,7 +181,7 @@ const PreEducationForm: React.FC<PreEducationFormProps> = ({
             <Field
               component={Select}
               name="abschluesse"
-              label="Abschlüsse"
+              label={t("onboarding.preEducation.qualifications")}
               variant="outlined"
               margin="normal"
               fullWidth

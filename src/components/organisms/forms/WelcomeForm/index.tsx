@@ -1,5 +1,6 @@
 import CustomTitle from "@/components/atoms/CustomTitle";
 import { Box, Typography, styled } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 const Wrapper = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -22,31 +23,21 @@ const Information = styled(Typography)(({ theme }) => ({
 }));
 
 const WelcomeForm = () => {
+  const { t } = useTranslation();
+
   return (
     <Wrapper>
       <CustomTitle
-        title="Anmeldung der BSO"
-        subTitle="Schließen Sie in 10 Schritten ihre Anmeldung ab."
+        title={t("onboarding.welcome.title")}
+        subTitle={t("onboarding.welcome.subtitle")}
       >
-        <Information>
-          In den nachfolgenden Schritten wirst du nach und nach durch deine
-          Schulanmeldung geführt.
-        </Information>
+        <Information>{t("onboarding.welcome.paragraph1")}</Information>
 
-        <Information>
-          Dort werden dir deine eigenen Daten angezeigt und du kannst veraltete
-          oder falsche Daten einfach abändern.
-        </Information>
+        <Information>{t("onboarding.welcome.paragraph2")}</Information>
 
-        <Information>
-          Solltest du bemerken, dass du etwas versehentlich abgeändert hast,
-          kannst du einfach zurück gehen und diese erneut abändern.
-        </Information>
+        <Information>{t("onboarding.welcome.paragraph3")}</Information>
 
-        <Information>
-          Solltest du dennoch Hilfe brauchen, spreche einfach deinen Lehrer
-          darauf an.
-        </Information>
+        <Information>{t("onboarding.welcome.paragraph4")}</Information>
       </CustomTitle>
     </Wrapper>
   );

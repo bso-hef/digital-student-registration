@@ -32,7 +32,10 @@
     "All": "All",
     "generatePassword": "Generate secure password",
     "of": "of",
-    "none": "None"
+    "none": "None",
+    "loadingSettings": "Loading settings...",
+    "Submit": "Submit",
+    "Submitting": "Submitting..."
   },
   "error": {
     "Page not found": "Page not found",
@@ -261,6 +264,87 @@
       "yearOfImmigration": "Year of Immigration",
       "familyLanguage": "Family Language"
     },
+    "address": {
+      "title": "Address and Contact Information",
+      "street": "Street",
+      "houseNumber": "House Number",
+      "postalCode": "Postal Code",
+      "city": "City",
+      "contactTitle": "Contact Information",
+      "mobile": "Mobile Number",
+      "phone": "Phone (Landline)",
+      "email": "Email Address"
+    },
+    "parents": {
+      "type": "Type",
+      "name": "Name",
+      "address": "Address",
+      "mobile": "Mobile Number",
+      "phone": "Phone",
+      "contactType": "Contact Person Type",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "postalCode": "Postal Code",
+      "city": "City",
+      "street": "Street",
+      "houseNumber": "House Number",
+      "mobileNumber": "Mobile Number",
+      "phoneNumber": "Phone Number"
+    },
+    "preEducation": {
+      "previousSchool": "Previous School",
+      "schoolType": "School Type",
+      "level": "Level",
+      "degrees": "Degrees",
+      "previousSchoolName": "Previous School Name",
+      "previousLevel": "Previous Level",
+      "previousSchoolType": "Previous School Type",
+      "qualifications": "Qualifications"
+    },
+    "training": {
+      "profession": "Profession",
+      "startDate": "Training Start Date",
+      "company": "Company",
+      "companyStartDate": "Company Entry Date",
+      "companyName": "Company Name",
+      "street": "Street",
+      "houseNumber": "House Number",
+      "postalCode": "Postal Code",
+      "city": "City",
+      "phone": "Phone",
+      "email": "Email"
+    },
+    "companyContact": {
+      "salutation": "Salutation",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "phone": "Phone"
+    },
+    "welcome": {
+      "title": "BSO Registration",
+      "subtitle": "Complete your registration in 10 steps.",
+      "paragraph1": "In the following steps, you will be guided through your school registration.",
+      "paragraph2": "Your data will be displayed and you can easily modify outdated or incorrect information.",
+      "paragraph3": "If you notice that you have accidentally changed something, you can simply go back and change it again.",
+      "paragraph4": "If you still need help, simply speak to your teacher."
+    },
+    "summary": {
+      "title": "Summary",
+      "description": "Please review your information before submission.",
+      "generalInfo": "General Information",
+      "address": "Address and Contact",
+      "contactPerson": "Contact Person",
+      "education": "Previous Education",
+      "training": "Vocational Training"
+    },
+    "completion": {
+      "title": "Enrollment Complete!",
+      "subtitle": "Your data has been successfully submitted.",
+      "message": "Thank you for your enrollment. Your data has been successfully saved in our system. You will receive further information from your school.",
+      "backToHome": "Back to Home",
+      "footer": "You can now close this window."
+    },
+    "loadingProfile": "Loading your student profile...",
     "error": {
       "invalidStudentId": {
         "title": "Invalid Student ID",
