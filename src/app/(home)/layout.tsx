@@ -1,8 +1,11 @@
 "use client";
 
+import { useEffect } from "react";
+
 import AccessibilityMenu from "@/components/molecules/AccessibilityMenu";
 import { applicationScrollbar } from "@/utils/styling.utils";
 import { Box, styled } from "@mui/material";
+import { usePathname } from "next/navigation";
 
 const HomeLayoutContainer = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -42,6 +45,15 @@ export default function HomeLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+
+  useEffect(() => {
+    // Only set title for root path, not for /admin or /student routes
+    if (pathname === "/") {
+      document.title = "Home | DSR";
+    }
+  }, [pathname]);
+
   return (
     <HomeLayoutContainer>
       <HomeLayoutBox>{children}</HomeLayoutBox>

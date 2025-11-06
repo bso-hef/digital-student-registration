@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 
 import Logo from "@/components/atoms/Logo";
 import {
@@ -103,6 +103,11 @@ export default function StudentLayout({
     pathname.includes("/student/") && !pathname.endsWith("/student");
 
   const showMobileView = isMobile || isTabletVertical;
+
+  // Set page title for all student routes
+  useEffect(() => {
+    document.title = "Digital Student Onboarding";
+  }, []);
 
   // Calculate active steps based on student data and class
   const activeSteps = useMemo(() => {

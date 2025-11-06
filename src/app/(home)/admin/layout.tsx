@@ -84,7 +84,7 @@ const LoadingContainer = styled(Box)(({ theme }) => ({
   color: theme.palette.text.primary,
 }));
 
-export default function StudentLayout({
+export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -94,6 +94,11 @@ export default function StudentLayout({
   const router = useRouter();
 
   const showMobileView = isMobile || isTabletVertical;
+
+  // Set page title for all admin routes
+  useEffect(() => {
+    document.title = "Admin | DSR";
+  }, []);
 
   // Immediate redirect if not authenticated
   useEffect(() => {
@@ -127,7 +132,7 @@ export default function StudentLayout({
   }
 
   return (
-    <StyledBox className="student-layout">
+    <StyledBox className="admin-layout">
       <AdminLayoutContainer showMobileView={showMobileView}>
         <LeftNavigation />
         <LayoutBox showMobileView={showMobileView}>{children}</LayoutBox>

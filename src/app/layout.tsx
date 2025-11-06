@@ -13,8 +13,11 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Digital Student Registration",
-  description: "A platform for students to register digitally.",
+  title: "Digital Student Onboarding",
+  description: "A platform for students to onboard digitally.",
+  icons: {
+    icon: "/icon-light.png",
+  },
 };
 
 export default async function RootLayout({

@@ -73,6 +73,37 @@ export default function ThemeWrapper({
     }
   }, [dyslexiaFont]);
 
+  // Dynamic favicon switching based on theme
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const updateFavicon = () => {
+      // Use icon-light.png for light mode, icon-dark.png for dark mode
+      const faviconPath = resolvedMode === "dark" ? "/icon-dark.png" : "/icon-light.png";
+
+      // Remove all existing favicon links to avoid conflicts
+      const existingFavicons = document.querySelectorAll<HTMLLinkElement>(
+        "link[rel='icon'], link[rel='shortcut icon']"
+      );
+      existingFavicons.forEach(link => link.remove());
+
+      // Create new favicon link with cache busting
+      const newFavicon = document.createElement("link");
+      newFavicon.rel = "icon";
+      newFavicon.type = "image/png";
+      newFavicon.href = `${faviconPath}?v=${Date.now()}`;
+      document.head.appendChild(newFavicon);
+    };
+
+    // Run immediately on mount and whenever resolvedMode changes
+    updateFavicon();
+
+    // Also run after a small delay to ensure it catches late hydration
+    const timeoutId = setTimeout(updateFavicon, 100);
+
+    return () => clearTimeout(timeoutId);
+  }, [resolvedMode]);
+
   return (
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>{children}</ThemeProvider>
