@@ -146,9 +146,12 @@ const StudentId = () => {
     };
 
     return (
-      <Wrapper>
+      <Wrapper sx={{ borderRadius: "8px" }}>
         <LoadingContainer>
-          <Alert severity={errorDetails.severity} sx={{ maxWidth: 600 }}>
+          <Alert
+            severity={errorDetails.severity}
+            sx={{ maxWidth: 600, borderRadius: "8px" }}
+          >
             <Typography variant="h6" gutterBottom>
               {errorDetails.title}
             </Typography>

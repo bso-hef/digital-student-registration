@@ -324,19 +324,17 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
             />
           </FormSection>
 
-          <FullWidthField>
-            {/* Staatsangehörigkeit 2 */}
-            <Field
-              component={TextField}
-              name="staatsangehoerigkeit2"
-              label={t(
-                "onboarding.general.nationality2",
-                "Staatsangehörigkeit 2 (optional)",
-              )}
-              variant="outlined"
-              fullWidth
-            />
-          </FullWidthField>
+          {/* Staatsangehörigkeit 2 */}
+          <Field
+            component={TextField}
+            name="staatsangehoerigkeit2"
+            label={t(
+              "onboarding.general.nationality2",
+              "Staatsangehörigkeit 2 (optional)",
+            )}
+            variant="outlined"
+            fullWidth
+          />
         </StyledForm>
       )}
     </Formik>
