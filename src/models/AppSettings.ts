@@ -35,6 +35,11 @@ const AgreementItemSchema = new Schema(
       en: { type: String, required: true },
       de: { type: String, required: true },
     },
+    description: {
+      en: { type: String, default: "" },
+      de: { type: String, default: "" },
+    },
+    icon: { type: String, default: "" },
   },
   { _id: false },
 );

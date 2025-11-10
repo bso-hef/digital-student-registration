@@ -5,6 +5,7 @@ import { memo, useMemo, useRef, useState } from "react";
 import CustomTitle from "@/components/atoms/CustomTitle";
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
 import AddressForm from "@/components/organisms/forms/AddressForm";
+import AgreementsForm from "@/components/organisms/forms/AgreementsForm";
 import CompanyContactForm from "@/components/organisms/forms/CompanyContactForm";
 import FormCompletion from "@/components/organisms/forms/FormCompletion";
 import GeneralForm from "@/components/organisms/forms/GeneralForm";
@@ -25,6 +26,7 @@ import {
   submitOnboarding,
 } from "@/store/actions/studentActions";
 import { AppDispatch } from "@/store/store";
+import { StudentData } from "@/types/student";
 import { applicationScrollbar } from "@/utils/styling.utils";
 import DoneRoundedIcon from "@mui/icons-material/DoneRounded";
 import KeyboardArrowLeftRoundedIcon from "@mui/icons-material/KeyboardArrowLeftRounded";
@@ -75,14 +77,14 @@ interface StepFormProps {
 }
 
 const StepForm = ({ studentId }: StepFormProps) => {
-  const { currentStep, data, loading, currentClass } = useSelector(
-    (state: RootState) => state.student,
-  );
+  const { currentStep, previousStep, data, loading, currentClass } =
+    useSelector((state: RootState) => state.student);
   const dispatch: AppDispatch = useDispatch();
   const { t } = useTranslation();
   const [isSaving, setIsSaving] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isConfirmationChecked, setIsConfirmationChecked] = useState(false);
 
   // Ref to access Formik instance of current form
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -91,6 +93,7 @@ const StepForm = ({ studentId }: StepFormProps) => {
   const allSteps = getStudentSteps(t);
 
   // Calculate active steps based on student data and class
+  // This will recalculate in real-time when data.geburtsland or currentClass.isVocational changes
   const activeSteps = useMemo(() => {
     return getActiveSteps(allSteps, data, currentClass);
   }, [allSteps, data, currentClass]);
@@ -103,8 +106,19 @@ const StepForm = ({ studentId }: StepFormProps) => {
     (step) => step.id === currentStep,
   );
 
+  // Helper to save just the step number (called during navigation)
+  const saveStepOnly = async (step: number) => {
+    if (studentId && step > 0 && step < 9) {
+      try {
+        await dispatch(saveOnboardingProgress(studentId, {}, step));
+      } catch (error) {
+        console.error("Failed to save step:", error);
+      }
+    }
+  };
+
   // Auto-save handler
-  const handleAutoSave = async () => {
+  const handleAutoSave = async (formValues?: unknown) => {
     if (!studentId || currentStep === 0 || currentStep === 9) {
       // Skip auto-save for welcome and completion screens
       return;
@@ -112,8 +126,14 @@ const StepForm = ({ studentId }: StepFormProps) => {
 
     setIsSaving(true);
     try {
+      // Merge form values with current Redux data to ensure latest values are saved
+      // This prevents race conditions where Redux state hasn't updated yet
+      const dataToSave = formValues ? { ...data, ...formValues } : data;
+
       // Save form data and current step to database
-      await dispatch(saveOnboardingProgress(studentId, data, currentStep));
+      await dispatch(
+        saveOnboardingProgress(studentId, dataToSave, currentStep),
+      );
     } catch (error) {
       console.error("Auto-save failed:", error);
     } finally {
@@ -181,14 +201,16 @@ const StepForm = ({ studentId }: StepFormProps) => {
 
     // Navigation is valid, dispatch the action
     dispatch(setCurrentStudentOnboardingStep(targetStepId));
+    // Save step to database for page reload persistence
+    saveStepOnly(targetStepId);
   };
 
   // Form submit handler passed to forms
-  const handleFormSubmit = async () => {
+  const handleFormSubmit = async (formValues?: unknown) => {
     setIsSubmitting(true);
     try {
-      // Auto-save current data
-      await handleAutoSave();
+      // Auto-save current data, passing form values to avoid race condition
+      await handleAutoSave(formValues);
       // Move to next active step
       const nextStepId = getNextActiveStepId();
 
@@ -199,6 +221,8 @@ const StepForm = ({ studentId }: StepFormProps) => {
       }
 
       dispatch(setCurrentStudentOnboardingStep(nextStepId));
+      // Save step to database for page reload persistence
+      saveStepOnly(nextStepId);
     } finally {
       setIsSubmitting(false);
     }
@@ -215,6 +239,11 @@ const StepForm = ({ studentId }: StepFormProps) => {
   // Callback to receive validation state from forms
   const handleValidationChange = (isValid: boolean) => {
     setIsFormValid(isValid);
+  };
+
+  // Callback to receive confirmation state from SummaryForm
+  const handleConfirmationChange = (isConfirmed: boolean) => {
+    setIsConfirmationChecked(isConfirmed);
   };
 
   function renderFormByStep(step: number) {
@@ -259,6 +288,7 @@ const StepForm = ({ studentId }: StepFormProps) => {
             onSubmit={handleFormSubmit}
             formikRef={formikRef}
             onValidationChange={handleValidationChange}
+            currentClass={currentClass}
           />
         );
       case 6:
@@ -279,12 +309,21 @@ const StepForm = ({ studentId }: StepFormProps) => {
         );
       case 8:
         return (
-          <SummaryForm
-            onGoToStep={navigateToStepSafely}
-            activeSteps={activeSteps}
+          <AgreementsForm
+            onSubmit={handleFormSubmit}
+            formikRef={formikRef}
+            onValidationChange={handleValidationChange}
           />
         );
       case 9:
+        return (
+          <SummaryForm
+            onGoToStep={navigateToStepSafely}
+            activeSteps={activeSteps}
+            onConfirmationChange={handleConfirmationChange}
+          />
+        );
+      case 10:
         return <FormCompletion />;
       default:
         return null;
@@ -292,19 +331,37 @@ const StepForm = ({ studentId }: StepFormProps) => {
   }
 
   const isFirstStep = currentStep === 0;
-  const isSummaryStep = currentStep === 8;
-  const isFormStep = currentStep >= 1 && currentStep <= 7; // Steps with forms
+  const isSummaryStep = currentStep === 9;
+  const isFormStep = currentStep >= 1 && currentStep <= 8; // Steps with forms
 
   const handleNextStep = () => {
     // Welcome screen - move to next active step
     const nextStepId = getNextActiveStepId();
     dispatch(setCurrentStudentOnboardingStep(nextStepId));
+    // Save step to database for page reload persistence
+    saveStepOnly(nextStepId);
   };
 
   const handlePreviousStep = () => {
-    // Go back to previous active step without validation
-    const prevStepId = getPreviousActiveStepId();
-    dispatch(setCurrentStudentOnboardingStep(prevStepId));
+    // Browser-like history: Use previousStep from Redux state if available
+    // This ensures we go back to the actual previous step the user was on,
+    // even if conditional steps were hidden/shown
+    let targetStep: number;
+    if (previousStep !== null && previousStep !== undefined) {
+      // Validate that previousStep is an active step
+      if (isStepActive(previousStep, activeSteps)) {
+        targetStep = previousStep;
+      } else {
+        // Fallback: If previousStep is not active, use calculated previous active step
+        targetStep = getPreviousActiveStepId();
+      }
+    } else {
+      // Fallback: No history available, use calculated previous active step
+      targetStep = getPreviousActiveStepId();
+    }
+    dispatch(setCurrentStudentOnboardingStep(targetStep));
+    // Save step to database for page reload persistence
+    saveStepOnly(targetStep);
   };
 
   const handleConfirm = async () => {
@@ -313,7 +370,7 @@ const StepForm = ({ studentId }: StepFormProps) => {
     try {
       await dispatch(submitOnboarding(studentId, data));
       // Move to completion screen
-      dispatch(setCurrentStudentOnboardingStep(9));
+      dispatch(setCurrentStudentOnboardingStep(10));
     } catch (error) {
       console.error("Submission failed:", error);
     } finally {
@@ -406,7 +463,7 @@ const StepForm = ({ studentId }: StepFormProps) => {
               )
             }
             onAction={handleConfirm}
-            disabled={isSaving || loading}
+            disabled={!isConfirmationChecked || isSaving || loading}
           />
         </StyledMenuOptions>
       )}

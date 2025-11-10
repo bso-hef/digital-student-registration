@@ -20,6 +20,7 @@ vi.mock("@/store/actions/studentActions", () => ({
     type: "SET_CURRENT_STUDENT_ONBOARDING_STEP",
     payload: step,
   })),
+  saveOnboardingProgress: vi.fn(() => async () => Promise.resolve()),
 }));
 
 // Mock device type detection

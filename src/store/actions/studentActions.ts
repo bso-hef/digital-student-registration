@@ -217,6 +217,7 @@ export const loadStudentForOnboarding =
 
       // Get onboarding step from database (default to 0 if not set)
       const onboardingStep = data.onboardingStep || 0;
+      const previousStep = data.previousStep ?? null;
 
       dispatch({
         type: TYPES.LOAD_STUDENT_FOR_ONBOARDING_SUCCESS,
@@ -226,6 +227,7 @@ export const loadStudentForOnboarding =
           currentClass,
           status: data.status,
           onboardingStep,
+          previousStep,
           studentId, // Include studentId in payload
         },
       });
@@ -247,17 +249,29 @@ export const saveOnboardingProgress =
     studentId: string,
     formData: Partial<StudentData>,
     currentStep?: number,
+    previousStep?: number | null,
   ): AppThunk =>
-  async (dispatch) => {
+  async (dispatch, getState) => {
     dispatch({ type: TYPES.SAVE_ONBOARDING_PROGRESS_REQUEST });
     try {
       // Convert form data (German) to database model (English)
       const modelData = mapFormDataToModel(formData);
 
-      // Add current step if provided
+      // Get previousStep from Redux state if not provided
+      const state = getState();
+      const prevStep =
+        previousStep !== undefined
+          ? previousStep
+          : (state.student.previousStep ?? null);
+
+      // Add current step and previousStep if provided
       const dataToSave =
         currentStep !== undefined
-          ? { ...modelData, onboardingStep: currentStep }
+          ? {
+              ...modelData,
+              onboardingStep: currentStep,
+              previousStep: prevStep,
+            }
           : modelData;
 
       const { data } = await studentService.updateOnboarding(

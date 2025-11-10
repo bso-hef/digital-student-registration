@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 
 import GeneralInput from "@/components/atoms/GeneralInput";
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
@@ -18,6 +18,7 @@ const FormWrap = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing(2),
+  padding: theme.spacing(2),
   ...applicationScrollbar(theme),
 }));
 
@@ -57,6 +58,9 @@ const AgreementModal: React.FC<Props> = ({
   const [key, setKey] = useState("");
   const [labelEn, setLabelEn] = useState("");
   const [labelDe, setLabelDe] = useState("");
+  const [descriptionEn, setDescriptionEn] = useState("");
+  const [descriptionDe, setDescriptionDe] = useState("");
+  const [icon, setIcon] = useState("");
   const [enabled, setEnabled] = useState(true);
   const [required, setRequired] = useState(false);
 
@@ -74,6 +78,9 @@ const AgreementModal: React.FC<Props> = ({
       setKey(agreement.key);
       setLabelEn(agreement.labels.en);
       setLabelDe(agreement.labels.de);
+      setDescriptionEn(agreement.description?.en || "");
+      setDescriptionDe(agreement.description?.de || "");
+      setIcon(agreement.icon || "");
       setEnabled(agreement.enabled);
       setRequired(agreement.required);
     } else if (open && !agreement) {
@@ -81,6 +88,9 @@ const AgreementModal: React.FC<Props> = ({
       setKey("");
       setLabelEn("");
       setLabelDe("");
+      setDescriptionEn("");
+      setDescriptionDe("");
+      setIcon("");
       setEnabled(true);
       setRequired(false);
     }
@@ -139,6 +149,11 @@ const AgreementModal: React.FC<Props> = ({
       id: agreement?.id || key,
       key,
       labels: { en: labelEn, de: labelDe },
+      description:
+        descriptionEn || descriptionDe
+          ? { en: descriptionEn, de: descriptionDe }
+          : undefined,
+      icon: icon || undefined,
       enabled,
       required,
       order: agreement?.order ?? 0, // Will be set by manager
@@ -153,6 +168,130 @@ const AgreementModal: React.FC<Props> = ({
     onClose();
   };
 
+  const contentChildren = (
+    <FormWrap>
+      {/* Key Field */}
+      <GeneralInput
+        label={t("settings.agreements.fields.key")}
+        value={key}
+        onChange={(e) => {
+          setKey(e.target.value);
+          setTouched((prev) => ({ ...prev, key: true }));
+        }}
+        onBlur={() => setTouched((prev) => ({ ...prev, key: true }))}
+        error={!!errors.key}
+        helperText={
+          errors.key ||
+          (!isEditMode ? t("settings.agreements.keyHelperText") : undefined)
+        }
+        placeholder={
+          isEditMode ? undefined : t("settings.agreements.keyPlaceholder")
+        }
+        fullWidth
+        required
+        disabled
+      />
+
+      {/* Label (English) */}
+      <GeneralInput
+        label={t("settings.agreements.fields.labelEn")}
+        value={labelEn}
+        onChange={(e) => {
+          setLabelEn(e.target.value);
+          setTouched((prev) => ({ ...prev, labelEn: true }));
+        }}
+        onBlur={() => setTouched((prev) => ({ ...prev, labelEn: true }))}
+        error={!!errors.labelEn}
+        helperText={errors.labelEn}
+        placeholder={t("settings.agreements.labelEnPlaceholder")}
+        required
+        fullWidth
+      />
+
+      {/* Label (German) */}
+      <GeneralInput
+        label={t("settings.agreements.fields.labelDe")}
+        value={labelDe}
+        onChange={(e) => {
+          setLabelDe(e.target.value);
+          setTouched((prev) => ({ ...prev, labelDe: true }));
+        }}
+        onBlur={() => setTouched((prev) => ({ ...prev, labelDe: true }))}
+        error={!!errors.labelDe}
+        helperText={errors.labelDe}
+        placeholder={t("settings.agreements.labelDePlaceholder")}
+        required
+        fullWidth
+      />
+
+      {/* Description (English) - Optional */}
+      <GeneralInput
+        label={t("settings.agreements.descriptionEn")}
+        value={descriptionEn}
+        onChange={(e) => setDescriptionEn(e.target.value)}
+        placeholder={t("settings.agreements.descriptionEnPlaceholder")}
+        multiline
+        rows={3}
+        fullWidth
+      />
+
+      {/* Description (German) - Optional */}
+      <GeneralInput
+        label={t("settings.agreements.descriptionDe")}
+        value={descriptionDe}
+        onChange={(e) => setDescriptionDe(e.target.value)}
+        placeholder={t("settings.agreements.descriptionDePlaceholder")}
+        multiline
+        rows={3}
+        fullWidth
+      />
+
+      {/* Icon - Optional */}
+      <GeneralInput
+        label={t("settings.agreements.icon")}
+        value={icon}
+        onChange={(e) => setIcon(e.target.value)}
+        helperText={t("settings.agreements.iconHelperText")}
+        placeholder={t("settings.agreements.iconPlaceholder")}
+        fullWidth
+      />
+
+      {/* Enabled Switch */}
+      <SwitchRow>
+        <SwitchLabel>{t("settings.agreements.fields.enabled")}</SwitchLabel>
+        <AppleSwitch
+          checked={enabled}
+          onChange={(e, checked) => setEnabled(checked)}
+        />
+      </SwitchRow>
+
+      {/* Required Switch */}
+      <SwitchRow>
+        <SwitchLabel>{t("settings.agreements.fields.required")}</SwitchLabel>
+        <AppleSwitch
+          checked={required}
+          onChange={(e, checked) => setRequired(checked)}
+        />
+      </SwitchRow>
+    </FormWrap>
+  );
+
+  const actionsChildren = (
+    <Fragment>
+      <GeneralButton
+        label={t("general.Cancel")}
+        onAction={handleClose}
+        isPrimary={false}
+      />
+      <GeneralButton
+        label={t("general.Save")}
+        onAction={handleSave}
+        isPrimary={true}
+        disabled={!isValid && Object.values(touched).some((t) => t)}
+      />
+    </Fragment>
+  );
+
   return (
     <GeneralModal
       open={open}
@@ -163,92 +302,10 @@ const AgreementModal: React.FC<Props> = ({
           : t("settings.agreements.addAgreement")
       }
       modalWidth={600}
-      contentChildren={
-        <FormWrap>
-          {/* Key Field */}
-          <GeneralInput
-            label={t("settings.agreements.fields.key")}
-            value={key}
-            onChange={(e) => {
-              setKey(e.target.value);
-              setTouched((prev) => ({ ...prev, key: true }));
-            }}
-            onBlur={() => setTouched((prev) => ({ ...prev, key: true }))}
-            error={!!errors.key}
-            helperText={
-              errors.key ||
-              (!isEditMode ? t("settings.agreements.keyHelperText") : undefined)
-            }
-            placeholder={
-              isEditMode ? undefined : t("settings.agreements.keyPlaceholder")
-            }
-          />
-
-          {/* Label (English) */}
-          <GeneralInput
-            label={t("settings.agreements.fields.labelEn")}
-            value={labelEn}
-            onChange={(e) => {
-              setLabelEn(e.target.value);
-              setTouched((prev) => ({ ...prev, labelEn: true }));
-            }}
-            onBlur={() => setTouched((prev) => ({ ...prev, labelEn: true }))}
-            error={!!errors.labelEn}
-            helperText={errors.labelEn}
-            placeholder={t("settings.agreements.labelEnPlaceholder")}
-            required
-          />
-
-          {/* Label (German) */}
-          <GeneralInput
-            label={t("settings.agreements.fields.labelDe")}
-            value={labelDe}
-            onChange={(e) => {
-              setLabelDe(e.target.value);
-              setTouched((prev) => ({ ...prev, labelDe: true }));
-            }}
-            onBlur={() => setTouched((prev) => ({ ...prev, labelDe: true }))}
-            error={!!errors.labelDe}
-            helperText={errors.labelDe}
-            placeholder={t("settings.agreements.labelDePlaceholder")}
-            required
-          />
-
-          {/* Enabled Switch */}
-          <SwitchRow>
-            <SwitchLabel>{t("settings.agreements.fields.enabled")}</SwitchLabel>
-            <AppleSwitch
-              checked={enabled}
-              onChange={(e, checked) => setEnabled(checked)}
-            />
-          </SwitchRow>
-
-          {/* Required Switch */}
-          <SwitchRow>
-            <SwitchLabel>
-              {t("settings.agreements.fields.required")}
-            </SwitchLabel>
-            <AppleSwitch
-              checked={required}
-              onChange={(e, checked) => setRequired(checked)}
-            />
-          </SwitchRow>
-        </FormWrap>
-      }
-      actionsChildren={
-        <Box display="flex" gap={2} justifyContent="flex-end" width="100%">
-          <GeneralButton
-            label={t("general.Cancel")}
-            onAction={handleClose}
-            isPrimary={false}
-          />
-          <GeneralButton
-            label={t("general.Save")}
-            onAction={handleSave}
-            isPrimary={true}
-            disabled={!isValid && Object.values(touched).some((t) => t)}
-          />
-        </Box>
+      contentChildren={contentChildren}
+      actionsChildren={actionsChildren}
+      onOpenInNewTab={
+        "https://mui.com/material-ui/material-icons/?query=link&theme=Rounded"
       }
     />
   );

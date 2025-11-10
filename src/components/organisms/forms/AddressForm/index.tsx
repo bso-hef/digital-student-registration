@@ -46,7 +46,7 @@ interface FormValues {
 }
 
 interface AddressFormProps {
-  onSubmit?: (values: FormValues) => void;
+  onSubmit?: (values?: Partial<Record<string, unknown>>) => void;
   formikRef?: React.RefObject<FormikProps<FormValues> | null>;
   onValidationChange?: (isValid: boolean) => void;
 }
@@ -85,9 +85,9 @@ const AddressForm: React.FC<AddressFormProps> = ({
     // Update Redux state with mapped values
     dispatch(updateStudentOnboardingData(mappedValues));
 
-    // Call parent onSubmit if provided
+    // Pass mapped values to parent to ensure immediate save to database
     if (onSubmit) {
-      onSubmit(values);
+      onSubmit(mappedValues);
     }
   };
 
@@ -143,6 +143,16 @@ const AddressForm: React.FC<AddressFormProps> = ({
               variant="outlined"
               fullWidth
               required
+              inputProps={{
+                inputMode: "numeric",
+                pattern: "[0-9]*",
+              }}
+              onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                // Only allow numbers
+                if (!/[0-9]/.test(e.key)) {
+                  e.preventDefault();
+                }
+              }}
             />
 
             {/* Ort */}
@@ -169,6 +179,16 @@ const AddressForm: React.FC<AddressFormProps> = ({
               variant="outlined"
               fullWidth
               placeholder="+49 123 456789"
+              inputProps={{
+                inputMode: "tel",
+                pattern: "[+0-9 ]*",
+              }}
+              onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                // Only allow numbers, +, and spaces
+                if (!/[0-9+\s]/.test(e.key)) {
+                  e.preventDefault();
+                }
+              }}
             />
 
             {/* Festnetz */}
@@ -179,6 +199,16 @@ const AddressForm: React.FC<AddressFormProps> = ({
               variant="outlined"
               fullWidth
               placeholder="+49 123 456789"
+              inputProps={{
+                inputMode: "tel",
+                pattern: "[+0-9 ]*",
+              }}
+              onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                // Only allow numbers, +, and spaces
+                if (!/[0-9+\s]/.test(e.key)) {
+                  e.preventDefault();
+                }
+              }}
             />
           </FormSection>
 

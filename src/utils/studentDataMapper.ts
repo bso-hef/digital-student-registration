@@ -100,7 +100,7 @@ export function mapFormDataToModel(
     mapped.previousSchoolType = formData.vorhergehendeSchulform;
   if (formData.vorhergehendeStufe)
     mapped.previousSchoolLevel = formData.vorhergehendeStufe;
-  if (formData.abschlüsse) mapped.degrees = formData.abschlüsse;
+  if (formData.abschluesse) mapped.degrees = formData.abschluesse;
 
   // Vocational training
   if (formData.beruf) mapped.profession = formData.beruf;
@@ -134,33 +134,73 @@ export function mapFormDataToModel(
     };
   }
 
-  // Contact person / Parent / Guardian
-  if (formData.ansprechpartner1Vorname || formData.ansprechpartner1Nachname) {
-    mapped.contactPersons = [
-      {
-        type: formData.ansprechpartner1Art || "parent",
-        firstName: formData.ansprechpartner1Vorname || "",
-        lastName: formData.ansprechpartner1Nachname || "",
+  // Contact persons / Parents / Guardians (up to 3)
+  const contactPersons: Array<{
+    type: string;
+    firstName: string;
+    lastName: string;
+    phone: string;
+    mobile: string;
+    address: {
+      street: string;
+      city: string;
+      zip: string;
+      state: string;
+      country: string;
+      timezone: string;
+    };
+  }> = [];
+
+  // Loop through all 3 possible contacts
+  for (let i = 1; i <= 3; i++) {
+    const vorname = formData[`ansprechpartner${i}Vorname` as keyof StudentData];
+    const nachname =
+      formData[`ansprechpartner${i}Nachname` as keyof StudentData];
+
+    if (vorname || nachname) {
+      contactPersons.push({
+        type:
+          (formData[`ansprechpartner${i}Art` as keyof StudentData] as string) ||
+          "parent",
+        firstName: (vorname as string) || "",
+        lastName: (nachname as string) || "",
         phone:
-          formData.ansprechpartner1Mobil ||
-          formData.ansprechpartner1Telefon1 ||
+          (formData[
+            `ansprechpartner${i}Mobil` as keyof StudentData
+          ] as string) ||
+          (formData[
+            `ansprechpartner${i}Telefon1` as keyof StudentData
+          ] as string) ||
           "",
-        mobile: formData.ansprechpartner1Mobil || "",
+        mobile:
+          (formData[
+            `ansprechpartner${i}Mobil` as keyof StudentData
+          ] as string) || "",
         address: {
           street: [
-            formData.ansprechpartner1Straße,
-            formData.ansprechpartner1HausNr,
+            formData[`ansprechpartner${i}Straße` as keyof StudentData],
+            formData[`ansprechpartner${i}HausNr` as keyof StudentData],
           ]
             .filter(Boolean)
             .join(" "),
-          city: formData.ansprechpartner1Ort || "",
-          zip: formData.ansprechpartner1Plz || "",
+          city:
+            (formData[
+              `ansprechpartner${i}Ort` as keyof StudentData
+            ] as string) || "",
+          zip:
+            (formData[
+              `ansprechpartner${i}Plz` as keyof StudentData
+            ] as string) || "",
           state: "",
           country: "DE",
           timezone: "Europe/Berlin",
         },
-      },
-    ];
+      });
+    }
+  }
+
+  if (contactPersons.length > 0) {
+    mapped.contactPersons = contactPersons;
   }
 
   // Agreements / Consents
@@ -271,7 +311,7 @@ export function mapModelToFormData(
     mapped.vorhergehendeSchulform = student.previousSchoolType;
   if (student.previousSchoolLevel)
     mapped.vorhergehendeStufe = student.previousSchoolLevel;
-  if (student.degrees) mapped.abschlüsse = student.degrees;
+  if (student.degrees) mapped.abschluesse = student.degrees;
 
   // Vocational training
   if (student.profession) mapped.beruf = student.profession;
@@ -300,25 +340,35 @@ export function mapModelToFormData(
     mapped.betriebApAnrede = student.employer.contactSalutation || "";
   }
 
-  // Contact person / Parent / Guardian (use first one if multiple)
+  // Contact persons / Parents / Guardians (map all up to 3)
   if (student.contactPersons && student.contactPersons.length > 0) {
-    const contact = student.contactPersons[0];
-    mapped.ansprechpartner1Art = contact.type || "";
-    mapped.ansprechpartner1Vorname = contact.firstName || "";
-    mapped.ansprechpartner1Nachname = contact.lastName || "";
-    mapped.ansprechpartner1Mobil = contact.mobile || "";
-    mapped.ansprechpartner1Telefon1 = contact.phone || "";
+    student.contactPersons.forEach((contact, index) => {
+      // Only map first 3 contacts
+      if (index >= 3) return;
 
-    if (contact.address) {
-      const addressParts = contact.address.street?.split(" ") || [];
-      const hausNr = addressParts.pop() || "";
-      const straße = addressParts.join(" ");
+      const contactNumber = index + 1;
+      const prefix = `ansprechpartner${contactNumber}` as
+        | "ansprechpartner1"
+        | "ansprechpartner2"
+        | "ansprechpartner3";
 
-      mapped.ansprechpartner1Straße = straße;
-      mapped.ansprechpartner1HausNr = hausNr;
-      mapped.ansprechpartner1Plz = contact.address.zip || "";
-      mapped.ansprechpartner1Ort = contact.address.city || "";
-    }
+      mapped[`${prefix}Art`] = contact.type || "";
+      mapped[`${prefix}Vorname`] = contact.firstName || "";
+      mapped[`${prefix}Nachname`] = contact.lastName || "";
+      mapped[`${prefix}Mobil`] = contact.mobile || "";
+      mapped[`${prefix}Telefon1`] = contact.phone || "";
+
+      if (contact.address) {
+        const addressParts = contact.address.street?.split(" ") || [];
+        const hausNr = addressParts.pop() || "";
+        const straße = addressParts.join(" ");
+
+        mapped[`${prefix}Straße`] = straße;
+        mapped[`${prefix}HausNr`] = hausNr;
+        mapped[`${prefix}Plz`] = contact.address.zip || "";
+        mapped[`${prefix}Ort`] = contact.address.city || "";
+      }
+    });
   }
 
   // Agreements / Consents (flatten nested object)

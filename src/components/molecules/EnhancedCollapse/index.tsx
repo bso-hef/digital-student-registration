@@ -81,6 +81,8 @@ interface EnhancedCollapseProps {
   withArrow?: boolean;
   expanded?: boolean;
   disablePadding?: boolean;
+  headerAction?: React.ReactNode;
+  onHeaderActionClick?: (e: React.MouseEvent) => void;
 }
 
 const EnhancedCollapse: React.FC<EnhancedCollapseProps> = ({
@@ -91,6 +93,8 @@ const EnhancedCollapse: React.FC<EnhancedCollapseProps> = ({
   withArrow = true,
   expanded = true,
   disablePadding = false,
+  headerAction = undefined,
+  onHeaderActionClick = undefined,
 }) => {
   return (
     <Paper elevation={0}>
@@ -99,15 +103,29 @@ const EnhancedCollapse: React.FC<EnhancedCollapseProps> = ({
           <StyledTitle>{title}</StyledTitle>
           {subtitle && <StyledSubTitle>{subtitle}</StyledSubTitle>}
         </Box>
-        {withArrow && (
-          <Box display="flex" alignItems="center">
-            {expanded ? (
-              <KeyboardArrowUpRoundedIcon />
-            ) : (
-              <KeyboardArrowDownRoundedIcon />
-            )}
-          </Box>
-        )}
+        <Box display="flex" alignItems="center" gap={1}>
+          {headerAction && (
+            <Box
+              onClick={(e) => {
+                e.stopPropagation();
+                onHeaderActionClick?.(e);
+              }}
+              display="flex"
+              alignItems="center"
+            >
+              {headerAction}
+            </Box>
+          )}
+          {withArrow && (
+            <Box display="flex" alignItems="center">
+              {expanded ? (
+                <KeyboardArrowUpRoundedIcon />
+              ) : (
+                <KeyboardArrowDownRoundedIcon />
+              )}
+            </Box>
+          )}
+        </Box>
       </StyledCollapse>
       {expanded && (
         <StyledContent disablePadding={disablePadding} expanded={expanded}>

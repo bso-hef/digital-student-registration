@@ -102,6 +102,7 @@ const TrainingForm: React.FC<TrainingFormProps> = ({
       validationSchema={validationSchema}
       onSubmit={(values) => {
         dispatch(updateStudentOnboardingData(values));
+        // Pass values to parent to ensure immediate save to database
         if (onSubmit) onSubmit(values);
       }}
       innerRef={formikRef}

@@ -12,57 +12,90 @@ export const runtime = "nodejs";
 const logger = new Logger("API <<==>> Settings::Agreements");
 
 /**
- * Default agreements with multilingual labels
- * Based on original boolean flags from AppSettings schema:
- * - privacyPolicyEnabled (default: false)
- * - termsOfServiceEnabled (default: false)
- * - parentalConsentEnabled (default: true)
- * - dataProcessingAgreementEnabled (default: false)
+ * Default agreements mapped to StudentData fields
+ * All enabled and required by default for student onboarding
+ * Keys must match StudentData field names: datenschutz, teilnahmeunterricht, schulordnung, personenabbildung, teamsnutzung
  */
 const DEFAULT_AGREEMENTS = [
   {
-    id: "privacy_policy",
-    key: "privacy_policy",
-    enabled: false,
-    required: false,
+    id: "datenschutz",
+    key: "datenschutz",
+    enabled: true,
+    required: true,
     order: 0,
     labels: {
-      en: "Privacy Policy",
-      de: "Datenschutzerklärung",
+      en: "Data Protection Agreement",
+      de: "Datenschutzvereinbarung",
     },
+    description: {
+      en: "I consent to the processing of my personal data in accordance with the data protection policy.",
+      de: "Ich willige in die Verarbeitung meiner personenbezogenen Daten gemäß der Datenschutzrichtlinie ein.",
+    },
+    icon: "PrivacyTip",
   },
   {
-    id: "terms_of_service",
-    key: "terms_of_service",
-    enabled: false,
-    required: false,
+    id: "teilnahmeunterricht",
+    key: "teilnahmeunterricht",
+    enabled: true,
+    required: true,
     order: 1,
     labels: {
-      en: "Terms of Service",
-      de: "Nutzungsbedingungen",
+      en: "Class Participation Consent",
+      de: "Einwilligung zur Teilnahme am Unterricht",
     },
+    description: {
+      en: "I agree to participate in all required classes and activities.",
+      de: "Ich verpflichte mich zur Teilnahme an allen erforderlichen Unterrichtsstunden und Aktivitäten.",
+    },
+    icon: "School",
   },
   {
-    id: "parental_consent",
-    key: "parental_consent",
+    id: "schulordnung",
+    key: "schulordnung",
     enabled: true,
     required: true,
     order: 2,
     labels: {
-      en: "Parental Consent",
-      de: "Einverständniserklärung der Eltern",
+      en: "School Rules Acceptance",
+      de: "Anerkennung der Schulordnung",
     },
+    description: {
+      en: "I have read and accept the school rules and regulations.",
+      de: "Ich habe die Schulordnung gelesen und akzeptiere die darin enthaltenen Regeln und Vorschriften.",
+    },
+    icon: "Gavel",
   },
   {
-    id: "data_processing_agreement",
-    key: "data_processing_agreement",
-    enabled: false,
-    required: false,
+    id: "personenabbildung",
+    key: "personenabbildung",
+    enabled: true,
+    required: true,
     order: 3,
     labels: {
-      en: "Data Processing Agreement",
-      de: "Datenverarbeitungsvereinbarung",
+      en: "Photo & Imaging Consent",
+      de: "Einwilligung für Foto- und Bildaufnahmen",
     },
+    description: {
+      en: "I consent to having my photo taken for school purposes (ID card, yearbook, website).",
+      de: "Ich willige ein, dass Fotos von mir für schulische Zwecke (Schülerausweis, Jahrbuch, Website) gemacht werden dürfen.",
+    },
+    icon: "CameraAlt",
+  },
+  {
+    id: "teamsnutzung",
+    key: "teamsnutzung",
+    enabled: true,
+    required: true,
+    order: 4,
+    labels: {
+      en: "Microsoft Teams Usage Agreement",
+      de: "Microsoft Teams Nutzungsvereinbarung",
+    },
+    description: {
+      en: "I agree to use Microsoft Teams for school-related communication and activities.",
+      de: "Ich verpflichte mich, Microsoft Teams für schulbezogene Kommunikation und Aktivitäten zu nutzen.",
+    },
+    icon: "Groups",
   },
 ];
 

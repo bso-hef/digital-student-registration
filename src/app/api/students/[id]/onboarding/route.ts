@@ -81,10 +81,12 @@ export async function PATCH(
     }
 
     const body = (await request.json()) as Record<string, unknown>;
-    const { finalSubmit, onboardingStep, ...updateData } = body as {
-      finalSubmit?: boolean;
-      onboardingStep?: number;
-    } & Record<string, unknown>;
+    const { finalSubmit, onboardingStep, previousStep, ...updateData } =
+      body as {
+        finalSubmit?: boolean;
+        onboardingStep?: number;
+        previousStep?: number | null;
+      } & Record<string, unknown>;
 
     // Find student by ID
     const student = await Student.findById(id);
@@ -93,28 +95,10 @@ export async function PATCH(
       return NextResponse.json({ error: "Student not found" }, { status: 404 });
     }
 
-    // Step validation: User can only advance one step at a time
-    const studentDoc = student as unknown as {
-      onboardingStep?: number;
-      status?: string;
-    };
-    const currentStep = studentDoc.onboardingStep || 0;
-
-    if (onboardingStep !== undefined) {
-      // Allow going back to previous steps
-      if (onboardingStep > currentStep + 1) {
-        logger.warn(
-          `Student ${id} attempted to skip steps: ${currentStep} -> ${onboardingStep}`,
-        );
-        return NextResponse.json(
-          {
-            error: "Invalid step progression",
-            message: "You must complete steps in order",
-          },
-          { status: 400 },
-        );
-      }
-    }
+    // Note: We removed server-side step validation because the frontend handles
+    // conditional step logic (e.g., skipping OriginForm for German students, hiding
+    // vocational forms for non-vocational classes). The frontend has comprehensive
+    // validation in canNavigateToStep() and only allows sequential progression.
 
     // Update student fields
     Object.keys(updateData).forEach((key) => {
@@ -128,6 +112,12 @@ export async function PATCH(
     if (onboardingStep !== undefined) {
       (student as unknown as Record<string, unknown>)["onboardingStep"] =
         onboardingStep;
+    }
+
+    // Update previousStep if provided
+    if (previousStep !== undefined) {
+      (student as unknown as Record<string, unknown>)["previousStep"] =
+        previousStep;
     }
 
     // If final submit, change status to "onboarded"

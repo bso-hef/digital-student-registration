@@ -1,6 +1,7 @@
 import React from "react";
 
 import type { ClassInterface } from "@/types/class.d";
+import AssignmentTurnedInRoundedIcon from "@mui/icons-material/AssignmentTurnedInRounded";
 import BusinessRoundedIcon from "@mui/icons-material/BusinessRounded";
 import EmojiEventsRoundedIcon from "@mui/icons-material/EmojiEventsRounded";
 import FamilyRestroomRoundedIcon from "@mui/icons-material/FamilyRestroomRounded";
@@ -34,6 +35,7 @@ export enum StepName {
   PRE_EDUCATION = "pre_education",
   TRAINING = "training",
   COMPANY_CONTACT = "company_contact",
+  AGREEMENTS = "agreements",
   SUMMARY = "summary",
   COMPLETION = "completion",
 }
@@ -51,7 +53,7 @@ export const getStudentSteps = (t: TFunction): StepDef[] => [
   { id: 3, label: t("student.steps.Address"), icon: <LocationOnRoundedIcon /> },
   {
     id: 4,
-    label: t("student.steps.Parents"),
+    label: t("student.steps.Legal Guardian"),
     icon: <FamilyRestroomRoundedIcon />,
   },
   {
@@ -73,9 +75,14 @@ export const getStudentSteps = (t: TFunction): StepDef[] => [
     conditional: true,
     requiresVocational: true,
   },
-  { id: 8, label: t("student.steps.Summary"), icon: <SummarizeRoundedIcon /> },
   {
-    id: 9,
+    id: 8,
+    label: t("student.steps.Agreements"),
+    icon: <AssignmentTurnedInRoundedIcon />,
+  },
+  { id: 9, label: t("student.steps.Summary"), icon: <SummarizeRoundedIcon /> },
+  {
+    id: 10,
     label: t("student.steps.Completion"),
     icon: <EmojiEventsRoundedIcon />,
   },
@@ -93,15 +100,13 @@ export const getActiveSteps = (
   studentData: { geburtsland?: string },
   currentClass: ClassInterface | null,
 ): StepDef[] => {
-  const isVocational = currentClass?.isVocational || false;
+  const isVocational = Boolean(currentClass?.isVocational);
 
   // Check if student is from Germany (hide Origin form if true)
+  // Normalize country value to handle both ISO codes ("DE") and full names ("Deutschland", "Germany")
+  const country = (studentData.geburtsland || "").trim().toUpperCase();
   const isFromGermany =
-    studentData.geburtsland === "Deutschland" ||
-    studentData.geburtsland === "Germany" ||
-    studentData.geburtsland === "DE" ||
-    studentData.geburtsland === "germany" ||
-    studentData.geburtsland === "deutschland";
+    country === "DE" || country === "DEUTSCHLAND" || country === "GERMANY";
 
   return allSteps.filter((step) => {
     // Filter vocational steps (Training & Company Contact)
@@ -131,8 +136,9 @@ const STEP_NAME_TO_ID_MAP: Record<StepName, number> = {
   [StepName.PRE_EDUCATION]: 5,
   [StepName.TRAINING]: 6,
   [StepName.COMPANY_CONTACT]: 7,
-  [StepName.SUMMARY]: 8,
-  [StepName.COMPLETION]: 9,
+  [StepName.AGREEMENTS]: 8,
+  [StepName.SUMMARY]: 9,
+  [StepName.COMPLETION]: 10,
 };
 
 /**

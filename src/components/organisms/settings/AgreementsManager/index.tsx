@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 
-import GeneralButton from "@/components/atoms/buttons/GeneralButton";
+import DynamicMuiIcon from "@/components/atoms/DynamicMuiIcon";
 import SmallIconButton from "@/components/atoms/buttons/SmallIconButton";
 import AgreementModal from "@/components/organisms/modals/AgreementModal";
 import ConfirmationModal from "@/components/organisms/modals/ConfirmationModal";
@@ -13,7 +13,6 @@ import {
   DropResult,
   Droppable,
 } from "@hello-pangea/dnd";
-import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import EditIcon from "@mui/icons-material/Edit";
@@ -38,19 +37,6 @@ const Container = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
   borderRadius: theme.spacing(1),
   border: `1px solid ${theme.palette.divider}`,
-}));
-
-const Header = styled(Box)(({ theme }) => ({
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  marginBottom: theme.spacing(2),
-}));
-
-const Title = styled(Typography)(({ theme }) => ({
-  fontSize: "1.1rem",
-  fontWeight: 600,
-  color: theme.palette.text.primary,
 }));
 
 const OptionItem = styled(ListItem, {
@@ -130,20 +116,35 @@ const EmptyState = styled(Box)(({ theme }) => ({
 interface AgreementsManagerProps {
   agreements: AgreementItem[];
   onChange: (agreements: AgreementItem[]) => void;
+  modalOpen?: boolean;
+  setModalOpen?: (open: boolean) => void;
+  editingAgreement?: AgreementItem | null;
+  setEditingAgreement?: (agreement: AgreementItem | null) => void;
 }
 
 const AgreementsManager: React.FC<AgreementsManagerProps> = ({
   agreements,
   onChange,
+  modalOpen: externalModalOpen,
+  setModalOpen: externalSetModalOpen,
+  editingAgreement: externalEditingAgreement,
+  setEditingAgreement: externalSetEditingAgreement,
 }) => {
   const { t } = useTranslation();
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editingAgreement, setEditingAgreement] =
+  const [internalModalOpen, setInternalModalOpen] = useState(false);
+  const [internalEditingAgreement, setInternalEditingAgreement] =
     useState<AgreementItem | null>(null);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [agreementToDelete, setAgreementToDelete] = useState<string | null>(
     null,
   );
+
+  // Use external state if provided, otherwise use internal state
+  const modalOpen = externalModalOpen ?? internalModalOpen;
+  const setModalOpen = externalSetModalOpen ?? setInternalModalOpen;
+  const editingAgreement = externalEditingAgreement ?? internalEditingAgreement;
+  const setEditingAgreement =
+    externalSetEditingAgreement ?? setInternalEditingAgreement;
 
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
@@ -168,11 +169,6 @@ const AgreementsManager: React.FC<AgreementsManagerProps> = ({
         : agreement,
     );
     onChange(updated);
-  };
-
-  const handleAdd = () => {
-    setEditingAgreement(null);
-    setModalOpen(true);
   };
 
   const handleEdit = (agreement: AgreementItem) => {
@@ -218,16 +214,6 @@ const AgreementsManager: React.FC<AgreementsManagerProps> = ({
 
   return (
     <Container>
-      <Header>
-        <Title>{t("settings.agreements.title")}</Title>
-        <GeneralButton
-          label={t("settings.agreements.addAgreement")}
-          startIcon={<AddIcon />}
-          onAction={handleAdd}
-          isPrimary={true}
-        />
-      </Header>
-
       {agreements.length === 0 ? (
         <EmptyState>
           <Typography variant="body2" color="text.secondary">
@@ -265,6 +251,16 @@ const AgreementsManager: React.FC<AgreementsManagerProps> = ({
                       >
                         <DragHandle />
 
+                        {/* Icon Display */}
+                        {agreement.icon && (
+                          <Box display="flex" alignItems="center" pr={1}>
+                            <DynamicMuiIcon
+                              iconName={agreement.icon}
+                              fontSize="medium"
+                            />
+                          </Box>
+                        )}
+
                         <LabelSection>
                           <LabelRow>
                             <LangBadge>EN:</LangBadge>
@@ -277,11 +273,39 @@ const AgreementsManager: React.FC<AgreementsManagerProps> = ({
                                 sx={{ height: 20, fontSize: "0.7rem" }}
                               />
                             )}
+                            {agreement.icon && (
+                              <Chip
+                                label={agreement.icon}
+                                size="small"
+                                variant="outlined"
+                                sx={{ height: 20, fontSize: "0.65rem" }}
+                              />
+                            )}
                           </LabelRow>
                           <LabelRow>
                             <LangBadge>DE:</LangBadge>
                             <LabelText>{agreement.labels.de}</LabelText>
                           </LabelRow>
+                          {/* Description Preview */}
+                          {(agreement.description?.en ||
+                            agreement.description?.de) && (
+                            <Typography
+                              variant="caption"
+                              color="text.secondary"
+                              sx={{
+                                mt: 0.5,
+                                fontStyle: "italic",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                display: "-webkit-box",
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: "vertical",
+                              }}
+                            >
+                              {agreement.description?.en ||
+                                agreement.description?.de}
+                            </Typography>
+                          )}
                         </LabelSection>
 
                         <ActionsSection>

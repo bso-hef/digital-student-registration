@@ -69,6 +69,7 @@ const CompanyContactForm: React.FC<CompanyContactFormProps> = ({
       validationSchema={validateStudentCompanyData}
       onSubmit={(values) => {
         dispatch(updateStudentOnboardingData(values));
+        // Pass values to parent to ensure immediate save to database
         if (onSubmit) onSubmit(values);
       }}
       innerRef={formikRef}

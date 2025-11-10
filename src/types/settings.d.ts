@@ -67,6 +67,11 @@ export interface AgreementItem {
     en: string;
     de: string;
   };
+  description?: {
+    en: string;
+    de: string;
+  };
+  icon?: string;
 }
 
 // Agreements Settings (for consent forms, privacy policies, etc.)

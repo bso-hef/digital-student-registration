@@ -21,7 +21,7 @@ export interface StudentData {
   staatsangehoerigkeit2: string;
   beruf: string;
   eintrittschule: string;
-  abschlüsse: string;
+  abschluesse: string;
   vorhergehendeSchule: string;
   vorhergehendeSchulform: string;
   vorhergehendeStufe: string;
@@ -37,6 +37,7 @@ export interface StudentData {
   betriebOrt: string;
   betriebTelefon1: string;
   betriebEmail: string;
+  // Contact Person 1
   ansprechpartner1Art: string;
   ansprechpartner1Vorname: string;
   ansprechpartner1Nachname: string;
@@ -46,6 +47,27 @@ export interface StudentData {
   ansprechpartner1Ort: string;
   ansprechpartner1Mobil: string;
   ansprechpartner1Telefon1: string;
+  // Contact Person 2
+  ansprechpartner2Art: string;
+  ansprechpartner2Vorname: string;
+  ansprechpartner2Nachname: string;
+  ansprechpartner2Straße: string;
+  ansprechpartner2HausNr: string;
+  ansprechpartner2Plz: string;
+  ansprechpartner2Ort: string;
+  ansprechpartner2Mobil: string;
+  ansprechpartner2Telefon1: string;
+  // Contact Person 3
+  ansprechpartner3Art: string;
+  ansprechpartner3Vorname: string;
+  ansprechpartner3Nachname: string;
+  ansprechpartner3Straße: string;
+  ansprechpartner3HausNr: string;
+  ansprechpartner3Plz: string;
+  ansprechpartner3Ort: string;
+  ansprechpartner3Mobil: string;
+  ansprechpartner3Telefon1: string;
+  // Agreements
   datenschutz: boolean;
   teilnahmeunterricht: boolean;
   schulordnung: boolean;

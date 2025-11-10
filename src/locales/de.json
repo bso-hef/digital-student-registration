@@ -35,7 +35,9 @@
     "none": "Keine Angabe",
     "loadingSettings": "Lade Einstellungen...",
     "Submit": "Absenden",
-    "Submitting": "Wird übermittelt..."
+    "Submitting": "Wird übermittelt...",
+    "Accepted": "Akzeptiert",
+    "NotAccepted": "Nicht akzeptiert"
   },
   "error": {
     "Page not found": "Seite nicht gefunden",
@@ -72,10 +74,11 @@
       "General": "Allgemein",
       "Origin": "Herkunft",
       "Address": "Adresse",
-      "Parents": "Eltern",
+      "Legal Guardian": "Erziehungsberechtigte",
       "Pre Education": "Vorbildung",
       "Training": "Ausbildung",
       "Company Contact": "Unternehmenskontakt",
+      "Agreements": "Vereinbarungen",
       "Summary": "Zusammenfassung",
       "Completion": "Abschluss"
     }
@@ -281,7 +284,7 @@
       "phone": "Telefon (Festnetz)",
       "email": "E-Mail-Adresse"
     },
-    "parents": {
+    "legalGuardian": {
       "type": "Art",
       "name": "Name",
       "address": "Adresse",
@@ -295,7 +298,15 @@
       "street": "Straße",
       "houseNumber": "Hausnummer",
       "mobileNumber": "Mobilnummer",
-      "phoneNumber": "Telefon"
+      "phoneNumber": "Telefon",
+      "contactPerson1": "Erziehungsberechtigte(r) 1",
+      "contactPerson2": "Erziehungsberechtigte(r) 2",
+      "contactPerson3": "Erziehungsberechtigte(r) 3",
+      "addContact": "Erziehungsberechtigte(n) hinzufügen",
+      "addContactTooltip": "Einen weiteren Erziehungsberechtigten hinzufügen",
+      "removeContact": "Erziehungsberechtigte(n) entfernen",
+      "removeContactTooltip": "Diesen Erziehungsberechtigten entfernen",
+      "adultOptionalInfo": "Da Sie volljährig sind (18 Jahre oder älter), sind die Angaben zu Erziehungsberechtigten optional. Sie müssen diese Felder nur ausfüllen, wenn Sie möchten."
     },
     "preEducation": {
       "previousSchool": "Vorherige Schule",
@@ -324,7 +335,24 @@
       "salutation": "Anrede",
       "firstName": "Vorname",
       "lastName": "Nachname",
-      "phone": "Telefon"
+      "phone": "Telefon",
+      "contactPerson": "Ansprechpartner im Betrieb"
+    },
+    "agreements": {
+      "title": "Vereinbarungen",
+      "description": "Bitte lesen und akzeptieren Sie die folgenden Vereinbarungen, um mit der Anmeldung fortzufahren.",
+      "required": "Diese Vereinbarung ist erforderlich",
+      "datenschutz": "Datenschutzvereinbarung",
+      "datenschutzDesc": "Ich willige in die Verarbeitung meiner personenbezogenen Daten gemäß der Datenschutzrichtlinie ein.",
+      "teilnahmeunterricht": "Einwilligung zur Teilnahme am Unterricht",
+      "teilnahmeunterrichtDesc": "Ich verpflichte mich zur Teilnahme an allen erforderlichen Unterrichtsstunden und Aktivitäten.",
+      "schulordnung": "Anerkennung der Schulordnung",
+      "schulordnungDesc": "Ich habe die Schulordnung gelesen und akzeptiere die darin enthaltenen Regeln und Vorschriften.",
+      "personenabbildung": "Einwilligung für Foto- und Bildaufnahmen",
+      "personenabbildungDesc": "Ich willige ein, dass Fotos von mir für schulische Zwecke (Schülerausweis, Jahrbuch, Website) gemacht werden dürfen.",
+      "teamsnutzung": "Microsoft Teams Nutzungsvereinbarung",
+      "teamsnutzungDesc": "Ich verpflichte mich, Microsoft Teams für schulbezogene Kommunikation und Aktivitäten zu nutzen.",
+      "noAgreements": "Es wurden keine Vereinbarungen vom Administrator konfiguriert."
     },
     "welcome": {
       "title": "Anmeldung der BSO",
@@ -338,10 +366,14 @@
       "title": "Zusammenfassung",
       "description": "Bitte überprüfen Sie Ihre Angaben vor der Übermittlung.",
       "generalInfo": "Allgemeine Daten",
+      "origin": "Herkunft und Einwanderung",
       "address": "Adresse und Kontakt",
       "contactPerson": "Ansprechpartner",
       "education": "Vorbildung",
-      "training": "Ausbildung"
+      "training": "Ausbildung",
+      "companyContact": "Ansprechpartner im Betrieb",
+      "agreements": "Vereinbarungen",
+      "confirmationText": "Ich habe die Zusammenfassung gelesen und bestätige, dass die Angaben korrekt sind"
     },
     "completion": {
       "title": "Einschreibung abgeschlossen!",
@@ -351,6 +383,7 @@
       "footer": "Sie können dieses Fenster jetzt schließen."
     },
     "loadingProfile": "Lade Schülerprofil...",
+    "loadingDetails": "Bitte warten Sie, während wir Ihre Informationen abrufen...",
     "error": {
       "invalidStudentId": {
         "title": "Ungültige Schüler-ID",
@@ -497,9 +530,6 @@
     },
     "agreements": {
       "title": "Vereinbarungen",
-      "description": "Verwalten Sie Schulvereinbarungen, die während der Schüleranmeldung angezeigt werden",
-      "schoolAgreements": "Schulvereinbarungen",
-      "schoolAgreementsSubtitle": "Konfigurieren Sie, welche Vereinbarungen Schüler während der Registrierung akzeptieren müssen",
       "addAgreement": "Vereinbarung hinzufügen",
       "editAgreement": "Vereinbarung bearbeiten",
       "deleteConfirm": "Vereinbarung löschen",
@@ -518,6 +548,14 @@
       "keyHelperText": "Eindeutiger Bezeichner (automatisch aus englischer Bezeichnung generiert)",
       "labelEnPlaceholder": "z.B. Data Protection",
       "labelDePlaceholder": "z.B. Datenschutz",
+      "descriptionEn": "Beschreibung (Englisch)",
+      "descriptionDe": "Beschreibung (Deutsch)",
+      "descriptionEnPlaceholder": "z.B. Ich willige in die Verarbeitung meiner personenbezogenen Daten ein...",
+      "descriptionDePlaceholder": "z.B. Ich willige in die Verarbeitung meiner personenbezogenen Daten ein...",
+      "descriptionHelperText": "Optionale Beschreibung für Schüler (unterstützt mehrere Zeilen)",
+      "icon": "Symbol",
+      "iconPlaceholder": "z.B. PrivacyTip, School, Gavel",
+      "iconHelperText": "Optionaler MUI-Symbolname (z.B. PrivacyTip, School, Gavel, CameraAlt, Groups)",
       "validation": {
         "keyRequired": "Schlüssel ist erforderlich",
         "keyExists": "Eine Vereinbarung mit diesem Schlüssel existiert bereits",

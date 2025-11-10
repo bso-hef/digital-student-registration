@@ -1,11 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
+import GeneralButton from "@/components/atoms/buttons/GeneralButton";
+import SmallIconButton from "@/components/atoms/buttons/SmallIconButton";
+import EnhancedCollapse from "@/components/molecules/EnhancedCollapse";
 import { useOnboardingSettings } from "@/hooks/useOnboardingSettings";
-import { validateStudentContactPersonData } from "@/lib/validate/student.validate";
+import { createValidateStudentContactPersonData } from "@/lib/validate/student.validate";
 import { updateStudentOnboardingData } from "@/store/actions/studentActions";
-import { useAppDispatch } from "@/store/store";
+import { useAppDispatch, useAppSelector } from "@/store/store";
 import { StudentData } from "@/types/student";
-import { MenuItem, styled } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { Alert, Box, MenuItem, styled } from "@mui/material";
+import dayjs from "dayjs";
 import { FormikProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import { Select, TextField } from "formik-mui";
@@ -18,9 +24,18 @@ const StyledForm = styled(Form)(() => ({
   justifyContent: "center",
   width: "100%",
   height: "auto",
+  gap: "16px",
+}));
+
+const StyledFieldsContainer = styled(Box)(() => ({
+  display: "flex",
+  flexDirection: "column",
+  width: "100%",
+  gap: "8px",
 }));
 
 interface FormValues {
+  // Contact Person 1
   ansprechpartner1Art: string;
   ansprechpartner1Vorname: string;
   ansprechpartner1Nachname: string;
@@ -30,6 +45,26 @@ interface FormValues {
   ansprechpartner1HausNr: string;
   ansprechpartner1Mobil: string;
   ansprechpartner1Telefon1: string;
+  // Contact Person 2
+  ansprechpartner2Art: string;
+  ansprechpartner2Vorname: string;
+  ansprechpartner2Nachname: string;
+  ansprechpartner2Plz: string;
+  ansprechpartner2Ort: string;
+  ansprechpartner2Straße: string;
+  ansprechpartner2HausNr: string;
+  ansprechpartner2Mobil: string;
+  ansprechpartner2Telefon1: string;
+  // Contact Person 3
+  ansprechpartner3Art: string;
+  ansprechpartner3Vorname: string;
+  ansprechpartner3Nachname: string;
+  ansprechpartner3Plz: string;
+  ansprechpartner3Ort: string;
+  ansprechpartner3Straße: string;
+  ansprechpartner3HausNr: string;
+  ansprechpartner3Mobil: string;
+  ansprechpartner3Telefon1: string;
 }
 
 interface ParentsFormProps {
@@ -40,7 +75,7 @@ interface ParentsFormProps {
 }
 
 const ParentsForm: React.FC<ParentsFormProps> = ({
-  data,
+  data: dataProp,
   onSubmit,
   formikRef,
   onValidationChange,
@@ -50,7 +85,35 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
   const { contactPersonTypeOptions, getEnabledOptions, loading } =
     useOnboardingSettings();
 
+  // Get data from Redux if not provided via props
+  const studentDataFromRedux = useAppSelector((state) => state.student.data);
+  const data = dataProp || studentDataFromRedux;
+
+  // Calculate age from geburtsdatum
+  const age = useMemo(() => {
+    if (!data?.geburtsdatum) return 0;
+    return dayjs().diff(dayjs(data.geburtsdatum), "year");
+  }, [data?.geburtsdatum]);
+
+  const isAdult = age >= 18;
+
+  // State for managing visible contacts and expanded state
+  const [visibleContacts, setVisibleContacts] = useState<number[]>(() => {
+    // Determine initially visible contacts based on existing data
+    const contacts = [1];
+    if (data?.ansprechpartner2Vorname || data?.ansprechpartner2Nachname) {
+      contacts.push(2);
+    }
+    if (data?.ansprechpartner3Vorname || data?.ansprechpartner3Nachname) {
+      contacts.push(3);
+    }
+    return contacts;
+  });
+
+  const [expandedContact, setExpandedContact] = useState<number | null>(1);
+
   const initialValues: FormValues = {
+    // Contact Person 1
     ansprechpartner1Art: data?.ansprechpartner1Art || "",
     ansprechpartner1Vorname: data?.ansprechpartner1Vorname || "",
     ansprechpartner1Nachname: data?.ansprechpartner1Nachname || "",
@@ -60,7 +123,33 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
     ansprechpartner1HausNr: data?.ansprechpartner1HausNr || "",
     ansprechpartner1Mobil: data?.ansprechpartner1Mobil || "",
     ansprechpartner1Telefon1: data?.ansprechpartner1Telefon1 || "",
+    // Contact Person 2
+    ansprechpartner2Art: data?.ansprechpartner2Art || "",
+    ansprechpartner2Vorname: data?.ansprechpartner2Vorname || "",
+    ansprechpartner2Nachname: data?.ansprechpartner2Nachname || "",
+    ansprechpartner2Plz: data?.ansprechpartner2Plz || "",
+    ansprechpartner2Ort: data?.ansprechpartner2Ort || "",
+    ansprechpartner2Straße: data?.ansprechpartner2Straße || "",
+    ansprechpartner2HausNr: data?.ansprechpartner2HausNr || "",
+    ansprechpartner2Mobil: data?.ansprechpartner2Mobil || "",
+    ansprechpartner2Telefon1: data?.ansprechpartner2Telefon1 || "",
+    // Contact Person 3
+    ansprechpartner3Art: data?.ansprechpartner3Art || "",
+    ansprechpartner3Vorname: data?.ansprechpartner3Vorname || "",
+    ansprechpartner3Nachname: data?.ansprechpartner3Nachname || "",
+    ansprechpartner3Plz: data?.ansprechpartner3Plz || "",
+    ansprechpartner3Ort: data?.ansprechpartner3Ort || "",
+    ansprechpartner3Straße: data?.ansprechpartner3Straße || "",
+    ansprechpartner3HausNr: data?.ansprechpartner3HausNr || "",
+    ansprechpartner3Mobil: data?.ansprechpartner3Mobil || "",
+    ansprechpartner3Telefon1: data?.ansprechpartner3Telefon1 || "",
   };
+
+  // Use dynamic validation based on age
+  const validationSchema = useMemo(
+    () => createValidateStudentContactPersonData(age),
+    [age],
+  );
 
   // Track validation state changes (must be before early return)
   useEffect(() => {
@@ -73,172 +162,254 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
     return <div>Loading settings...</div>;
   }
 
+  const handleAddContact = () => {
+    const nextContact = visibleContacts.length + 1;
+    if (nextContact <= 3) {
+      setVisibleContacts([...visibleContacts, nextContact]);
+      setExpandedContact(nextContact);
+    }
+  };
+
+  const handleRemoveContact = (contactNumber: number) => {
+    setVisibleContacts(visibleContacts.filter((c) => c !== contactNumber));
+    if (expandedContact === contactNumber) {
+      setExpandedContact(visibleContacts[0] || null);
+    }
+  };
+
+  const toggleExpand = (contactNumber: number) => {
+    setExpandedContact(
+      expandedContact === contactNumber ? null : contactNumber,
+    );
+  };
+
+  const renderContactFields = (
+    contactNumber: number,
+    errors: Record<string, string | undefined>,
+    touched: Record<string, boolean | undefined>,
+  ) => {
+    const prefix = `ansprechpartner${contactNumber}`;
+    return (
+      <StyledFieldsContainer>
+        {/* Contact Type */}
+        <Field
+          component={Select}
+          name={`${prefix}Art`}
+          label={t("onboarding.legalGuardian.contactType")}
+          variant="outlined"
+          margin="normal"
+          fullWidth
+          error={touched[`${prefix}Art`] && Boolean(errors[`${prefix}Art`])}
+        >
+          {getEnabledOptions(contactPersonTypeOptions).map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+              {option.label}
+            </MenuItem>
+          ))}
+        </Field>
+
+        {/* First Name */}
+        <Field
+          component={TextField}
+          name={`${prefix}Vorname`}
+          label={t("onboarding.legalGuardian.firstName")}
+          variant="outlined"
+          margin="normal"
+          fullWidth
+          error={
+            touched[`${prefix}Vorname`] && Boolean(errors[`${prefix}Vorname`])
+          }
+          helperText={touched[`${prefix}Vorname`] && errors[`${prefix}Vorname`]}
+        />
+
+        {/* Last Name */}
+        <Field
+          component={TextField}
+          name={`${prefix}Nachname`}
+          label={t("onboarding.legalGuardian.lastName")}
+          variant="outlined"
+          margin="normal"
+          fullWidth
+          error={
+            touched[`${prefix}Nachname`] && Boolean(errors[`${prefix}Nachname`])
+          }
+          helperText={
+            touched[`${prefix}Nachname`] && errors[`${prefix}Nachname`]
+          }
+        />
+
+        {/* Postal Code */}
+        <Field
+          component={TextField}
+          name={`${prefix}Plz`}
+          label={t("onboarding.legalGuardian.postalCode")}
+          variant="outlined"
+          margin="normal"
+          fullWidth
+          error={touched[`${prefix}Plz`] && Boolean(errors[`${prefix}Plz`])}
+          helperText={touched[`${prefix}Plz`] && errors[`${prefix}Plz`]}
+        />
+
+        {/* City */}
+        <Field
+          component={TextField}
+          name={`${prefix}Ort`}
+          label={t("onboarding.legalGuardian.city")}
+          variant="outlined"
+          margin="normal"
+          fullWidth
+          error={touched[`${prefix}Ort`] && Boolean(errors[`${prefix}Ort`])}
+          helperText={touched[`${prefix}Ort`] && errors[`${prefix}Ort`]}
+        />
+
+        {/* Street */}
+        <Field
+          component={TextField}
+          name={`${prefix}Straße`}
+          label={t("onboarding.legalGuardian.street")}
+          variant="outlined"
+          margin="normal"
+          fullWidth
+          error={
+            touched[`${prefix}Straße`] && Boolean(errors[`${prefix}Straße`])
+          }
+          helperText={touched[`${prefix}Straße`] && errors[`${prefix}Straße`]}
+        />
+
+        {/* House Number */}
+        <Field
+          component={TextField}
+          name={`${prefix}HausNr`}
+          label={t("onboarding.legalGuardian.houseNumber")}
+          variant="outlined"
+          margin="normal"
+          fullWidth
+          error={
+            touched[`${prefix}HausNr`] && Boolean(errors[`${prefix}HausNr`])
+          }
+          helperText={touched[`${prefix}HausNr`] && errors[`${prefix}HausNr`]}
+        />
+
+        {/* Mobile Number */}
+        <Field
+          component={TextField}
+          name={`${prefix}Mobil`}
+          label={t("onboarding.legalGuardian.mobileNumber")}
+          variant="outlined"
+          margin="normal"
+          fullWidth
+          error={touched[`${prefix}Mobil`] && Boolean(errors[`${prefix}Mobil`])}
+          helperText={touched[`${prefix}Mobil`] && errors[`${prefix}Mobil`]}
+        />
+
+        {/* Phone Number */}
+        <Field
+          component={TextField}
+          name={`${prefix}Telefon1`}
+          label={t("onboarding.legalGuardian.phoneNumber")}
+          variant="outlined"
+          margin="normal"
+          fullWidth
+          error={
+            touched[`${prefix}Telefon1`] && Boolean(errors[`${prefix}Telefon1`])
+          }
+          helperText={
+            touched[`${prefix}Telefon1`] && errors[`${prefix}Telefon1`]
+          }
+        />
+      </StyledFieldsContainer>
+    );
+  };
+
   return (
     <Formik<FormValues>
       initialValues={initialValues}
-      validationSchema={validateStudentContactPersonData}
+      validationSchema={validationSchema}
       onSubmit={(values) => {
         dispatch(updateStudentOnboardingData(values));
+        // Pass values to parent to ensure immediate save to database
         if (onSubmit) onSubmit(values);
       }}
       innerRef={formikRef}
     >
-      {({ errors, touched }) => (
+      {({ errors, touched, values, setFieldValue }) => (
         <StyledForm>
-          {/* ansprechpartner1Art - Dynamic Dropdown */}
-          <Field
-            component={Select}
-            name="ansprechpartner1Art"
-            label={t("onboarding.parents.contactType")}
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            error={
-              touched.ansprechpartner1Art && Boolean(errors.ansprechpartner1Art)
-            }
-          >
-            {getEnabledOptions(contactPersonTypeOptions).map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </Field>
+          {/* Show info alert for adults indicating fields are optional */}
+          {isAdult && (
+            <Alert severity="info" sx={{ width: "100%", mb: 2 }}>
+              {t("onboarding.legalGuardian.adultOptionalInfo")}
+            </Alert>
+          )}
 
-          {/* ansprechpartner1Vorname */}
-          <Field
-            component={TextField}
-            name="ansprechpartner1Vorname"
-            label={t("onboarding.parents.firstName")}
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            error={
-              touched.ansprechpartner1Vorname &&
-              Boolean(errors.ansprechpartner1Vorname)
-            }
-            helperText={
-              touched.ansprechpartner1Vorname && errors.ansprechpartner1Vorname
-            }
-          />
+          {/* Add Contact button at the top */}
+          {visibleContacts.length < 3 && (
+            <GeneralButton
+              label={t("onboarding.legalGuardian.addContact")}
+              onAction={handleAddContact}
+              isPrimary={false}
+              startIcon={<AddIcon />}
+              fullWidth
+              withTooltip
+              tooltipLabel={t("onboarding.legalGuardian.addContactTooltip")}
+              tooltipPlacement="top"
+            />
+          )}
 
-          {/* ansprechpartner1Nachname */}
-          <Field
-            component={TextField}
-            name="ansprechpartner1Nachname"
-            label={t("onboarding.parents.lastName")}
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            error={
-              touched.ansprechpartner1Nachname &&
-              Boolean(errors.ansprechpartner1Nachname)
-            }
-            helperText={
-              touched.ansprechpartner1Nachname &&
-              errors.ansprechpartner1Nachname
-            }
-          />
-
-          {/* ansprechpartner1Plz */}
-          <Field
-            component={TextField}
-            name="ansprechpartner1Plz"
-            label={t("onboarding.parents.postalCode")}
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            error={
-              touched.ansprechpartner1Plz && Boolean(errors.ansprechpartner1Plz)
-            }
-            helperText={
-              touched.ansprechpartner1Plz && errors.ansprechpartner1Plz
-            }
-          />
-
-          {/* ansprechpartner1Ort */}
-          <Field
-            component={TextField}
-            name="ansprechpartner1Ort"
-            label={t("onboarding.parents.city")}
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            error={
-              touched.ansprechpartner1Ort && Boolean(errors.ansprechpartner1Ort)
-            }
-            helperText={
-              touched.ansprechpartner1Ort && errors.ansprechpartner1Ort
-            }
-          />
-
-          {/* ansprechpartner1Straße */}
-          <Field
-            component={TextField}
-            name="ansprechpartner1Straße"
-            label={t("onboarding.parents.street")}
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            error={
-              touched.ansprechpartner1Straße &&
-              Boolean(errors.ansprechpartner1Straße)
-            }
-            helperText={
-              touched.ansprechpartner1Straße && errors.ansprechpartner1Straße
-            }
-          />
-
-          {/* ansprechpartner1HausNr */}
-          <Field
-            component={TextField}
-            name="ansprechpartner1HausNr"
-            label={t("onboarding.parents.houseNumber")}
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            error={
-              touched.ansprechpartner1HausNr &&
-              Boolean(errors.ansprechpartner1HausNr)
-            }
-            helperText={
-              touched.ansprechpartner1HausNr && errors.ansprechpartner1HausNr
-            }
-          />
-
-          {/* ansprechpartner1Mobil */}
-          <Field
-            component={TextField}
-            name="ansprechpartner1Mobil"
-            label={t("onboarding.parents.mobileNumber")}
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            error={
-              touched.ansprechpartner1Mobil &&
-              Boolean(errors.ansprechpartner1Mobil)
-            }
-            helperText={
-              touched.ansprechpartner1Mobil && errors.ansprechpartner1Mobil
-            }
-          />
-
-          {/* ansprechpartner1Telefon1 */}
-          <Field
-            component={TextField}
-            name="ansprechpartner1Telefon1"
-            label={t("onboarding.parents.phoneNumber")}
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            error={
-              touched.ansprechpartner1Telefon1 &&
-              Boolean(errors.ansprechpartner1Telefon1)
-            }
-            helperText={
-              touched.ansprechpartner1Telefon1 &&
-              errors.ansprechpartner1Telefon1
-            }
-          />
+          {/* Render visible contacts with EnhancedCollapse */}
+          {visibleContacts.map((contactNumber) => (
+            <Box key={contactNumber} sx={{ width: "100%" }}>
+              <EnhancedCollapse
+                title={t(
+                  `onboarding.legalGuardian.contactPerson${contactNumber}`,
+                )}
+                subtitle={
+                  values[
+                    `ansprechpartner${contactNumber}Vorname` as keyof FormValues
+                  ] &&
+                  values[
+                    `ansprechpartner${contactNumber}Nachname` as keyof FormValues
+                  ]
+                    ? `${values[`ansprechpartner${contactNumber}Vorname` as keyof FormValues]} ${values[`ansprechpartner${contactNumber}Nachname` as keyof FormValues]}`
+                    : undefined
+                }
+                expanded={expandedContact === contactNumber}
+                onAction={() => toggleExpand(contactNumber)}
+                withArrow
+                headerAction={
+                  contactNumber > 1 ? (
+                    <SmallIconButton
+                      icon={<DeleteIcon />}
+                      customColor="#d32f2f"
+                      hoverAllowed
+                      noMargin
+                      title={t("onboarding.legalGuardian.removeContactTooltip")}
+                      placement="top"
+                    />
+                  ) : undefined
+                }
+                onHeaderActionClick={
+                  contactNumber > 1
+                    ? () => {
+                        // Clear all fields for this contact
+                        const prefix = `ansprechpartner${contactNumber}`;
+                        setFieldValue(`${prefix}Art`, "");
+                        setFieldValue(`${prefix}Vorname`, "");
+                        setFieldValue(`${prefix}Nachname`, "");
+                        setFieldValue(`${prefix}Plz`, "");
+                        setFieldValue(`${prefix}Ort`, "");
+                        setFieldValue(`${prefix}Straße`, "");
+                        setFieldValue(`${prefix}HausNr`, "");
+                        setFieldValue(`${prefix}Mobil`, "");
+                        setFieldValue(`${prefix}Telefon1`, "");
+                        handleRemoveContact(contactNumber);
+                      }
+                    : undefined
+                }
+              >
+                {renderContactFields(contactNumber, errors, touched)}
+              </EnhancedCollapse>
+            </Box>
+          ))}
         </StyledForm>
       )}
     </Formik>

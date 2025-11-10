@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 
+import GeneralButton from "@/components/atoms/buttons/GeneralButton";
 import AdminSettingsHeader from "@/components/molecules/AdminSettingsHeader";
-import EnhancedCollapse from "@/components/molecules/EnhancedCollapse";
 import AgreementsManager from "@/components/organisms/settings/AgreementsManager";
 import {
   getAgreementSettings,
@@ -12,7 +12,8 @@ import {
 import { AppDispatch, RootState } from "@/store/store";
 import { AgreementItem, AgreementSettings } from "@/types/settings";
 import { applicationScrollbar } from "@/utils/styling.utils";
-import { Box, Typography, styled } from "@mui/material";
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import { Box, styled } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -39,13 +40,6 @@ const ContentContainer = styled(Box)(({ theme }) => ({
   ...applicationScrollbar(theme),
 }));
 
-const Section = styled(Box)(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  gap: theme.spacing(2),
-  marginBottom: theme.spacing(4),
-}));
-
 const AdminSettingsAgreementsPage = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
@@ -57,6 +51,9 @@ const AdminSettingsAgreementsPage = () => {
 
   const [localAgreements, setLocalAgreements] = useState<AgreementItem[]>([]);
   const [hasChanges, setHasChanges] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editingAgreement, setEditingAgreement] =
+    useState<AgreementItem | null>(null);
 
   // Fetch agreement settings on mount (always fetch to get defaults)
   useEffect(() => {
@@ -87,11 +84,9 @@ const AdminSettingsAgreementsPage = () => {
     setHasChanges(false);
   };
 
-  const handleCancel = () => {
-    if (agreementSettings?.agreements) {
-      setLocalAgreements(agreementSettings.agreements);
-      setHasChanges(false);
-    }
+  const handleAddAgreement = () => {
+    setEditingAgreement(null);
+    setModalOpen(true);
   };
 
   return (
@@ -99,28 +94,26 @@ const AdminSettingsAgreementsPage = () => {
       <AdminSettingsHeader
         title={t("navigation.agreementSettings")}
         onSave={handleSave}
-        onCancel={handleCancel}
-        hasChanges={hasChanges}
-        loading={loading}
-      />
+        disabled={!hasChanges}
+        onLoad={loading}
+      >
+        <GeneralButton
+          label={t("settings.agreements.addAgreement")}
+          startIcon={<AddRoundedIcon />}
+          onAction={handleAddAgreement}
+          isPrimary={false}
+        />
+      </AdminSettingsHeader>
 
       <ContentContainer>
-        <Section>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            {t("settings.agreements.description")}
-          </Typography>
-
-          <EnhancedCollapse
-            title={t("settings.agreements.schoolAgreements")}
-            subtitle={t("settings.agreements.schoolAgreementsSubtitle")}
-            expanded={true}
-          >
-            <AgreementsManager
-              agreements={localAgreements}
-              onChange={handleAgreementsChange}
-            />
-          </EnhancedCollapse>
-        </Section>
+        <AgreementsManager
+          agreements={localAgreements}
+          onChange={handleAgreementsChange}
+          modalOpen={modalOpen}
+          setModalOpen={setModalOpen}
+          editingAgreement={editingAgreement}
+          setEditingAgreement={setEditingAgreement}
+        />
       </ContentContainer>
     </Wrapper>
   );

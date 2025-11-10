@@ -7,6 +7,7 @@ import { AppAction } from "./index";
 
 interface StudentState {
   currentStep: number;
+  previousStep: number | null;
   data: StudentData;
   students: Student[];
   loading: boolean;
@@ -19,6 +20,7 @@ interface StudentState {
 
 const initialStudentState: StudentState = {
   currentStep: 0,
+  previousStep: null,
   data: {
     klassenname: "",
     vorname: "",
@@ -42,7 +44,7 @@ const initialStudentState: StudentState = {
     staatsangehoerigkeit2: "",
     beruf: "",
     eintrittschule: "",
-    abschlüsse: "",
+    abschluesse: "",
     vorhergehendeSchule: "",
     vorhergehendeSchulform: "",
     vorhergehendeStufe: "",
@@ -58,6 +60,7 @@ const initialStudentState: StudentState = {
     betriebOrt: "",
     betriebTelefon1: "",
     betriebEmail: "",
+    // Contact Person 1
     ansprechpartner1Art: "",
     ansprechpartner1Vorname: "",
     ansprechpartner1Nachname: "",
@@ -67,6 +70,27 @@ const initialStudentState: StudentState = {
     ansprechpartner1Ort: "",
     ansprechpartner1Mobil: "",
     ansprechpartner1Telefon1: "",
+    // Contact Person 2
+    ansprechpartner2Art: "",
+    ansprechpartner2Vorname: "",
+    ansprechpartner2Nachname: "",
+    ansprechpartner2Straße: "",
+    ansprechpartner2HausNr: "",
+    ansprechpartner2Plz: "",
+    ansprechpartner2Ort: "",
+    ansprechpartner2Mobil: "",
+    ansprechpartner2Telefon1: "",
+    // Contact Person 3
+    ansprechpartner3Art: "",
+    ansprechpartner3Vorname: "",
+    ansprechpartner3Nachname: "",
+    ansprechpartner3Straße: "",
+    ansprechpartner3HausNr: "",
+    ansprechpartner3Plz: "",
+    ansprechpartner3Ort: "",
+    ansprechpartner3Mobil: "",
+    ansprechpartner3Telefon1: "",
+    // Agreements
     datenschutz: false,
     teilnahmeunterricht: false,
     schulordnung: false,
@@ -87,6 +111,7 @@ const studentReducer = (state = initialStudentState, action: AppAction) => {
     case TYPES.SET_STUDENT_CURRENT_STEP:
       return {
         ...state,
+        previousStep: state.currentStep, // Save current step as previous before changing
         currentStep: action.payload,
       };
 
@@ -134,6 +159,7 @@ const studentReducer = (state = initialStudentState, action: AppAction) => {
         ...state,
         data: initialStudentState.data,
         currentStep: 0,
+        previousStep: null,
         currentStudentId: null,
         currentStudent: null,
         currentClass: null,
@@ -167,6 +193,7 @@ const studentReducer = (state = initialStudentState, action: AppAction) => {
           ...action.payload.formData,
         },
         currentStep: action.payload.onboardingStep || 0,
+        previousStep: action.payload.previousStep ?? null,
         currentClass: action.payload.currentClass || null,
         studentStatus: action.payload.status || null,
         currentStudentId: action.payload.studentId || null,
@@ -193,6 +220,7 @@ const studentReducer = (state = initialStudentState, action: AppAction) => {
         ...state,
         loading: false,
         currentStep: 0,
+        previousStep: null,
         data: initialStudentState.data,
       };
 

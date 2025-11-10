@@ -90,12 +90,17 @@ const OriginForm: React.FC<OriginFormProps> = ({
       validationSchema={validationSchema}
       onSubmit={(values) => {
         dispatch(updateStudentOnboardingData(values));
+        // Pass values to parent to ensure immediate save to database
         if (onSubmit) onSubmit(values);
       }}
       innerRef={formikRef}
     >
       {({ setFieldValue, values, errors, touched }) => {
-        const enabledCountries = getEnabledOptions(countryOptions);
+        // Filter out Germany since this form is only for non-German students
+        // (students born in Germany skip this form entirely via conditional logic)
+        const enabledCountries = getEnabledOptions(countryOptions).filter(
+          (country) => country.value !== "DE",
+        );
 
         return (
           <StyledForm>
@@ -116,8 +121,10 @@ const OriginForm: React.FC<OriginFormProps> = ({
                   margin="normal"
                   error={touched.herkunftsland && Boolean(errors.herkunftsland)}
                   helperText={touched.herkunftsland && errors.herkunftsland}
+                  fullWidth
                 />
               )}
+              fullWidth
             />
 
             {/* Zuzugsjahr */}

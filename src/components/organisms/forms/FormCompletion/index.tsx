@@ -2,8 +2,10 @@
 
 import React from "react";
 
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import { Box, Button, Typography, styled } from "@mui/material";
+import GeneralButton from "@/components/atoms/buttons/GeneralButton";
+import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
+import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
+import { Box, Typography, styled } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 
@@ -14,7 +16,6 @@ const CompletionContainer = styled(Box)(({ theme }) => ({
   justifyContent: "center",
   textAlign: "center",
   padding: theme.spacing(6),
-  maxWidth: "600px",
   margin: "0 auto",
 }));
 
@@ -46,7 +47,7 @@ const FormCompletion = () => {
   return (
     <CompletionContainer>
       <IconContainer>
-        <CheckCircleOutlineIcon />
+        <CheckCircleOutlineRoundedIcon />
       </IconContainer>
 
       <Typography variant="h3" gutterBottom sx={{ fontWeight: 600 }}>
@@ -57,23 +58,18 @@ const FormCompletion = () => {
         {t("onboarding.completion.subtitle")}
       </Typography>
 
-      <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
+      <Typography variant="body1" color="text.information" sx={{ mb: 4 }}>
         {t("onboarding.completion.message")}
       </Typography>
 
       <ActionsContainer>
-        <Button
-          variant="contained"
-          size="large"
-          onClick={handleGoHome}
-          sx={{ textTransform: "none", fontSize: "16px", padding: "12px 32px" }}
-        >
-          {t("onboarding.completion.backToHome")}
-        </Button>
-
-        <Typography variant="caption" color="text.secondary" sx={{ mt: 2 }}>
-          {t("onboarding.completion.footer")}
-        </Typography>
+        <GeneralButton
+          onAction={handleGoHome}
+          startIcon={<HomeRoundedIcon />}
+          label={t("onboarding.completion.backToHome")}
+          fullHeight={false}
+          fullWidth={false}
+        />
       </ActionsContainer>
     </CompletionContainer>
   );

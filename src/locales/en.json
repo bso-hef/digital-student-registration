@@ -35,7 +35,9 @@
     "none": "None",
     "loadingSettings": "Loading settings...",
     "Submit": "Submit",
-    "Submitting": "Submitting..."
+    "Submitting": "Submitting...",
+    "Accepted": "Accepted",
+    "NotAccepted": "Not Accepted"
   },
   "error": {
     "Page not found": "Page not found",
@@ -72,10 +74,11 @@
       "General": "General",
       "Origin": "Origin",
       "Address": "Address",
-      "Parents": "Parents",
+      "Legal Guardian": "Legal Guardian",
       "Pre Education": "Previous Education",
       "Training": "Training",
       "Company Contact": "Company Contact",
+      "Agreements": "Agreements",
       "Summary": "Summary",
       "Completion": "Completion"
     }
@@ -276,7 +279,7 @@
       "phone": "Phone (Landline)",
       "email": "Email Address"
     },
-    "parents": {
+    "legalGuardian": {
       "type": "Type",
       "name": "Name",
       "address": "Address",
@@ -290,7 +293,15 @@
       "street": "Street",
       "houseNumber": "House Number",
       "mobileNumber": "Mobile Number",
-      "phoneNumber": "Phone Number"
+      "phoneNumber": "Phone Number",
+      "contactPerson1": "Legal Guardian 1",
+      "contactPerson2": "Legal Guardian 2",
+      "contactPerson3": "Legal Guardian 3",
+      "addContact": "Add Legal Guardian",
+      "addContactTooltip": "Add another legal guardian",
+      "removeContact": "Remove Legal Guardian",
+      "removeContactTooltip": "Remove this legal guardian",
+      "adultOptionalInfo": "Since you are an adult (18 years or older), legal guardian information is optional. You only need to fill these fields if you wish."
     },
     "preEducation": {
       "previousSchool": "Previous School",
@@ -319,7 +330,24 @@
       "salutation": "Salutation",
       "firstName": "First Name",
       "lastName": "Last Name",
-      "phone": "Phone"
+      "phone": "Phone",
+      "contactPerson": "Company Contact Person"
+    },
+    "agreements": {
+      "title": "Agreements",
+      "description": "Please read and accept the following agreements to continue with your registration.",
+      "required": "This agreement is required",
+      "datenschutz": "Data Protection Agreement",
+      "datenschutzDesc": "I consent to the processing of my personal data in accordance with the data protection policy.",
+      "teilnahmeunterricht": "Class Participation Consent",
+      "teilnahmeunterrichtDesc": "I agree to participate in all required classes and activities.",
+      "schulordnung": "School Rules Acceptance",
+      "schulordnungDesc": "I have read and accept the school rules and regulations.",
+      "personenabbildung": "Photo & Imaging Consent",
+      "personenabbildungDesc": "I consent to having my photo taken for school purposes (ID card, yearbook, website).",
+      "teamsnutzung": "Microsoft Teams Usage Agreement",
+      "teamsnutzungDesc": "I agree to use Microsoft Teams for school-related communication and activities.",
+      "noAgreements": "No agreements have been configured by the administrator."
     },
     "welcome": {
       "title": "BSO Registration",
@@ -333,10 +361,14 @@
       "title": "Summary",
       "description": "Please review your information before submission.",
       "generalInfo": "General Information",
+      "origin": "Immigration Details",
       "address": "Address and Contact",
       "contactPerson": "Contact Person",
       "education": "Previous Education",
-      "training": "Vocational Training"
+      "training": "Vocational Training",
+      "companyContact": "Company Contact Person",
+      "agreements": "Agreements",
+      "confirmationText": "I have read the summary and accept that the data is accurate"
     },
     "completion": {
       "title": "Enrollment Complete!",
@@ -346,6 +378,7 @@
       "footer": "You can now close this window."
     },
     "loadingProfile": "Loading your student profile...",
+    "loadingDetails": "Please wait while we fetch your information...",
     "error": {
       "invalidStudentId": {
         "title": "Invalid Student ID",
@@ -452,6 +485,7 @@
       "dateOfBirth": "Date of Birth",
       "class": "Class",
       "status": "Status",
+      "verificationCode": "Registration ID",
       "importStudents": "Import Students",
       "deleteStudents": "Delete Students",
       "generateQRCode": "Generate QR Code",
@@ -491,9 +525,6 @@
     },
     "agreements": {
       "title": "Agreements",
-      "description": "Manage school agreements shown during student onboarding",
-      "schoolAgreements": "School Agreements",
-      "schoolAgreementsSubtitle": "Configure which agreements students must accept during registration",
       "addAgreement": "Add Agreement",
       "editAgreement": "Edit Agreement",
       "deleteConfirm": "Delete Agreement",
@@ -512,6 +543,14 @@
       "keyHelperText": "Unique identifier (auto-generated from English label)",
       "labelEnPlaceholder": "e.g., Data Protection",
       "labelDePlaceholder": "e.g., Datenschutz",
+      "descriptionEn": "Description (English)",
+      "descriptionDe": "Description (German)",
+      "descriptionEnPlaceholder": "e.g., I consent to the processing of my personal data...",
+      "descriptionDePlaceholder": "e.g., Ich willige in die Verarbeitung meiner personenbezogenen Daten ein...",
+      "descriptionHelperText": "Optional description shown to students (supports multiple lines)",
+      "icon": "Icon",
+      "iconPlaceholder": "e.g., PrivacyTip, School, Gavel",
+      "iconHelperText": "Optional MUI icon name (e.g., PrivacyTip, School, Gavel, CameraAlt, Groups)",
       "validation": {
         "keyRequired": "Key is required",
         "keyExists": "An agreement with this key already exists",

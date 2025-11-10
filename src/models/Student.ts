@@ -155,6 +155,7 @@ const StudentSchema = new Schema(
 
     // Onboarding progress
     onboardingStep: { type: Number, default: 0 },
+    previousStep: { type: Number, default: null },
 
     // System fields
     firstNameNorm: { type: String, required: true, index: true },
@@ -201,7 +202,7 @@ StudentSchema.pre(
     if (!this.verificationCode) {
       const checkExists = async (code: string): Promise<boolean> => {
         // Use this.constructor to access the model after it's instantiated
-        const Model = this.constructor as mongoose.Model<IStudent>;
+        const Model = this.constructor as mongoose.Model<mongoose.Document>;
         const existing = await Model.findOne({
           verificationCode: code,
         }).lean();
