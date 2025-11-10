@@ -1,4 +1,5 @@
 import { SCHEMA } from "@/constants/db.constants";
+import { generateUniqueVerificationCode } from "@/utils/verification.utils";
 import { getAllTimezones, getCountry } from "countries-and-timezones";
 import mongoose, { Schema } from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
@@ -165,6 +166,15 @@ const StudentSchema = new Schema(
       enum: ["imported", "invited", "onboarded"],
       default: "imported",
     },
+    verificationCode: {
+      type: String,
+      unique: true,
+      sparse: true,
+      index: true,
+      trim: true,
+      uppercase: true,
+      match: /^[0-9A-Z]{6}$/,
+    },
 
     active: { type: Boolean, default: true },
   },
@@ -179,6 +189,30 @@ StudentSchema.index(
 
 StudentSchema.plugin(mongoosePaginate);
 
+// Pre-save hook: Generate verification code if not present
+StudentSchema.pre(
+  "save",
+  async function (
+    this: mongoose.Document & {
+      verificationCode?: string;
+    },
+  ) {
+    // Generate verification code if not present
+    if (!this.verificationCode) {
+      const checkExists = async (code: string): Promise<boolean> => {
+        // Use this.constructor to access the model after it's instantiated
+        const Model = this.constructor as mongoose.Model<any>;
+        const existing = await Model.findOne({
+          verificationCode: code,
+        }).lean();
+        return !!existing;
+      };
+      this.verificationCode = await generateUniqueVerificationCode(checkExists);
+    }
+  },
+);
+
+// Pre-save hook: Validate employer info for vocational classes
 StudentSchema.pre(
   "save",
   async function (

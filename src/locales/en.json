@@ -131,6 +131,7 @@
       "onboardingWizard": "Onboarding Wizard",
       "class": "Class:",
       "id": "ID:",
+      "verificationCode": "Verification Code:",
       "downloadPdf": "Download PDF",
       "createZip": "Create ZIP",
       "title": "Generate QR PDFs for selected students"
@@ -699,6 +700,23 @@
       "hasSpecialChar": "At least one special character (!@#$%^&*)",
       "hasMinLength": "Minimum 8 characters",
       "generatePassword": "Generate secure password"
+    },
+    "pdf": {
+      "onboardingWizard": "Onboarding Wizard",
+      "class": "Class:",
+      "verificationCode": "Verification Code:",
+      "id": "ID:",
+      "portrait": "Portrait",
+      "landscape": "Landscape"
+    },
+    "studentLogin": {
+      "title": "BSO Registration",
+      "subtitle": "Please enter your first name, last name, and registration ID.",
+      "firstNamePlaceholder": "First Name",
+      "lastNamePlaceholder": "Last Name",
+      "verificationCodePlaceholder": "Registration ID (e.g. A1B2C3)",
+      "submit": "Submit",
+      "verifying": "Verifying..."
     }
   }
 }

@@ -1,11 +1,17 @@
 "use client";
 
+import { useState } from "react";
+
 import CustomTitle from "@/components/atoms/CustomTitle";
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
+import { validateVerificationForm } from "@/lib/validate/student.validate";
+import { verifyStudent } from "@/store/actions/studentActions";
+import { useAppDispatch } from "@/store/store";
 import { Box, styled } from "@mui/material";
 import { Field, Form, Formik } from "formik";
 import { TextField } from "formik-mui";
-import * as Yup from "yup";
+import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 
 const Wrapper = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -32,69 +38,98 @@ const StyledForm = styled(Form)(({ theme }) => ({
 interface FormValues {
   firstName: string;
   lastName: string;
-  uniqueIdentifier: string | number;
+  uniqueIdentifier: string;
 }
 
-const validationSchema = Yup.object({
-  firstName: Yup.string().required("Vorname ist erforderlich"),
-  lastName: Yup.string().required("Nachname ist erforderlich"),
-  uniqueIdentifier: Yup.string().required(
-    "Eindeutiger Bezeichner ist erforderlich",
-  ),
-});
-
 export default function StudentPage() {
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const initialValues: FormValues = {
     firstName: "",
     lastName: "",
     uniqueIdentifier: "",
   };
 
+  const handleVerification = async (values: FormValues) => {
+    setIsSubmitting(true);
+    try {
+      const studentId = await dispatch(
+        verifyStudent(
+          values.firstName,
+          values.lastName,
+          values.uniqueIdentifier,
+        ),
+      );
+
+      if (studentId) {
+        // Navigate to student onboarding page
+        router.push(`/student/${studentId}`);
+      }
+    } catch (error) {
+      // Error is already handled in the action (notification shown)
+      console.error("Verification failed:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <Wrapper>
       <CustomTitle
-        title="Anmeldung der BSO"
-        subTitle="Bitte gib deinen Vor-, Nachnamen und die Anmelde-ID ein."
+        title={t("auth.studentLogin.title")}
+        subTitle={t("auth.studentLogin.subtitle")}
       />
       <Formik<FormValues>
         enableReinitialize
         initialValues={initialValues}
-        validationSchema={validationSchema}
-        onSubmit={(values) => {
-          console.log("✅ Submitted values:", values);
-        }}
+        validationSchema={validateVerificationForm}
+        onSubmit={handleVerification}
       >
-        {({ handleSubmit, errors, touched }) => (
+        {({ handleSubmit, errors, touched, isValid, dirty }) => (
           <StyledForm>
             <Field
               component={TextField}
               name="firstName"
-              placeholder="Vorname"
+              placeholder={t("auth.studentLogin.firstNamePlaceholder")}
               error={touched.firstName && Boolean(errors.firstName)}
               helperText={touched.firstName && errors.firstName}
+              disabled={isSubmitting}
             />
             <Field
               component={TextField}
               name="lastName"
-              placeholder="Nachname"
+              placeholder={t("auth.studentLogin.lastNamePlaceholder")}
               error={touched.lastName && Boolean(errors.lastName)}
               helperText={touched.lastName && errors.lastName}
+              disabled={isSubmitting}
             />
             <Field
               component={TextField}
               name="uniqueIdentifier"
-              placeholder="Eindeutiger Bezeichner"
+              placeholder={t("auth.studentLogin.verificationCodePlaceholder")}
               error={
                 touched.uniqueIdentifier && Boolean(errors.uniqueIdentifier)
               }
               helperText={touched.uniqueIdentifier && errors.uniqueIdentifier}
+              disabled={isSubmitting}
+              inputProps={{
+                style: { textTransform: "uppercase" },
+                maxLength: 6,
+              }}
             />
             <Box>
               <GeneralButton
                 onAction={() => handleSubmit()}
                 isPrimary={false}
-                label="Absenden"
-                disabled={Object.keys(errors).length > 0}
+                label={
+                  isSubmitting
+                    ? t("auth.studentLogin.verifying")
+                    : t("auth.studentLogin.submit")
+                }
+                disabled={isSubmitting || !isValid || !dirty}
               />
             </Box>
           </StyledForm>

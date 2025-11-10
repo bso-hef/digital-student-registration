@@ -1,5 +1,26 @@
 import * as Yup from "yup";
 
+// Verification Form Validation
+export const validateVerificationForm = Yup.object({
+  firstName: Yup.string()
+    .required("Vorname ist erforderlich")
+    .trim()
+    .min(1, "Vorname darf nicht leer sein"),
+  lastName: Yup.string()
+    .required("Nachname ist erforderlich")
+    .trim()
+    .min(1, "Nachname darf nicht leer sein"),
+  uniqueIdentifier: Yup.string()
+    .required("Eindeutiger Bezeichner ist erforderlich")
+    .trim()
+    .length(6, "Der Code muss genau 6 Zeichen enthalten")
+    .matches(
+      /^[0-9A-Z]{6}$/i,
+      "Der Code darf nur Zahlen (0-9) und Großbuchstaben (A-Z) enthalten",
+    )
+    .transform((value) => value.toUpperCase()),
+});
+
 // Dynamic validation schema builders
 export const createGenderValidation = (
   allowedValues: string[],

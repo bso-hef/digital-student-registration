@@ -131,6 +131,7 @@
       "onboardingWizard": "Onboarding-Assistent",
       "class": "Klasse:",
       "id": "ID:",
+      "verificationCode": "Verifizierungscode:",
       "downloadPdf": "PDF herunterladen",
       "createZip": "ZIP erzeugen",
       "title": "QR-PDFs für ausgewählte Schüler erzeugen"
@@ -168,6 +169,11 @@
     "studentAddFailed": "Hinzufügen der Schüler fehlgeschlagen.",
     "studentDeleteSuccess": "Schüler erfolgreich gelöscht.",
     "studentDeleteFailed": "Löschen der Schüler fehlgeschlagen.",
+    "verificationSuccess": "Verifizierung erfolgreich.",
+    "verificationFailed": "Verifizierung fehlgeschlagen.",
+    "studentLoadFailed": "Laden der Schülerdaten fehlgeschlagen.",
+    "onboardingSubmitSuccess": "Onboarding erfolgreich abgeschlossen.",
+    "onboardingSubmitFailed": "Onboarding-Übermittlung fehlgeschlagen.",
     "classFetchFailed": "Abrufen der Klassen fehlgeschlagen.",
     "classAddSuccess": "Klassen erfolgreich hinzugefügt.",
     "classAddFailed": "Hinzufügen der Klassen fehlgeschlagen.",
@@ -451,6 +457,7 @@
       "dateOfBirth": "Geburtsdatum",
       "class": "Klasse",
       "status": "Status",
+      "verificationCode": "Anmelde-ID",
       "importStudents": "Schüler hinzufügen",
       "deleteStudents": "Schüler löschen",
       "generateQRCode": "QR-Code generieren",
@@ -699,6 +706,23 @@
       "hasSpecialChar": "Mindestens ein Sonderzeichen (!@#$%^&*)",
       "hasMinLength": "Mindestens 8 Zeichen",
       "generatePassword": "Sicheres Passwort generieren"
+    },
+    "pdf": {
+      "onboardingWizard": "Onboarding-Assistent",
+      "class": "Klasse:",
+      "verificationCode": "Verifizierungscode:",
+      "id": "ID:",
+      "portrait": "Hochformat",
+      "landscape": "Querformat"
+    },
+    "studentLogin": {
+      "title": "Anmeldung der BSO",
+      "subtitle": "Bitte gib deinen Vor-, Nachnamen und die Anmelde-ID ein.",
+      "firstNamePlaceholder": "Vorname",
+      "lastNamePlaceholder": "Nachname",
+      "verificationCodePlaceholder": "Anmelde-ID (z.B. A1B2C3)",
+      "submit": "Absenden",
+      "verifying": "Wird überprüft..."
     }
   }
 }

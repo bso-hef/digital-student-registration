@@ -7,8 +7,8 @@
  *
  * All models must be imported here using side-effect imports.
  */
-
 import "./AppSettings";
+
 import "./AuditLog";
 import "./Class";
 import "./Student";

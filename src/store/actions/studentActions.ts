@@ -73,6 +73,46 @@ export const deleteStudents =
     }
   };
 
+// ===== Student Verification Action =====
+
+/**
+ * Verifies student identity using first name, last name, and verification code
+ * Returns student ID on success, which can be used to load onboarding
+ */
+export const verifyStudent =
+  (firstName: string, lastName: string, verificationCode: string): AppThunk =>
+  async (dispatch) => {
+    dispatch({ type: TYPES.VERIFY_STUDENT_REQUEST });
+    try {
+      const { data } = await studentService.verify(
+        firstName,
+        lastName,
+        verificationCode,
+      );
+
+      dispatch({
+        type: TYPES.VERIFY_STUDENT_SUCCESS,
+        payload: data,
+      });
+
+      successNotification(i18n.t("actions.verificationSuccess"));
+
+      return data.studentId; // Return for navigation
+    } catch (error: any) {
+      // Extract specific error message from API response
+      const errorMessage =
+        error?.response?.data?.error || i18n.t("actions.verificationFailed");
+
+      errorNotification(errorMessage);
+      dispatch({
+        type: TYPES.VERIFY_STUDENT_FAILURE,
+        payload: error,
+      });
+
+      throw error; // Re-throw for component to handle
+    }
+  };
+
 // ===== Student Onboarding Actions =====
 
 /**

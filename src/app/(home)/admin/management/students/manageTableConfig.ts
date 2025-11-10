@@ -26,6 +26,14 @@ export const manageTableHeaders = (t: TFunction) => [
     label: t("settings.manageStudent.class"),
   },
   {
+    id: "verificationCode",
+    align: TABLE_ALIGN.LEFT,
+    numeric: false,
+    disablePadding: false,
+    sortable: true,
+    label: t("settings.manageStudent.verificationCode"),
+  },
+  {
     id: "status",
     align: TABLE_ALIGN.RIGHT,
     numeric: false,

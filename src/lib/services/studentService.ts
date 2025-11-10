@@ -33,6 +33,14 @@ const studentService = {
   delete: (ids: string[]) => {
     return http.delete("/api/students", { data: { ids } });
   },
+  // Verification method
+  verify: (firstName: string, lastName: string, verificationCode: string) => {
+    return http.post("/api/students/verify", {
+      firstName,
+      lastName,
+      verificationCode,
+    });
+  },
   // Onboarding methods
   updateOnboarding: (id: string, data: Record<string, unknown>) => {
     return http.patch(`/api/students/${id}/onboarding`, data);

@@ -97,6 +97,7 @@ export interface Student {
   collisionGroup?: string;
   ordinal?: number;
   status: "imported" | "invited" | "onboarded";
+  verificationCode?: string; // 6-character alphanumeric code (0-9, A-Z)
   active?: boolean;
 
   // Metadata

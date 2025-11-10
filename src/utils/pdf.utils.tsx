@@ -1,3 +1,4 @@
+import { tServer } from "@/lib/server-i18n";
 import { jsPDF } from "jspdf";
 
 import { makeQrDataUrl } from "./qr.utils";
@@ -7,6 +8,9 @@ export type Student = {
   firstName: string;
   lastName: string;
   className?: string;
+  currentClassName?: string;
+  currentClass?: { name?: string } | string | null;
+  verificationCode?: string;
 };
 
 export type PdfSettings = {
@@ -43,7 +47,7 @@ export async function buildPdfForStudent(
   // Header
   doc.setFontSize(11);
   doc.setFont("helvetica");
-  doc.text("Onboarding-Wizard", pad, pad + 7);
+  doc.text(tServer("pdf.onboardingWizard"), pad, pad + 7);
 
   // URL + QR
   const sid = s._id || "";
@@ -71,16 +75,41 @@ export async function buildPdfForStudent(
   doc.setFontSize(12);
   let ty = qrY + 14;
 
-  if (settings.includeClass && s.className) {
-    doc.text(`Klasse: ${s.className}`, textX, ty, { maxWidth: textMaxW });
+  const classNameToDisplay =
+    s.currentClassName ||
+    (s.currentClass && typeof s.currentClass === "object"
+      ? s.currentClass.name
+      : s.currentClass) ||
+    s.className;
+  if (
+    settings.includeClass &&
+    classNameToDisplay &&
+    classNameToDisplay.trim()
+  ) {
+    doc.text(`${tServer("pdf.class")} ${classNameToDisplay}`, textX, ty, {
+      maxWidth: textMaxW,
+    });
     ty += 7;
   }
 
+  if (s.verificationCode) {
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(0);
+    doc.setFontSize(14);
+    doc.text(
+      `${tServer("pdf.verificationCode")} ${s.verificationCode}`,
+      textX,
+      ty,
+    );
+    ty += 8;
+  }
+
   const shownId = settings.shortenId ? sid.slice(0, 8) : sid;
+  doc.setFont("helvetica", "normal");
   doc.setTextColor(120);
-  doc.setFontSize(10);
-  doc.text(`ID: ${shownId}`, textX, ty);
-  ty += 7;
+  doc.setFontSize(8);
+  doc.text(`${tServer("pdf.id")} ${shownId}`, textX, ty);
+  ty += 6;
 
   doc.setTextColor(0);
   doc.setFontSize(9);
@@ -91,12 +120,22 @@ export async function buildPdfForStudent(
   doc.setFontSize(9);
   doc.setTextColor(100);
   doc.text(
-    `${settings.pageSize} • ${isPortrait ? "Hochformat" : "Querformat"}`,
+    `${settings.pageSize} • ${isPortrait ? tServer("pdf.portrait") : tServer("pdf.landscape")}`,
     pad,
     pageH - pad,
   );
+  const classNameForFilename =
+    s.currentClassName ||
+    (s.currentClass && typeof s.currentClass === "object"
+      ? s.currentClass.name
+      : s.currentClass) ||
+    s.className;
+  const filenameClass =
+    settings.includeClass && classNameForFilename && classNameForFilename.trim()
+      ? `_${classNameForFilename}`
+      : "";
   doc.text(
-    `${s.lastName}_${s.firstName}${settings.includeClass ? `_${s.className ?? ""}` : ""}.pdf`,
+    `${s.lastName}_${s.firstName}${filenameClass}.pdf`,
     pageW - pad,
     pageH - pad,
     { align: "right" },

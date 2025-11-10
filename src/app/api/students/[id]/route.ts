@@ -84,16 +84,21 @@ export async function PATCH(
 
     const body = await request.json();
 
-    // Find and update student
-    const student = await Student.findByIdAndUpdate(
-      id,
-      { $set: body },
-      { new: true, runValidators: true },
-    ).populate("currentClass");
+    // Find student first
+    const student = await Student.findById(id);
 
     if (!student) {
       return NextResponse.json({ error: "Student not found" }, { status: 404 });
     }
+
+    // Update fields
+    Object.assign(student, body);
+
+    // Save to trigger pre-save hooks (including verification code generation)
+    await student.save();
+
+    // Populate after save
+    await student.populate("currentClass");
 
     logger.info(`Updated student: ${id}`);
 

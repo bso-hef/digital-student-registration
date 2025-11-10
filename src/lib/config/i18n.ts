@@ -11,7 +11,12 @@ import { store } from "../../store/store";
 
 const resources = {
   en: { translation: EN },
+  "en-US": { translation: EN },
+  "en-GB": { translation: EN },
   de: { translation: DE },
+  "de-DE": { translation: DE },
+  "de-AT": { translation: DE },
+  "de-CH": { translation: DE },
 };
 
 const detection = {
@@ -47,6 +52,9 @@ i18n
     detection,
 
     fallbackLng: "en",
+    supportedLngs: ["en", "en-US", "en-GB", "de", "de-DE", "de-AT", "de-CH"],
+    nonExplicitSupportedLngs: true,
+    load: "languageOnly",
     debug: process.env.NODE_ENV === "development",
     interpolation: {
       escapeValue: false,

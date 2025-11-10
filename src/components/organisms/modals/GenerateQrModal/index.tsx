@@ -71,6 +71,9 @@ type Student = {
   firstName: string;
   lastName: string;
   className?: string;
+  currentClassName?: string;
+  currentClass?: { name?: string } | string | null;
+  verificationCode?: string;
 };
 
 type GenerateQrModalProps = {
@@ -108,9 +111,21 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
         lastName: "Muster",
         className: "7B",
         _id: "671c23e91f4a9a2d7c3e1b45",
+        verificationCode: "A1B2C3",
       };
 
   const isPortrait = orientation === "portrait";
+
+  const getClassName = (s: Student): string => {
+    return (
+      s.currentClassName ||
+      (s.currentClass && typeof s.currentClass === "object"
+        ? s.currentClass.name || ""
+        : s.currentClass || "") ||
+      s.className ||
+      ""
+    );
+  };
 
   const resolveFilename = (s: Student) => {
     const sid = s._id || "";
@@ -366,18 +381,27 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                       >
                         {sample.firstName} {sample.lastName}
                       </Typography>
-                      {includeClass && (
+                      {includeClass && getClassName(sample) && (
                         <Typography
                           variant="body2"
                           sx={{ color: "text.secondary" }}
                         >
                           {t("modals.generateQrModal.class")}{" "}
-                          <b>{sample.className}</b>
+                          <b>{getClassName(sample)}</b>
+                        </Typography>
+                      )}
+                      {sample.verificationCode && (
+                        <Typography
+                          variant="body1"
+                          sx={{ color: "text.primary", fontWeight: 700 }}
+                        >
+                          {t("modals.generateQrModal.verificationCode")}{" "}
+                          <b>{sample.verificationCode}</b>
                         </Typography>
                       )}
                       <Typography
                         variant="caption"
-                        sx={{ color: "text.disabled" }}
+                        sx={{ color: "text.disabled", fontSize: "0.7rem" }}
                       >
                         {t("modals.generateQrModal.id")}{" "}
                         {shortenId
@@ -408,7 +432,10 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                     sx={{ color: "text.secondary" }}
                   >
                     {sample?.lastName}_{sample.firstName}
-                    {includeClass ? `_${sample.className}` : ""}.pdf
+                    {includeClass && getClassName(sample)
+                      ? `_${getClassName(sample)}`
+                      : ""}
+                    .pdf
                   </Typography>
                 </Stack>
               </Box>
