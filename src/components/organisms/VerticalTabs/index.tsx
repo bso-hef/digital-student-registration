@@ -100,7 +100,7 @@ export default function VerticalTabs({
   const router = useRouter();
   const pathname = usePathname();
 
-  const gotoRoute = (path: string) => router.push(path);
+  const gotoRoute = (path: string) => router.replace(path);
 
   const isTabSelected = useCallback(
     (tabLink: string) => {

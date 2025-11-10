@@ -26,7 +26,6 @@ import {
   submitOnboarding,
 } from "@/store/actions/studentActions";
 import { AppDispatch } from "@/store/store";
-import { StudentData } from "@/types/student";
 import { applicationScrollbar } from "@/utils/styling.utils";
 import DoneRoundedIcon from "@mui/icons-material/DoneRounded";
 import KeyboardArrowLeftRoundedIcon from "@mui/icons-material/KeyboardArrowLeftRounded";

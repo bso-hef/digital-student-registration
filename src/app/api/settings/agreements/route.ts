@@ -114,8 +114,10 @@ export async function GET() {
     await dbConnect();
 
     // Get or create settings document
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let settings = (await AppSettings.findOne().lean()) as any;
+    let settings = (await AppSettings.findOne().lean()) as {
+      agreements?: { agreements?: unknown[] };
+      [key: string]: unknown;
+    } | null;
 
     if (!settings) {
       logger.info(
@@ -145,7 +147,10 @@ export async function GET() {
         await settingsDoc.save();
 
         // Fetch updated settings
-        settings = await AppSettings.findOne().lean();
+        settings = (await AppSettings.findOne().lean()) as {
+          agreements?: { agreements?: unknown[] };
+          [key: string]: unknown;
+        } | null;
 
         // Log migration
         logger.info(
