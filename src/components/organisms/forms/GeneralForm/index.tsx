@@ -45,10 +45,6 @@ const FormSection = styled(Box)(({ theme }) => ({
   },
 }));
 
-const FullWidthField = styled(Box)(() => ({
-  gridColumn: "1 / -1",
-}));
-
 interface FormValues {
   eintrittschule: dayjs.Dayjs | null;
   klassenname: string;
@@ -139,7 +135,7 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
   // Track validation state changes (must be before early return)
   useEffect(() => {
     if (formikRef?.current && onValidationChange) {
-      const { isValid, isValidating, values } = formikRef.current;
+      const { isValid, isValidating } = formikRef.current;
       if (!isValidating) {
         onValidationChange(isValid);
       }

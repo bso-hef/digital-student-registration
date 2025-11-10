@@ -98,10 +98,11 @@ export const verifyStudent =
       successNotification(i18n.t("actions.verificationSuccess"));
 
       return data.studentId; // Return for navigation
-    } catch (error: any) {
+    } catch (error) {
       // Extract specific error message from API response
+      const err = error as { response?: { data?: { error?: string } } };
       const errorMessage =
-        error?.response?.data?.error || i18n.t("actions.verificationFailed");
+        err?.response?.data?.error || i18n.t("actions.verificationFailed");
 
       errorNotification(errorMessage);
       dispatch({

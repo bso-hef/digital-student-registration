@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
 /**
  * Custom hook to manage document title
@@ -20,8 +20,6 @@ import { useEffect, useRef } from "react";
  * ```
  */
 export function useDocumentTitle(title: string) {
-  const prevTitleRef = useRef<string>(document.title);
-
   useEffect(() => {
     // Store the current title before we change it
     const previousTitle = document.title;

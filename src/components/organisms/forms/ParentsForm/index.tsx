@@ -35,7 +35,7 @@ interface FormValues {
 interface ParentsFormProps {
   data?: Partial<StudentData>;
   onSubmit?: (values: FormValues) => void;
-  formikRef?: React.RefObject<FormikProps<any> | null>;
+  formikRef?: React.RefObject<FormikProps<FormValues> | null>;
   onValidationChange?: (isValid: boolean) => void;
 }
 

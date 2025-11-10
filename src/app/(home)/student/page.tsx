@@ -7,7 +7,9 @@ import GeneralButton from "@/components/atoms/buttons/GeneralButton";
 import { validateVerificationForm } from "@/lib/validate/student.validate";
 import { verifyStudent } from "@/store/actions/studentActions";
 import { useAppDispatch } from "@/store/store";
-import { Box, styled } from "@mui/material";
+import BadgeRoundedIcon from "@mui/icons-material/BadgeRounded";
+import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
+import { Box, InputAdornment, styled } from "@mui/material";
 import { Field, Form, Formik } from "formik";
 import { TextField } from "formik-mui";
 import { useRouter } from "next/navigation";
@@ -26,13 +28,21 @@ const Wrapper = styled(Box)(({ theme }) => ({
 
 const StyledForm = styled(Form)(({ theme }) => ({
   display: "flex",
-  flexDirection: "row",
+  flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
   width: "100%",
   height: "100%",
   marginTop: theme.spacing(2),
   gap: theme.spacing(2),
+}));
+
+const StyledEndContainer = styled(Box)(() => ({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  width: "100%",
 }));
 
 interface FormValues {
@@ -97,6 +107,18 @@ export default function StudentPage() {
               error={touched.firstName && Boolean(errors.firstName)}
               helperText={touched.firstName && errors.firstName}
               disabled={isSubmitting}
+              fullWidth
+              style={{
+                height: "50px",
+                flexShrink: 0,
+              }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <PersonRoundedIcon />
+                  </InputAdornment>
+                ),
+              }}
             />
             <Field
               component={TextField}
@@ -105,6 +127,18 @@ export default function StudentPage() {
               error={touched.lastName && Boolean(errors.lastName)}
               helperText={touched.lastName && errors.lastName}
               disabled={isSubmitting}
+              fullWidth
+              style={{
+                height: "50px",
+                flexShrink: 0,
+              }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <PersonRoundedIcon />
+                  </InputAdornment>
+                ),
+              }}
             />
             <Field
               component={TextField}
@@ -119,8 +153,20 @@ export default function StudentPage() {
                 style: { textTransform: "uppercase" },
                 maxLength: 6,
               }}
+              fullWidth
+              style={{
+                height: "50px",
+                flexShrink: 0,
+              }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <BadgeRoundedIcon />
+                  </InputAdornment>
+                ),
+              }}
             />
-            <Box>
+            <StyledEndContainer>
               <GeneralButton
                 onAction={() => handleSubmit()}
                 isPrimary={false}
@@ -131,7 +177,7 @@ export default function StudentPage() {
                 }
                 disabled={isSubmitting || !isValid || !dirty}
               />
-            </Box>
+            </StyledEndContainer>
           </StyledForm>
         )}
       </Formik>

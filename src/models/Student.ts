@@ -201,7 +201,7 @@ StudentSchema.pre(
     if (!this.verificationCode) {
       const checkExists = async (code: string): Promise<boolean> => {
         // Use this.constructor to access the model after it's instantiated
-        const Model = this.constructor as mongoose.Model<any>;
+        const Model = this.constructor as mongoose.Model<IStudent>;
         const existing = await Model.findOne({
           verificationCode: code,
         }).lean();

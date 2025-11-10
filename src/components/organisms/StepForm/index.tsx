@@ -30,7 +30,6 @@ import DoneRoundedIcon from "@mui/icons-material/DoneRounded";
 import KeyboardArrowLeftRoundedIcon from "@mui/icons-material/KeyboardArrowLeftRounded";
 import KeyboardArrowRightRoundedIcon from "@mui/icons-material/KeyboardArrowRightRounded";
 import { Box, CircularProgress, styled } from "@mui/material";
-import { useDeviceTypeDetection } from "device-type-detection";
 import { FormikProps } from "formik";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
@@ -88,10 +87,6 @@ const StepForm = ({ studentId }: StepFormProps) => {
   // Ref to access Formik instance of current form
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const formikRef = useRef<FormikProps<any> | null>(null);
-
-  const { isMobile, isTabletVertical } = useDeviceTypeDetection();
-
-  const showMobileView = isMobile || isTabletVertical;
 
   const allSteps = getStudentSteps(t);
 
@@ -297,7 +292,6 @@ const StepForm = ({ studentId }: StepFormProps) => {
   }
 
   const isFirstStep = currentStep === 0;
-  const isLastStep = currentStep === 9;
   const isSummaryStep = currentStep === 8;
   const isFormStep = currentStep >= 1 && currentStep <= 7; // Steps with forms
 

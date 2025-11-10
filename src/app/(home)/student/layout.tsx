@@ -3,6 +3,8 @@
 import { useMemo } from "react";
 
 import Logo from "@/components/atoms/Logo";
+import BackgroundStudyPattern from "@/components/organisms/BackgroundStudyPattern";
+import DynamicPageStepper from "@/components/organisms/DynamicPageStepper";
 import {
   getActiveSteps,
   getStudentSteps,
@@ -15,9 +17,6 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 
 import { RootState } from "@/store/reducers";
-
-import BackgroundStudyPattern from "./BackgroundStudyPattern";
-import DynamicPageStepper from "./DynamicPageStepper";
 
 const StyledBox = styled(Box)({
   position: "relative",
@@ -47,35 +46,38 @@ const StudentLayoutContainer = styled(Box, {
 }));
 
 const LayoutBox = styled(Box, {
-  shouldForwardProp: (prop) => prop !== "showMobileView",
-})<{ showMobileView: boolean }>(({ theme, showMobileView }) => ({
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "center",
-  minHeight: "30dvh",
-  height: showMobileView ? "100%" : "auto",
-  maxHeight: showMobileView ? "75%" : undefined,
-  width: "100%",
-  maxWidth: "1200px",
-  textAlign: "center",
-  // overflowY: "auto",
-  padding: showMobileView ? theme.spacing(4, 4, 0, 4) : theme.spacing(4),
-  backgroundColor: theme.palette.surface.interface.base,
-  backgroundImage: "unset",
-  color: theme.palette.text.default,
-  borderRadius: showMobileView ? theme.spacing(3, 3, 0, 0) : theme.spacing(3),
-  border: !showMobileView
-    ? `1px solid ${theme.palette.border.seperator}`
-    : "none",
-  borderTop: `1px solid ${theme.palette.border.seperator}`,
-  position: showMobileView ? "absolute" : "relative",
-  boxShadow: showMobileView
-    ? "0px 8px 24px rgba(0,0,0,0.06)"
-    : "rgba(0, 0, 0, 0.1) 0px 4px 12px",
-  zIndex: 2,
-  ...applicationScrollbar(theme),
-}));
+  shouldForwardProp: (prop) =>
+    prop !== "showMobileView" && prop !== "isStudentWizzardPage",
+})<{ showMobileView: boolean; isStudentWizzardPage: boolean }>(
+  ({ theme, showMobileView, isStudentWizzardPage }) => ({
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: "30dvh",
+    height: showMobileView ? "100%" : "auto",
+    maxHeight: showMobileView ? "75%" : undefined,
+    width: "100%",
+    maxWidth: isStudentWizzardPage ? "1200px" : "500px",
+    textAlign: "center",
+    // overflowY: "auto",
+    padding: showMobileView ? theme.spacing(4, 4, 0, 4) : theme.spacing(4),
+    backgroundColor: theme.palette.surface.interface.base,
+    backgroundImage: "unset",
+    color: theme.palette.text.default,
+    borderRadius: showMobileView ? theme.spacing(3, 3, 0, 0) : theme.spacing(3),
+    border: !showMobileView
+      ? `1px solid ${theme.palette.border.seperator}`
+      : "none",
+    borderTop: `1px solid ${theme.palette.border.seperator}`,
+    position: showMobileView ? "absolute" : "relative",
+    boxShadow: showMobileView
+      ? "0px 8px 24px rgba(0,0,0,0.06)"
+      : "rgba(0, 0, 0, 0.1) 0px 4px 12px",
+    zIndex: 2,
+    ...applicationScrollbar(theme),
+  }),
+);
 
 const StyledImageBox = styled(Box)({
   display: "flex",
@@ -99,7 +101,7 @@ export default function StudentLayout({
   const { isMobile, isTabletVertical } = useDeviceTypeDetection();
   const pathname = usePathname();
 
-  const isStudentPage =
+  const isStudentWizzardPage =
     pathname.includes("/student/") && !pathname.endsWith("/student");
 
   const showMobileView = isMobile || isTabletVertical;
@@ -122,14 +124,19 @@ export default function StudentLayout({
         seed={20250822}
       />
       <StudentLayoutContainer showMobileView={showMobileView}>
-        {isStudentPage && !showMobileView ? (
+        {isStudentWizzardPage && !showMobileView ? (
           <DynamicPageStepper activeStep={currentStep} steps={activeSteps} />
         ) : showMobileView ? (
           <StyledImageBox>
             <Logo width={250} height={250} />
           </StyledImageBox>
         ) : null}
-        <LayoutBox showMobileView={showMobileView}>{children}</LayoutBox>
+        <LayoutBox
+          isStudentWizzardPage={isStudentWizzardPage}
+          showMobileView={showMobileView}
+        >
+          {children}
+        </LayoutBox>
       </StudentLayoutContainer>
     </StyledBox>
   );

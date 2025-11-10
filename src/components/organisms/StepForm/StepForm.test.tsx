@@ -124,7 +124,7 @@ vi.mock("@/constants/studentSteps.constants", () => ({
     { id: 8, label: "Summary", step: 8 },
     { id: 9, label: "Completion", step: 9 },
   ],
-  getActiveSteps: (_allSteps: any, _data: any, _currentClass: any) => [
+  getActiveSteps: () => [
     { id: 0, label: "Welcome", step: 0 },
     { id: 1, label: "General Information", step: 1 },
     { id: 2, label: "Origin", step: 2 },
@@ -136,7 +136,7 @@ vi.mock("@/constants/studentSteps.constants", () => ({
     { id: 8, label: "Summary", step: 8 },
     { id: 9, label: "Completion", step: 9 },
   ],
-  isStepActive: (_stepId: number, _activeSteps: any) => true,
+  isStepActive: () => true,
   StepName: {
     WELCOME: "welcome",
     GENERAL: "general",

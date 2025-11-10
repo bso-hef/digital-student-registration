@@ -194,7 +194,6 @@ const AddSingleClassModal: React.FC<Props> = ({
                 "& .MuiOutlinedInput-root": {
                   height: 50,
                   borderRadius: 10,
-                  background: "#1F2429",
                 },
               },
             },
