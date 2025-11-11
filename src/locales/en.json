@@ -1,0 +1,766 @@
+{
+  "general": {
+    "Save": "Save",
+    "Cancel": "Cancel",
+    "Next": "Next",
+    "Previous": "Previous",
+    "Edit": "Edit",
+    "Delete": "Delete",
+    "Start": "Start",
+    "Confirm": "Confirm",
+    "Step": "Step",
+    "Close": "Close",
+    "Accessibility": "Accessibility",
+    "Language": "Language",
+    "Light": "Light",
+    "Dark": "Dark",
+    "Light Theme": "Light Theme",
+    "Dark Theme": "Dark Theme",
+    "System": "System",
+    "Rows per page": "Rows per page:",
+    "Search": "Search",
+    "Imported": "Imported",
+    "Invited": "Invited",
+    "Onboarded": "Onboarded",
+    "Unknown": "Unknown",
+    "Are you sure you want to close this modal": "Are you sure you want to close this modal?",
+    "Add": "Add",
+    "Yes": "Yes",
+    "No": "No",
+    "Inactive": "Inactive",
+    "Active": "Active",
+    "All": "All",
+    "generatePassword": "Generate secure password",
+    "of": "of",
+    "none": "None",
+    "loadingSettings": "Loading settings...",
+    "Submit": "Submit",
+    "Submitting": "Submitting...",
+    "Accepted": "Accepted",
+    "NotAccepted": "Not Accepted"
+  },
+  "error": {
+    "Page not found": "Page not found",
+    "An unexpected error occurred": "An unexpected error occurred",
+    "Something went wrong": "Something went wrong",
+    "Please try again later": "Please try again later",
+    "Sorry we couldn't find that page": "Sorry, the page you’re looking for does not exist or has been moved.",
+    "Back Home": "Back to Dashboard"
+  },
+  "accessibility": {
+    "Language Control": "Language Control",
+    "Theme Control": "Theme Control",
+    "High Contrast Mode": "High Contrast Mode",
+    "High Contrast Description": "Increase color contrast for improved visibility",
+    "Dyslexia Font": "Dyslexia Font",
+    "Dyslexia Font Description": "Use OpenDyslexic font designed for better readability"
+  },
+  "gender": {
+    "male": "Male",
+    "female": "Female",
+    "diverse": "Diverse",
+    "unknown": "Unknown"
+  },
+  "student": {
+    "home": {
+      "Title": "Digital Onboarding",
+      "Description": "This is a simple, digital onboarding system for new students at the BSO in Bad Hersfeld.",
+      "Onboarding": "Onboarding",
+      "Administration": "Administration",
+      "Documentation": "Documentation"
+    },
+    "steps": {
+      "Welcome": "Welcome",
+      "General": "General",
+      "Origin": "Origin",
+      "Address": "Address",
+      "Legal Guardian": "Legal Guardian",
+      "Pre Education": "Previous Education",
+      "Training": "Training",
+      "Company Contact": "Company Contact",
+      "Agreements": "Agreements",
+      "Summary": "Summary",
+      "Completion": "Completion"
+    }
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "management": "Management",
+    "studentManagement": "Student Management",
+    "classManagement": "Class Management",
+    "data": "Data",
+    "importData": "Import Data",
+    "exportData": "Export Data",
+    "manageStudent": "Manage Data",
+    "dataOverview": "Data Overview",
+    "settings": "Settings",
+    "onboardingSettings": "Onboarding",
+    "agreementSettings": "Agreements",
+    "integrationSettings": "Integrations",
+    "auditLog": "Audit Log",
+    "Browse settings": "Browse settings",
+    "welcome": "Welcome {{name}}",
+    "Logged in as": "Logged in as",
+    "Logout": "Logout",
+    "Logged out successfully": "Logged out successfully",
+    "Failed to logout": "Failed to logout"
+  },
+  "modals": {
+    "addStudent": {
+      "title": "Add Student",
+      "subtitle": "Add students manually or via csv import",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "dateOfBirth": "Date of Birth",
+      "required": "Required",
+      "firstNamePlaceholder": "John",
+      "lastNamePlaceholder": "Doe",
+      "uploadCsv": "Upload CSV",
+      "add": "Add"
+    },
+    "generateQrModal": {
+      "creatingZip": "Creating ZIP...",
+      "progress": "Progress: {{progress}}%",
+      "pageSize": "Page Size",
+      "orientation": "Orientation",
+      "portrait": "Portrait",
+      "landscape": "Landscape",
+      "filenameSchema": "Filename Schema",
+      "filenameSchemaExample": "Example: {lastName}_{firstName}_{class}.pdf",
+      "options": "Options",
+      "showClassOnPdf": "Show class on PDF",
+      "shortenIdInLink": "Shorten ID in link (first 8 characters)",
+      "previewMock": "Preview (Mock):",
+      "onboardingWizard": "Onboarding Wizard",
+      "class": "Class:",
+      "id": "ID:",
+      "verificationCode": "Verification Code:",
+      "downloadPdf": "Download PDF",
+      "createZip": "Create ZIP",
+      "title": "Generate QR PDFs for selected students"
+    },
+    "addClass": {
+      "title": "Add Class",
+      "subtitleSingle": "Create a single class",
+      "className": "Class Name",
+      "classNamePlaceholder": "e.g. 11A, 12B, ...",
+      "companyClass": "Company Class",
+      "isCompanyClass": "Is a company class",
+      "grade": "Grade",
+      "gradePlaceholder": "e.g. 10, 11, ...",
+      "requiresEmployerInfo": "Requires employer info",
+      "active": "Active",
+      "required": "Required",
+      "onlyNumbers": "Only numbers allowed",
+      "createClasses": "Create Class",
+      "schoolYearFrom": "School Year From",
+      "schoolYearTo": "School Year To",
+      "yearOrderError": "Must be after 'from'"
+    },
+    "addStudentsToClass": {
+      "title": "Add Students to Class",
+      "subtitle": "Select students to add to this class",
+      "searchPlaceholder": "Search students...",
+      "noOptions": "No unassigned students available",
+      "addButton": "Add Students",
+      "selectedCount": "{{count}} student(s) selected"
+    }
+  },
+  "actions": {
+    "studentFetchFailed": "Failed to fetch students.",
+    "studentAddSuccess": "Students added successfully.",
+    "studentAddFailed": "Failed to add students.",
+    "studentDeleteSuccess": "Students deleted successfully.",
+    "studentDeleteFailed": "Failed to delete students.",
+    "verificationSuccess": "Verification successful.",
+    "verificationFailed": "Verification failed.",
+    "studentLoadFailed": "Failed to load student data.",
+    "onboardingSubmitSuccess": "Onboarding completed successfully.",
+    "onboardingSubmitFailed": "Onboarding submission failed.",
+    "classFetchFailed": "Failed to fetch classes.",
+    "classAddSuccess": "Classes added successfully.",
+    "classAddFailed": "Failed to add Classes.",
+    "classDeleteSuccess": "Classes deleted successfully.",
+    "studentsAddedToClass": "Students added to class successfully.",
+    "studentsAddToClassFailed": "Failed to add students to class.",
+    "studentsRemovedFromClass": "Students removed from class successfully.",
+    "studentsRemoveFromClassFailed": "Failed to remove students from class.",
+    "dashboardStatsFetchFailed": "Failed to fetch dashboard statistics.",
+    "dashboardHealthFetchFailed": "Failed to fetch system health status.",
+    "settingsFetchFailed": "Failed to fetch settings.",
+    "onboardingSettingsFetchFailed": "Failed to fetch onboarding settings.",
+    "settingsUpdateSuccess": "Settings updated successfully.",
+    "settingsUpdateFailed": "Failed to update settings.",
+    "onboardingSettingsUpdateSuccess": "Onboarding settings updated successfully.",
+    "onboardingSettingsUpdateFailed": "Failed to update onboarding settings.",
+    "agreementSettingsFetchFailed": "Failed to fetch agreement settings.",
+    "agreementSettingsUpdateSuccess": "Agreement settings updated successfully.",
+    "agreementSettingsUpdateFailed": "Failed to update agreement settings.",
+    "auditLogFetchFailed": "Failed to fetch audit logs.",
+    "auditLogStatsFailed": "Failed to fetch audit log statistics.",
+    "auditLogExportSuccess": "Audit logs exported successfully.",
+    "auditLogExportFailed": "Failed to export audit logs.",
+    "auditLogClearSuccess": "Audit logs cleared successfully.",
+    "auditLogClearFailed": "Failed to clear audit logs."
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "resetLayout": "Reset Layout",
+    "quickStats": {
+      "totalStudents": "Total Students",
+      "totalClasses": "Total Classes",
+      "unassignedStudents": "Unassigned Students",
+      "activeClasses": "Active Classes"
+    },
+    "charts": {
+      "registrationTrend": "Registration Trend (Last 7 Days)",
+      "studentStatus": "Students by Status",
+      "classDistribution": "Classes by Grade",
+      "systemMetrics": "System Metrics"
+    },
+    "status": {
+      "imported": "Imported",
+      "invited": "Invited",
+      "onboarded": "Onboarded",
+      "other": "Other"
+    },
+    "health": {
+      "title": "System Health",
+      "status": "Status",
+      "up": "Operational",
+      "down": "Down",
+      "database": "Database",
+      "uptime": "Uptime",
+      "memory": "Memory Usage",
+      "cpu": "CPU Cores",
+      "loadAverage": "Load Average",
+      "hostname": "Hostname",
+      "platform": "Platform",
+      "nodeVersion": "Node Version",
+      "lastUpdated": "Last Updated",
+      "refresh": "Refresh"
+    },
+    "errors": {
+      "loadFailed": "Failed to load dashboard data",
+      "retry": "Retry"
+    }
+  },
+  "table": {
+    "No data found": "No Data to Show",
+    "No data found description": "After member/members are added, a list will appear here in this section."
+  },
+  "onboarding": {
+    "general": {
+      "title": "General Information",
+      "schoolEntry": "School Entry Date",
+      "className": "Class Name",
+      "personalInfo": "Personal Information",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "birthName": "Birth Name",
+      "gender": "Gender",
+      "birthInfo": "Birth Information",
+      "birthDate": "Date of Birth",
+      "birthPlace": "Place of Birth",
+      "birthCountry": "Country of Birth",
+      "additionalInfo": "Additional Information",
+      "religion": "Religion",
+      "nationality1": "Nationality 1",
+      "nationality2": "Nationality 2 (optional)"
+    },
+    "origin": {
+      "countryOfOrigin": "Country of Origin",
+      "yearOfImmigration": "Year of Immigration",
+      "familyLanguage": "Family Language"
+    },
+    "address": {
+      "title": "Address and Contact Information",
+      "street": "Street",
+      "houseNumber": "House Number",
+      "postalCode": "Postal Code",
+      "city": "City",
+      "contactTitle": "Contact Information",
+      "mobile": "Mobile Number",
+      "phone": "Phone (Landline)",
+      "email": "Email Address"
+    },
+    "legalGuardian": {
+      "type": "Type",
+      "name": "Name",
+      "address": "Address",
+      "mobile": "Mobile Number",
+      "phone": "Phone",
+      "contactType": "Contact Person Type",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "postalCode": "Postal Code",
+      "city": "City",
+      "street": "Street",
+      "houseNumber": "House Number",
+      "mobileNumber": "Mobile Number",
+      "phoneNumber": "Phone Number",
+      "contactPerson1": "Legal Guardian 1",
+      "contactPerson2": "Legal Guardian 2",
+      "contactPerson3": "Legal Guardian 3",
+      "addContact": "Add Legal Guardian",
+      "addContactTooltip": "Add another legal guardian",
+      "removeContact": "Remove Legal Guardian",
+      "removeContactTooltip": "Remove this legal guardian",
+      "adultOptionalInfo": "Since you are an adult (18 years or older), legal guardian information is optional. You only need to fill these fields if you wish."
+    },
+    "preEducation": {
+      "previousSchool": "Previous School",
+      "schoolType": "School Type",
+      "level": "Level",
+      "degrees": "Degrees",
+      "previousSchoolName": "Previous School Name",
+      "previousLevel": "Previous Level",
+      "previousSchoolType": "Previous School Type",
+      "qualifications": "Qualifications"
+    },
+    "training": {
+      "profession": "Profession",
+      "startDate": "Training Start Date",
+      "company": "Company",
+      "companyStartDate": "Company Entry Date",
+      "companyName": "Company Name",
+      "street": "Street",
+      "houseNumber": "House Number",
+      "postalCode": "Postal Code",
+      "city": "City",
+      "phone": "Phone",
+      "email": "Email"
+    },
+    "companyContact": {
+      "salutation": "Salutation",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "phone": "Phone",
+      "contactPerson": "Company Contact Person"
+    },
+    "agreements": {
+      "title": "Agreements",
+      "description": "Please read and accept the following agreements to continue with your registration.",
+      "required": "This agreement is required",
+      "datenschutz": "Data Protection Agreement",
+      "datenschutzDesc": "I consent to the processing of my personal data in accordance with the data protection policy.",
+      "teilnahmeunterricht": "Class Participation Consent",
+      "teilnahmeunterrichtDesc": "I agree to participate in all required classes and activities.",
+      "schulordnung": "School Rules Acceptance",
+      "schulordnungDesc": "I have read and accept the school rules and regulations.",
+      "personenabbildung": "Photo & Imaging Consent",
+      "personenabbildungDesc": "I consent to having my photo taken for school purposes (ID card, yearbook, website).",
+      "teamsnutzung": "Microsoft Teams Usage Agreement",
+      "teamsnutzungDesc": "I agree to use Microsoft Teams for school-related communication and activities.",
+      "noAgreements": "No agreements have been configured by the administrator."
+    },
+    "welcome": {
+      "title": "BSO Registration",
+      "subtitle": "Complete your registration in 10 steps.",
+      "paragraph1": "In the following steps, you will be guided through your school registration.",
+      "paragraph2": "Your data will be displayed and you can easily modify outdated or incorrect information.",
+      "paragraph3": "If you notice that you have accidentally changed something, you can simply go back and change it again.",
+      "paragraph4": "If you still need help, simply speak to your teacher."
+    },
+    "summary": {
+      "title": "Summary",
+      "description": "Please review your information before submission.",
+      "generalInfo": "General Information",
+      "origin": "Immigration Details",
+      "address": "Address and Contact",
+      "contactPerson": "Contact Person",
+      "education": "Previous Education",
+      "training": "Vocational Training",
+      "companyContact": "Company Contact Person",
+      "agreements": "Agreements",
+      "confirmationText": "I have read the summary and accept that the data is accurate"
+    },
+    "completion": {
+      "title": "Enrollment Complete!",
+      "subtitle": "Your data has been successfully submitted.",
+      "message": "Thank you for your enrollment. Your data has been successfully saved in our system. You will receive further information from your school.",
+      "backToHome": "Back to Home",
+      "footer": "You can now close this window."
+    },
+    "loadingProfile": "Loading your student profile...",
+    "loadingDetails": "Please wait while we fetch your information...",
+    "error": {
+      "invalidStudentId": {
+        "title": "Invalid Student ID",
+        "message": "The provided student ID has an invalid format. Please check the URL."
+      },
+      "studentNotFound": {
+        "title": "Student Not Found",
+        "message": "No student was found with this ID. Please contact the administrator."
+      },
+      "noClassAssigned": {
+        "title": "No Class Assigned",
+        "message": "You have not been assigned to a class yet. Please contact the administrator to be assigned to a class."
+      },
+      "classInactive": {
+        "title": "Class Inactive",
+        "message": "Your assigned class is currently not active. Please contact the administrator."
+      },
+      "alreadyOnboarded": {
+        "title": "Onboarding Already Completed",
+        "message": "You have already completed the onboarding process. If you need to make changes, please contact the administrator."
+      },
+      "generic": {
+        "title": "Loading Error",
+        "message": "The student data could not be loaded. Please check the URL or contact the administrator."
+      },
+      "retry": "Retry"
+    }
+  },
+  "settings": {
+    "onboarding": {
+      "dropdownOptions": "Dropdown Options",
+      "fieldConfiguration": "Field Configuration",
+      "sections": {
+        "gender": {
+          "title": "Gender Options",
+          "subtitle": "Available gender options for student registration"
+        },
+        "salutation": {
+          "title": "Salutation Options",
+          "subtitle": "Salutation options for contact persons and company contacts"
+        },
+        "religion": {
+          "title": "Religion Options",
+          "subtitle": "Available religious affiliations"
+        },
+        "language": {
+          "title": "Language Options",
+          "subtitle": "Available family language options"
+        },
+        "fieldConfig": {
+          "title": "Form Field Settings",
+          "subtitle": "Control which fields are required, visible, and allow custom values"
+        }
+      },
+      "table": {
+        "field": "Field",
+        "required": "Required",
+        "visible": "Visible",
+        "allowCustom": "Allow Custom",
+        "requiredTooltip": "Field must be filled out by students",
+        "visibleTooltip": "Field is visible in the onboarding form",
+        "allowCustomTooltip": "Allow students to enter custom values not in the dropdown"
+      },
+      "fields": {
+        "geschlecht": {
+          "label": "Gender (Geschlecht)",
+          "description": "Student's gender selection"
+        },
+        "religion": {
+          "label": "Religion",
+          "description": "Student's religious affiliation"
+        },
+        "familiensprache": {
+          "label": "Family Language (Familiensprache)",
+          "description": "Primary language spoken at home"
+        }
+      },
+      "dropdownManager": {
+        "value": "Value",
+        "label": "Label",
+        "save": "Save",
+        "cancel": "Cancel",
+        "newValue": "New Value",
+        "newLabel": "New Label",
+        "addOption": "Add Option",
+        "valuePlaceholder": "männlich",
+        "labelPlaceholder": "Männlich",
+        "valuePrefix": "Value:"
+      }
+    },
+    "csv": {
+      "CSV data is empty": "CSV data is empty.",
+      "CSV data should contain both headers and data rows": "CSV data should contain both headers and data rows.",
+      "Invalid CSV headers": "Invalid CSV headers. Expected: {{headers}}",
+      "Invalid row format": "Invalid row format at row {{row}}.",
+      "CSV file has no valid data": "CSV file has no valid data.",
+      "CSV uploaded and parsed successfully": "CSV uploaded and parsed successfully.",
+      "Error while parsing CSV": "Error while parsing CSV.",
+      "Error while reading file": "Error while reading file."
+    },
+    "manageStudent": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "dateOfBirth": "Date of Birth",
+      "class": "Class",
+      "status": "Status",
+      "verificationCode": "Registration ID",
+      "importStudents": "Import Students",
+      "deleteStudents": "Delete Students",
+      "generateQRCode": "Generate QR Code",
+      "delete Student request": "Are you sure you want to delete the selected student(s)? This action cannot be undone."
+    },
+    "manageClass": {
+      "className": "Class Name",
+      "numberOfStudents": "Number of Students",
+      "companyClass": "Company Class",
+      "isClassActive": "Active",
+      "addClass": "Add Class",
+      "deleteClasses": "Delete Classes",
+      "deleteClassRequest": "Are you sure you want to delete the selected class(es)? This action cannot be undone.",
+      "checkInActive": "Check-in active",
+      "schoolYear": "School Year",
+      "grade": "Grade",
+      "class": "Class",
+      "schoolYearFrom": "School Year From",
+      "schoolYearTo": "School Year To",
+      "isVocational": "Is Vocational",
+      "requiresEmployerInfo": "Requires Employer Info",
+      "removeFromClass": "Remove from Class",
+      "removeFromClassConfirmation": "Are you sure you want to remove the selected student(s) from this class?",
+      "classSettings": {
+        "settings": "Class Settings",
+        "general": "General",
+        "students": "Students",
+        "options": "Settings"
+      },
+      "student": {
+        "firstName": "First name",
+        "lastName": "Last name",
+        "dateOfBirth": "Date of birth",
+        "gender": "Gender",
+        "status": "Status"
+      }
+    },
+    "agreements": {
+      "title": "Agreements",
+      "addAgreement": "Add Agreement",
+      "editAgreement": "Edit Agreement",
+      "deleteConfirm": "Delete Agreement",
+      "deleteWarning": "Are you sure you want to delete this agreement? This action cannot be undone.",
+      "noAgreements": "No agreements configured yet",
+      "clickAddToStart": "Click 'Add Agreement' to create your first agreement",
+      "required": "Required",
+      "fields": {
+        "key": "Key",
+        "labelEn": "Label (English)",
+        "labelDe": "Label (German)",
+        "enabled": "Enabled",
+        "required": "Required"
+      },
+      "keyPlaceholder": "Auto-generated from English label",
+      "keyHelperText": "Unique identifier (auto-generated from English label)",
+      "labelEnPlaceholder": "e.g., Data Protection",
+      "labelDePlaceholder": "e.g., Datenschutz",
+      "descriptionEn": "Description (English)",
+      "descriptionDe": "Description (German)",
+      "descriptionEnPlaceholder": "e.g., I consent to the processing of my personal data...",
+      "descriptionDePlaceholder": "e.g., Ich willige in die Verarbeitung meiner personenbezogenen Daten ein...",
+      "descriptionHelperText": "Optional description shown to students (supports multiple lines)",
+      "icon": "Icon",
+      "iconPlaceholder": "e.g., PrivacyTip, School, Gavel",
+      "iconHelperText": "Optional MUI icon name (e.g., PrivacyTip, School, Gavel, CameraAlt, Groups)",
+      "validation": {
+        "keyRequired": "Key is required",
+        "keyExists": "An agreement with this key already exists",
+        "labelRequired": "Label is required in both languages"
+      }
+    }
+  },
+  "audit": {
+    "title": "Audit Log",
+    "timestamp": "Timestamp",
+    "action": "Action",
+    "description": "Description",
+    "user": "User",
+    "ipAddress": "IP Address",
+    "metadata": "Metadata",
+    "logDetails": "Log Details",
+    "categoryLabel": "Category",
+    "statusLabel": "Status",
+    "filterByCategory": "Filter by Category",
+    "filterByStatus": "Filter by Status",
+    "clearLogs": "Clear Logs",
+    "export": "Export",
+    "clearLogsConfirm": "Clear Audit Logs",
+    "clearLogsWarning": "Are you sure you want to clear old audit logs? This action cannot be undone.",
+    "deleteSelected": "Delete Selected",
+    "deleteSelectedConfirm": "Delete Selected Audit Logs",
+    "deleteSelectedWarning": "Are you sure you want to delete the selected audit log(s)? This action cannot be undone.",
+    "exportSelected": "Export Selected",
+    "category": {
+      "student": "Student",
+      "class": "Class",
+      "settings": "Settings",
+      "auth": "Authentication",
+      "system": "System"
+    },
+    "status": {
+      "success": "Success",
+      "failure": "Failure",
+      "partial": "Partial"
+    },
+    "descriptions": {
+      "updatedAgreementSettings": "Updated agreement settings",
+      "failedUpdateAgreementSettings": "Failed to update agreement settings"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Admin Login",
+      "subtitle": "Digital Student Registration",
+      "emailLabel": "Email Address",
+      "passwordLabel": "Password",
+      "forgotPassword": "Forgot password?",
+      "signInButton": "Sign In",
+      "signingIn": "Signing in...",
+      "invalidCredentials": "Invalid email or password",
+      "loginSuccess": "Login successful!",
+      "loginError": "An error occurred during login"
+    },
+    "setup": {
+      "title": "Admin Setup",
+      "subtitle": "First-time setup wizard for Digital Student Registration",
+      "steps": {
+        "welcome": "Welcome",
+        "email": "Admin Email",
+        "password": "Set Password",
+        "recovery": "Recovery Code",
+        "confirmation": "Confirmation"
+      },
+      "welcome": {
+        "title": "Welcome to Digital Student Registration",
+        "description": "This is the first-time setup wizard for your admin account. You will:",
+        "step1": "Set up your admin email address",
+        "step2": "Create a secure password",
+        "step3": "Receive a recovery code for password reset",
+        "warning": "Important: Make sure to save your recovery code in a safe place. You will need it to reset your password if you forget it.",
+        "startButton": "Get Started"
+      },
+      "email": {
+        "title": "Admin Email",
+        "description": "Enter the email address for the admin account. This will be used to log in to the system.",
+        "emailLabel": "Email Address"
+      },
+      "password": {
+        "title": "Set Password",
+        "description": "Create a strong password for your admin account. Your password must:",
+        "requirement1": "Be at least 8 characters long",
+        "requirement2": "Contain at least one uppercase letter",
+        "requirement3": "Contain at least one lowercase letter",
+        "requirement4": "Contain at least one number",
+        "passwordLabel": "Password",
+        "confirmPasswordLabel": "Confirm Password",
+        "strengthLabel": "Password Strength:",
+        "strengthWeak": "Weak",
+        "strengthMedium": "Medium",
+        "strengthStrong": "Strong",
+        "creatingAccount": "Creating Account...",
+        "createButton": "Create Account"
+      },
+      "recovery": {
+        "title": "Recovery Code",
+        "warning": "IMPORTANT: This is your only chance to save this recovery code. It cannot be retrieved later. You will need this code to reset your password if you forget it.",
+        "codeLabel": "Your recovery code is:",
+        "copyButton": "Copy Code",
+        "copied": "Copied!",
+        "downloadButton": "Download",
+        "continueButton": "I Have Saved My Recovery Code"
+      },
+      "confirmation": {
+        "title": "Confirm Setup",
+        "description": "Before completing the setup, please confirm that you have saved your recovery code.",
+        "warning": "Without your recovery code, you will not be able to reset your password if you forget it. The only way to recover access would be to manually reset it through the database.",
+        "checkboxLabel": "I confirm that I have saved my recovery code in a safe place",
+        "completeButton": "Complete Setup"
+      },
+      "messages": {
+        "accountCreated": "Admin account created successfully!",
+        "setupComplete": "Setup complete! Redirecting to login...",
+        "setupFailed": "Failed to complete setup",
+        "codeCopied": "Recovery code copied to clipboard!",
+        "codeDownloaded": "Recovery code downloaded!"
+      }
+    },
+    "resetPassword": {
+      "title": "Reset Password",
+      "subtitle": "Enter your email, recovery code, and new password to reset your account.",
+      "backToLogin": "Back to Login",
+      "infoMessage": "You will need the recovery code that was provided when you first set up your admin account.",
+      "emailLabel": "Email Address",
+      "recoveryCodeLabel": "Recovery Code",
+      "recoveryCodePlaceholder": "XXXX-XXXX-XXXX-XXXX",
+      "recoveryCodeHelper": "Enter the 16-character recovery code from your initial setup",
+      "newPasswordLabel": "New Password",
+      "confirmPasswordLabel": "Confirm New Password",
+      "strengthLabel": "Password Strength:",
+      "strengthWeak": "Weak",
+      "strengthMedium": "Medium",
+      "strengthStrong": "Strong",
+      "resettingButton": "Resetting Password...",
+      "resetButton": "Reset Password",
+      "resetSuccess": "Password reset successful!",
+      "resetFailed": "Failed to reset password"
+    },
+    "validation": {
+      "emailRequired": "Email is required",
+      "emailInvalid": "Invalid email address",
+      "passwordRequired": "Password is required",
+      "passwordMin": "Password must be at least 8 characters",
+      "passwordUppercase": "Password must contain at least one uppercase letter",
+      "passwordLowercase": "Password must contain at least one lowercase letter",
+      "passwordNumber": "Password must contain at least one number",
+      "passwordSpecialChar": "Password must contain at least one special character (!@#$%^&*)",
+      "passwordMatch": "Passwords must match",
+      "confirmPasswordRequired": "Please confirm your password",
+      "recoveryCodeRequired": "Recovery code is required",
+      "recoveryCodeFormat": "Recovery code must be in format: XXXX-XXXX-XXXX-XXXX",
+      "recoveryCodeConfirmRequired": "You must confirm that you have saved your recovery code"
+    },
+    "errors": {
+      "setupAlreadyCompleted": "Setup has already been completed",
+      "emailPasswordRequired": "Email and password are required",
+      "invalidEmailFormat": "Invalid email format",
+      "passwordTooShort": "Password must be at least 8 characters long",
+      "passwordNeedsUppercase": "Password must contain at least one uppercase letter",
+      "passwordNeedsLowercase": "Password must contain at least one lowercase letter",
+      "passwordNeedsNumber": "Password must contain at least one number",
+      "emailExists": "User with this email already exists",
+      "invalidCredentials": "Invalid email or recovery code",
+      "recoveryFieldsRequired": "Email, recovery code, and new password are required",
+      "invalidRecoveryFormat": "Invalid recovery code format",
+      "unknownError": "Unknown error",
+      "setupFailed": "Failed to complete setup",
+      "resetFailed": "Failed to reset password",
+      "checkSetupFailed": "Failed to check setup status"
+    },
+    "common": {
+      "back": "Back",
+      "next": "Next",
+      "copyright": "© 2025 Beruflichen Schulen Obersberg"
+    },
+    "passwordInput": {
+      "guidelines": "Password Guidelines",
+      "guidelinesText": "Your password must meet the following requirements:",
+      "hasUpperCase": "At least one uppercase letter",
+      "hasLowerCase": "At least one lowercase letter",
+      "hasNumbers": "At least one number",
+      "hasSpecialChar": "At least one special character (!@#$%^&*)",
+      "hasMinLength": "Minimum 8 characters",
+      "generatePassword": "Generate secure password"
+    },
+    "pdf": {
+      "onboardingWizard": "Onboarding Wizard",
+      "class": "Class:",
+      "verificationCode": "Verification Code:",
+      "id": "ID:",
+      "portrait": "Portrait",
+      "landscape": "Landscape"
+    },
+    "studentLogin": {
+      "title": "BSO Registration",
+      "subtitle": "Please enter your first name, last name, and registration ID.",
+      "firstNamePlaceholder": "First Name",
+      "lastNamePlaceholder": "Last Name",
+      "verificationCodePlaceholder": "Registration ID (e.g. A1B2C3)",
+      "submit": "Submit",
+      "verifying": "Verifying..."
+    }
+  }
+}

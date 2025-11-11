@@ -1,112 +1,213 @@
-# Next.js Fullstack Template
+# Digital Student Registration
 
-A modern, scalable fullstack template using:
+> Modern full-stack web application for managing student onboarding and class administration.
 
-- **Next.js (App Router)** in `client/`
-- **Express + MongoDB** via Mongoose in `server/`
-- **Socket.IO** (client & server)
-- **Redux** (classic structure with actions/reducers)
-- **Material-UI (MUI)**
-- **i18n** with `next-i18next`
-- **TypeScript (frontend only)**
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node Version](https://img.shields.io/badge/node-v22.20.0-brightgreen)](https://nodejs.org/)
+[![Yarn Version](https://img.shields.io/badge/yarn-1.22.22-blue)](https://yarnpkg.com/)
 
 ---
 
-## 📁 Project Structure
+## About the Project
 
-```
-project-root/
-├── client/ # Frontend app (Next.js)
-│ ├── public/
-│ ├── src/
-│ │ ├── app/
-│ │ ├── components/
-│ │ ├── constants/
-│ │ ├── hooks/
-│ │ ├── lib/
-│ │ ├── locales/
-│ │ ├── store/
-│ │ ├── theme/
-│ │ ├── types/
-│ │ └── utils/
-│ ├── middleware.ts
-│ └── package.json
-│
-├── server/ # Backend app (Express + Socket.IO + MongoDB)
-│ ├── app/
-│ │ ├── routes/
-│ │ ├── sockets/
-│ │ ├── models/
-│ │ └── index.js
-│ ├── .env
-│ └── package.json
-│
-└── README.md
+**Digital Student Registration** is a comprehensive student administration system designed to streamline the onboarding process for educational institutions. It provides tools for managing classes, tracking student information, and guiding students through a structured registration workflow.
 
-```
+- **Multi-step student onboarding** with 11-form wizard
+- **Admin dashboard** with real-time statistics and drag-and-drop layout
+- **Class & student management** for grades 1-13 with vocational support
+- **Bilingual interface** (English & German)
+- **Data export** to PDF, Excel, CSV
+- **Full accessibility** with dark mode and dyslexia-friendly fonts
 
 ---
 
-## 🧰 Scripts
+## Tech Stack
 
-### In `client/` (Next.js)
+### Frontend
+
+- **Next.js 15.4.2** (App Router) with React 19.1.0
+- **TypeScript 5** for type safety
+- **Material-UI v7** with Emotion styling
+- **Redux Toolkit** for state management with Redux Persist
+- **Formik + Yup** for form handling and validation
+- **i18next** with browser language detection
+
+### Backend
+
+- **Next.js API Routes** (integrated backend)
+- **MongoDB** with Mongoose 8.18.0
+- **mongoose-paginate-v2** for efficient pagination
+
+### Testing
+
+- **Vitest** - 964+ unit and integration tests
+- **React Testing Library** for component testing
+- **MSW** (Mock Service Worker) for API mocking
+
+### Additional Tools
+
+- **Socket.IO** client for real-time features (ready for integration)
+- **Sonner** for toast notifications
+- **Day.js** for date manipulation
+- **jsPDF** and **JSZip** for document generation
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js v22.20.0
+- Yarn 1.22.22
+- MongoDB 4.4+
+
+### Development
 
 ```bash
-yarn dev          # Start frontend dev server
-yarn build        # Build frontend for production
-yarn start        # Start frontend server
+# Clone repository
+git clone https://github.com/bso-hef/digital-student-registration.git
+cd digital-student-registration
+
+# Install dependencies
+yarn install
+
+# Configure environment
+cp .env.example .env.local
+# Edit .env.local with your MongoDB URI and credentials
+
+# Start MongoDB (if local)
+# mongod
+
+# Run development server
+yarn dev
 ```
 
-### In `server/` (Express)
+Open [https://localhost:3000](https://localhost:3000)
+
+### Docker (Recommended)
 
 ```bash
-yarn dev          # Start backend dev server with nodemon or ts-node-dev
-yarn start        # Start compiled backend (e.g. node dist/index.js)
+# Development
+cp .env.docker.example .env
+docker-compose up -d
+
+# Production
+docker-compose -f docker-compose.prod.yml up -d --build
+```
+
+See **[DOCKER.md](./DOCKER.md)** for complete Docker documentation.
+
+---
+
+## How to Develop
+
+### Available Commands
+
+```bash
+# Development
+yarn dev          # Start dev server with HTTPS
+yarn build        # Production build
+yarn start        # Start production server
+
+# Code Quality
+yarn lint         # Run ESLint
+yarn format       # Format with Prettier
+
+# Testing
+yarn test                    # Run unit tests
+yarn test:watch             # Watch mode
+yarn test:coverage          # Coverage report
+yarn test:ui                # Interactive UI
+yarn test:all               # Run all tests
+```
+
+### Project Structure
+
+```text
+src/
+├── app/                    # Next.js App Router
+│   ├── (home)/admin/      # Admin dashboard & management
+│   ├── (home)/student/    # Student onboarding flow
+│   └── api/               # Backend API routes
+├── components/            # Atomic design (atoms/molecules/organisms)
+├── store/                 # Redux state management
+├── models/                # Mongoose schemas
+├── lib/                   # Services, config, validation
+└── theme/                 # MUI theme system
+```
+
+### Commit Guidelines
+
+```text
+feature/bugfix/patch: AUTHOR TICKET-NUMBER description
+```
+
+Example:
+
+```text
+feature: Valentin Roehle #123 Add student export functionality
+```
+
+**Important:** Never use `--no-verify` or `--force` flags.
+
+---
+
+## Testing Proccess
+
+```bash
+# Run all tests
+yarn test
+
+# Watch mode
+yarn test:watch
+
+# With coverage
+yarn test:coverage
+
+# Interactive UI
+yarn test:ui
 ```
 
 ---
 
-## 🌐 Environment Variables
+## Documentation
 
-### client/.env.local
+**Release Documentation:**
 
-```env
-NEXT_PUBLIC_SOCKET_URL=http://localhost:5000
-NEXT_PUBLIC_API_URL=http://localhost:5000
-```
+- **[CHANGELOG.md](./CHANGELOG.md)** - Technical changelog
+- **[RELEASE_NOTES.md](./RELEASE_NOTES.md)** - Release notes (German)
+- **[DOCKER.md](./DOCKER.md)** - Docker deployment guide
 
-### server/.env
+**Development Docs:** [docs/development/](./docs/development/)
 
-```env
-MONGODB_URI=mongodb://localhost:27017/mydb
-PORT=5000
-```
+- API.md • ARCHITECTURE.md • COMPONENTS.md • DATABASE.md • DEPLOYMENT.md • SETUP.md • TESTING.md • TROUBLESHOOTING.md
 
----
+**Public Docs:** [docs/public/](./docs/public/)
 
-## 🌍 i18n
-
-Localized via `next-i18next` under `client/public/locales/{lang}`. Default: `en`, `de`.
+- ONBOARDING.md - Student onboarding flow documentation
 
 ---
 
-## 🧠 Redux
+## API Overview
 
-Redux is split by feature (classic structure) under `client/src/store/`:
+**Classes:** `GET|POST|DELETE /api/classes`
 
-- `actions/`
-- `reducers/`
-- `types/`
+**Students:** `GET|POST|DELETE /api/students`
 
----
+**Dashboard:** `GET /api/dashboard/stats`
 
-## 🔌 Socket.IO
-
-- Client setup: `client/src/lib/services/socketClient.ts`
-- Server events: `server/app/sockets/`
+**Health:** `GET /api/health/live` • `GET /api/health/full`
 
 ---
 
-## ✅ License
+## License
 
-MIT — free to use and modify.
+MIT License - Copyright (c) 2025 Beruflichen Schulen Obersberg
+
+---
+
+## Repository
+
+**GitHub:** [bso-hef/digital-student-registration](https://github.com/bso-hef/digital-student-registration)
+
+**Issues:** [Report bugs or request features](https://github.com/bso-hef/digital-student-registration/issues)

@@ -1,0 +1,766 @@
+{
+  "general": {
+    "Save": "Speichern",
+    "Cancel": "Abbrechen",
+    "Next": "Weiter",
+    "Previous": "Zurück",
+    "Edit": "Bearbeiten",
+    "Delete": "Löschen",
+    "Start": "Starten",
+    "Confirm": "Bestätigen",
+    "Step": "Schritt",
+    "Close": "Schließen",
+    "Accessibility": "Barrierefreiheit",
+    "Language": "Sprache",
+    "Light": "Hell",
+    "Dark": "Dunkel",
+    "Light Theme": "Helles Theme",
+    "Dark Theme": "Dunkles Theme",
+    "System": "System",
+    "Rows per page": "Zeilen pro Seite:",
+    "Search": "Suche",
+    "Imported": "Importiert",
+    "Invited": "Eingeladen",
+    "Onboarded": "Eingeschrieben",
+    "Unknown": "Unbekannt",
+    "Are you sure you want to close this modal": "Sind Sie sicher, dass Sie dieses Modal schließen möchten?",
+    "Add": "Hinzufügen",
+    "Yes": "Ja",
+    "No": "Nein",
+    "Inactive": "Inaktiv",
+    "Active": "Aktiv",
+    "All": "Alle",
+    "generatePassword": "Sicheres Passwort generieren",
+    "of": "von",
+    "none": "Keine Angabe",
+    "loadingSettings": "Lade Einstellungen...",
+    "Submit": "Absenden",
+    "Submitting": "Wird übermittelt...",
+    "Accepted": "Akzeptiert",
+    "NotAccepted": "Nicht akzeptiert"
+  },
+  "error": {
+    "Page not found": "Seite nicht gefunden",
+    "An unexpected error occurred": "Ein unerwarteter Fehler ist aufgetreten",
+    "Something went wrong": "Etwas ist schief gelaufen",
+    "Please try again later": "Bitte versuche es später erneut",
+    "Sorry we couldn't find that page": "Leider existiert die gesuchte Seite nicht oder wurde verschoben.",
+    "Back Home": "Zurück zum Dashboard"
+  },
+  "accessibility": {
+    "Language Control": "Sprachsteuerung",
+    "Theme Control": "Themensteuerung",
+    "High Contrast Mode": "Hochkontrastmodus",
+    "High Contrast Description": "Erhöhen Sie den Farbkontrast für bessere Sichtbarkeit",
+    "Dyslexia Font": "Legasthenie Schriftart",
+    "Dyslexia Font Description": "Verwenden Sie die OpenDyslexic für bessere Lesbarkeit"
+  },
+  "gender": {
+    "male": "Männlich",
+    "female": "Weiblich",
+    "diverse": "Divers",
+    "unknown": "Unbekannt"
+  },
+  "student": {
+    "home": {
+      "Title": "Digitale Anmeldung",
+      "Description": "Dies ist eine einfache, digitale Anmeldung für neue Schüler:innen der BSO in Bad Hersfeld.",
+      "Onboarding": "Anmeldung",
+      "Administration": "Administration",
+      "Documentation": "Dokumentation"
+    },
+    "steps": {
+      "Welcome": "Willkommen",
+      "General": "Allgemein",
+      "Origin": "Herkunft",
+      "Address": "Adresse",
+      "Legal Guardian": "Erziehungsberechtigte",
+      "Pre Education": "Vorbildung",
+      "Training": "Ausbildung",
+      "Company Contact": "Unternehmenskontakt",
+      "Agreements": "Vereinbarungen",
+      "Summary": "Zusammenfassung",
+      "Completion": "Abschluss"
+    }
+  },
+  "navigation": {
+    "dashboard": "Übersicht",
+    "management": "Verwaltung",
+    "studentManagement": "Schülerverwaltung",
+    "classManagement": "Klassenverwaltung",
+    "data": "Daten",
+    "importData": "Daten importieren",
+    "exportData": "Daten exportieren",
+    "manageStudent": "Datenverwaltung",
+    "dataOverview": "Datenübersicht",
+    "settings": "Einstellungen",
+    "onboardingSettings": "Onboarding",
+    "agreementSettings": "Vereinbarungen",
+    "integrationSettings": "Integrationen",
+    "auditLog": "Audit-Log",
+    "Browse settings": "Einstellungen durchsuchen",
+    "welcome": "Willkommen {{name}}",
+    "Logged in as": "Angemeldet als",
+    "Logout": "Abmelden",
+    "Logged out successfully": "Erfolgreich abgemeldet",
+    "Failed to logout": "Abmeldung fehlgeschlagen"
+  },
+  "modals": {
+    "addStudent": {
+      "title": "Studenten hinzufügen",
+      "subtitle": "Fügen Sie Studenten manuell oder per CSV-Import hinzu",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "dateOfBirth": "Geburtsdatum",
+      "required": "Erforderlich",
+      "firstNamePlaceholder": "John",
+      "lastNamePlaceholder": "Doe",
+      "uploadCsv": "CSV hochladen",
+      "add": "Hinzufügen"
+    },
+    "generateQrModal": {
+      "creatingZip": "Erzeuge ZIP...",
+      "progress": "Fortschritt: {{progress}}%",
+      "pageSize": "Seitenformat",
+      "orientation": "Ausrichtung",
+      "portrait": "Hochformat",
+      "landscape": "Querformat",
+      "filenameSchema": "Dateinamensschema",
+      "filenameSchemaExample": "Beispiel: {nachname}_{vorname}_{klasse}.pdf",
+      "options": "Optionen",
+      "showClassOnPdf": "Klasse auf PDF anzeigen",
+      "shortenIdInLink": "ID im Link kürzen (erste 8 Zeichen)",
+      "previewMock": "Vorschau (Mock):",
+      "onboardingWizard": "Onboarding-Assistent",
+      "class": "Klasse:",
+      "id": "ID:",
+      "verificationCode": "Verifizierungscode:",
+      "downloadPdf": "PDF herunterladen",
+      "createZip": "ZIP erzeugen",
+      "title": "QR-PDFs für ausgewählte Schüler erzeugen"
+    },
+    "addClass": {
+      "title": "Klasse hinzufügen",
+      "subtitleSingle": "Erstelle eine einzelne Klasse",
+      "className": "Klassenname",
+      "classNamePlaceholder": "z.B. 11A, 12B, ...",
+      "companyClass": "Berufsklasse",
+      "isCompanyClass": "Ist eine Berufsklasse",
+      "grade": "Jahrgang",
+      "gradePlaceholder": "z.B. 10, 11, ...",
+      "requiresEmployerInfo": "Benötigt Informationen zum Ausbildungsbetrieb",
+      "active": "Aktiv",
+      "required": "Pflichtfeld",
+      "onlyNumbers": "Nur Zahlen erlaubt",
+      "createClasses": "Klassen anlegen",
+      "schoolYearFrom": "Schuljahr von",
+      "schoolYearTo": "Schuljahr bis",
+      "yearOrderError": "Das Endjahr muss größer als das Startjahr sein"
+    },
+    "addStudentsToClass": {
+      "title": "Schüler zur Klasse hinzufügen",
+      "subtitle": "Wählen Sie Schüler aus, die zu dieser Klasse hinzugefügt werden sollen",
+      "searchPlaceholder": "Schüler suchen...",
+      "noOptions": "Keine nicht zugewiesenen Schüler verfügbar",
+      "addButton": "Schüler hinzufügen",
+      "selectedCount": "{{count}} Schüler ausgewählt"
+    }
+  },
+  "actions": {
+    "studentFetchFailed": "Abrufen der Schüler fehlgeschlagen.",
+    "studentAddSuccess": "Schüler erfolgreich hinzugefügt.",
+    "studentAddFailed": "Hinzufügen der Schüler fehlgeschlagen.",
+    "studentDeleteSuccess": "Schüler erfolgreich gelöscht.",
+    "studentDeleteFailed": "Löschen der Schüler fehlgeschlagen.",
+    "verificationSuccess": "Verifizierung erfolgreich.",
+    "verificationFailed": "Verifizierung fehlgeschlagen.",
+    "studentLoadFailed": "Laden der Schülerdaten fehlgeschlagen.",
+    "onboardingSubmitSuccess": "Onboarding erfolgreich abgeschlossen.",
+    "onboardingSubmitFailed": "Onboarding-Übermittlung fehlgeschlagen.",
+    "classFetchFailed": "Abrufen der Klassen fehlgeschlagen.",
+    "classAddSuccess": "Klassen erfolgreich hinzugefügt.",
+    "classAddFailed": "Hinzufügen der Klassen fehlgeschlagen.",
+    "classDeleteSuccess": "Klassen erfolgreich gelöscht.",
+    "studentsAddedToClass": "Schüler erfolgreich zur Klasse hinzugefügt.",
+    "studentsAddToClassFailed": "Hinzufügen der Schüler zur Klasse fehlgeschlagen.",
+    "studentsRemovedFromClass": "Schüler erfolgreich aus der Klasse entfernt.",
+    "studentsRemoveFromClassFailed": "Entfernen der Schüler aus der Klasse fehlgeschlagen.",
+    "dashboardStatsFetchFailed": "Abrufen der Dashboard-Statistiken fehlgeschlagen.",
+    "dashboardHealthFetchFailed": "Abrufen des Systemstatus fehlgeschlagen.",
+    "settingsFetchFailed": "Abrufen der Einstellungen fehlgeschlagen.",
+    "onboardingSettingsFetchFailed": "Abrufen der Onboarding-Einstellungen fehlgeschlagen.",
+    "settingsUpdateSuccess": "Einstellungen erfolgreich aktualisiert.",
+    "settingsUpdateFailed": "Aktualisierung der Einstellungen fehlgeschlagen.",
+    "onboardingSettingsUpdateSuccess": "Onboarding-Einstellungen erfolgreich aktualisiert.",
+    "onboardingSettingsUpdateFailed": "Aktualisierung der Onboarding-Einstellungen fehlgeschlagen.",
+    "agreementSettingsFetchFailed": "Abrufen der Vereinbarungseinstellungen fehlgeschlagen.",
+    "agreementSettingsUpdateSuccess": "Vereinbarungseinstellungen erfolgreich aktualisiert.",
+    "agreementSettingsUpdateFailed": "Aktualisierung der Vereinbarungseinstellungen fehlgeschlagen.",
+    "auditLogFetchFailed": "Abrufen der Audit-Protokolle fehlgeschlagen.",
+    "auditLogStatsFailed": "Abrufen der Audit-Protokoll-Statistiken fehlgeschlagen.",
+    "auditLogExportSuccess": "Audit-Protokolle erfolgreich exportiert.",
+    "auditLogExportFailed": "Export der Audit-Protokolle fehlgeschlagen.",
+    "auditLogClearSuccess": "Audit-Protokolle erfolgreich gelöscht.",
+    "auditLogClearFailed": "Löschen der Audit-Protokolle fehlgeschlagen."
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "resetLayout": "Layout zurücksetzen",
+    "quickStats": {
+      "totalStudents": "Schüler gesamt",
+      "totalClasses": "Klassen gesamt",
+      "unassignedStudents": "Nicht zugeordnete Schüler",
+      "activeClasses": "Aktive Klassen"
+    },
+    "charts": {
+      "registrationTrend": "Anmeldungstrend (letzte 7 Tage)",
+      "studentStatus": "Schüler nach Status",
+      "classDistribution": "Klassen nach Jahrgang",
+      "systemMetrics": "Systemmetriken"
+    },
+    "status": {
+      "imported": "Importiert",
+      "invited": "Eingeladen",
+      "onboarded": "Angemeldet",
+      "other": "Sonstige"
+    },
+    "health": {
+      "title": "Systemstatus",
+      "status": "Status",
+      "up": "Betriebsbereit",
+      "down": "Ausgefallen",
+      "database": "Datenbank",
+      "uptime": "Betriebszeit",
+      "memory": "Speichernutzung",
+      "cpu": "CPU-Kerne",
+      "loadAverage": "Systemlast",
+      "hostname": "Hostname",
+      "platform": "Plattform",
+      "nodeVersion": "Node-Version",
+      "lastUpdated": "Zuletzt aktualisiert",
+      "refresh": "Aktualisieren"
+    },
+    "errors": {
+      "loadFailed": "Laden der Dashboard-Daten fehlgeschlagen",
+      "retry": "Erneut versuchen"
+    }
+  },
+  "table": {
+    "No data found": "Keine Daten gefunden",
+    "No data found description": "Nachdem mindestens ein Benutzer hinzugefügt wurde, erscheint hier eine Liste."
+  },
+  "onboarding": {
+    "general": {
+      "title": "Allgemeine Daten",
+      "schoolEntry": "Eintritt Schule",
+      "className": "Klassenname",
+      "personalInfo": "Persönliche Daten",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "birthName": "Geburtsname",
+      "gender": "Geschlecht",
+      "birthInfo": "Geburtsinformationen",
+      "birthDate": "Geburtsdatum",
+      "birthPlace": "Geburtsort",
+      "birthCountry": "Geburtsland",
+      "additionalInfo": "Weitere Angaben",
+      "religion": "Religion",
+      "nationality1": "Staatsangehörigkeit 1",
+      "nationality2": "Staatsangehörigkeit 2 (optional)"
+    },
+    "origin": {
+      "countryOfOrigin": "Herkunftsland",
+      "yearOfImmigration": "Zuzugsjahr",
+      "familyLanguage": "Familiensprache"
+    },
+    "address": {
+      "title": "Adresse und Kontaktdaten",
+      "street": "Straße",
+      "houseNumber": "Hausnummer",
+      "postalCode": "Postleitzahl",
+      "city": "Ort",
+      "contactTitle": "Kontaktinformationen",
+      "mobile": "Mobilnummer",
+      "phone": "Telefon (Festnetz)",
+      "email": "E-Mail-Adresse"
+    },
+    "legalGuardian": {
+      "type": "Art",
+      "name": "Name",
+      "address": "Adresse",
+      "mobile": "Mobilnummer",
+      "phone": "Telefon",
+      "contactType": "Ansprechpartner Art",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "postalCode": "PLZ",
+      "city": "Ort",
+      "street": "Straße",
+      "houseNumber": "Hausnummer",
+      "mobileNumber": "Mobilnummer",
+      "phoneNumber": "Telefon",
+      "contactPerson1": "Erziehungsberechtigte(r) 1",
+      "contactPerson2": "Erziehungsberechtigte(r) 2",
+      "contactPerson3": "Erziehungsberechtigte(r) 3",
+      "addContact": "Erziehungsberechtigte(n) hinzufügen",
+      "addContactTooltip": "Einen weiteren Erziehungsberechtigten hinzufügen",
+      "removeContact": "Erziehungsberechtigte(n) entfernen",
+      "removeContactTooltip": "Diesen Erziehungsberechtigten entfernen",
+      "adultOptionalInfo": "Da Sie volljährig sind (18 Jahre oder älter), sind die Angaben zu Erziehungsberechtigten optional. Sie müssen diese Felder nur ausfüllen, wenn Sie möchten."
+    },
+    "preEducation": {
+      "previousSchool": "Vorherige Schule",
+      "schoolType": "Schulform",
+      "level": "Stufe",
+      "degrees": "Abschlüsse",
+      "previousSchoolName": "Vorhergehende Schule",
+      "previousLevel": "Vorhergehende Stufe",
+      "previousSchoolType": "Vorhergehende Schulform",
+      "qualifications": "Abschlüsse"
+    },
+    "training": {
+      "profession": "Beruf",
+      "startDate": "Ausbildungsbeginn",
+      "company": "Betrieb",
+      "companyStartDate": "Betriebseintritt",
+      "companyName": "Betriebsname",
+      "street": "Straße",
+      "houseNumber": "Hausnummer",
+      "postalCode": "PLZ",
+      "city": "Ort",
+      "phone": "Telefon",
+      "email": "E-Mail"
+    },
+    "companyContact": {
+      "salutation": "Anrede",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "phone": "Telefon",
+      "contactPerson": "Ansprechpartner im Betrieb"
+    },
+    "agreements": {
+      "title": "Vereinbarungen",
+      "description": "Bitte lesen und akzeptieren Sie die folgenden Vereinbarungen, um mit der Anmeldung fortzufahren.",
+      "required": "Diese Vereinbarung ist erforderlich",
+      "datenschutz": "Datenschutzvereinbarung",
+      "datenschutzDesc": "Ich willige in die Verarbeitung meiner personenbezogenen Daten gemäß der Datenschutzrichtlinie ein.",
+      "teilnahmeunterricht": "Einwilligung zur Teilnahme am Unterricht",
+      "teilnahmeunterrichtDesc": "Ich verpflichte mich zur Teilnahme an allen erforderlichen Unterrichtsstunden und Aktivitäten.",
+      "schulordnung": "Anerkennung der Schulordnung",
+      "schulordnungDesc": "Ich habe die Schulordnung gelesen und akzeptiere die darin enthaltenen Regeln und Vorschriften.",
+      "personenabbildung": "Einwilligung für Foto- und Bildaufnahmen",
+      "personenabbildungDesc": "Ich willige ein, dass Fotos von mir für schulische Zwecke (Schülerausweis, Jahrbuch, Website) gemacht werden dürfen.",
+      "teamsnutzung": "Microsoft Teams Nutzungsvereinbarung",
+      "teamsnutzungDesc": "Ich verpflichte mich, Microsoft Teams für schulbezogene Kommunikation und Aktivitäten zu nutzen.",
+      "noAgreements": "Es wurden keine Vereinbarungen vom Administrator konfiguriert."
+    },
+    "welcome": {
+      "title": "Anmeldung der BSO",
+      "subtitle": "Schließen Sie in 10 Schritten ihre Anmeldung ab.",
+      "paragraph1": "In den nachfolgenden Schritten wirst du durch deine Schuleinschreibung geführt.",
+      "paragraph2": "Dort werden dir deine eigenen Daten angezeigt, und du kannst einfach veraltete oder fehlerhaft Daten bearbeiten.",
+      "paragraph3": "Solltest du bemerken, dass du etwas versehentlich geändert hast, kannst du einfach zurück gehen und es erneut ändern.",
+      "paragraph4": "Solltest du dennoch Hilfe brauchen, wende dich einfach an deinen Lehrer."
+    },
+    "summary": {
+      "title": "Zusammenfassung",
+      "description": "Bitte überprüfen Sie Ihre Angaben vor der Übermittlung.",
+      "generalInfo": "Allgemeine Daten",
+      "origin": "Herkunft und Einwanderung",
+      "address": "Adresse und Kontakt",
+      "contactPerson": "Ansprechpartner",
+      "education": "Vorbildung",
+      "training": "Ausbildung",
+      "companyContact": "Ansprechpartner im Betrieb",
+      "agreements": "Vereinbarungen",
+      "confirmationText": "Ich habe die Zusammenfassung gelesen und bestätige, dass die Angaben korrekt sind"
+    },
+    "completion": {
+      "title": "Einschreibung abgeschlossen!",
+      "subtitle": "Ihre Daten wurden erfolgreich übermittelt.",
+      "message": "Vielen Dank für die Einschreibung. Ihre Daten wurden erfolgreich in unserem System gespeichert. Sie erhalten weitere Informationen von Ihrer Schule.",
+      "backToHome": "Zur Startseite",
+      "footer": "Sie können dieses Fenster jetzt schließen."
+    },
+    "loadingProfile": "Lade Schülerprofil...",
+    "loadingDetails": "Bitte warten Sie, während wir Ihre Informationen abrufen...",
+    "error": {
+      "invalidStudentId": {
+        "title": "Ungültige Schüler-ID",
+        "message": "Die angegebene Schüler-ID hat ein ungültiges Format. Bitte überprüfen Sie die URL."
+      },
+      "studentNotFound": {
+        "title": "Schüler nicht gefunden",
+        "message": "Es wurde kein Schüler mit dieser ID gefunden. Bitte kontaktieren Sie den Administrator."
+      },
+      "noClassAssigned": {
+        "title": "Keine Klasse zugewiesen",
+        "message": "Sie sind noch keiner Klasse zugeordnet. Bitte wenden Sie sich an den Administrator, um einer Klasse zugewiesen zu werden."
+      },
+      "classInactive": {
+        "title": "Klasse nicht aktiv",
+        "message": "Die Ihnen zugewiesene Klasse ist derzeit nicht aktiv. Bitte kontaktieren Sie den Administrator."
+      },
+      "alreadyOnboarded": {
+        "title": "Einschreibung bereits abgeschlossen",
+        "message": "Sie haben die Einschreibung bereits abgeschlossen. Wenn Sie Änderungen vornehmen müssen, wenden Sie sich bitte an den Administrator."
+      },
+      "generic": {
+        "title": "Fehler beim Laden",
+        "message": "Die Schülerdaten konnten nicht geladen werden. Bitte überprüfen Sie die URL oder kontaktieren Sie den Administrator."
+      },
+      "retry": "Erneut versuchen"
+    }
+  },
+  "settings": {
+    "onboarding": {
+      "dropdownOptions": "Dropdown-Optionen",
+      "fieldConfiguration": "Feldkonfiguration",
+      "sections": {
+        "gender": {
+          "title": "Geschlechtsoptionen",
+          "subtitle": "Verfügbare Geschlechtsoptionen für die Schülerregistrierung"
+        },
+        "salutation": {
+          "title": "Anredeoptionen",
+          "subtitle": "Anredeoptionen für Kontaktpersonen und Unternehmenskontakte"
+        },
+        "religion": {
+          "title": "Religionsoptionen",
+          "subtitle": "Verfügbare Religionszugehörigkeiten"
+        },
+        "language": {
+          "title": "Sprachoptionen",
+          "subtitle": "Verfügbare Familiensprachoptionen"
+        },
+        "fieldConfig": {
+          "title": "Formularfeldeinstellungen",
+          "subtitle": "Steuern Sie, welche Felder erforderlich, sichtbar sind und benutzerdefinierte Werte zulassen"
+        }
+      },
+      "table": {
+        "field": "Feld",
+        "required": "Erforderlich",
+        "visible": "Sichtbar",
+        "allowCustom": "Benutzerdefiniert erlauben",
+        "requiredTooltip": "Feld muss von Schülern ausgefüllt werden",
+        "visibleTooltip": "Feld ist im Onboarding-Formular sichtbar",
+        "allowCustomTooltip": "Erlauben Sie Schülern, benutzerdefinierte Werte einzugeben, die nicht in der Dropdown-Liste enthalten sind"
+      },
+      "fields": {
+        "geschlecht": {
+          "label": "Geschlecht",
+          "description": "Geschlechtsauswahl des Schülers"
+        },
+        "religion": {
+          "label": "Religion",
+          "description": "Religionszugehörigkeit des Schülers"
+        },
+        "familiensprache": {
+          "label": "Familiensprache",
+          "description": "Hauptsprache, die zu Hause gesprochen wird"
+        }
+      },
+      "dropdownManager": {
+        "value": "Wert",
+        "label": "Bezeichnung",
+        "save": "Speichern",
+        "cancel": "Abbrechen",
+        "newValue": "Neuer Wert",
+        "newLabel": "Neue Bezeichnung",
+        "addOption": "Option hinzufügen",
+        "valuePlaceholder": "männlich",
+        "labelPlaceholder": "Männlich",
+        "valuePrefix": "Wert:"
+      }
+    },
+    "csv": {
+      "CSV data is empty": "CSV-Daten sind leer.",
+      "CSV data should contain both headers and data rows": "CSV-Daten sollten sowohl Kopfzeilen als auch Datenzeilen enthalten.",
+      "Invalid CSV headers": "Ungültige CSV-Kopfzeilen. Erwartet: {{headers}}",
+      "Invalid row format": "Ungültiges Zeilenformat in Zeile {{row}}.",
+      "CSV file has no valid data": "CSV-Datei enthält keine gültigen Daten.",
+      "CSV uploaded and parsed successfully": "CSV wurde erfolgreich hochgeladen und verarbeitet.",
+      "Error while parsing CSV": "Fehler beim Parsen der CSV-Datei.",
+      "Error while reading file": "Fehler beim Lesen der Datei."
+    },
+    "manageStudent": {
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "dateOfBirth": "Geburtsdatum",
+      "class": "Klasse",
+      "status": "Status",
+      "verificationCode": "Anmelde-ID",
+      "importStudents": "Schüler hinzufügen",
+      "deleteStudents": "Schüler löschen",
+      "generateQRCode": "QR-Code generieren",
+      "delete Student request": "Sind Sie sicher, dass Sie die ausgewählten Schüler löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
+    },
+    "manageClass": {
+      "className": "Klassenname",
+      "numberOfStudents": "Anzahl der Schüler",
+      "companyClass": "Berufsklasse",
+      "isClassActive": "Aktiv",
+      "addClass": "Klasse hinzufügen",
+      "deleteClasses": "Klassen löschen",
+      "deleteClassRequest": "Sind Sie sicher, dass Sie die ausgewählten Klassen löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+      "checkInActive": "Check-in aktiv",
+      "schoolYear": "Schuljahr",
+      "grade": "Jahrgang",
+      "class": "Klasse",
+      "schoolYearFrom": "Schuljahr von",
+      "schoolYearTo": "Schuljahr bis",
+      "isVocational": "Ist Berufsklasse",
+      "requiresEmployerInfo": "Benötigt Informationen zum Ausbildungsbetrieb",
+      "removeFromClass": "Aus Klasse entfernen",
+      "removeFromClassConfirmation": "Sind Sie sicher, dass Sie die ausgewählten Schüler aus dieser Klasse entfernen möchten?",
+      "classSettings": {
+        "settings": "Klasseneinstellungen",
+        "general": "Allgemein",
+        "students": "Schüler",
+        "options": "Einstellungen"
+      },
+      "student": {
+        "firstName": "Vorname",
+        "lastName": "Nachname",
+        "dateOfBirth": "Geburtsdatum",
+        "gender": "Geschlecht",
+        "status": "Status"
+      }
+    },
+    "agreements": {
+      "title": "Vereinbarungen",
+      "addAgreement": "Vereinbarung hinzufügen",
+      "editAgreement": "Vereinbarung bearbeiten",
+      "deleteConfirm": "Vereinbarung löschen",
+      "deleteWarning": "Sind Sie sicher, dass Sie diese Vereinbarung löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+      "noAgreements": "Noch keine Vereinbarungen konfiguriert",
+      "clickAddToStart": "Klicken Sie auf 'Vereinbarung hinzufügen', um Ihre erste Vereinbarung zu erstellen",
+      "required": "Erforderlich",
+      "fields": {
+        "key": "Schlüssel",
+        "labelEn": "Bezeichnung (Englisch)",
+        "labelDe": "Bezeichnung (Deutsch)",
+        "enabled": "Aktiviert",
+        "required": "Erforderlich"
+      },
+      "keyPlaceholder": "Automatisch aus englischer Bezeichnung generiert",
+      "keyHelperText": "Eindeutiger Bezeichner (automatisch aus englischer Bezeichnung generiert)",
+      "labelEnPlaceholder": "z.B. Data Protection",
+      "labelDePlaceholder": "z.B. Datenschutz",
+      "descriptionEn": "Beschreibung (Englisch)",
+      "descriptionDe": "Beschreibung (Deutsch)",
+      "descriptionEnPlaceholder": "z.B. Ich willige in die Verarbeitung meiner personenbezogenen Daten ein...",
+      "descriptionDePlaceholder": "z.B. Ich willige in die Verarbeitung meiner personenbezogenen Daten ein...",
+      "descriptionHelperText": "Optionale Beschreibung für Schüler (unterstützt mehrere Zeilen)",
+      "icon": "Symbol",
+      "iconPlaceholder": "z.B. PrivacyTip, School, Gavel",
+      "iconHelperText": "Optionaler MUI-Symbolname (z.B. PrivacyTip, School, Gavel, CameraAlt, Groups)",
+      "validation": {
+        "keyRequired": "Schlüssel ist erforderlich",
+        "keyExists": "Eine Vereinbarung mit diesem Schlüssel existiert bereits",
+        "labelRequired": "Bezeichnung ist in beiden Sprachen erforderlich"
+      }
+    }
+  },
+  "audit": {
+    "title": "Audit-Protokoll",
+    "timestamp": "Zeitstempel",
+    "action": "Aktion",
+    "description": "Beschreibung",
+    "user": "Benutzer",
+    "ipAddress": "IP-Adresse",
+    "metadata": "Metadaten",
+    "logDetails": "Protokolldetails",
+    "categoryLabel": "Kategorie",
+    "statusLabel": "Status",
+    "filterByCategory": "Nach Kategorie filtern",
+    "filterByStatus": "Nach Status filtern",
+    "clearLogs": "Protokolle löschen",
+    "export": "Exportieren",
+    "clearLogsConfirm": "Audit-Protokolle löschen",
+    "clearLogsWarning": "Sind Sie sicher, dass Sie alte Audit-Protokolle löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "deleteSelected": "Ausgewählte löschen",
+    "deleteSelectedConfirm": "Ausgewählte Audit-Protokolle löschen",
+    "deleteSelectedWarning": "Sind Sie sicher, dass Sie die ausgewählten Audit-Protokolle löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "exportSelected": "Ausgewählte exportieren",
+    "category": {
+      "student": "Schüler",
+      "class": "Klasse",
+      "settings": "Einstellungen",
+      "auth": "Authentifizierung",
+      "system": "System"
+    },
+    "status": {
+      "success": "Erfolg",
+      "failure": "Fehler",
+      "partial": "Teilweise"
+    },
+    "descriptions": {
+      "updatedAgreementSettings": "Vereinbarungseinstellungen aktualisiert",
+      "failedUpdateAgreementSettings": "Aktualisierung der Vereinbarungseinstellungen fehlgeschlagen"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Admin-Anmeldung",
+      "subtitle": "Digitale Schülerregistrierung",
+      "emailLabel": "E-Mail-Adresse",
+      "passwordLabel": "Passwort",
+      "forgotPassword": "Passwort vergessen?",
+      "signInButton": "Anmelden",
+      "signingIn": "Anmeldung läuft...",
+      "invalidCredentials": "Ungültige E-Mail oder Passwort",
+      "loginSuccess": "Anmeldung erfolgreich!",
+      "loginError": "Bei der Anmeldung ist ein Fehler aufgetreten"
+    },
+    "setup": {
+      "title": "Admin-Einrichtung",
+      "subtitle": "Ersteinrichtungs-Assistent für die Digitale Schülerregistrierung",
+      "steps": {
+        "welcome": "Willkommen",
+        "email": "Admin-E-Mail",
+        "password": "Passwort festlegen",
+        "recovery": "Wiederherstellungscode",
+        "confirmation": "Bestätigung"
+      },
+      "welcome": {
+        "title": "Willkommen bei der Digitalen Schülerregistrierung",
+        "description": "Dies ist der Ersteinrichtungs-Assistent für Ihr Admin-Konto. Sie werden:",
+        "step1": "Ihre Admin-E-Mail-Adresse einrichten",
+        "step2": "Ein sicheres Passwort erstellen",
+        "step3": "Einen Wiederherstellungscode für das Zurücksetzen des Passworts erhalten",
+        "warning": "Wichtig: Bewahren Sie Ihren Wiederherstellungscode an einem sicheren Ort auf. Sie benötigen ihn, um Ihr Passwort zurückzusetzen, falls Sie es vergessen.",
+        "startButton": "Los geht's"
+      },
+      "email": {
+        "title": "Admin-E-Mail",
+        "description": "Geben Sie die E-Mail-Adresse für das Admin-Konto ein. Diese wird für die Anmeldung im System verwendet.",
+        "emailLabel": "E-Mail-Adresse"
+      },
+      "password": {
+        "title": "Passwort festlegen",
+        "description": "Erstellen Sie ein sicheres Passwort für Ihr Admin-Konto. Ihr Passwort muss:",
+        "requirement1": "Mindestens 8 Zeichen lang sein",
+        "requirement2": "Mindestens einen Großbuchstaben enthalten",
+        "requirement3": "Mindestens einen Kleinbuchstaben enthalten",
+        "requirement4": "Mindestens eine Zahl enthalten",
+        "passwordLabel": "Passwort",
+        "confirmPasswordLabel": "Passwort bestätigen",
+        "strengthLabel": "Passwortstärke:",
+        "strengthWeak": "Schwach",
+        "strengthMedium": "Mittel",
+        "strengthStrong": "Stark",
+        "creatingAccount": "Konto wird erstellt...",
+        "createButton": "Konto erstellen"
+      },
+      "recovery": {
+        "title": "Wiederherstellungscode",
+        "warning": "WICHTIG: Dies ist Ihre einzige Chance, diesen Wiederherstellungscode zu speichern. Er kann später nicht abgerufen werden. Sie benötigen diesen Code, um Ihr Passwort zurückzusetzen, falls Sie es vergessen.",
+        "codeLabel": "Ihr Wiederherstellungscode lautet:",
+        "copyButton": "Code kopieren",
+        "copied": "Kopiert!",
+        "downloadButton": "Herunterladen",
+        "continueButton": "Ich habe meinen Wiederherstellungscode gespeichert"
+      },
+      "confirmation": {
+        "title": "Einrichtung bestätigen",
+        "description": "Bevor Sie die Einrichtung abschließen, bestätigen Sie bitte, dass Sie Ihren Wiederherstellungscode gespeichert haben.",
+        "warning": "Ohne Ihren Wiederherstellungscode können Sie Ihr Passwort nicht zurücksetzen, wenn Sie es vergessen. Die einzige Möglichkeit, wieder Zugriff zu erhalten, wäre ein manuelles Zurücksetzen über die Datenbank.",
+        "checkboxLabel": "Ich bestätige, dass ich meinen Wiederherstellungscode an einem sicheren Ort gespeichert habe",
+        "completeButton": "Einrichtung abschließen"
+      },
+      "messages": {
+        "accountCreated": "Admin-Konto erfolgreich erstellt!",
+        "setupComplete": "Einrichtung abgeschlossen! Weiterleitung zur Anmeldung...",
+        "setupFailed": "Einrichtung fehlgeschlagen",
+        "codeCopied": "Wiederherstellungscode in die Zwischenablage kopiert!",
+        "codeDownloaded": "Wiederherstellungscode heruntergeladen!"
+      }
+    },
+    "resetPassword": {
+      "title": "Passwort zurücksetzen",
+      "subtitle": "Geben Sie Ihre E-Mail, Ihren Wiederherstellungscode und Ihr neues Passwort ein, um Ihr Konto zurückzusetzen.",
+      "backToLogin": "Zurück zur Anmeldung",
+      "infoMessage": "Sie benötigen den Wiederherstellungscode, der Ihnen bei der Ersteinrichtung Ihres Admin-Kontos bereitgestellt wurde.",
+      "emailLabel": "E-Mail-Adresse",
+      "recoveryCodeLabel": "Wiederherstellungscode",
+      "recoveryCodePlaceholder": "XXXX-XXXX-XXXX-XXXX",
+      "recoveryCodeHelper": "Geben Sie den 16-stelligen Wiederherstellungscode aus Ihrer Ersteinrichtung ein",
+      "newPasswordLabel": "Neues Passwort",
+      "confirmPasswordLabel": "Neues Passwort bestätigen",
+      "strengthLabel": "Passwortstärke:",
+      "strengthWeak": "Schwach",
+      "strengthMedium": "Mittel",
+      "strengthStrong": "Stark",
+      "resettingButton": "Passwort wird zurückgesetzt...",
+      "resetButton": "Passwort zurücksetzen",
+      "resetSuccess": "Passwort erfolgreich zurückgesetzt!",
+      "resetFailed": "Passwort zurücksetzen fehlgeschlagen"
+    },
+    "validation": {
+      "emailRequired": "E-Mail ist erforderlich",
+      "emailInvalid": "Ungültige E-Mail-Adresse",
+      "passwordRequired": "Passwort ist erforderlich",
+      "passwordMin": "Passwort muss mindestens 8 Zeichen lang sein",
+      "passwordUppercase": "Passwort muss mindestens einen Großbuchstaben enthalten",
+      "passwordLowercase": "Passwort muss mindestens einen Kleinbuchstaben enthalten",
+      "passwordNumber": "Passwort muss mindestens eine Zahl enthalten",
+      "passwordSpecialChar": "Passwort muss mindestens ein Sonderzeichen enthalten (!@#$%^&*)",
+      "passwordMatch": "Passwörter müssen übereinstimmen",
+      "confirmPasswordRequired": "Bitte bestätigen Sie Ihr Passwort",
+      "recoveryCodeRequired": "Wiederherstellungscode ist erforderlich",
+      "recoveryCodeFormat": "Wiederherstellungscode muss im Format sein: XXXX-XXXX-XXXX-XXXX",
+      "recoveryCodeConfirmRequired": "Sie müssen bestätigen, dass Sie Ihren Wiederherstellungscode gespeichert haben"
+    },
+    "errors": {
+      "setupAlreadyCompleted": "Einrichtung wurde bereits abgeschlossen",
+      "emailPasswordRequired": "E-Mail und Passwort sind erforderlich",
+      "invalidEmailFormat": "Ungültiges E-Mail-Format",
+      "passwordTooShort": "Passwort muss mindestens 8 Zeichen lang sein",
+      "passwordNeedsUppercase": "Passwort muss mindestens einen Großbuchstaben enthalten",
+      "passwordNeedsLowercase": "Passwort muss mindestens einen Kleinbuchstaben enthalten",
+      "passwordNeedsNumber": "Passwort muss mindestens eine Zahl enthalten",
+      "emailExists": "Benutzer mit dieser E-Mail existiert bereits",
+      "invalidCredentials": "Ungültige E-Mail oder Wiederherstellungscode",
+      "recoveryFieldsRequired": "E-Mail, Wiederherstellungscode und neues Passwort sind erforderlich",
+      "invalidRecoveryFormat": "Ungültiges Wiederherstellungscode-Format",
+      "unknownError": "Unbekannter Fehler",
+      "setupFailed": "Einrichtung fehlgeschlagen",
+      "resetFailed": "Passwort zurücksetzen fehlgeschlagen",
+      "checkSetupFailed": "Überprüfung des Einrichtungsstatus fehlgeschlagen"
+    },
+    "common": {
+      "back": "Zurück",
+      "next": "Weiter",
+      "copyright": "© 2025 Beruflichen Schulen Obersberg"
+    },
+    "passwordInput": {
+      "guidelines": "Passwort-Richtlinien",
+      "guidelinesText": "Ihr Passwort muss die folgenden Anforderungen erfüllen:",
+      "hasUpperCase": "Mindestens ein Großbuchstabe",
+      "hasLowerCase": "Mindestens ein Kleinbuchstabe",
+      "hasNumbers": "Mindestens eine Zahl",
+      "hasSpecialChar": "Mindestens ein Sonderzeichen (!@#$%^&*)",
+      "hasMinLength": "Mindestens 8 Zeichen",
+      "generatePassword": "Sicheres Passwort generieren"
+    },
+    "pdf": {
+      "onboardingWizard": "Onboarding-Assistent",
+      "class": "Klasse:",
+      "verificationCode": "Verifizierungscode:",
+      "id": "ID:",
+      "portrait": "Hochformat",
+      "landscape": "Querformat"
+    },
+    "studentLogin": {
+      "title": "Anmeldung der BSO",
+      "subtitle": "Bitte gib deinen Vor-, Nachnamen und die Anmelde-ID ein.",
+      "firstNamePlaceholder": "Vorname",
+      "lastNamePlaceholder": "Nachname",
+      "verificationCodePlaceholder": "Anmelde-ID (z.B. A1B2C3)",
+      "submit": "Absenden",
+      "verifying": "Wird überprüft..."
+    }
+  }
+}

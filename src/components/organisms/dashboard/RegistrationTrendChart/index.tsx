@@ -1,0 +1,60 @@
+import React from "react";
+
+import ChartContainer from "@/components/molecules/dashboard/ChartContainer";
+import { RegistrationTrendItem } from "@/types/dashboard";
+import { LineChart } from "@mui/x-charts/LineChart";
+import { useTranslation } from "react-i18next";
+
+import { DASHBOARD_GRADIENTS } from "@/constants/theme.constants";
+
+interface RegistrationTrendChartProps {
+  data: RegistrationTrendItem[];
+  loading?: boolean;
+}
+
+const RegistrationTrendChart: React.FC<RegistrationTrendChartProps> = ({
+  data,
+  loading = false,
+}) => {
+  const { t } = useTranslation();
+
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString(undefined, {
+      month: "short",
+      day: "numeric",
+    });
+  };
+
+  const xLabels = data.map((item) => formatDate(item.date));
+  const yValues = data.map((item) => item.count);
+
+  return (
+    <ChartContainer
+      title={t("dashboard.charts.registrationTrend")}
+      loading={loading}
+      height={300}
+    >
+      <LineChart
+        xAxis={[
+          {
+            scaleType: "point",
+            data: xLabels,
+          },
+        ]}
+        series={[
+          {
+            data: yValues,
+            label: t("dashboard.quickStats.totalStudents"),
+            color: DASHBOARD_GRADIENTS.CHART_PRIMARY,
+            curve: "linear",
+            showMark: true,
+          },
+        ]}
+        margin={{ left: 50, right: 20, top: 20, bottom: 30 }}
+      />
+    </ChartContainer>
+  );
+};
+
+export default RegistrationTrendChart;
