@@ -16,9 +16,9 @@ type Story = StoryObj<typeof OriginForm>;
 export const Default: Story = {
   args: {
     data: {
-      herkunftsland: "Deutschland",
+      herkunftsland: "Türkei",
       zuzugjahr: 2010,
-      familiensprache: "Deutsch",
+      familiensprache: "Türkisch",
     },
   },
   play: async ({ canvasElement }) => {

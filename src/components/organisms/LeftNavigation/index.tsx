@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Fragment, memo, useCallback, useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 
 import GeneralInput from "@/components/atoms/GeneralInput";
 import OnboardingVersion from "@/components/atoms/OnboardingVersion";
@@ -356,7 +356,6 @@ const LeftNavigation = () => {
               const result = await dispatch(logoutUser());
               if (result.success) {
                 router.push("/login");
-                router.refresh();
               }
             }}
             fullWidth={false}
@@ -370,4 +369,4 @@ const LeftNavigation = () => {
   );
 };
 
-export default memo(LeftNavigation);
+export default LeftNavigation;

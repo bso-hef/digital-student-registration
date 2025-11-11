@@ -1,3 +1,4 @@
+import { auth } from "@/lib/auth/auth";
 import { dbConnect } from "@/lib/config/mongo";
 import { tServer } from "@/lib/server-i18n";
 import Logger from "@/lib/server-logger";
@@ -16,6 +17,12 @@ const logger = new Logger("API <<==>> Settings::Onboarding");
  */
 export async function PATCH(request: NextRequest) {
   try {
+    // Check authentication
+    const session = await auth();
+    if (!session) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
     await dbConnect();
 
     const body = await request.json();
@@ -117,6 +124,7 @@ export async function PATCH(request: NextRequest) {
 /**
  * GET /api/settings/onboarding
  * Fetches only the onboarding settings
+ * Public endpoint - no authentication required for invited students
  */
 export async function GET() {
   try {

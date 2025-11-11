@@ -120,14 +120,21 @@ const classReducer = (state = initialState, action: AppAction): ClassState => {
       };
     }
 
-    case TYPES.DELETE_CLASSES_SUCCESS:
+    case TYPES.DELETE_CLASSES_SUCCESS: {
+      const deletedIds = action.payload;
+      const updatedById = { ...state.byId };
+      deletedIds.forEach((id: string) => {
+        delete updatedById[id];
+      });
       return {
         ...state,
         loading: false,
         classes: state.classes.filter(
-          (classItem) => !action.payload.includes(classItem._id),
+          (classItem) => !deletedIds.includes(classItem._id),
         ),
+        byId: updatedById,
       };
+    }
 
     case TYPES.UPDATE_CLASS_SUCCESS: {
       const updated = action.payload;

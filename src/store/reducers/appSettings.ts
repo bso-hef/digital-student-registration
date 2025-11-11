@@ -104,6 +104,54 @@ const appSettingsReducer = (
         error: action.payload,
       };
 
+    // Get agreement settings
+    case TYPES.GET_AGREEMENT_SETTINGS_REQUEST:
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      };
+    case TYPES.GET_AGREEMENT_SETTINGS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        data: {
+          ...state.data,
+          agreements: action.payload,
+        },
+        error: null,
+      };
+    case TYPES.GET_AGREEMENT_SETTINGS_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
+
+    // Update agreement settings
+    case TYPES.UPDATE_AGREEMENT_SETTINGS_REQUEST:
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      };
+    case TYPES.UPDATE_AGREEMENT_SETTINGS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        data: {
+          ...state.data,
+          agreements: action.payload,
+        },
+        error: null,
+      };
+    case TYPES.UPDATE_AGREEMENT_SETTINGS_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
+
     default:
       return state;
   }

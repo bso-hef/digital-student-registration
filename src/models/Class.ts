@@ -38,5 +38,8 @@ ClassSchema.index(
 );
 ClassSchema.plugin(mongoosePaginate);
 
-export default mongoose.models.Class ||
-  mongoose.model(SCHEMA.CLASS, ClassSchema);
+// Ensure model is properly registered
+const ClassModel =
+  mongoose.models.Class || mongoose.model(SCHEMA.CLASS, ClassSchema);
+
+export default ClassModel;

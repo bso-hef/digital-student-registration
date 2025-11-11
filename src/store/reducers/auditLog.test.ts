@@ -35,8 +35,16 @@ describe("auditLogReducer", () => {
 
   it("should handle GET_AUDIT_LOGS_SUCCESS", () => {
     const mockLogs = [
-      { _id: "1", action: "CREATE", timestamp: new Date() } as any,
-      { _id: "2", action: "UPDATE", timestamp: new Date() } as any,
+      {
+        _id: "1",
+        action: "CREATE",
+        timestamp: new Date(),
+      } as Partial<AuditLogEntry>,
+      {
+        _id: "2",
+        action: "UPDATE",
+        timestamp: new Date(),
+      } as Partial<AuditLogEntry>,
     ];
 
     const result = auditLogReducer(initialState, {
@@ -138,7 +146,7 @@ describe("auditLogReducer", () => {
   it("should handle CLEAR_AUDIT_LOGS_SUCCESS", () => {
     const stateWithLogs = {
       ...initialState,
-      logs: [{ _id: "1", action: "TEST" } as any],
+      logs: [{ _id: "1", action: "TEST" } as Partial<AuditLogEntry>],
       clearing: true,
     };
 

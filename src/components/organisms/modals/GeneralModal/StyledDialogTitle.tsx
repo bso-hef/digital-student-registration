@@ -3,6 +3,7 @@ import React from "react";
 import SmallIconButton from "@/components/atoms/buttons/SmallIconButton";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import LinkRoundedIcon from "@mui/icons-material/LinkRounded";
+import OpenInNewRoundedIcon from "@mui/icons-material/OpenInNewRounded";
 import { Box, DialogTitle, Typography, styled, useTheme } from "@mui/material";
 
 type TitleOwnProps = {
@@ -10,6 +11,7 @@ type TitleOwnProps = {
   subtitle?: string;
   onClose?: () => void;
   onCopy?: () => void;
+  onOpenInNewTab?: () => void;
   textCapitalize?: boolean;
   id?: string;
 };
@@ -70,6 +72,7 @@ const StyledDialogTitle = ({
   subtitle,
   onClose,
   onCopy,
+  onOpenInNewTab,
   textCapitalize = true,
   ...otherTitleProps
 }: TitleOwnProps) => {
@@ -87,6 +90,18 @@ const StyledDialogTitle = ({
               onAction={onCopy}
               icon={
                 <LinkRoundedIcon sx={{ color: theme.palette.icon.secondary }} />
+              }
+              hugeIcon
+              noMargin
+            />
+          )}
+          {onOpenInNewTab && (
+            <SmallIconButton
+              onAction={onOpenInNewTab}
+              icon={
+                <OpenInNewRoundedIcon
+                  sx={{ color: theme.palette.icon.secondary }}
+                />
               }
               hugeIcon
               noMargin

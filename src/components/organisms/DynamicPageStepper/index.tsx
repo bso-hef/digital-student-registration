@@ -112,13 +112,20 @@ const ColorlibStepIconRoot = styled("div")<{
 const DynamicPageStepper = ({
   activeStep = 0,
   showLabelForId = null,
+  steps: propSteps,
 }: {
   activeStep?: number;
   showLabelForId?: number | null;
+  steps?: StepDef[];
 }) => {
   const { t } = useTranslation();
 
-  const steps: StepDef[] = getStudentSteps(t);
+  // Use provided steps or fall back to all steps
+  const steps: StepDef[] = propSteps || getStudentSteps(t);
+
+  // Find the index of the current step ID in the steps array
+  const activeStepIndex = steps.findIndex((step) => step.id === activeStep);
+  const effectiveActiveStep = activeStepIndex >= 0 ? activeStepIndex : 0;
 
   function ColorlibStepIcon(props: StepIconProps) {
     const { active, completed, className, icon } = props;
@@ -139,13 +146,13 @@ const DynamicPageStepper = ({
   return (
     <StepperBox>
       <Stepper
-        activeStep={activeStep}
+        activeStep={effectiveActiveStep}
         alternativeLabel
         connector={<ColorlibConnector />}
         sx={stepperSx}
       >
         {steps.map((step, index) => {
-          const isActive = index === activeStep;
+          const isActive = index === effectiveActiveStep;
           const isExplicitShown = showLabelForId === step.id;
           const shouldShowLabel = isActive || isExplicitShown;
 

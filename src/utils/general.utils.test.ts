@@ -272,7 +272,7 @@ describe("general.utils", () => {
   describe("getAvatarFullURL", () => {
     it("should return empty string for null or empty path", () => {
       expect(getAvatarFullURL("")).toBe("");
-      expect(getAvatarFullURL(null as any)).toBe("");
+      expect(getAvatarFullURL(null as unknown as string)).toBe("");
     });
 
     it("should return undefined for valid path (implementation pending)", () => {

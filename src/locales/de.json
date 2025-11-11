@@ -30,7 +30,14 @@
     "Inactive": "Inaktiv",
     "Active": "Aktiv",
     "All": "Alle",
-    "generatePassword": "Sicheres Passwort generieren"
+    "generatePassword": "Sicheres Passwort generieren",
+    "of": "von",
+    "none": "Keine Angabe",
+    "loadingSettings": "Lade Einstellungen...",
+    "Submit": "Absenden",
+    "Submitting": "Wird übermittelt...",
+    "Accepted": "Akzeptiert",
+    "NotAccepted": "Nicht akzeptiert"
   },
   "error": {
     "Page not found": "Seite nicht gefunden",
@@ -67,10 +74,11 @@
       "General": "Allgemein",
       "Origin": "Herkunft",
       "Address": "Adresse",
-      "Parents": "Eltern",
+      "Legal Guardian": "Erziehungsberechtigte",
       "Pre Education": "Vorbildung",
       "Training": "Ausbildung",
       "Company Contact": "Unternehmenskontakt",
+      "Agreements": "Vereinbarungen",
       "Summary": "Zusammenfassung",
       "Completion": "Abschluss"
     }
@@ -126,6 +134,7 @@
       "onboardingWizard": "Onboarding-Assistent",
       "class": "Klasse:",
       "id": "ID:",
+      "verificationCode": "Verifizierungscode:",
       "downloadPdf": "PDF herunterladen",
       "createZip": "ZIP erzeugen",
       "title": "QR-PDFs für ausgewählte Schüler erzeugen"
@@ -163,6 +172,11 @@
     "studentAddFailed": "Hinzufügen der Schüler fehlgeschlagen.",
     "studentDeleteSuccess": "Schüler erfolgreich gelöscht.",
     "studentDeleteFailed": "Löschen der Schüler fehlgeschlagen.",
+    "verificationSuccess": "Verifizierung erfolgreich.",
+    "verificationFailed": "Verifizierung fehlgeschlagen.",
+    "studentLoadFailed": "Laden der Schülerdaten fehlgeschlagen.",
+    "onboardingSubmitSuccess": "Onboarding erfolgreich abgeschlossen.",
+    "onboardingSubmitFailed": "Onboarding-Übermittlung fehlgeschlagen.",
     "classFetchFailed": "Abrufen der Klassen fehlgeschlagen.",
     "classAddSuccess": "Klassen erfolgreich hinzugefügt.",
     "classAddFailed": "Hinzufügen der Klassen fehlgeschlagen.",
@@ -179,6 +193,9 @@
     "settingsUpdateFailed": "Aktualisierung der Einstellungen fehlgeschlagen.",
     "onboardingSettingsUpdateSuccess": "Onboarding-Einstellungen erfolgreich aktualisiert.",
     "onboardingSettingsUpdateFailed": "Aktualisierung der Onboarding-Einstellungen fehlgeschlagen.",
+    "agreementSettingsFetchFailed": "Abrufen der Vereinbarungseinstellungen fehlgeschlagen.",
+    "agreementSettingsUpdateSuccess": "Vereinbarungseinstellungen erfolgreich aktualisiert.",
+    "agreementSettingsUpdateFailed": "Aktualisierung der Vereinbarungseinstellungen fehlgeschlagen.",
     "auditLogFetchFailed": "Abrufen der Audit-Protokolle fehlgeschlagen.",
     "auditLogStatsFailed": "Abrufen der Audit-Protokoll-Statistiken fehlgeschlagen.",
     "auditLogExportSuccess": "Audit-Protokolle erfolgreich exportiert.",
@@ -231,6 +248,169 @@
   "table": {
     "No data found": "Keine Daten gefunden",
     "No data found description": "Nachdem mindestens ein Benutzer hinzugefügt wurde, erscheint hier eine Liste."
+  },
+  "onboarding": {
+    "general": {
+      "title": "Allgemeine Daten",
+      "schoolEntry": "Eintritt Schule",
+      "className": "Klassenname",
+      "personalInfo": "Persönliche Daten",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "birthName": "Geburtsname",
+      "gender": "Geschlecht",
+      "birthInfo": "Geburtsinformationen",
+      "birthDate": "Geburtsdatum",
+      "birthPlace": "Geburtsort",
+      "birthCountry": "Geburtsland",
+      "additionalInfo": "Weitere Angaben",
+      "religion": "Religion",
+      "nationality1": "Staatsangehörigkeit 1",
+      "nationality2": "Staatsangehörigkeit 2 (optional)"
+    },
+    "origin": {
+      "countryOfOrigin": "Herkunftsland",
+      "yearOfImmigration": "Zuzugsjahr",
+      "familyLanguage": "Familiensprache"
+    },
+    "address": {
+      "title": "Adresse und Kontaktdaten",
+      "street": "Straße",
+      "houseNumber": "Hausnummer",
+      "postalCode": "Postleitzahl",
+      "city": "Ort",
+      "contactTitle": "Kontaktinformationen",
+      "mobile": "Mobilnummer",
+      "phone": "Telefon (Festnetz)",
+      "email": "E-Mail-Adresse"
+    },
+    "legalGuardian": {
+      "type": "Art",
+      "name": "Name",
+      "address": "Adresse",
+      "mobile": "Mobilnummer",
+      "phone": "Telefon",
+      "contactType": "Ansprechpartner Art",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "postalCode": "PLZ",
+      "city": "Ort",
+      "street": "Straße",
+      "houseNumber": "Hausnummer",
+      "mobileNumber": "Mobilnummer",
+      "phoneNumber": "Telefon",
+      "contactPerson1": "Erziehungsberechtigte(r) 1",
+      "contactPerson2": "Erziehungsberechtigte(r) 2",
+      "contactPerson3": "Erziehungsberechtigte(r) 3",
+      "addContact": "Erziehungsberechtigte(n) hinzufügen",
+      "addContactTooltip": "Einen weiteren Erziehungsberechtigten hinzufügen",
+      "removeContact": "Erziehungsberechtigte(n) entfernen",
+      "removeContactTooltip": "Diesen Erziehungsberechtigten entfernen",
+      "adultOptionalInfo": "Da Sie volljährig sind (18 Jahre oder älter), sind die Angaben zu Erziehungsberechtigten optional. Sie müssen diese Felder nur ausfüllen, wenn Sie möchten."
+    },
+    "preEducation": {
+      "previousSchool": "Vorherige Schule",
+      "schoolType": "Schulform",
+      "level": "Stufe",
+      "degrees": "Abschlüsse",
+      "previousSchoolName": "Vorhergehende Schule",
+      "previousLevel": "Vorhergehende Stufe",
+      "previousSchoolType": "Vorhergehende Schulform",
+      "qualifications": "Abschlüsse"
+    },
+    "training": {
+      "profession": "Beruf",
+      "startDate": "Ausbildungsbeginn",
+      "company": "Betrieb",
+      "companyStartDate": "Betriebseintritt",
+      "companyName": "Betriebsname",
+      "street": "Straße",
+      "houseNumber": "Hausnummer",
+      "postalCode": "PLZ",
+      "city": "Ort",
+      "phone": "Telefon",
+      "email": "E-Mail"
+    },
+    "companyContact": {
+      "salutation": "Anrede",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "phone": "Telefon",
+      "contactPerson": "Ansprechpartner im Betrieb"
+    },
+    "agreements": {
+      "title": "Vereinbarungen",
+      "description": "Bitte lesen und akzeptieren Sie die folgenden Vereinbarungen, um mit der Anmeldung fortzufahren.",
+      "required": "Diese Vereinbarung ist erforderlich",
+      "datenschutz": "Datenschutzvereinbarung",
+      "datenschutzDesc": "Ich willige in die Verarbeitung meiner personenbezogenen Daten gemäß der Datenschutzrichtlinie ein.",
+      "teilnahmeunterricht": "Einwilligung zur Teilnahme am Unterricht",
+      "teilnahmeunterrichtDesc": "Ich verpflichte mich zur Teilnahme an allen erforderlichen Unterrichtsstunden und Aktivitäten.",
+      "schulordnung": "Anerkennung der Schulordnung",
+      "schulordnungDesc": "Ich habe die Schulordnung gelesen und akzeptiere die darin enthaltenen Regeln und Vorschriften.",
+      "personenabbildung": "Einwilligung für Foto- und Bildaufnahmen",
+      "personenabbildungDesc": "Ich willige ein, dass Fotos von mir für schulische Zwecke (Schülerausweis, Jahrbuch, Website) gemacht werden dürfen.",
+      "teamsnutzung": "Microsoft Teams Nutzungsvereinbarung",
+      "teamsnutzungDesc": "Ich verpflichte mich, Microsoft Teams für schulbezogene Kommunikation und Aktivitäten zu nutzen.",
+      "noAgreements": "Es wurden keine Vereinbarungen vom Administrator konfiguriert."
+    },
+    "welcome": {
+      "title": "Anmeldung der BSO",
+      "subtitle": "Schließen Sie in 10 Schritten ihre Anmeldung ab.",
+      "paragraph1": "In den nachfolgenden Schritten wirst du durch deine Schuleinschreibung geführt.",
+      "paragraph2": "Dort werden dir deine eigenen Daten angezeigt, und du kannst einfach veraltete oder fehlerhaft Daten bearbeiten.",
+      "paragraph3": "Solltest du bemerken, dass du etwas versehentlich geändert hast, kannst du einfach zurück gehen und es erneut ändern.",
+      "paragraph4": "Solltest du dennoch Hilfe brauchen, wende dich einfach an deinen Lehrer."
+    },
+    "summary": {
+      "title": "Zusammenfassung",
+      "description": "Bitte überprüfen Sie Ihre Angaben vor der Übermittlung.",
+      "generalInfo": "Allgemeine Daten",
+      "origin": "Herkunft und Einwanderung",
+      "address": "Adresse und Kontakt",
+      "contactPerson": "Ansprechpartner",
+      "education": "Vorbildung",
+      "training": "Ausbildung",
+      "companyContact": "Ansprechpartner im Betrieb",
+      "agreements": "Vereinbarungen",
+      "confirmationText": "Ich habe die Zusammenfassung gelesen und bestätige, dass die Angaben korrekt sind"
+    },
+    "completion": {
+      "title": "Einschreibung abgeschlossen!",
+      "subtitle": "Ihre Daten wurden erfolgreich übermittelt.",
+      "message": "Vielen Dank für die Einschreibung. Ihre Daten wurden erfolgreich in unserem System gespeichert. Sie erhalten weitere Informationen von Ihrer Schule.",
+      "backToHome": "Zur Startseite",
+      "footer": "Sie können dieses Fenster jetzt schließen."
+    },
+    "loadingProfile": "Lade Schülerprofil...",
+    "loadingDetails": "Bitte warten Sie, während wir Ihre Informationen abrufen...",
+    "error": {
+      "invalidStudentId": {
+        "title": "Ungültige Schüler-ID",
+        "message": "Die angegebene Schüler-ID hat ein ungültiges Format. Bitte überprüfen Sie die URL."
+      },
+      "studentNotFound": {
+        "title": "Schüler nicht gefunden",
+        "message": "Es wurde kein Schüler mit dieser ID gefunden. Bitte kontaktieren Sie den Administrator."
+      },
+      "noClassAssigned": {
+        "title": "Keine Klasse zugewiesen",
+        "message": "Sie sind noch keiner Klasse zugeordnet. Bitte wenden Sie sich an den Administrator, um einer Klasse zugewiesen zu werden."
+      },
+      "classInactive": {
+        "title": "Klasse nicht aktiv",
+        "message": "Die Ihnen zugewiesene Klasse ist derzeit nicht aktiv. Bitte kontaktieren Sie den Administrator."
+      },
+      "alreadyOnboarded": {
+        "title": "Einschreibung bereits abgeschlossen",
+        "message": "Sie haben die Einschreibung bereits abgeschlossen. Wenn Sie Änderungen vornehmen müssen, wenden Sie sich bitte an den Administrator."
+      },
+      "generic": {
+        "title": "Fehler beim Laden",
+        "message": "Die Schülerdaten konnten nicht geladen werden. Bitte überprüfen Sie die URL oder kontaktieren Sie den Administrator."
+      },
+      "retry": "Erneut versuchen"
+    }
   },
   "settings": {
     "onboarding": {
@@ -310,6 +490,7 @@
       "dateOfBirth": "Geburtsdatum",
       "class": "Klasse",
       "status": "Status",
+      "verificationCode": "Anmelde-ID",
       "importStudents": "Schüler hinzufügen",
       "deleteStudents": "Schüler löschen",
       "generateQRCode": "QR-Code generieren",
@@ -346,6 +527,40 @@
         "gender": "Geschlecht",
         "status": "Status"
       }
+    },
+    "agreements": {
+      "title": "Vereinbarungen",
+      "addAgreement": "Vereinbarung hinzufügen",
+      "editAgreement": "Vereinbarung bearbeiten",
+      "deleteConfirm": "Vereinbarung löschen",
+      "deleteWarning": "Sind Sie sicher, dass Sie diese Vereinbarung löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+      "noAgreements": "Noch keine Vereinbarungen konfiguriert",
+      "clickAddToStart": "Klicken Sie auf 'Vereinbarung hinzufügen', um Ihre erste Vereinbarung zu erstellen",
+      "required": "Erforderlich",
+      "fields": {
+        "key": "Schlüssel",
+        "labelEn": "Bezeichnung (Englisch)",
+        "labelDe": "Bezeichnung (Deutsch)",
+        "enabled": "Aktiviert",
+        "required": "Erforderlich"
+      },
+      "keyPlaceholder": "Automatisch aus englischer Bezeichnung generiert",
+      "keyHelperText": "Eindeutiger Bezeichner (automatisch aus englischer Bezeichnung generiert)",
+      "labelEnPlaceholder": "z.B. Data Protection",
+      "labelDePlaceholder": "z.B. Datenschutz",
+      "descriptionEn": "Beschreibung (Englisch)",
+      "descriptionDe": "Beschreibung (Deutsch)",
+      "descriptionEnPlaceholder": "z.B. Ich willige in die Verarbeitung meiner personenbezogenen Daten ein...",
+      "descriptionDePlaceholder": "z.B. Ich willige in die Verarbeitung meiner personenbezogenen Daten ein...",
+      "descriptionHelperText": "Optionale Beschreibung für Schüler (unterstützt mehrere Zeilen)",
+      "icon": "Symbol",
+      "iconPlaceholder": "z.B. PrivacyTip, School, Gavel",
+      "iconHelperText": "Optionaler MUI-Symbolname (z.B. PrivacyTip, School, Gavel, CameraAlt, Groups)",
+      "validation": {
+        "keyRequired": "Schlüssel ist erforderlich",
+        "keyExists": "Eine Vereinbarung mit diesem Schlüssel existiert bereits",
+        "labelRequired": "Bezeichnung ist in beiden Sprachen erforderlich"
+      }
     }
   },
   "audit": {
@@ -380,6 +595,10 @@
       "success": "Erfolg",
       "failure": "Fehler",
       "partial": "Teilweise"
+    },
+    "descriptions": {
+      "updatedAgreementSettings": "Vereinbarungseinstellungen aktualisiert",
+      "failedUpdateAgreementSettings": "Aktualisierung der Vereinbarungseinstellungen fehlgeschlagen"
     }
   },
   "auth": {
@@ -525,6 +744,23 @@
       "hasSpecialChar": "Mindestens ein Sonderzeichen (!@#$%^&*)",
       "hasMinLength": "Mindestens 8 Zeichen",
       "generatePassword": "Sicheres Passwort generieren"
+    },
+    "pdf": {
+      "onboardingWizard": "Onboarding-Assistent",
+      "class": "Klasse:",
+      "verificationCode": "Verifizierungscode:",
+      "id": "ID:",
+      "portrait": "Hochformat",
+      "landscape": "Querformat"
+    },
+    "studentLogin": {
+      "title": "Anmeldung der BSO",
+      "subtitle": "Bitte gib deinen Vor-, Nachnamen und die Anmelde-ID ein.",
+      "firstNamePlaceholder": "Vorname",
+      "lastNamePlaceholder": "Nachname",
+      "verificationCodePlaceholder": "Anmelde-ID (z.B. A1B2C3)",
+      "submit": "Absenden",
+      "verifying": "Wird überprüft..."
     }
   }
 }

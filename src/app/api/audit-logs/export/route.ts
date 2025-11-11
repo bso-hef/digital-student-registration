@@ -1,3 +1,4 @@
+import { auth } from "@/lib/auth/auth";
 import { dbConnect } from "@/lib/config/mongo";
 import Logger from "@/lib/server-logger";
 import AuditLog from "@/models/AuditLog";
@@ -48,6 +49,12 @@ function generateCSV(logs: Array<Record<string, unknown>>): string {
  */
 export async function GET(request: NextRequest) {
   try {
+    // Check authentication
+    const session = await auth();
+    if (!session) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
     await dbConnect();
 
     const { searchParams } = new URL(request.url);

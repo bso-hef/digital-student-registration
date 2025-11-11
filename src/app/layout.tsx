@@ -13,8 +13,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Digital Student Registration",
-  description: "A platform for students to register digitally.",
+  title: "Digitale Schüleranmeldung",
+  description: "A platform for students to onboard digitally.",
 };
 
 export default async function RootLayout({

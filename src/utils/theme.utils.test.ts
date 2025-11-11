@@ -151,14 +151,17 @@ describe("theme.utils", () => {
 
     it("should call callback with dark theme when matches is true", () => {
       const callback = vi.fn();
-      let changeHandler: ((e: any) => void) | null = null;
+      let changeHandler: ((e: { matches: boolean }) => void) | null = null;
 
       Object.defineProperty(window, "matchMedia", {
         writable: true,
         value: vi.fn().mockImplementation(() => ({
           matches: false,
           media: "(prefers-color-scheme: dark)",
-          addEventListener: (event: string, handler: any) => {
+          addEventListener: (
+            event: string,
+            handler: (event: { matches: boolean }) => void,
+          ) => {
             changeHandler = handler;
           },
           removeEventListener: vi.fn(),
@@ -177,14 +180,17 @@ describe("theme.utils", () => {
 
     it("should call callback with light theme when matches is false", () => {
       const callback = vi.fn();
-      let changeHandler: ((e: any) => void) | null = null;
+      let changeHandler: ((e: { matches: boolean }) => void) | null = null;
 
       Object.defineProperty(window, "matchMedia", {
         writable: true,
         value: vi.fn().mockImplementation(() => ({
           matches: false,
           media: "(prefers-color-scheme: dark)",
-          addEventListener: (event: string, handler: any) => {
+          addEventListener: (
+            event: string,
+            handler: (event: { matches: boolean }) => void,
+          ) => {
             changeHandler = handler;
           },
           removeEventListener: vi.fn(),

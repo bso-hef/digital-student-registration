@@ -1,4 +1,5 @@
 import {
+  AgreementSettings,
   AppSettings,
   OnboardingSettings,
   SettingsResponse,
@@ -18,7 +19,7 @@ const settingsService = {
    * Fetches only onboarding settings
    */
   getOnboarding: () => {
-    return http.get<{ success: boolean; data: OnboardingSettings }>(
+    return http.get<{ success: boolean; data: AppSettings }>(
       "/api/settings/onboarding",
     );
   },
@@ -37,6 +38,27 @@ const settingsService = {
     return http.patch<SettingsResponse>("/api/settings/onboarding", {
       onboarding,
     });
+  },
+
+  /**
+   * Fetches only agreement settings
+   */
+  getAgreements: () => {
+    return http.get<{ success: boolean; data: AgreementSettings }>(
+      "/api/settings/agreements",
+    );
+  },
+
+  /**
+   * Updates only agreement settings
+   */
+  updateAgreements: (agreements: Partial<AgreementSettings>) => {
+    return http.patch<{ success: boolean; data: AgreementSettings }>(
+      "/api/settings/agreements",
+      {
+        agreements,
+      },
+    );
   },
 };
 

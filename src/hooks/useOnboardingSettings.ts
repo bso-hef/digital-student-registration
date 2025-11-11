@@ -61,6 +61,7 @@ export const useOnboardingSettings = () => {
     degreeOptions: onboarding?.degreeOptions || [],
     languageOptions: onboarding?.languageOptions || [],
     professionOptions: onboarding?.professionOptions || [],
+    countryOptions: onboarding?.countryOptions || [],
     // Field configs
     fieldConfigs: onboarding?.fieldConfigs || {},
     // Helper functions

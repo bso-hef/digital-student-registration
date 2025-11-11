@@ -1,3 +1,4 @@
+import { auth } from "@/lib/auth/auth";
 import { dbConnect } from "@/lib/config/mongo";
 import { tServer } from "@/lib/server-i18n";
 import Logger from "@/lib/server-logger";
@@ -16,6 +17,12 @@ const logger = new Logger("API <<==>> Settings");
  */
 export async function GET() {
   try {
+    // Check authentication
+    const session = await auth();
+    if (!session) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
     await dbConnect();
 
     // Get the first (and only) settings document, or create default if none exists
@@ -55,6 +62,12 @@ export async function GET() {
  */
 export async function PATCH(request: NextRequest) {
   try {
+    // Check authentication
+    const session = await auth();
+    if (!session) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
     await dbConnect();
 
     const body = await request.json();

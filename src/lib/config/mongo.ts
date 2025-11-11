@@ -1,4 +1,6 @@
 import Logger from "@/lib/server-logger";
+// Import model registry to ensure all models are registered
+import "@/models";
 import mongoose from "mongoose";
 
 const logger = new Logger("Config <<==>> MongoDB");

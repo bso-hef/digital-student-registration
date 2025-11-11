@@ -1,31 +1,58 @@
-import React, { useMemo } from "react";
+"use client";
+
+import React, { useEffect, useMemo, useRef } from "react";
 
 import { useOnboardingSettings } from "@/hooks/useOnboardingSettings";
 import {
   createValidateGeneralStudentData,
   validateGeneralStudentData,
 } from "@/lib/validate/student.validate";
-import { MenuItem, styled } from "@mui/material";
+import { updateStudentOnboardingData } from "@/store/actions/studentActions";
+import { useAppDispatch, useAppSelector } from "@/store/store";
+import {
+  Autocomplete,
+  Box,
+  TextField as MUITextField,
+  MenuItem,
+  Skeleton,
+  Typography,
+  styled,
+} from "@mui/material";
+import dayjs from "dayjs";
+import { FormikProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import { Select, TextField } from "formik-mui";
+import { DatePicker } from "formik-mui-x-date-pickers";
+import { useTranslation } from "react-i18next";
 
-const StyledForm = styled(Form)(() => ({
+const StyledForm = styled(Form)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "flex-start",
   justifyContent: "center",
   width: "100%",
   height: "auto",
+  gap: theme.spacing(2),
+}));
+
+const FormSection = styled(Box)(({ theme }) => ({
+  width: "100%",
+  display: "grid",
+  gridTemplateColumns: "1fr 1fr",
+  gap: theme.spacing(2),
+  [theme.breakpoints.down("md")]: {
+    gridTemplateColumns: "1fr",
+  },
 }));
 
 interface FormValues {
-  eintrittschule: string;
+  eintrittschule: dayjs.Dayjs | null;
   klassenname: string;
   vorname: string;
   nachname: string;
   geburtsname: string;
   geschlecht: string;
-  geburtsdatum: string;
+  geburtsdatum: dayjs.Dayjs | null;
   geburtsland: string;
   geburtsort: string;
   religion: string;
@@ -34,106 +61,312 @@ interface FormValues {
 }
 
 interface GeneralFormProps {
-  data?: Partial<FormValues>;
+  onSubmit?: (values?: unknown) => void;
+  formikRef?: React.RefObject<FormikProps<FormValues> | null>;
+  onValidationChange?: (isValid: boolean) => void;
 }
 
-const GeneralForm: React.FC<GeneralFormProps> = ({ data }) => {
-  const { genderOptions, getOptionValues, getEnabledOptions, loading } =
-    useOnboardingSettings();
+// Component to watch Formik values and sync to Redux
+const CountryWatcher: React.FC<{
+  country: string;
+  dispatch: ReturnType<typeof useAppDispatch>;
+  previousCountryRef: React.MutableRefObject<string>;
+}> = ({ country, dispatch, previousCountryRef }) => {
+  useEffect(() => {
+    if (country && country !== previousCountryRef.current) {
+      previousCountryRef.current = country;
+      dispatch(updateStudentOnboardingData({ geburtsland: country }));
+    }
+  }, [country, dispatch, previousCountryRef]);
+
+  return null;
+};
+
+const GeneralForm: React.FC<GeneralFormProps> = ({
+  onSubmit,
+  formikRef,
+  onValidationChange,
+}) => {
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const studentData = useAppSelector((state) => state.student.data);
+  const previousCountryRef = useRef<string>(studentData.geburtsland || "DE");
+  const {
+    genderOptions,
+    religionOptions,
+    countryOptions,
+    getOptionValues,
+    getEnabledOptions,
+    loading,
+  } = useOnboardingSettings();
+
+  // Initial sync: Ensure Redux has the current country value on mount
+  useEffect(() => {
+    const initialCountry = studentData.geburtsland || "DE";
+    if (!studentData.geburtsland) {
+      // If Redux doesn't have a country, set the default
+      dispatch(updateStudentOnboardingData({ geburtsland: initialCountry }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Run once on mount to set initial country
 
   const initialValues: FormValues = {
-    eintrittschule: data?.eintrittschule || "",
-    klassenname: data?.klassenname || "",
-    vorname: data?.vorname || "",
-    nachname: data?.nachname || "",
-    geburtsname: data?.geburtsname || "",
-    geschlecht: data?.geschlecht || "",
-    geburtsdatum: data?.geburtsdatum || "",
-    geburtsland: data?.geburtsland || "",
-    geburtsort: data?.geburtsort || "",
-    religion: data?.religion || "",
-    staatsangehoerigkeit1: data?.staatsangehoerigkeit1 || "",
-    staatsangehoerigkeit2: data?.staatsangehoerigkeit2 || "",
+    eintrittschule: null,
+    klassenname: "",
+    vorname: studentData.vorname || "",
+    nachname: studentData.nachname || "",
+    geburtsname: studentData.geburtsname || "",
+    geschlecht: studentData.geschlecht || "",
+    geburtsdatum: studentData.geburtsdatum
+      ? dayjs(studentData.geburtsdatum)
+      : null,
+    geburtsland: studentData.geburtsland || "DE",
+    geburtsort: studentData.geburtsort || "",
+    religion: studentData.religion || "",
+    staatsangehoerigkeit1: studentData.staatsangehoerigkeit1 || "",
+    staatsangehoerigkeit2: studentData.staatsangehoerigkeit2 || "",
   };
 
   // Create dynamic validation schema with settings
   const validationSchema = useMemo(() => {
-    if (genderOptions.length > 0) {
-      return createValidateGeneralStudentData(getOptionValues(genderOptions));
+    if (genderOptions.length > 0 || countryOptions.length > 0) {
+      return createValidateGeneralStudentData(
+        getOptionValues(genderOptions),
+        getOptionValues(countryOptions),
+      );
     }
     return validateGeneralStudentData;
-  }, [genderOptions, getOptionValues]);
+  }, [genderOptions, countryOptions, getOptionValues]);
 
+  const handleSubmit = (values: FormValues) => {
+    // Convert Dayjs objects to ISO strings for Redux storage
+    const submittedValues = {
+      ...values,
+      eintrittschule: values.eintrittschule
+        ? values.eintrittschule.format("YYYY-MM-DD")
+        : "",
+      geburtsdatum: values.geburtsdatum
+        ? values.geburtsdatum.format("YYYY-MM-DD")
+        : "",
+    };
+
+    // Update Redux state
+    dispatch(updateStudentOnboardingData(submittedValues));
+
+    // Pass values to parent to ensure immediate save to database
+    if (onSubmit) {
+      onSubmit(submittedValues);
+    }
+  };
+
+  // Track validation state changes (must be before early return)
+  useEffect(() => {
+    if (formikRef?.current && onValidationChange) {
+      const { isValid, isValidating } = formikRef.current;
+      if (!isValidating) {
+        onValidationChange(isValid);
+      }
+    }
+  }, [formikRef, onValidationChange]);
+
+  // Show loading skeleton while settings are loading
   if (loading) {
-    return <div>Loading settings...</div>;
+    return (
+      <Box
+        sx={{ width: "100%", display: "flex", flexDirection: "column", gap: 2 }}
+      >
+        <Typography variant="h6" gutterBottom>
+          <Skeleton width="60%" />
+        </Typography>
+        <Skeleton variant="rectangular" height={56} />
+        <Skeleton variant="rectangular" height={56} />
+        <Skeleton variant="rectangular" height={56} />
+        <Skeleton variant="rectangular" height={56} />
+      </Box>
+    );
   }
 
   return (
     <Formik<FormValues>
       initialValues={initialValues}
       validationSchema={validationSchema}
-      onSubmit={(values) => {
-        console.log("✅ Submitted values:", values);
-      }}
+      onSubmit={handleSubmit}
+      enableReinitialize={false}
+      innerRef={formikRef}
     >
-      {({ errors, touched }) => (
-        <StyledForm>
-          {/* Vorname */}
-          <Field
-            component={TextField}
-            name="vorname"
-            label="Vorname"
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            error={touched.vorname && Boolean(errors.vorname)}
-            helperText={touched.vorname && errors.vorname}
+      {({ setFieldValue, values, setFieldTouched }) => (
+        <>
+          <CountryWatcher
+            country={values.geburtsland}
+            dispatch={dispatch}
+            previousCountryRef={previousCountryRef}
           />
+          <StyledForm>
+            <Typography variant="h6" gutterBottom>
+              {t("onboarding.general.title")}
+            </Typography>
 
-          {/* Nachname */}
-          <Field
-            component={TextField}
-            name="nachname"
-            label="Nachname"
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            error={touched.nachname && Boolean(errors.nachname)}
-            helperText={touched.nachname && errors.nachname}
-          />
+            <Typography variant="subtitle1" sx={{ mt: 2 }}>
+              {t("onboarding.general.personalInfo")}
+            </Typography>
 
-          {/* Geschlecht - Dynamic Dropdown */}
-          <Field
-            component={Select}
-            name="geschlecht"
-            label="Geschlecht"
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            error={touched.geschlecht && Boolean(errors.geschlecht)}
-            helperText={touched.geschlecht && errors.geschlecht}
-          >
-            {getEnabledOptions(genderOptions).map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </Field>
+            <FormSection>
+              {/* Vorname */}
+              <Field
+                component={TextField}
+                name="vorname"
+                label={t("onboarding.general.firstName")}
+                variant="outlined"
+                fullWidth
+                required
+              />
 
-          {/* Geburtsdatum */}
-          <Field
-            component={TextField}
-            name="geburtsdatum"
-            label="Geburtsdatum"
-            type="date"
-            InputLabelProps={{ shrink: true }}
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            error={touched.geburtsdatum && Boolean(errors.geburtsdatum)}
-            helperText={touched.geburtsdatum && errors.geburtsdatum}
-          />
-        </StyledForm>
+              {/* Nachname */}
+              <Field
+                component={TextField}
+                name="nachname"
+                label={t("onboarding.general.lastName")}
+                variant="outlined"
+                fullWidth
+                required
+              />
+            </FormSection>
+
+            <FormSection>
+              {/* Geburtsname */}
+              <Field
+                component={TextField}
+                name="geburtsname"
+                label={t("onboarding.general.birthName")}
+                variant="outlined"
+                fullWidth
+              />
+
+              {/* Geschlecht - Dynamic Dropdown */}
+              <Field
+                component={Select}
+                name="geschlecht"
+                label={t("onboarding.general.gender")}
+                variant="outlined"
+                fullWidth
+                required
+              >
+                {getEnabledOptions(genderOptions).map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </Field>
+            </FormSection>
+
+            <Typography variant="subtitle1" sx={{ mt: 2 }}>
+              {t("onboarding.general.birthInfo")}
+            </Typography>
+
+            <FormSection>
+              {/* Geburtsdatum */}
+              <Field
+                component={DatePicker}
+                name="geburtsdatum"
+                label={t("onboarding.general.birthDate")}
+                slotProps={{
+                  textField: {
+                    variant: "outlined",
+                    fullWidth: true,
+                    required: true,
+                  },
+                }}
+              />
+
+              {/* Geburtsort */}
+              <Field
+                component={TextField}
+                name="geburtsort"
+                label={t("onboarding.general.birthPlace")}
+                variant="outlined"
+                fullWidth
+                required
+              />
+            </FormSection>
+
+            <Autocomplete
+              options={getEnabledOptions(countryOptions)}
+              getOptionLabel={(option) => option.label}
+              isOptionEqualToValue={(option, value) =>
+                option.value === value.value
+              }
+              value={
+                getEnabledOptions(countryOptions).find(
+                  (opt) => opt.value === values.geburtsland,
+                ) || null
+              }
+              onChange={(_, newValue) => {
+                const newCountry = newValue?.value || "";
+                setFieldValue("geburtsland", newCountry);
+              }}
+              onBlur={() => setFieldTouched("geburtsland", true)}
+              fullWidth
+              renderInput={(params) => (
+                <MUITextField
+                  {...params}
+                  label={t("onboarding.general.birthCountry")}
+                  variant="outlined"
+                  fullWidth
+                  required
+                />
+              )}
+            />
+
+            <Typography variant="subtitle1" sx={{ mt: 2 }}>
+              {t("onboarding.general.additionalInfo")}
+            </Typography>
+
+            <FormSection>
+              {/* Religion */}
+              <Field
+                component={Select}
+                name="religion"
+                label={t("onboarding.general.religion")}
+                variant="outlined"
+                fullWidth
+              >
+                <MenuItem value="">
+                  <em>{t("general.none")}</em>
+                </MenuItem>
+                {getEnabledOptions(religionOptions).map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </Field>
+
+              {/* Staatsangehörigkeit 1 */}
+              <Field
+                component={TextField}
+                name="staatsangehoerigkeit1"
+                label={t(
+                  "onboarding.general.nationality1",
+                  "Staatsangehörigkeit 1",
+                )}
+                variant="outlined"
+                fullWidth
+                required
+              />
+            </FormSection>
+
+            {/* Staatsangehörigkeit 2 */}
+            <Field
+              component={TextField}
+              name="staatsangehoerigkeit2"
+              label={t(
+                "onboarding.general.nationality2",
+                "Staatsangehörigkeit 2 (optional)",
+              )}
+              variant="outlined"
+              fullWidth
+            />
+          </StyledForm>
+        </>
       )}
     </Formik>
   );

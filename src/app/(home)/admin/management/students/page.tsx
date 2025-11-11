@@ -156,6 +156,7 @@ const StudentManagementPage = () => {
         firstName: student?.firstName,
         lastName: student?.lastName,
         class: className,
+        verificationCode: student?.verificationCode || "-",
         status: <StudentStatus studentStatus={student?.status} />,
       };
     });

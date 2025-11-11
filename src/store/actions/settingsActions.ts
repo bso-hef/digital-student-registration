@@ -1,5 +1,9 @@
 import settingsService from "@/lib/services/settingsService";
-import { AppSettings, OnboardingSettings } from "@/types/settings";
+import {
+  AgreementSettings,
+  AppSettings,
+  OnboardingSettings,
+} from "@/types/settings";
 import { toAppError } from "@/utils/general.utils";
 import {
   errorNotification,
@@ -87,6 +91,53 @@ export const updateOnboardingSettings =
       const appError = await toAppError(error);
       dispatch({
         type: TYPES.UPDATE_ONBOARDING_SETTINGS_FAILURE,
+        payload: appError,
+      });
+    }
+  };
+
+/**
+ * Fetches only agreement settings
+ */
+export const getAgreementSettings = (): AppThunk => async (dispatch) => {
+  dispatch({ type: TYPES.GET_AGREEMENT_SETTINGS_REQUEST });
+  try {
+    const { data } = await settingsService.getAgreements();
+
+    dispatch({
+      type: TYPES.GET_AGREEMENT_SETTINGS_SUCCESS,
+      payload: data.data,
+    });
+  } catch (error) {
+    errorNotification(i18n.t("actions.agreementSettingsFetchFailed"));
+    const appError = await toAppError(error);
+    dispatch({
+      type: TYPES.GET_AGREEMENT_SETTINGS_FAILURE,
+      payload: appError,
+    });
+  }
+};
+
+/**
+ * Updates only agreement settings
+ */
+export const updateAgreementSettings =
+  (agreements: Partial<AgreementSettings>): AppThunk =>
+  async (dispatch) => {
+    dispatch({ type: TYPES.UPDATE_AGREEMENT_SETTINGS_REQUEST });
+    try {
+      const { data } = await settingsService.updateAgreements(agreements);
+
+      dispatch({
+        type: TYPES.UPDATE_AGREEMENT_SETTINGS_SUCCESS,
+        payload: data.data,
+      });
+      successNotification(i18n.t("actions.agreementSettingsUpdateSuccess"));
+    } catch (error) {
+      errorNotification(i18n.t("actions.agreementSettingsUpdateFailed"));
+      const appError = await toAppError(error);
+      dispatch({
+        type: TYPES.UPDATE_AGREEMENT_SETTINGS_FAILURE,
         payload: appError,
       });
     }

@@ -21,6 +21,9 @@ const studentService = {
   getAll: () => {
     return http.get("/api/students");
   },
+  getById: (id: string) => {
+    return http.get(`/api/students/${id}`);
+  },
   getUnassigned: () => {
     return http.get("/api/students?unassigned=true");
   },
@@ -29,6 +32,24 @@ const studentService = {
   },
   delete: (ids: string[]) => {
     return http.delete("/api/students", { data: { ids } });
+  },
+  // Verification method
+  verify: (firstName: string, lastName: string, verificationCode: string) => {
+    return http.post("/api/students/verify", {
+      firstName,
+      lastName,
+      verificationCode,
+    });
+  },
+  // Onboarding methods
+  updateOnboarding: (id: string, data: Record<string, unknown>) => {
+    return http.patch(`/api/students/${id}/onboarding`, data);
+  },
+  submitOnboarding: (id: string, data: Record<string, unknown>) => {
+    return http.patch(`/api/students/${id}/onboarding`, {
+      ...data,
+      finalSubmit: true,
+    });
   },
 };
 

@@ -5,6 +5,7 @@ import {
 import i18n from "i18next";
 import { signIn, signOut } from "next-auth/react";
 
+import { persistor } from "../store";
 import { AppThunk } from "../store";
 import * as TYPES from "../types";
 
@@ -65,7 +66,16 @@ export const logoutUser =
   async (dispatch) => {
     dispatch({ type: TYPES.AUTH_LOGOUT_REQUEST });
     try {
+      // First, sign out from NextAuth
       await signOut({ redirect: false });
+
+      // Clear all persisted Redux state (including cached admin data)
+      await persistor.purge();
+
+      // Also clear localStorage to ensure no data remains
+      if (typeof window !== "undefined") {
+        localStorage.clear();
+      }
 
       successNotification(i18n.t("navigation.Logged out successfully"));
       dispatch({ type: TYPES.AUTH_LOGOUT_SUCCESS });

@@ -79,6 +79,7 @@ export interface GeneralModalProps
   actionsChildren?: React.ReactNode;
   onCloseModal?: (value: string) => void;
   onCopyValue?: string;
+  onOpenInNewTab?: string;
   disabled?: boolean;
   disableBackdropClick?: boolean;
   closeIcon?: boolean;
@@ -98,6 +99,7 @@ const GeneralModal = ({
   open,
   onCloseModal,
   onCopyValue,
+  onOpenInNewTab,
   maxWidth = "md",
   disableBackdropClick = false,
   closeIcon = true,
@@ -114,6 +116,12 @@ const GeneralModal = ({
     if (onCopyValue) copyText(onCopyValue);
   };
 
+  const handleOpenInNewTab = () => {
+    if (onOpenInNewTab) {
+      window.open(onOpenInNewTab, "_blank", "noopener,noreferrer");
+    }
+  };
+
   const closeIconProps = closeIcon
     ? {
         onClose: handleClose,
@@ -123,6 +131,12 @@ const GeneralModal = ({
   const copyIconProps = onCopyValue
     ? {
         onCopy: handleCopy,
+      }
+    : {};
+
+  const openInNewTabProps = onOpenInNewTab
+    ? {
+        onOpenInNewTab: handleOpenInNewTab,
       }
     : {};
 
@@ -163,6 +177,7 @@ const GeneralModal = ({
             textCapitalize={textCapitalize}
             {...closeIconProps}
             {...copyIconProps}
+            {...openInNewTabProps}
           >
             {customTitle}
           </StyledDialogTitle>

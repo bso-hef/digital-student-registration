@@ -30,7 +30,14 @@
     "Inactive": "Inactive",
     "Active": "Active",
     "All": "All",
-    "generatePassword": "Generate secure password"
+    "generatePassword": "Generate secure password",
+    "of": "of",
+    "none": "None",
+    "loadingSettings": "Loading settings...",
+    "Submit": "Submit",
+    "Submitting": "Submitting...",
+    "Accepted": "Accepted",
+    "NotAccepted": "Not Accepted"
   },
   "error": {
     "Page not found": "Page not found",
@@ -67,10 +74,11 @@
       "General": "General",
       "Origin": "Origin",
       "Address": "Address",
-      "Parents": "Parents",
+      "Legal Guardian": "Legal Guardian",
       "Pre Education": "Previous Education",
       "Training": "Training",
       "Company Contact": "Company Contact",
+      "Agreements": "Agreements",
       "Summary": "Summary",
       "Completion": "Completion"
     }
@@ -126,6 +134,7 @@
       "onboardingWizard": "Onboarding Wizard",
       "class": "Class:",
       "id": "ID:",
+      "verificationCode": "Verification Code:",
       "downloadPdf": "Download PDF",
       "createZip": "Create ZIP",
       "title": "Generate QR PDFs for selected students"
@@ -163,6 +172,11 @@
     "studentAddFailed": "Failed to add students.",
     "studentDeleteSuccess": "Students deleted successfully.",
     "studentDeleteFailed": "Failed to delete students.",
+    "verificationSuccess": "Verification successful.",
+    "verificationFailed": "Verification failed.",
+    "studentLoadFailed": "Failed to load student data.",
+    "onboardingSubmitSuccess": "Onboarding completed successfully.",
+    "onboardingSubmitFailed": "Onboarding submission failed.",
     "classFetchFailed": "Failed to fetch classes.",
     "classAddSuccess": "Classes added successfully.",
     "classAddFailed": "Failed to add Classes.",
@@ -179,6 +193,9 @@
     "settingsUpdateFailed": "Failed to update settings.",
     "onboardingSettingsUpdateSuccess": "Onboarding settings updated successfully.",
     "onboardingSettingsUpdateFailed": "Failed to update onboarding settings.",
+    "agreementSettingsFetchFailed": "Failed to fetch agreement settings.",
+    "agreementSettingsUpdateSuccess": "Agreement settings updated successfully.",
+    "agreementSettingsUpdateFailed": "Failed to update agreement settings.",
     "auditLogFetchFailed": "Failed to fetch audit logs.",
     "auditLogStatsFailed": "Failed to fetch audit log statistics.",
     "auditLogExportSuccess": "Audit logs exported successfully.",
@@ -231,6 +248,169 @@
   "table": {
     "No data found": "No Data to Show",
     "No data found description": "After member/members are added, a list will appear here in this section."
+  },
+  "onboarding": {
+    "general": {
+      "title": "General Information",
+      "schoolEntry": "School Entry Date",
+      "className": "Class Name",
+      "personalInfo": "Personal Information",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "birthName": "Birth Name",
+      "gender": "Gender",
+      "birthInfo": "Birth Information",
+      "birthDate": "Date of Birth",
+      "birthPlace": "Place of Birth",
+      "birthCountry": "Country of Birth",
+      "additionalInfo": "Additional Information",
+      "religion": "Religion",
+      "nationality1": "Nationality 1",
+      "nationality2": "Nationality 2 (optional)"
+    },
+    "origin": {
+      "countryOfOrigin": "Country of Origin",
+      "yearOfImmigration": "Year of Immigration",
+      "familyLanguage": "Family Language"
+    },
+    "address": {
+      "title": "Address and Contact Information",
+      "street": "Street",
+      "houseNumber": "House Number",
+      "postalCode": "Postal Code",
+      "city": "City",
+      "contactTitle": "Contact Information",
+      "mobile": "Mobile Number",
+      "phone": "Phone (Landline)",
+      "email": "Email Address"
+    },
+    "legalGuardian": {
+      "type": "Type",
+      "name": "Name",
+      "address": "Address",
+      "mobile": "Mobile Number",
+      "phone": "Phone",
+      "contactType": "Contact Person Type",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "postalCode": "Postal Code",
+      "city": "City",
+      "street": "Street",
+      "houseNumber": "House Number",
+      "mobileNumber": "Mobile Number",
+      "phoneNumber": "Phone Number",
+      "contactPerson1": "Legal Guardian 1",
+      "contactPerson2": "Legal Guardian 2",
+      "contactPerson3": "Legal Guardian 3",
+      "addContact": "Add Legal Guardian",
+      "addContactTooltip": "Add another legal guardian",
+      "removeContact": "Remove Legal Guardian",
+      "removeContactTooltip": "Remove this legal guardian",
+      "adultOptionalInfo": "Since you are an adult (18 years or older), legal guardian information is optional. You only need to fill these fields if you wish."
+    },
+    "preEducation": {
+      "previousSchool": "Previous School",
+      "schoolType": "School Type",
+      "level": "Level",
+      "degrees": "Degrees",
+      "previousSchoolName": "Previous School Name",
+      "previousLevel": "Previous Level",
+      "previousSchoolType": "Previous School Type",
+      "qualifications": "Qualifications"
+    },
+    "training": {
+      "profession": "Profession",
+      "startDate": "Training Start Date",
+      "company": "Company",
+      "companyStartDate": "Company Entry Date",
+      "companyName": "Company Name",
+      "street": "Street",
+      "houseNumber": "House Number",
+      "postalCode": "Postal Code",
+      "city": "City",
+      "phone": "Phone",
+      "email": "Email"
+    },
+    "companyContact": {
+      "salutation": "Salutation",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "phone": "Phone",
+      "contactPerson": "Company Contact Person"
+    },
+    "agreements": {
+      "title": "Agreements",
+      "description": "Please read and accept the following agreements to continue with your registration.",
+      "required": "This agreement is required",
+      "datenschutz": "Data Protection Agreement",
+      "datenschutzDesc": "I consent to the processing of my personal data in accordance with the data protection policy.",
+      "teilnahmeunterricht": "Class Participation Consent",
+      "teilnahmeunterrichtDesc": "I agree to participate in all required classes and activities.",
+      "schulordnung": "School Rules Acceptance",
+      "schulordnungDesc": "I have read and accept the school rules and regulations.",
+      "personenabbildung": "Photo & Imaging Consent",
+      "personenabbildungDesc": "I consent to having my photo taken for school purposes (ID card, yearbook, website).",
+      "teamsnutzung": "Microsoft Teams Usage Agreement",
+      "teamsnutzungDesc": "I agree to use Microsoft Teams for school-related communication and activities.",
+      "noAgreements": "No agreements have been configured by the administrator."
+    },
+    "welcome": {
+      "title": "BSO Registration",
+      "subtitle": "Complete your registration in 10 steps.",
+      "paragraph1": "In the following steps, you will be guided through your school registration.",
+      "paragraph2": "Your data will be displayed and you can easily modify outdated or incorrect information.",
+      "paragraph3": "If you notice that you have accidentally changed something, you can simply go back and change it again.",
+      "paragraph4": "If you still need help, simply speak to your teacher."
+    },
+    "summary": {
+      "title": "Summary",
+      "description": "Please review your information before submission.",
+      "generalInfo": "General Information",
+      "origin": "Immigration Details",
+      "address": "Address and Contact",
+      "contactPerson": "Contact Person",
+      "education": "Previous Education",
+      "training": "Vocational Training",
+      "companyContact": "Company Contact Person",
+      "agreements": "Agreements",
+      "confirmationText": "I have read the summary and accept that the data is accurate"
+    },
+    "completion": {
+      "title": "Enrollment Complete!",
+      "subtitle": "Your data has been successfully submitted.",
+      "message": "Thank you for your enrollment. Your data has been successfully saved in our system. You will receive further information from your school.",
+      "backToHome": "Back to Home",
+      "footer": "You can now close this window."
+    },
+    "loadingProfile": "Loading your student profile...",
+    "loadingDetails": "Please wait while we fetch your information...",
+    "error": {
+      "invalidStudentId": {
+        "title": "Invalid Student ID",
+        "message": "The provided student ID has an invalid format. Please check the URL."
+      },
+      "studentNotFound": {
+        "title": "Student Not Found",
+        "message": "No student was found with this ID. Please contact the administrator."
+      },
+      "noClassAssigned": {
+        "title": "No Class Assigned",
+        "message": "You have not been assigned to a class yet. Please contact the administrator to be assigned to a class."
+      },
+      "classInactive": {
+        "title": "Class Inactive",
+        "message": "Your assigned class is currently not active. Please contact the administrator."
+      },
+      "alreadyOnboarded": {
+        "title": "Onboarding Already Completed",
+        "message": "You have already completed the onboarding process. If you need to make changes, please contact the administrator."
+      },
+      "generic": {
+        "title": "Loading Error",
+        "message": "The student data could not be loaded. Please check the URL or contact the administrator."
+      },
+      "retry": "Retry"
+    }
   },
   "settings": {
     "onboarding": {
@@ -310,6 +490,7 @@
       "dateOfBirth": "Date of Birth",
       "class": "Class",
       "status": "Status",
+      "verificationCode": "Registration ID",
       "importStudents": "Import Students",
       "deleteStudents": "Delete Students",
       "generateQRCode": "Generate QR Code",
@@ -346,6 +527,40 @@
         "gender": "Gender",
         "status": "Status"
       }
+    },
+    "agreements": {
+      "title": "Agreements",
+      "addAgreement": "Add Agreement",
+      "editAgreement": "Edit Agreement",
+      "deleteConfirm": "Delete Agreement",
+      "deleteWarning": "Are you sure you want to delete this agreement? This action cannot be undone.",
+      "noAgreements": "No agreements configured yet",
+      "clickAddToStart": "Click 'Add Agreement' to create your first agreement",
+      "required": "Required",
+      "fields": {
+        "key": "Key",
+        "labelEn": "Label (English)",
+        "labelDe": "Label (German)",
+        "enabled": "Enabled",
+        "required": "Required"
+      },
+      "keyPlaceholder": "Auto-generated from English label",
+      "keyHelperText": "Unique identifier (auto-generated from English label)",
+      "labelEnPlaceholder": "e.g., Data Protection",
+      "labelDePlaceholder": "e.g., Datenschutz",
+      "descriptionEn": "Description (English)",
+      "descriptionDe": "Description (German)",
+      "descriptionEnPlaceholder": "e.g., I consent to the processing of my personal data...",
+      "descriptionDePlaceholder": "e.g., Ich willige in die Verarbeitung meiner personenbezogenen Daten ein...",
+      "descriptionHelperText": "Optional description shown to students (supports multiple lines)",
+      "icon": "Icon",
+      "iconPlaceholder": "e.g., PrivacyTip, School, Gavel",
+      "iconHelperText": "Optional MUI icon name (e.g., PrivacyTip, School, Gavel, CameraAlt, Groups)",
+      "validation": {
+        "keyRequired": "Key is required",
+        "keyExists": "An agreement with this key already exists",
+        "labelRequired": "Label is required in both languages"
+      }
     }
   },
   "audit": {
@@ -380,6 +595,10 @@
       "success": "Success",
       "failure": "Failure",
       "partial": "Partial"
+    },
+    "descriptions": {
+      "updatedAgreementSettings": "Updated agreement settings",
+      "failedUpdateAgreementSettings": "Failed to update agreement settings"
     }
   },
   "auth": {
@@ -525,6 +744,23 @@
       "hasSpecialChar": "At least one special character (!@#$%^&*)",
       "hasMinLength": "Minimum 8 characters",
       "generatePassword": "Generate secure password"
+    },
+    "pdf": {
+      "onboardingWizard": "Onboarding Wizard",
+      "class": "Class:",
+      "verificationCode": "Verification Code:",
+      "id": "ID:",
+      "portrait": "Portrait",
+      "landscape": "Landscape"
+    },
+    "studentLogin": {
+      "title": "BSO Registration",
+      "subtitle": "Please enter your first name, last name, and registration ID.",
+      "firstNamePlaceholder": "First Name",
+      "lastNamePlaceholder": "Last Name",
+      "verificationCodePlaceholder": "Registration ID (e.g. A1B2C3)",
+      "submit": "Submit",
+      "verifying": "Verifying..."
     }
   }
 }

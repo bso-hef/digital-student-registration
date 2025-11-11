@@ -1,3 +1,4 @@
+import { auth } from "@/lib/auth/auth";
 import { dbConnect } from "@/lib/config/mongo";
 import Logger from "@/lib/server-logger";
 import AuditLog from "@/models/AuditLog";
@@ -7,6 +8,12 @@ const logger = new Logger("AuditLogDeleteAPI");
 
 export async function POST(request: NextRequest) {
   try {
+    // Check authentication
+    const session = await auth();
+    if (!session) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
     await dbConnect();
 
     const body = await request.json();

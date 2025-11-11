@@ -1,9 +1,11 @@
+import { auth } from "@/lib/auth/auth";
 import { dbConnect } from "@/lib/config/mongo";
 import { norm } from "@/lib/config/norm";
 import { tServer } from "@/lib/server-i18n";
 import Logger from "@/lib/server-logger";
 import Student from "@/models/Student";
 import { createAuditLog } from "@/server/middleware/audit.middleware";
+import { generateUniqueVerificationCode } from "@/utils/verification.utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
@@ -31,6 +33,7 @@ interface StudentInput {
   firstName?: unknown;
   lastName?: unknown;
   dateOfBirth?: unknown;
+  verificationCode?: unknown;
   [key: string]: unknown;
 }
 
@@ -43,6 +46,7 @@ type ShapedStudentValid = {
     dateOfBirth: Date;
     firstNameNorm: string;
     lastNameNorm: string;
+    verificationCode?: string;
     status: string;
   };
 };
@@ -76,6 +80,12 @@ const shapeStudent = (row: StudentInput): ShapedStudent => {
 
 export async function GET(request: NextRequest) {
   try {
+    // Check authentication
+    const session = await auth();
+    if (!session) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
     await dbConnect();
 
     const { searchParams } = new URL(request.url);
@@ -122,6 +132,12 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: Request) {
   try {
+    // Check authentication
+    const session = await auth();
+    if (!session) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
     await dbConnect();
     const body = await request.json();
     const rows: StudentInput[] = body?.students;
@@ -146,7 +162,33 @@ export async function POST(request: Request) {
       );
     }
 
-    const result = await Student.insertMany(docs, { ordered: false });
+    const generatedCodes = new Set<string>();
+
+    for (const doc of docs) {
+      if (!doc.verificationCode) {
+        doc.verificationCode = await generateUniqueVerificationCode(
+          async (code: string) => {
+            if (generatedCodes.has(code)) {
+              return true;
+            }
+
+            const count = await Student.countDocuments({
+              $and: [
+                { verificationCode: { $eq: code } },
+                { verificationCode: { $ne: null } },
+              ],
+            });
+            return count > 0;
+          },
+          100,
+        );
+
+        generatedCodes.add(doc.verificationCode);
+      }
+    }
+
+    // Create students with verification codes
+    const result = await Student.create(docs);
 
     // Log audit entry
     await createAuditLog(
@@ -218,6 +260,12 @@ export async function POST(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
+    // Check authentication
+    const session = await auth();
+    if (!session) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
     await dbConnect();
     const body = await request.json();
     const ids: string[] = body?.ids;

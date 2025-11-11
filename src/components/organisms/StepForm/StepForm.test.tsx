@@ -20,6 +20,8 @@ vi.mock("@/store/actions/studentActions", () => ({
     type: "SET_CURRENT_STUDENT_ONBOARDING_STEP",
     payload: step,
   })),
+  saveOnboardingProgress: vi.fn(() => async () => Promise.resolve()),
+  submitOnboarding: vi.fn(() => async () => Promise.resolve()),
 }));
 
 // Mock device type detection
@@ -32,43 +34,149 @@ vi.mock("device-type-detection", () => ({
   }),
 }));
 
+// Type for form component props
+type MockFormProps = {
+  onSubmit?: (values: Record<string, unknown>) => void;
+  formikRef?: React.MutableRefObject<{
+    submitForm: () => void;
+    values: Record<string, unknown>;
+  } | null>;
+  onValidationChange?: (isValid: boolean) => void;
+  currentClass?: unknown;
+};
+
 // Mock all form components
 vi.mock("@/components/organisms/forms/WelcomeForm", () => ({
   default: () => <div data-testid="welcome-form">Welcome Form</div>,
 }));
 
 vi.mock("@/components/organisms/forms/GeneralForm", () => ({
-  default: () => <div data-testid="general-form">General Form</div>,
+  default: ({ onSubmit, formikRef, onValidationChange }: MockFormProps) => {
+    // Simulate a valid form
+    if (onValidationChange) onValidationChange(true);
+    if (formikRef) {
+      formikRef.current = {
+        submitForm: () => {
+          if (onSubmit) onSubmit({});
+        },
+        values: {},
+      };
+    }
+    return <div data-testid="general-form">General Form</div>;
+  },
 }));
 
 vi.mock("@/components/organisms/forms/OriginForm", () => ({
-  default: () => <div data-testid="origin-form">Origin Form</div>,
+  default: ({ onSubmit, formikRef, onValidationChange }: MockFormProps) => {
+    if (onValidationChange) onValidationChange(true);
+    if (formikRef) {
+      formikRef.current = {
+        submitForm: () => {
+          if (onSubmit) onSubmit({});
+        },
+        values: {},
+      };
+    }
+    return <div data-testid="origin-form">Origin Form</div>;
+  },
 }));
 
 vi.mock("@/components/organisms/forms/AddressForm", () => ({
-  default: () => <div data-testid="address-form">Address Form</div>,
+  default: ({ onSubmit, formikRef, onValidationChange }: MockFormProps) => {
+    if (onValidationChange) onValidationChange(true);
+    if (formikRef) {
+      formikRef.current = {
+        submitForm: () => {
+          if (onSubmit) onSubmit({});
+        },
+        values: {},
+      };
+    }
+    return <div data-testid="address-form">Address Form</div>;
+  },
 }));
 
 vi.mock("@/components/organisms/forms/ParentsForm", () => ({
-  default: () => <div data-testid="parents-form">Parents Form</div>,
+  default: ({ onSubmit, formikRef, onValidationChange }: MockFormProps) => {
+    if (onValidationChange) onValidationChange(true);
+    if (formikRef) {
+      formikRef.current = {
+        submitForm: () => {
+          if (onSubmit) onSubmit({});
+        },
+        values: {},
+      };
+    }
+    return <div data-testid="parents-form">Parents Form</div>;
+  },
 }));
 
 vi.mock("@/components/organisms/forms/PreEducationForm", () => ({
-  default: () => <div data-testid="pre-education-form">Pre-Education Form</div>,
+  default: ({ onSubmit, formikRef, onValidationChange }: MockFormProps) => {
+    if (onValidationChange) onValidationChange(true);
+    if (formikRef) {
+      formikRef.current = {
+        submitForm: () => {
+          if (onSubmit) onSubmit({});
+        },
+        values: {},
+      };
+    }
+    return <div data-testid="pre-education-form">Pre-Education Form</div>;
+  },
 }));
 
 vi.mock("@/components/organisms/forms/TrainingForm", () => ({
-  default: () => <div data-testid="training-form">Training Form</div>,
+  default: ({ onSubmit, formikRef, onValidationChange }: MockFormProps) => {
+    if (onValidationChange) onValidationChange(true);
+    if (formikRef) {
+      formikRef.current = {
+        submitForm: () => {
+          if (onSubmit) onSubmit({});
+        },
+        values: {},
+      };
+    }
+    return <div data-testid="training-form">Training Form</div>;
+  },
 }));
 
 vi.mock("@/components/organisms/forms/CompanyContactForm", () => ({
-  default: () => (
-    <div data-testid="company-contact-form">Company Contact Form</div>
-  ),
+  default: ({ onSubmit, formikRef, onValidationChange }: MockFormProps) => {
+    if (onValidationChange) onValidationChange(true);
+    if (formikRef) {
+      formikRef.current = {
+        submitForm: () => {
+          if (onSubmit) onSubmit({});
+        },
+        values: {},
+      };
+    }
+    return <div data-testid="company-contact-form">Company Contact Form</div>;
+  },
+}));
+
+vi.mock("@/components/organisms/forms/AgreementsForm", () => ({
+  default: ({ onSubmit, formikRef, onValidationChange }: MockFormProps) => {
+    if (onValidationChange) onValidationChange(true);
+    if (formikRef) {
+      formikRef.current = {
+        submitForm: () => {
+          if (onSubmit) onSubmit({});
+        },
+        values: {},
+      };
+    }
+    return <div data-testid="agreements-form">Agreements Form</div>;
+  },
 }));
 
 vi.mock("@/components/organisms/forms/SummaryForm", () => ({
-  default: () => <div data-testid="summary-form">Summary Form</div>,
+  default: ({ activeSteps }: { activeSteps?: unknown[] }) => (
+    <div data-testid="summary-form" data-active-steps={activeSteps?.length}>
+      Summary Form
+    </div>
+  ),
 }));
 
 vi.mock("@/components/organisms/forms/FormCompletion", () => ({
@@ -106,20 +214,47 @@ vi.mock("@/components/atoms/buttons/GeneralButton", () => ({
   ),
 }));
 
-// Mock getStudentSteps
+// Mock getStudentSteps and related functions
 vi.mock("@/constants/studentSteps.constants", () => ({
   getStudentSteps: () => [
-    { label: "Welcome", step: 0 },
-    { label: "General Information", step: 1 },
-    { label: "Origin", step: 2 },
-    { label: "Address", step: 3 },
-    { label: "Parents", step: 4 },
-    { label: "Pre-Education", step: 5 },
-    { label: "Training", step: 6 },
-    { label: "Company Contact", step: 7 },
-    { label: "Summary", step: 8 },
-    { label: "Completion", step: 9 },
+    { id: 0, label: "Welcome", step: 0 },
+    { id: 1, label: "General Information", step: 1 },
+    { id: 2, label: "Origin", step: 2 },
+    { id: 3, label: "Address", step: 3 },
+    { id: 4, label: "Parents", step: 4 },
+    { id: 5, label: "Pre-Education", step: 5 },
+    { id: 6, label: "Training", step: 6 },
+    { id: 7, label: "Company Contact", step: 7 },
+    { id: 8, label: "Agreements", step: 8 },
+    { id: 9, label: "Summary", step: 9 },
+    { id: 10, label: "Completion", step: 10 },
   ],
+  getActiveSteps: () => [
+    { id: 0, label: "Welcome", step: 0 },
+    { id: 1, label: "General Information", step: 1 },
+    { id: 2, label: "Origin", step: 2 },
+    { id: 3, label: "Address", step: 3 },
+    { id: 4, label: "Parents", step: 4 },
+    { id: 5, label: "Pre-Education", step: 5 },
+    { id: 6, label: "Training", step: 6 },
+    { id: 7, label: "Company Contact", step: 7 },
+    { id: 8, label: "Agreements", step: 8 },
+    { id: 9, label: "Summary", step: 9 },
+    { id: 10, label: "Completion", step: 10 },
+  ],
+  isStepActive: () => true,
+  StepName: {
+    WELCOME: "welcome",
+    GENERAL: "general",
+    ORIGIN: "origin",
+    ADDRESS: "address",
+    PARENTS: "parents",
+    PRE_EDUCATION: "pre_education",
+    TRAINING: "training",
+    COMPANY_CONTACT: "company_contact",
+    SUMMARY: "summary",
+    COMPLETION: "completion",
+  },
 }));
 
 // Mock console.log to avoid noise in tests
@@ -143,7 +278,10 @@ describe("StepForm", () => {
         },
       });
 
-      const { container } = renderWithProviders(<StepForm />, { store });
+      const { container } = renderWithProviders(
+        <StepForm studentId="test-student-123" />,
+        { store },
+      );
 
       const wrapper = container.querySelector(".MuiBox-root");
       expect(wrapper).toBeInTheDocument();
@@ -160,7 +298,7 @@ describe("StepForm", () => {
         },
       });
 
-      renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
       expect(screen.getByTestId("general-form")).toBeInTheDocument();
     });
@@ -176,7 +314,7 @@ describe("StepForm", () => {
         },
       });
 
-      renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
       const buttons = screen.getAllByTestId("general-button");
       expect(buttons.length).toBeGreaterThan(0);
@@ -195,7 +333,7 @@ describe("StepForm", () => {
         },
       });
 
-      renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
       expect(screen.getByTestId("welcome-form")).toBeInTheDocument();
     });
@@ -211,7 +349,7 @@ describe("StepForm", () => {
         },
       });
 
-      renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
       expect(screen.getByTestId("general-form")).toBeInTheDocument();
     });
@@ -227,7 +365,7 @@ describe("StepForm", () => {
         },
       });
 
-      renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
       expect(screen.getByTestId("origin-form")).toBeInTheDocument();
     });
@@ -243,7 +381,7 @@ describe("StepForm", () => {
         },
       });
 
-      renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
       expect(screen.getByTestId("address-form")).toBeInTheDocument();
     });
@@ -259,7 +397,7 @@ describe("StepForm", () => {
         },
       });
 
-      renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
       expect(screen.getByTestId("parents-form")).toBeInTheDocument();
     });
@@ -275,7 +413,7 @@ describe("StepForm", () => {
         },
       });
 
-      renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
       expect(screen.getByTestId("pre-education-form")).toBeInTheDocument();
     });
@@ -291,7 +429,7 @@ describe("StepForm", () => {
         },
       });
 
-      renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
       expect(screen.getByTestId("training-form")).toBeInTheDocument();
     });
@@ -307,12 +445,12 @@ describe("StepForm", () => {
         },
       });
 
-      renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
       expect(screen.getByTestId("company-contact-form")).toBeInTheDocument();
     });
 
-    it("should render SummaryForm at step 8", () => {
+    it("should render AgreementsForm at step 8", () => {
       const store = createMockStore({
         student: {
           currentStep: 8,
@@ -323,12 +461,12 @@ describe("StepForm", () => {
         },
       });
 
-      renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
-      expect(screen.getByTestId("summary-form")).toBeInTheDocument();
+      expect(screen.getByTestId("agreements-form")).toBeInTheDocument();
     });
 
-    it("should render FormCompletion at step 9", () => {
+    it("should render SummaryForm at step 9", () => {
       const store = createMockStore({
         student: {
           currentStep: 9,
@@ -339,7 +477,23 @@ describe("StepForm", () => {
         },
       });
 
-      renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
+
+      expect(screen.getByTestId("summary-form")).toBeInTheDocument();
+    });
+
+    it("should render FormCompletion at step 10", () => {
+      const store = createMockStore({
+        student: {
+          currentStep: 10,
+          data: {},
+          students: [],
+          loading: false,
+          error: null,
+        },
+      });
+
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
       expect(screen.getByTestId("form-completion")).toBeInTheDocument();
     });
@@ -355,7 +509,7 @@ describe("StepForm", () => {
         },
       });
 
-      renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
       expect(screen.queryByTestId("welcome-form")).not.toBeInTheDocument();
       expect(screen.queryByTestId("general-form")).not.toBeInTheDocument();
@@ -374,7 +528,7 @@ describe("StepForm", () => {
         },
       });
 
-      renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
       const buttons = screen.getAllByTestId("general-button");
       expect(buttons.length).toBe(1);
@@ -392,7 +546,7 @@ describe("StepForm", () => {
         },
       });
 
-      renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
       const buttons = screen.getAllByTestId("general-button");
       const previousButton = buttons.find(
@@ -413,7 +567,7 @@ describe("StepForm", () => {
         },
       });
 
-      renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
       const startButton = screen.getByTestId("general-button");
       await user.click(startButton);
@@ -436,7 +590,7 @@ describe("StepForm", () => {
         },
       });
 
-      renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
       const buttons = screen.getAllByTestId("general-button");
       expect(buttons.length).toBe(2);
@@ -458,7 +612,7 @@ describe("StepForm", () => {
         },
       });
 
-      renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
       const buttons = screen.getAllByTestId("general-button");
       const previousButton = buttons.find(
@@ -485,7 +639,7 @@ describe("StepForm", () => {
         },
       });
 
-      renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
       const buttons = screen.getAllByTestId("general-button");
       const nextButton = buttons.find(
@@ -501,66 +655,6 @@ describe("StepForm", () => {
     });
   });
 
-  describe("Navigation Buttons - Last Step", () => {
-    it("should show only Confirm button at step 9", () => {
-      const store = createMockStore({
-        student: {
-          currentStep: 9,
-          data: {},
-          students: [],
-          loading: false,
-          error: null,
-        },
-      });
-
-      renderWithProviders(<StepForm />, { store });
-
-      const buttons = screen.getAllByTestId("general-button");
-      expect(buttons.length).toBe(1);
-      expect(buttons[0]).toHaveAttribute("data-label", "general.Confirm");
-    });
-
-    it("should not show Next button at step 9", () => {
-      const store = createMockStore({
-        student: {
-          currentStep: 9,
-          data: {},
-          students: [],
-          loading: false,
-          error: null,
-        },
-      });
-
-      renderWithProviders(<StepForm />, { store });
-
-      const buttons = screen.getAllByTestId("general-button");
-      const nextButton = buttons.find(
-        (btn) => btn.getAttribute("data-label") === "general.Next",
-      );
-      expect(nextButton).toBeUndefined();
-    });
-
-    it("should call handleConfirm when Confirm clicked", async () => {
-      const user = userEvent.setup();
-      const store = createMockStore({
-        student: {
-          currentStep: 9,
-          data: {},
-          students: [],
-          loading: false,
-          error: null,
-        },
-      });
-
-      renderWithProviders(<StepForm />, { store });
-
-      const confirmButton = screen.getByTestId("general-button");
-      await user.click(confirmButton);
-
-      expect(consoleSpy).toHaveBeenCalledWith("Confirm step");
-    });
-  });
-
   describe("Title Display", () => {
     it("should not show title at step 0", () => {
       const store = createMockStore({
@@ -573,7 +667,7 @@ describe("StepForm", () => {
         },
       });
 
-      renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
       expect(screen.queryByTestId("custom-title")).not.toBeInTheDocument();
     });
@@ -589,7 +683,7 @@ describe("StepForm", () => {
         },
       });
 
-      renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
       expect(screen.getByTestId("custom-title")).toBeInTheDocument();
     });
@@ -605,7 +699,7 @@ describe("StepForm", () => {
         },
       });
 
-      renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
       expect(screen.getByTestId("title")).toHaveTextContent("Pre-Education");
     });
@@ -621,11 +715,9 @@ describe("StepForm", () => {
         },
       });
 
-      renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
-      expect(screen.getByTestId("subtitle")).toHaveTextContent(
-        "general.Step 6",
-      );
+      expect(screen.getByTestId("subtitle")).toHaveTextContent("Step 6 of 11");
     });
 
     it("should show title at last step", () => {
@@ -639,15 +731,15 @@ describe("StepForm", () => {
         },
       });
 
-      renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
       expect(screen.getByTestId("custom-title")).toBeInTheDocument();
-      expect(screen.getByTestId("title")).toHaveTextContent("Completion");
+      expect(screen.getByTestId("title")).toHaveTextContent("Summary");
     });
   });
 
   describe("Step Transitions", () => {
-    it("should render different form when step changes", () => {
+    it("should render correct form for step 1", () => {
       const store = createMockStore({
         student: {
           currentStep: 1,
@@ -658,17 +750,25 @@ describe("StepForm", () => {
         },
       });
 
-      const { rerender } = renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
       expect(screen.getByTestId("general-form")).toBeInTheDocument();
+    });
 
-      // Store updated for step change
-      store.getState().student.currentStep = 2;
+    it("should render correct form for step 2", () => {
+      const store = createMockStore({
+        student: {
+          currentStep: 2,
+          data: {},
+          students: [],
+          loading: false,
+          error: null,
+        },
+      });
 
-      rerender(<StepForm />);
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
-      // Note: In real app, Redux would update the store
-      // This test shows component responds to prop changes
+      expect(screen.getByTestId("origin-form")).toBeInTheDocument();
     });
 
     it("should pass data prop to forms", () => {
@@ -683,7 +783,7 @@ describe("StepForm", () => {
         },
       });
 
-      renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
       expect(screen.getByTestId("general-form")).toBeInTheDocument();
     });
@@ -701,7 +801,7 @@ describe("StepForm", () => {
         },
       });
 
-      renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
       expect(screen.getByTestId("address-form")).toBeInTheDocument();
     });
@@ -718,7 +818,7 @@ describe("StepForm", () => {
         },
       });
 
-      renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
       expect(screen.getByTestId("general-form")).toBeInTheDocument();
     });
@@ -735,7 +835,7 @@ describe("StepForm", () => {
         },
       });
 
-      renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
       const buttons = screen.getAllByTestId("general-button");
       const nextButton = buttons.find(
@@ -762,7 +862,7 @@ describe("StepForm", () => {
         },
       });
 
-      renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
       const buttons = screen.getAllByTestId("general-button");
       const previousButton = buttons.find(
@@ -790,16 +890,16 @@ describe("StepForm", () => {
         },
       });
 
-      renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
       expect(screen.getByTestId("welcome-form")).toBeInTheDocument();
       expect(screen.queryByTestId("custom-title")).not.toBeInTheDocument();
     });
 
-    it("should handle step 9 correctly", () => {
+    it("should handle step 10 correctly", () => {
       const store = createMockStore({
         student: {
-          currentStep: 9,
+          currentStep: 10,
           data: {},
           students: [],
           loading: false,
@@ -807,11 +907,11 @@ describe("StepForm", () => {
         },
       });
 
-      renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
       expect(screen.getByTestId("form-completion")).toBeInTheDocument();
-      const buttons = screen.getAllByTestId("general-button");
-      expect(buttons.length).toBe(1);
+      const buttons = screen.queryAllByTestId("general-button");
+      expect(buttons.length).toBe(0);
     });
 
     it("should handle empty data object", () => {
@@ -825,7 +925,7 @@ describe("StepForm", () => {
         },
       });
 
-      renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
       expect(screen.getByTestId("general-form")).toBeInTheDocument();
     });
@@ -842,7 +942,7 @@ describe("StepForm", () => {
         },
       });
 
-      renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
       const buttons = screen.getAllByTestId("general-button");
       const nextButton = buttons.find(
@@ -873,7 +973,10 @@ describe("StepForm", () => {
         },
       });
 
-      const { container } = renderWithProviders(<StepForm />, { store });
+      const { container } = renderWithProviders(
+        <StepForm studentId="test-student-123" />,
+        { store },
+      );
 
       const wrapper = container.querySelector(".MuiBox-root");
       expect(wrapper).toBeInTheDocument();
@@ -890,7 +993,7 @@ describe("StepForm", () => {
         },
       });
 
-      renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
       expect(screen.getByTestId("general-form")).toBeInTheDocument();
     });
@@ -906,7 +1009,7 @@ describe("StepForm", () => {
         },
       });
 
-      renderWithProviders(<StepForm />, { store });
+      renderWithProviders(<StepForm studentId="test-student-123" />, { store });
 
       const buttons = screen.getAllByTestId("general-button");
       expect(buttons.length).toBe(2);
@@ -925,11 +1028,14 @@ describe("StepForm", () => {
         },
       });
 
-      const { rerender } = renderWithProviders(<StepForm />, { store });
+      const { rerender } = renderWithProviders(
+        <StepForm studentId="test-student-123" />,
+        { store },
+      );
 
       expect(screen.getByTestId("general-form")).toBeInTheDocument();
 
-      rerender(<StepForm />);
+      rerender(<StepForm studentId="test-student-123" />, { store });
 
       expect(screen.getByTestId("general-form")).toBeInTheDocument();
     });

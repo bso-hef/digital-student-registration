@@ -1,13 +1,17 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 
 import { useOnboardingSettings } from "@/hooks/useOnboardingSettings";
 import {
   createValidateStudentCompanyData,
   validateStudentCompanyData,
 } from "@/lib/validate/student.validate";
+import { updateStudentOnboardingData } from "@/store/actions/studentActions";
+import { useAppDispatch } from "@/store/store";
 import { MenuItem, styled } from "@mui/material";
+import { FormikProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import { Select, TextField } from "formik-mui";
+import { useTranslation } from "react-i18next";
 
 const StyledForm = styled(Form)(() => ({
   display: "flex",
@@ -32,9 +36,19 @@ interface FormValues {
 
 interface TrainingFormProps {
   data?: Partial<FormValues>;
+  onSubmit?: (values: FormValues) => void;
+  formikRef?: React.RefObject<FormikProps<FormValues> | null>;
+  onValidationChange?: (isValid: boolean) => void;
 }
 
-const TrainingForm: React.FC<TrainingFormProps> = ({ data }) => {
+const TrainingForm: React.FC<TrainingFormProps> = ({
+  data,
+  onSubmit,
+  formikRef,
+  onValidationChange,
+}) => {
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
   const {
     professionOptions,
     salutationOptions,
@@ -69,6 +83,13 @@ const TrainingForm: React.FC<TrainingFormProps> = ({ data }) => {
     return validateStudentCompanyData;
   }, [professionOptions, salutationOptions, fieldConfigs, getOptionValues]);
 
+  // Track validation state changes (must be before early return)
+  useEffect(() => {
+    if (formikRef?.current && onValidationChange) {
+      onValidationChange(formikRef.current.isValid);
+    }
+  });
+
   if (loading) {
     return <div>Loading settings...</div>;
   }
@@ -80,8 +101,11 @@ const TrainingForm: React.FC<TrainingFormProps> = ({ data }) => {
       initialValues={initialValues}
       validationSchema={validationSchema}
       onSubmit={(values) => {
-        console.log("✅ Submitted values:", values);
+        dispatch(updateStudentOnboardingData(values));
+        // Pass values to parent to ensure immediate save to database
+        if (onSubmit) onSubmit(values);
       }}
+      innerRef={formikRef}
     >
       {({ errors, touched }) => (
         <StyledForm>
@@ -90,7 +114,7 @@ const TrainingForm: React.FC<TrainingFormProps> = ({ data }) => {
             <Field
               component={TextField}
               name="beruf"
-              label="Beruf"
+              label={t("onboarding.training.profession")}
               variant="outlined"
               margin="normal"
               fullWidth
@@ -101,7 +125,7 @@ const TrainingForm: React.FC<TrainingFormProps> = ({ data }) => {
             <Field
               component={Select}
               name="beruf"
-              label="Beruf"
+              label={t("onboarding.training.profession")}
               variant="outlined"
               margin="normal"
               fullWidth
@@ -119,7 +143,7 @@ const TrainingForm: React.FC<TrainingFormProps> = ({ data }) => {
           <Field
             component={TextField}
             name="betriebEintritt"
-            label="Betriebseintritt"
+            label={t("onboarding.training.companyStartDate")}
             type="date"
             InputLabelProps={{ shrink: true }}
             variant="outlined"
@@ -133,7 +157,7 @@ const TrainingForm: React.FC<TrainingFormProps> = ({ data }) => {
           <Field
             component={TextField}
             name="betriebName"
-            label="Betriebsname"
+            label={t("onboarding.training.companyName")}
             variant="outlined"
             margin="normal"
             fullWidth
@@ -145,7 +169,7 @@ const TrainingForm: React.FC<TrainingFormProps> = ({ data }) => {
           <Field
             component={TextField}
             name="betriebStraße"
-            label="Straße"
+            label={t("onboarding.training.street")}
             variant="outlined"
             margin="normal"
             fullWidth
@@ -157,7 +181,7 @@ const TrainingForm: React.FC<TrainingFormProps> = ({ data }) => {
           <Field
             component={TextField}
             name="betriebHausNr"
-            label="Hausnummer"
+            label={t("onboarding.training.houseNumber")}
             variant="outlined"
             margin="normal"
             fullWidth
@@ -169,7 +193,7 @@ const TrainingForm: React.FC<TrainingFormProps> = ({ data }) => {
           <Field
             component={TextField}
             name="betriebPlz"
-            label="PLZ"
+            label={t("onboarding.training.postalCode")}
             variant="outlined"
             margin="normal"
             fullWidth
@@ -181,7 +205,7 @@ const TrainingForm: React.FC<TrainingFormProps> = ({ data }) => {
           <Field
             component={TextField}
             name="betriebOrt"
-            label="Ort"
+            label={t("onboarding.training.city")}
             variant="outlined"
             margin="normal"
             fullWidth
@@ -193,7 +217,7 @@ const TrainingForm: React.FC<TrainingFormProps> = ({ data }) => {
           <Field
             component={TextField}
             name="betriebTel"
-            label="Telefon"
+            label={t("onboarding.training.phone")}
             variant="outlined"
             margin="normal"
             fullWidth
@@ -205,7 +229,7 @@ const TrainingForm: React.FC<TrainingFormProps> = ({ data }) => {
           <Field
             component={TextField}
             name="betriebMail"
-            label="E-Mail"
+            label={t("onboarding.training.email")}
             type="email"
             variant="outlined"
             margin="normal"

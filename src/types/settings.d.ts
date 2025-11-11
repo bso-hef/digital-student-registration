@@ -36,6 +36,7 @@ export interface OnboardingSettings {
   degreeOptions: DropdownOption[];
   languageOptions: DropdownOption[];
   professionOptions: DropdownOption[];
+  countryOptions: DropdownOption[];
 
   // Field Configurations
   fieldConfigs: {
@@ -55,12 +56,32 @@ export interface OnboardingSettings {
   formSteps: FormSteps;
 }
 
+// Agreement Item (individual configurable agreement)
+export interface AgreementItem {
+  id: string;
+  key: string;
+  enabled: boolean;
+  required: boolean;
+  order: number;
+  labels: {
+    en: string;
+    de: string;
+  };
+  description?: {
+    en: string;
+    de: string;
+  };
+  icon?: string;
+}
+
 // Agreements Settings (for consent forms, privacy policies, etc.)
 export interface AgreementSettings {
-  privacyPolicyEnabled: boolean;
-  termsOfServiceEnabled: boolean;
-  parentalConsentEnabled: boolean;
-  dataProcessingAgreementEnabled: boolean;
+  agreements: AgreementItem[];
+  // Old fields kept for migration
+  privacyPolicyEnabled?: boolean;
+  termsOfServiceEnabled?: boolean;
+  parentalConsentEnabled?: boolean;
+  dataProcessingAgreementEnabled?: boolean;
 }
 
 // Integration Settings (for third-party integrations)

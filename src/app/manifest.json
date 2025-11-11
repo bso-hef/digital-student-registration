@@ -1,6 +1,6 @@
 {
-  "name": "Next.js Template",
-  "short_name": "Next.js",
+  "name": "Digital student onboarding",
+  "short_name": "DSO",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",

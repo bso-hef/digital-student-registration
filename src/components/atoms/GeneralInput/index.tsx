@@ -42,6 +42,9 @@ interface GeneralInputProps {
   error?: boolean;
   helperText?: string;
   inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
+  disabled?: boolean;
+  multiline?: boolean;
+  rows?: number;
 }
 
 const GeneralInput: React.FC<GeneralInputProps> = ({
@@ -63,6 +66,9 @@ const GeneralInput: React.FC<GeneralInputProps> = ({
   error,
   helperText,
   inputProps,
+  disabled = false,
+  multiline = false,
+  rows,
 }) => {
   return (
     <StyledInput
@@ -79,6 +85,9 @@ const GeneralInput: React.FC<GeneralInputProps> = ({
       id={id}
       required={required}
       error={error}
+      disabled={disabled}
+      multiline={multiline}
+      rows={rows}
       helperText={helperText}
       inputProps={inputProps}
       InputProps={{

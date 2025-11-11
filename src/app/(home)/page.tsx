@@ -1,6 +1,7 @@
 "use client";
 
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import AdminPanelSettingsRoundedIcon from "@mui/icons-material/AdminPanelSettingsRounded";
 import ArticleRoundedIcon from "@mui/icons-material/ArticleRounded";
 import SchoolRoundedIcon from "@mui/icons-material/SchoolRounded";
@@ -26,6 +27,8 @@ const Wrapper = styled(Box)(({ theme }) => ({
 export default function Home() {
   const router = useRouter();
   const { t } = useTranslation();
+
+  useDocumentTitle("Home | Digitale Schüleranmeldung");
 
   const handleVisitDocs = () => {
     if (typeof window !== "undefined") {
