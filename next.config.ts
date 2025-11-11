@@ -4,6 +4,10 @@ import type { NextConfig } from "next";
  * @type {import('next').NextConfig}
  */
 const nextConfig: NextConfig = {
+  // Enable standalone output for Docker deployment
+  // This creates a minimal Node.js server with all dependencies
+  output: "standalone",
+
   // The rewrites configuration allows you to proxy requests to another server.
   // In this case, we are proxying all requests made to '/api/:path*' to the backend server
   // running on 'https://localhost:3000/api/:path*'.
