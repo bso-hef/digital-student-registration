@@ -21,6 +21,22 @@
 
 ---
 
+## 🚀 Quick Start for Testers
+
+**Want to test the application? Just run one command:**
+
+```bash
+docker compose up -d
+```
+
+**That's it!** No configuration needed. Access the app at [https://localhost:3000](https://localhost:3000)
+
+→ See **[QUICK-START.md](./QUICK-START.md)** for complete testing guide with credentials and scenarios.
+
+**Requirements:** Docker 20.10+ and Docker Compose 2.0+ ([Install Docker](https://docs.docker.com/get-docker/))
+
+---
+
 ## Tech Stack
 
 ### Frontend
@@ -86,16 +102,23 @@ Open [https://localhost:3000](https://localhost:3000)
 
 ### Docker (Recommended)
 
+**Testing (Zero Configuration):**
 ```bash
-# Development
-cp .env.docker.example .env
-docker-compose up -d
+# Just one command - uses committed .env.docker
+docker compose up -d
+```
 
-# Production
+**Production Deployment:**
+```bash
+# Configure secure credentials first
+cp .env.docker.example .env
+# Edit .env with production values
+
+# Deploy
 docker-compose -f docker-compose.prod.yml up -d --build
 ```
 
-See **[DOCKER.md](./DOCKER.md)** for complete Docker documentation.
+See **[QUICK-START.md](./QUICK-START.md)** for testing guide or **[DOCKER.md](./DOCKER.md)** for production setup.
 
 ---
 

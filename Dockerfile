@@ -13,8 +13,7 @@ WORKDIR /app
 FROM base AS deps
 
 # Copy package files
-COPY package.json yarn.lock .yarnrc.yml ./
-COPY .yarn ./.yarn
+COPY package.json yarn.lock ./
 
 # Install dependencies with frozen lockfile for reproducible builds
 RUN yarn install --frozen-lockfile --production=false
@@ -26,7 +25,6 @@ WORKDIR /app
 
 # Copy dependencies from deps stage
 COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/.yarn ./.yarn
 
 # Copy application source code
 COPY . .

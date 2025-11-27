@@ -1,14 +1,14 @@
 # Docker Compose configuration for DEVELOPMENT
 # This setup includes hot-reload, debugging, and development tools
 
-version: '3.9'
-
 services:
   # MongoDB Database Service
   mongo:
     image: mongo:7.0
     container_name: digital-student-mongo-dev
     restart: unless-stopped
+    env_file:
+      - .env.docker
     ports:
       - '27017:27017'
     environment:
@@ -37,6 +37,8 @@ services:
       target: builder
     container_name: digital-student-app-dev
     restart: unless-stopped
+    env_file:
+      - .env.docker
     ports:
       - '3000:3000'
     environment:
@@ -86,6 +88,8 @@ services:
     image: mongo-express:1.0.2
     container_name: digital-student-mongo-express
     restart: unless-stopped
+    env_file:
+      - .env.docker
     ports:
       - '8081:8081'
     environment:
