@@ -169,8 +169,11 @@ describe("AccessibilityMenu", () => {
         await user.click(closeButton);
       }
 
-      // Verify state changed
-      expect(buttons[0]).toBeInTheDocument();
+      // Verify button is visible again after closing (re-query since original was unmounted)
+      await waitFor(() => {
+        const accessibilityButton = screen.getAllByTestId("small-icon-button");
+        expect(accessibilityButton[0]).toBeInTheDocument();
+      });
     });
   });
 
@@ -564,13 +567,28 @@ describe("AccessibilityMenu", () => {
 
       renderWithProviders(<AccessibilityMenu />);
 
-      const buttons = screen.getAllByTestId("small-icon-button");
+      // Open drawer
+      const accessibilityButton = screen.getAllByTestId("small-icon-button")[0];
+      await user.click(accessibilityButton);
 
-      await user.click(buttons[0]);
-      await user.click(buttons[0]);
-      await user.click(buttons[0]);
+      // Wait for drawer to open and close button to appear
+      await waitFor(() => {
+        expect(screen.getByText("general.Accessibility")).toBeInTheDocument();
+      });
 
-      expect(buttons[0]).toBeInTheDocument();
+      // Find and click close button
+      const closeButton = screen
+        .getAllByTestId("small-icon-button")
+        .find((btn) => btn.getAttribute("title") === "general.Close");
+      if (closeButton) {
+        await user.click(closeButton);
+      }
+
+      // Verify accessibility button is back after closing
+      await waitFor(() => {
+        const buttons = screen.getAllByTestId("small-icon-button");
+        expect(buttons[0]).toBeInTheDocument();
+      });
     });
 
     it("should maintain state when drawer closed and reopened", async () => {

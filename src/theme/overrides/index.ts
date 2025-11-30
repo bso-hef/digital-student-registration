@@ -7,6 +7,7 @@ import MuiFormLabelOverride from "./MuiFormLabel";
 import MuiInputBaseOverride from "./MuiInputBase";
 import MuiOutlinedInputOverride from "./MuiOutlinedInput";
 import MuiPickerPopperOverride from "./MuiPickerPopper";
+import MuiSelectOverride from "./MuiSelect";
 import MuiTextFieldOverride from "./MuiTextField";
 
 const overrides = {
@@ -39,6 +40,9 @@ const overrides = {
   },
   MuiDateCalendar: {
     styleOverrides: MuiDateCalendarOverride,
+  },
+  MuiSelect: {
+    styleOverrides: MuiSelectOverride,
   },
 };
 

@@ -204,10 +204,8 @@ export const createValidateStudentContactPersonData = (age: number) => {
 
   if (isAdult) {
     // Adult: Optional unless any field is filled
-    const allContactFields = [
-      "ansprechpartner1Art",
-      "ansprechpartner1Vorname",
-      "ansprechpartner1Nachname",
+    // Define the base fields that are always optional
+    const optionalFields = [
       "ansprechpartner1Plz",
       "ansprechpartner1Ort",
       "ansprechpartner1Straße",
@@ -216,27 +214,49 @@ export const createValidateStudentContactPersonData = (age: number) => {
       "ansprechpartner1Telefon1",
     ];
 
+    // For each required field, create dependency array excluding itself
+    // This prevents Yup cyclic dependency errors
+    const fieldsForVorname = [
+      "ansprechpartner1Art",
+      "ansprechpartner1Nachname",
+      ...optionalFields,
+    ];
+    const fieldsForNachname = [
+      "ansprechpartner1Art",
+      "ansprechpartner1Vorname",
+      ...optionalFields,
+    ];
+    const fieldsForArt = [
+      "ansprechpartner1Vorname",
+      "ansprechpartner1Nachname",
+      ...optionalFields,
+    ];
+
+    // Helper to check if any field has a value
+    const hasAnyValue = (...values: string[]) =>
+      values.some((v) => v && v.trim() !== "");
+
     return Yup.object({
-      // If ANY field is filled, require basic fields
-      ansprechpartner1Vorname: Yup.string().when(allContactFields, {
-        is: (...values: string[]) => values.some((v) => v && v.trim() !== ""),
+      // Each field watches OTHER fields only (not itself) to avoid cyclic dependency
+      ansprechpartner1Vorname: Yup.string().when(fieldsForVorname, {
+        is: hasAnyValue,
         then: (schema) =>
           schema.required("Vorname ist erforderlich wenn Kontakt ausgefüllt"),
         otherwise: (schema) => schema.notRequired(),
       }),
-      ansprechpartner1Nachname: Yup.string().when(allContactFields, {
-        is: (...values: string[]) => values.some((v) => v && v.trim() !== ""),
+      ansprechpartner1Nachname: Yup.string().when(fieldsForNachname, {
+        is: hasAnyValue,
         then: (schema) =>
           schema.required("Nachname ist erforderlich wenn Kontakt ausgefüllt"),
         otherwise: (schema) => schema.notRequired(),
       }),
-      ansprechpartner1Art: Yup.string().when(allContactFields, {
-        is: (...values: string[]) => values.some((v) => v && v.trim() !== ""),
+      ansprechpartner1Art: Yup.string().when(fieldsForArt, {
+        is: hasAnyValue,
         then: (schema) =>
           schema.required("Art ist erforderlich wenn Kontakt ausgefüllt"),
         otherwise: (schema) => schema.notRequired(),
       }),
-      // Other fields optional
+      // Other fields remain optional
       ansprechpartner1Plz: Yup.string()
         .matches(/^\d{5}$/, "PLZ muss 5 Ziffern haben")
         .nullable(),

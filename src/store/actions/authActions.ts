@@ -238,3 +238,22 @@ export const syncSession =
 export const clearAuthError = (): AppThunk<void> => (dispatch) => {
   dispatch({ type: TYPES.AUTH_CLEAR_ERROR });
 };
+
+/**
+ * Update setup wizard state (persisted via redux-persist)
+ */
+export const updateSetupWizard = (data: {
+  step?: number;
+  email?: string;
+  password?: string;
+}) => ({
+  type: TYPES.AUTH_UPDATE_SETUP_WIZARD,
+  payload: data,
+});
+
+/**
+ * Clear setup wizard state
+ */
+export const clearSetupWizard = () => ({
+  type: TYPES.AUTH_CLEAR_SETUP_WIZARD,
+});

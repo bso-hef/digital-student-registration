@@ -707,6 +707,7 @@
       "passwordLowercase": "Passwort muss mindestens einen Kleinbuchstaben enthalten",
       "passwordNumber": "Passwort muss mindestens eine Zahl enthalten",
       "passwordSpecialChar": "Passwort muss mindestens ein Sonderzeichen enthalten (!@#$%^&*)",
+      "passwordNoSpaces": "Passwort darf keine Leerzeichen enthalten",
       "passwordMatch": "Passwörter müssen übereinstimmen",
       "confirmPasswordRequired": "Bitte bestätigen Sie Ihr Passwort",
       "recoveryCodeRequired": "Wiederherstellungscode ist erforderlich",

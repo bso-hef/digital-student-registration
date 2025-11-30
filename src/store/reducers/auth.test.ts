@@ -12,6 +12,10 @@ describe("authReducer", () => {
     setupCompleted: false,
     checkingSession: false,
     checkingSetup: false,
+    // Setup wizard persistence
+    setupWizardStep: 0,
+    setupWizardEmail: "",
+    setupWizardPassword: "",
   };
 
   it("should return initial state", () => {

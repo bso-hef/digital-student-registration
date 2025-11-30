@@ -17,11 +17,22 @@ export const AuthCard = styled(Box, {
   boxShadow: theme.shadows[4],
   width: "100%",
   maxWidth: maxWidth,
+  maxHeight: "calc(100vh - 4rem)", // Leave room for padding
   margin: "0 auto",
-  overflow: "hidden",
-  minHeight: 0,
-  maxHeight: "100%",
   textAlign: "left",
+  overflow: "hidden",
+  overflowY: "auto",
+  ...applicationScrollbar(theme),
+  // Viewport-based zoom scaling for large screens
+  [theme.breakpoints.up(1920)]: {
+    zoom: 1.1,
+  },
+  [theme.breakpoints.up(2560)]: {
+    zoom: 1.25,
+  },
+  [theme.breakpoints.up(3840)]: {
+    zoom: 1.5,
+  },
   // Large desktop (lg and up): Full specified maxWidth
   [theme.breakpoints.down("lg")]: {
     maxWidth: `min(${maxWidth}px, 85%)`,
@@ -30,12 +41,14 @@ export const AuthCard = styled(Box, {
   // Tablet (md): Reduce to 90% with less padding
   [theme.breakpoints.down("md")]: {
     maxWidth: "90%",
+    maxHeight: "calc(100vh - 3rem)",
     padding: theme.spacing(4),
     borderRadius: theme.spacing(1.5),
   },
   // Mobile landscape and small tablets (sm): 95% width
   [theme.breakpoints.down("sm")]: {
     maxWidth: "95%",
+    maxHeight: "calc(100vh - 2rem)",
     padding: theme.spacing(3),
     borderRadius: theme.spacing(1),
     boxShadow: theme.shadows[2],
@@ -43,6 +56,7 @@ export const AuthCard = styled(Box, {
   // Very small mobile (xs): Full width with minimal padding
   [theme.breakpoints.down(400)]: {
     maxWidth: "100%",
+    maxHeight: "calc(100vh - 1rem)",
     padding: theme.spacing(2),
     borderRadius: 0,
     border: "none",

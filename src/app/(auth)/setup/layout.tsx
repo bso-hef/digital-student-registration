@@ -17,5 +17,5 @@ export default async function SetupLayout({
     redirect("/api/auth/setup/sync?redirect=/login");
   }
 
-  return <>{children}</>;
+  return children;
 }

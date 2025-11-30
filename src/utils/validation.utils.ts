@@ -44,6 +44,11 @@ export const PASSWORD_REGEX = {
   SPECIAL_CHAR: /[!@#$%^&*()_+\-=[\]{}|;:,.<>?]/,
 
   /**
+   * No spaces allowed
+   */
+  NO_SPACES: /^\S*$/,
+
+  /**
    * Combined strong password regex
    * - Minimum 8 characters
    * - At least one uppercase letter

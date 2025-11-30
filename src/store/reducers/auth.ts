@@ -14,6 +14,10 @@ export interface AuthState {
   setupCompleted: boolean;
   checkingSession: boolean;
   checkingSetup: boolean;
+  // Setup wizard persistence
+  setupWizardStep: number;
+  setupWizardEmail: string;
+  setupWizardPassword: string;
 }
 
 const initialAuthState: AuthState = {
@@ -24,6 +28,10 @@ const initialAuthState: AuthState = {
   setupCompleted: false,
   checkingSession: false,
   checkingSetup: false,
+  // Setup wizard persistence
+  setupWizardStep: 0,
+  setupWizardEmail: "",
+  setupWizardPassword: "",
 };
 
 const authReducer = (state = initialAuthState, action: AppAction) => {
@@ -66,6 +74,10 @@ const authReducer = (state = initialAuthState, action: AppAction) => {
       return {
         ...initialAuthState,
         setupCompleted: state.setupCompleted,
+        // Clear setup wizard state on logout
+        setupWizardStep: 0,
+        setupWizardEmail: "",
+        setupWizardPassword: "",
       };
 
     case TYPES.AUTH_LOGOUT_FAILURE:
@@ -89,6 +101,8 @@ const authReducer = (state = initialAuthState, action: AppAction) => {
         isLoading: false,
         setupCompleted: true,
         error: null,
+        // Don't clear setup wizard here - we need email for finalizeSetup
+        // State is cleared in finalizeSetup after completion
       };
 
     case TYPES.AUTH_SETUP_FAILURE:
@@ -176,6 +190,24 @@ const authReducer = (state = initialAuthState, action: AppAction) => {
       return {
         ...state,
         error: null,
+      };
+
+    // Setup wizard persistence
+    case TYPES.AUTH_UPDATE_SETUP_WIZARD:
+      return {
+        ...state,
+        setupWizardStep: action.payload.step ?? state.setupWizardStep,
+        setupWizardEmail: action.payload.email ?? state.setupWizardEmail,
+        setupWizardPassword:
+          action.payload.password ?? state.setupWizardPassword,
+      };
+
+    case TYPES.AUTH_CLEAR_SETUP_WIZARD:
+      return {
+        ...state,
+        setupWizardStep: 0,
+        setupWizardEmail: "",
+        setupWizardPassword: "",
       };
 
     default:

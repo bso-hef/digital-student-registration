@@ -707,6 +707,7 @@
       "passwordLowercase": "Password must contain at least one lowercase letter",
       "passwordNumber": "Password must contain at least one number",
       "passwordSpecialChar": "Password must contain at least one special character (!@#$%^&*)",
+      "passwordNoSpaces": "Password cannot contain spaces",
       "passwordMatch": "Passwords must match",
       "confirmPasswordRequired": "Please confirm your password",
       "recoveryCodeRequired": "Recovery code is required",

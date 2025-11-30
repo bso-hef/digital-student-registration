@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import GeneralInput from "@/components/atoms/GeneralInput";
 import {
   AuthActions,
   AuthCard,
@@ -10,10 +11,15 @@ import {
 } from "@/components/atoms/auth/AuthCard";
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
 import PasswordInput from "@/components/atoms/inputs/PasswordInput";
-import { setupAdmin } from "@/store/actions/authActions";
+import {
+  clearSetupWizard,
+  setupAdmin,
+  updateSetupWizard,
+} from "@/store/actions/authActions";
 import { AppDispatch, RootState } from "@/store/store";
 import { EMAIL_REGEX, PASSWORD_REGEX } from "@/utils/validation.utils";
 import { CheckCircle, ContentCopy, Download } from "@mui/icons-material";
+import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 import {
   Alert,
   Box,
@@ -22,7 +28,6 @@ import {
   Step,
   StepLabel,
   Stepper,
-  TextField,
   Typography,
   styled,
 } from "@mui/material";
@@ -109,15 +114,16 @@ const StyledForm = styled(Form)({
 });
 
 const StepList = styled(Box)(({ theme }) => ({
-  paddingLeft: theme.spacing(2),
   marginBottom: theme.spacing(2),
-  [theme.breakpoints.up("sm")]: {
-    paddingLeft: theme.spacing(3),
-  },
+  color: theme.palette.text.information,
 }));
 
 const StepListItem = styled(Typography)(({ theme }) => ({
   fontSize: "0.9rem",
+  display: "flex",
+  alignItems: "center",
+  flexDirection: "row",
+  gap: theme.spacing(1),
   [theme.breakpoints.up("sm")]: {
     fontSize: "1rem",
   },
@@ -162,10 +168,6 @@ const ButtonContainerSpaceBetween = styled(Box)(({ theme }) => ({
   [theme.breakpoints.up("md")]: {
     marginTop: theme.spacing(4),
   },
-}));
-
-const StyledTextField = styled(TextField)(({ theme }) => ({
-  marginTop: theme.spacing(2),
 }));
 
 const RecoveryCodeBox = styled(Box)(({ theme }) => ({
@@ -214,11 +216,15 @@ export default function SetupPage() {
   const { t } = useTranslation();
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
-  const { isLoading } = useSelector((state: RootState) => state.auth);
-  const [activeStep, setActiveStep] = useState(0);
+  const { isLoading, setupWizardStep, setupWizardEmail, setupWizardPassword } =
+    useSelector((state: RootState) => state.auth);
+
+  // Use Redux state for active step (persisted)
+  const activeStep = setupWizardStep;
+
+  // Recovery code and copied state are local (not persisted - security)
   const [recoveryCode, setRecoveryCode] = useState<string>("");
   const [copied, setCopied] = useState(false);
-  const [adminEmail, setAdminEmail] = useState<string>("");
 
   // Steps array with i18n
   const steps = [
@@ -236,6 +242,7 @@ export default function SetupPage() {
       .required(t("auth.validation.emailRequired")),
     password: Yup.string()
       .min(8, t("auth.validation.passwordMin"))
+      .matches(PASSWORD_REGEX.NO_SPACES, t("auth.validation.passwordNoSpaces"))
       .matches(PASSWORD_REGEX.UPPERCASE, t("auth.validation.passwordUppercase"))
       .matches(PASSWORD_REGEX.LOWERCASE, t("auth.validation.passwordLowercase"))
       .matches(PASSWORD_REGEX.NUMBER, t("auth.validation.passwordNumber"))
@@ -250,11 +257,11 @@ export default function SetupPage() {
   });
 
   const handleNext = () => {
-    setActiveStep((prev) => prev + 1);
+    dispatch(updateSetupWizard({ step: activeStep + 1 }));
   };
 
   const handleBack = () => {
-    setActiveStep((prev) => prev - 1);
+    dispatch(updateSetupWizard({ step: activeStep - 1 }));
   };
 
   const copyRecoveryCode = () => {
@@ -282,12 +289,14 @@ export default function SetupPage() {
   };
 
   const handlePasswordSubmit = async (email: string, password: string) => {
+    // Persist password to Redux before submitting
+    dispatch(updateSetupWizard({ password }));
+
     const result = await dispatch(setupAdmin(email, password));
 
     if (result.success && result.recoveryCode) {
       // Store the recovery code to display in step 3
       setRecoveryCode(result.recoveryCode);
-      setAdminEmail(email); // Store email for final setup completion
       handleNext(); // Move to recovery code step
     }
   };
@@ -309,12 +318,15 @@ export default function SetupPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email: adminEmail }),
+        body: JSON.stringify({ email: setupWizardEmail }),
       });
 
       if (!response.ok) {
         throw new Error("Failed to complete setup");
       }
+
+      // Clear the setup wizard state
+      dispatch(clearSetupWizard());
 
       // Wait a bit then redirect to login
       setTimeout(() => {
@@ -322,7 +334,8 @@ export default function SetupPage() {
       }, 1500);
     } catch (error) {
       console.error("Error completing setup:", error);
-      // Still redirect even if there's an error
+      // Clear state and redirect even if there's an error
+      dispatch(clearSetupWizard());
       setTimeout(() => {
         router.push("/login");
       }, 1500);
@@ -349,14 +362,22 @@ export default function SetupPage() {
 
       <Formik
         initialValues={{
-          email: "",
-          password: "",
-          recoveryCodeSaved: false,
+          email: setupWizardEmail,
+          password: setupWizardPassword,
+          recoveryCodeSaved: false, // Always reset - must confirm each session
         }}
+        enableReinitialize
         validationSchema={setupSchema}
         onSubmit={handleSubmit}
       >
-        {({ values, errors, touched, setFieldValue }) => (
+        {({
+          values,
+          errors,
+          touched,
+          setFieldValue,
+          validateField,
+          setFieldTouched,
+        }) => (
           <StyledForm>
             <AuthContent>
               {/* Step 0: Welcome */}
@@ -370,12 +391,15 @@ export default function SetupPage() {
                   </Typography>
                   <StepList>
                     <StepListItem variant="body1">
+                      <CheckRoundedIcon color="success" />
                       {t("auth.setup.welcome.step1")}
                     </StepListItem>
                     <StepListItem variant="body1">
+                      <CheckRoundedIcon color="success" />
                       {t("auth.setup.welcome.step2")}
                     </StepListItem>
                     <StepListItem variant="body1">
+                      <CheckRoundedIcon color="success" />
                       {t("auth.setup.welcome.step3")}
                     </StepListItem>
                   </StepList>
@@ -398,17 +422,21 @@ export default function SetupPage() {
                   <Typography variant="h5" gutterBottom>
                     {t("auth.setup.email.title")}
                   </Typography>
-                  <Typography variant="body1" paragraph>
+                  <Typography variant="body1" color="text.information">
                     {t("auth.setup.email.description")}
                   </Typography>
+                  <br />
                   <Field
-                    as={StyledTextField}
+                    as={GeneralInput}
                     fullWidth
                     name="email"
                     label={t("auth.setup.email.emailLabel")}
+                    placeholder="admin@email.com"
                     type="email"
                     error={touched.email && Boolean(errors.email)}
                     helperText={touched.email && errors.email}
+                    required
+                    margin="normal"
                   />
                   <ButtonContainerSpaceBetween>
                     <GeneralButton
@@ -418,7 +446,18 @@ export default function SetupPage() {
                       maxWidth="auto"
                     />
                     <GeneralButton
-                      onAction={handleNext}
+                      onAction={async () => {
+                        setFieldTouched("email", true);
+                        const error = await validateField("email");
+                        if (!error) {
+                          dispatch(
+                            updateSetupWizard({
+                              step: activeStep + 1,
+                              email: values.email,
+                            }),
+                          );
+                        }
+                      }}
                       label={t("auth.common.next")}
                       disabled={!values.email || Boolean(errors.email)}
                       maxWidth="auto"
@@ -438,11 +477,20 @@ export default function SetupPage() {
                   </Typography>
                   <PasswordInput
                     value={values.password}
-                    onChange={(e) => setFieldValue("password", e.target.value)}
+                    onChange={(e) =>
+                      setFieldValue(
+                        "password",
+                        e.target.value.replace(/\s/g, ""),
+                      )
+                    }
                     label={t("auth.setup.password.passwordLabel")}
                     placeholder={t("auth.setup.password.passwordLabel")}
                     error={touched.password && Boolean(errors.password)}
-                    helperText={touched.password ? errors.password : undefined}
+                    helperText={
+                      touched.password
+                        ? (errors.password as string | undefined)
+                        : undefined
+                    }
                     showCubeIcon
                     showEyeIcon
                     showProgressBar
