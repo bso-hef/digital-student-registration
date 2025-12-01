@@ -1,3 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+// AppAction interface for reducers
+export interface AppAction {
+  type: string;
+  payload?: any;
+  [key: string]: any;
+}
+
 // ui
 export const SET_DOCUMENT_DRAGGED_OVER = "SET_DOCUMENT_DRAGGED_OVER";
 export const SET_APP_TOUCHED = "SET_APP_TOUCHED";

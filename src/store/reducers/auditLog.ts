@@ -1,5 +1,5 @@
 import * as TYPES from "../types";
-import { AppAction } from "./index";
+import { AppAction } from "../types";
 
 export interface AuditLogEntry {
   _id: string;

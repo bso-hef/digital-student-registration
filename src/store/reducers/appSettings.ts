@@ -1,7 +1,7 @@
 import { AppSettings } from "@/types/settings";
 
 import * as TYPES from "../types";
-import { AppAction } from "./index";
+import { AppAction } from "../types";
 
 interface AppSettingsState {
   data: AppSettings | null;

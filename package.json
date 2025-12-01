@@ -22,7 +22,9 @@
     "test:all": "yarn test:unit",
     "healthcheck": "sh scripts/docker-healthcheck.sh",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "dep-graph": "madge --image dependency-graph.svg --extensions ts,tsx --ts-config tsconfig.json src/",
+    "dep-graph:circular": "madge --circular --extensions ts,tsx --ts-config tsconfig.json src/"
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^3.11.1",
@@ -117,6 +119,7 @@
     "happy-dom": "^20.0.8",
     "jsdom": "^27.0.1",
     "lodash-es": "^4.17.21",
+    "madge": "^8.0.0",
     "mongodb-memory-server": "^10.2.3",
     "msw": "^2.11.6",
     "prettier": "^3.6.2",

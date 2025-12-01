@@ -3,7 +3,7 @@ import { Student } from "@/types/db";
 import { StudentData } from "@/types/student";
 
 import * as TYPES from "../types";
-import { AppAction } from "./index";
+import { AppAction } from "../types";
 
 interface StudentState {
   currentStep: number;

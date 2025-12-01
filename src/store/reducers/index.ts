@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { combineReducers } from "redux";
 
 import appSettingsReducer from "./appSettings";
@@ -9,11 +8,8 @@ import dashboardReducer from "./dashboard";
 import studentReducer from "./student";
 import uiReducer from "./ui";
 
-export interface AppAction {
-  type: string;
-  payload?: any;
-  [key: string]: any;
-}
+// Re-export AppAction from types for backwards compatibility
+export { AppAction } from "../types";
 
 const rootReducer = combineReducers({
   appSettings: appSettingsReducer,
