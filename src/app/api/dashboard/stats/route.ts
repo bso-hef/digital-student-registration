@@ -121,7 +121,7 @@ export async function GET() {
     // Format grade distribution
     const gradeDistribution = classesByGrade.map(
       (item: { _id: number | null; count: number }) => ({
-        grade: item._id !== null ? `Grade ${item._id}` : "No Grade",
+        grade: item._id !== null ? `Klasse ${item._id}` : "Keine Klasse",
         count: item.count,
       }),
     );

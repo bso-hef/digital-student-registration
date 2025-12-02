@@ -122,11 +122,58 @@ export async function POST(
 
     const now = new Date();
     const classObjectId = new mongoose.Types.ObjectId(classId);
+    const studentObjectIds = studentIds.map(
+      (id) => new mongoose.Types.ObjectId(id),
+    );
 
-    // Update students
+    // Find students that are being transferred from other classes
+    const studentsToTransfer = await Student.find({
+      _id: { $in: studentObjectIds },
+      active: true,
+      currentClass: { $ne: null, $ne: classObjectId },
+    })
+      .select("_id currentClass classHistory")
+      .lean();
+
+    // Group by old class to decrement counts
+    const oldClassCountMap = new Map<string, number>();
+    for (const student of studentsToTransfer) {
+      if (student.currentClass) {
+        const oldClassId = student.currentClass.toString();
+        oldClassCountMap.set(
+          oldClassId,
+          (oldClassCountMap.get(oldClassId) || 0) + 1,
+        );
+      }
+    }
+
+    // Close classHistory entries for students leaving their old classes
+    if (studentsToTransfer.length > 0) {
+      const transferStudentIds = studentsToTransfer.map((s) => s._id);
+      await Student.updateMany(
+        { _id: { $in: transferStudentIds } },
+        { $set: { "classHistory.$[elem].endDate": now } },
+        { arrayFilters: [{ "elem.endDate": null }] },
+      );
+    }
+
+    // Decrement old class studentCounts
+    if (oldClassCountMap.size > 0) {
+      const bulkOps = Array.from(oldClassCountMap.entries()).map(
+        ([oldClassId, count]) => ({
+          updateOne: {
+            filter: { _id: new mongoose.Types.ObjectId(oldClassId) },
+            update: { $inc: { studentCount: -count } },
+          },
+        }),
+      );
+      await Class.bulkWrite(bulkOps);
+    }
+
+    // Update students with new class assignment
     const updateResult = await Student.updateMany(
       {
-        _id: { $in: studentIds.map((id) => new mongoose.Types.ObjectId(id)) },
+        _id: { $in: studentObjectIds },
         active: true,
       },
       {
@@ -153,7 +200,7 @@ export async function POST(
       );
     }
 
-    // Update class student count
+    // Update new class student count
     await Class.findByIdAndUpdate(classId, {
       $inc: { studentCount: updateResult.modifiedCount },
     });

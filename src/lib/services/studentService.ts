@@ -27,6 +27,9 @@ const studentService = {
   getUnassigned: () => {
     return http.get("/api/students?unassigned=true");
   },
+  getForAssignment: () => {
+    return http.get("/api/students?forAssignment=true&limit=200");
+  },
   create: (students: CreateStudentInput[]) => {
     return http.post("/api/students", { students });
   },

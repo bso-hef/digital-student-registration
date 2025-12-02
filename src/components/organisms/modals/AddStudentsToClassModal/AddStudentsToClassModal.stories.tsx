@@ -17,6 +17,7 @@ export const Default: Story = {
   args: {
     open: true,
     onClose: () => {},
+    onAddStudents: () => {},
     classId: "test-class-id",
   },
   play: async () => {

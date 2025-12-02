@@ -96,18 +96,27 @@ export async function GET(request: NextRequest) {
     );
     const skip = (page - 1) * limit;
     const unassigned = searchParams.get("unassigned") === "true";
+    const forAssignment = searchParams.get("forAssignment") === "true";
 
     // Build filter query
     const filter: Record<string, unknown> = {};
     if (unassigned) {
       filter.currentClass = null;
       filter.active = true;
+    } else if (forAssignment) {
+      // For class assignment: get all active students (including those already assigned)
+      filter.active = true;
     }
+
+    // Sort by name for assignment dropdown, by date for other views
+    const sortOrder = forAssignment
+      ? { lastName: 1 as const, firstName: 1 as const }
+      : { createdAt: -1 as const, _id: -1 as const };
 
     const [students, total] = await Promise.all([
       Student.find(filter)
         .populate("currentClass", "name")
-        .sort({ createdAt: -1, _id: -1 })
+        .sort(sortOrder)
         .skip(skip)
         .limit(limit)
         .lean(),
@@ -277,12 +286,35 @@ export async function DELETE(request: Request) {
       );
     }
 
-    // Fetch student names before deletion for audit log
+    // Fetch student data before deletion for audit log and class count updates
     const students = await Student.find({ _id: { $in: ids } })
-      .select("firstName lastName")
+      .select("firstName lastName currentClass")
       .lean();
 
+    // Aggregate class IDs and counts for students being deleted
+    const classCountMap = new Map<string, number>();
+    for (const student of students) {
+      if (student.currentClass) {
+        const classId = student.currentClass.toString();
+        classCountMap.set(classId, (classCountMap.get(classId) || 0) + 1);
+      }
+    }
+
     const result = await Student.deleteMany({ _id: { $in: ids } });
+
+    // Update class student counts after successful deletion
+    if (classCountMap.size > 0 && result.deletedCount > 0) {
+      const Class = (await import("@/models/Class")).default;
+      const bulkOps = Array.from(classCountMap.entries()).map(
+        ([classId, count]) => ({
+          updateOne: {
+            filter: { _id: classId },
+            update: { $inc: { studentCount: -count } },
+          },
+        }),
+      );
+      await Class.bulkWrite(bulkOps);
+    }
 
     // Log audit entry
     await createAuditLog(

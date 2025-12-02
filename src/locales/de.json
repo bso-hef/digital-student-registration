@@ -107,8 +107,8 @@
   },
   "modals": {
     "addStudent": {
-      "title": "Studenten hinzufügen",
-      "subtitle": "Fügen Sie Studenten manuell oder per CSV-Import hinzu",
+      "title": "Schüler hinzufügen",
+      "subtitle": "Fügen Sie Schüler manuell oder per CSV-Import hinzu",
       "firstName": "Vorname",
       "lastName": "Nachname",
       "dateOfBirth": "Geburtsdatum",
