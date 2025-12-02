@@ -1,4 +1,4 @@
-import { tServer } from "@/lib/server-i18n";
+import i18next from "i18next";
 import { jsPDF } from "jspdf";
 
 import { makeQrDataUrl } from "./qr.utils";
@@ -19,12 +19,16 @@ export type PdfSettings = {
   includeClass: boolean;
   shortenId: boolean;
   wizardUrlTemplate: string; // z.B. WIZZARD_URL mit {short-id}
+  locale?: string;
 };
 
 export async function buildPdfForStudent(
   s: Student,
   settings: PdfSettings,
 ): Promise<Blob> {
+  const { locale = "en" } = settings;
+  const t = (key: string) => i18next.t(key, { lng: locale });
+
   const isPortrait = settings.orientation === "portrait";
   const doc = new jsPDF({
     orientation: isPortrait ? "portrait" : "landscape",
@@ -47,7 +51,7 @@ export async function buildPdfForStudent(
   // Header
   doc.setFontSize(11);
   doc.setFont("helvetica");
-  doc.text(tServer("pdf.onboardingWizard"), pad, pad + 7);
+  doc.text(t("modals.generateQrModal.onboardingWizard"), pad, pad + 7);
 
   // URL + QR
   const sid = s._id || "";
@@ -86,9 +90,14 @@ export async function buildPdfForStudent(
     classNameToDisplay &&
     classNameToDisplay.trim()
   ) {
-    doc.text(`${tServer("pdf.class")} ${classNameToDisplay}`, textX, ty, {
-      maxWidth: textMaxW,
-    });
+    doc.text(
+      `${t("modals.generateQrModal.class")} ${classNameToDisplay}`,
+      textX,
+      ty,
+      {
+        maxWidth: textMaxW,
+      },
+    );
     ty += 7;
   }
 
@@ -97,7 +106,7 @@ export async function buildPdfForStudent(
     doc.setTextColor(0);
     doc.setFontSize(14);
     doc.text(
-      `${tServer("pdf.verificationCode")} ${s.verificationCode}`,
+      `${t("modals.generateQrModal.verificationCode")} ${s.verificationCode}`,
       textX,
       ty,
     );
@@ -108,7 +117,7 @@ export async function buildPdfForStudent(
   doc.setFont("helvetica", "normal");
   doc.setTextColor(120);
   doc.setFontSize(8);
-  doc.text(`${tServer("pdf.id")} ${shownId}`, textX, ty);
+  doc.text(`${t("modals.generateQrModal.id")} ${shownId}`, textX, ty);
   ty += 6;
 
   doc.setTextColor(0);
@@ -120,7 +129,7 @@ export async function buildPdfForStudent(
   doc.setFontSize(9);
   doc.setTextColor(100);
   doc.text(
-    `${settings.pageSize} • ${isPortrait ? tServer("pdf.portrait") : tServer("pdf.landscape")}`,
+    `${settings.pageSize} • ${isPortrait ? t("modals.generateQrModal.portrait") : t("modals.generateQrModal.landscape")}`,
     pad,
     pageH - pad,
   );

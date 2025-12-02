@@ -229,6 +229,15 @@ const studentReducer = (state = initialStudentState, action: AppAction) => {
     case TYPES.SUBMIT_ONBOARDING_FAILURE:
       return { ...state, loading: false, error: action.payload };
 
+    case TYPES.UPDATE_STUDENT_CLASS_REQUEST:
+      return { ...state, loading: true, error: null };
+
+    case TYPES.UPDATE_STUDENT_CLASS_SUCCESS:
+      return { ...state, loading: false };
+
+    case TYPES.UPDATE_STUDENT_CLASS_FAILURE:
+      return { ...state, loading: false, error: action.payload };
+
     default:
       return state;
   }

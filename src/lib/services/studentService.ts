@@ -54,6 +54,10 @@ const studentService = {
       finalSubmit: true,
     });
   },
+  // Class assignment method
+  updateClass: (id: string, classId: string | null) => {
+    return http.patch(`/api/students/${id}`, { currentClass: classId });
+  },
 };
 
 export default studentService;

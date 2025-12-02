@@ -330,3 +330,30 @@ export const submitOnboarding =
       });
     }
   };
+
+/**
+ * Updates a student's class assignment
+ * @param studentId - Student ID to update
+ * @param classId - New class ID (or null to unassign)
+ */
+export const updateStudentClass =
+  (studentId: string, classId: string | null): AppThunk =>
+  async (dispatch) => {
+    dispatch({ type: TYPES.UPDATE_STUDENT_CLASS_REQUEST });
+    try {
+      await studentService.updateClass(studentId, classId);
+
+      dispatch({ type: TYPES.UPDATE_STUDENT_CLASS_SUCCESS });
+      successNotification(i18n.t("actions.studentClassUpdateSuccess"));
+
+      // Refresh students list to get updated data with populated class
+      dispatch(getStudents());
+    } catch (error) {
+      errorNotification(i18n.t("actions.studentClassUpdateFailed"));
+      dispatch({
+        type: TYPES.UPDATE_STUDENT_CLASS_FAILURE,
+        payload: error,
+      });
+      throw error; // Re-throw for component to handle rollback
+    }
+  };

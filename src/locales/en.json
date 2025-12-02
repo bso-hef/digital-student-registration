@@ -201,7 +201,9 @@
     "auditLogExportSuccess": "Audit logs exported successfully.",
     "auditLogExportFailed": "Failed to export audit logs.",
     "auditLogClearSuccess": "Audit logs cleared successfully.",
-    "auditLogClearFailed": "Failed to clear audit logs."
+    "auditLogClearFailed": "Failed to clear audit logs.",
+    "studentClassUpdateSuccess": "Student class updated successfully.",
+    "studentClassUpdateFailed": "Failed to update student class."
   },
   "dashboard": {
     "title": "Dashboard",
@@ -494,7 +496,9 @@
       "importStudents": "Import Students",
       "deleteStudents": "Delete Students",
       "generateQRCode": "Generate QR Code",
-      "delete Student request": "Are you sure you want to delete the selected student(s)? This action cannot be undone."
+      "delete Student request": "Are you sure you want to delete the selected student(s)? This action cannot be undone.",
+      "noClass": "No Class",
+      "selectClass": "Select class..."
     },
     "manageClass": {
       "className": "Class Name",

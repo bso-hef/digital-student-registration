@@ -201,7 +201,9 @@
     "auditLogExportSuccess": "Audit-Protokolle erfolgreich exportiert.",
     "auditLogExportFailed": "Export der Audit-Protokolle fehlgeschlagen.",
     "auditLogClearSuccess": "Audit-Protokolle erfolgreich gelöscht.",
-    "auditLogClearFailed": "Löschen der Audit-Protokolle fehlgeschlagen."
+    "auditLogClearFailed": "Löschen der Audit-Protokolle fehlgeschlagen.",
+    "studentClassUpdateSuccess": "Schülerklasse erfolgreich aktualisiert.",
+    "studentClassUpdateFailed": "Fehler beim Aktualisieren der Schülerklasse."
   },
   "dashboard": {
     "title": "Dashboard",
@@ -494,7 +496,9 @@
       "importStudents": "Schüler hinzufügen",
       "deleteStudents": "Schüler löschen",
       "generateQRCode": "QR-Code generieren",
-      "delete Student request": "Sind Sie sicher, dass Sie die ausgewählten Schüler löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
+      "delete Student request": "Sind Sie sicher, dass Sie die ausgewählten Schüler löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+      "noClass": "Keine Klasse",
+      "selectClass": "Klasse auswählen..."
     },
     "manageClass": {
       "className": "Klassenname",

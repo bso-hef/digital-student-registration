@@ -3,12 +3,15 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
+import GeneralDropdown from "@/components/atoms/dropdowns/GeneralDropdown";
 import StudentStatus from "@/components/atoms/status/StudentStatus";
 import AdminSettingsHeader from "@/components/molecules/AdminSettingsHeader";
+import ClassAutocomplete from "@/components/molecules/ClassAutocomplete";
 import AddStudentModal from "@/components/organisms/modals/AddStudentModal";
 import ConfirmationModal from "@/components/organisms/modals/ConfirmationModal";
 import GenerateQrDialog from "@/components/organisms/modals/GenerateQrModal";
 import DataTable from "@/components/organisms/tables/DataTable";
+import { getClasses } from "@/store/actions/classActions";
 import {
   addStudents,
   deleteStudents,
@@ -60,6 +63,7 @@ const StudentManagementPage = () => {
   const { students, loading } = useSelector(
     (state: RootState) => state.student,
   );
+  const { classes } = useSelector((state: RootState) => state.class);
 
   const [openStudentAddModal, setOpenStudentAddModal] = useState(false);
   const [openStudentDeleteModal, setOpenStudentDeleteModal] = useState(false);
@@ -71,6 +75,11 @@ const StudentManagementPage = () => {
 
   useEffect(() => {
     dispatch(getStudents());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    dispatch(getClasses());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -143,24 +152,26 @@ const StudentManagementPage = () => {
     return filterStudents(searchString, students).map((student: Student) => {
       const currentClass = (
         student as Student & {
-          currentClass?: { name?: string } | string | null;
+          currentClass?: { _id: string; name: string } | string | null;
         }
       ).currentClass;
-      const className =
-        currentClass && typeof currentClass === "object"
-          ? (currentClass as { name: string }).name
-          : "-";
 
       return {
         id: student?._id,
         firstName: student?.firstName,
         lastName: student?.lastName,
-        class: className,
+        class: (
+          <ClassAutocomplete
+            studentId={student._id}
+            currentClass={currentClass}
+            availableClasses={classes}
+          />
+        ),
         verificationCode: student?.verificationCode || "-",
         status: <StudentStatus studentStatus={student?.status} />,
       };
     });
-  }, [students, searchString]);
+  }, [students, searchString, classes]);
 
   const handleDeleteStudents = useCallback(() => {
     const ids = selectedItems.filter(

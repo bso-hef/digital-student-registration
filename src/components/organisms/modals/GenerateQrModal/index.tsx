@@ -27,6 +27,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 
 import GeneralModal from "../GeneralModal";
 
@@ -89,6 +90,7 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
 }) => {
   const theme = useTheme();
   const { t } = useTranslation();
+  const locale = useSelector((state: any) => state.ui.locale) || "en";
 
   const [pageSize, setPageSize] = useState<"A4" | "A5">("A4");
   const [orientation, setOrientation] = useState<"portrait" | "landscape">(
@@ -157,6 +159,7 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
           includeClass,
           shortenId,
           wizardUrlTemplate: WIZZARD_URL,
+          locale,
         });
         const filename = resolveFilename(s);
         downloadBlob(filename, pdf);
@@ -172,6 +175,7 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
             includeClass,
             shortenId,
             wizardUrlTemplate: WIZZARD_URL,
+            locale,
           });
           files.push({ name: resolveFilename(s), blob: pdf });
           done += 1;
