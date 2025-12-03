@@ -1,4 +1,5 @@
 import ClientLogger from "@/lib/client-logger";
+import { Student } from "@/types/db";
 import i18n from "i18next";
 
 import { errorNotification, successNotification } from "./notification.utils";
@@ -188,4 +189,220 @@ export function parseCSVFile(
     // Read as ArrayBuffer to properly handle BOM via TextDecoder
     reader.readAsArrayBuffer(file);
   });
+}
+
+type ExportSettings = {
+  includeEmptyFields?: boolean;
+  locale?: string;
+};
+
+function escapeCSVField(value: any): string {
+  if (value === null || value === undefined || value === "") {
+    return "";
+  }
+
+  const str = String(value);
+
+  if (str.includes(";") || str.includes('"') || str.includes("\n")) {
+    return `"${str.replace(/"/g, '""')}"`;
+  }
+
+  return str;
+}
+
+function buildCSVRow(student: Student, includeEmptyFields: boolean): string[] {
+  const getClassName = () => {
+    if (
+      student.currentClass &&
+      typeof student.currentClass === "object" &&
+      "name" in student.currentClass
+    ) {
+      return student.currentClass.name || "";
+    }
+    return "";
+  };
+
+  const cp1 = student.contactPersons?.[0];
+  const cp2 = student.contactPersons?.[1];
+  const cp3 = student.contactPersons?.[2];
+
+  const row = [
+    student.firstName || "",
+    student.lastName || "",
+    student.birthName || "",
+    student.dateOfBirth || "",
+    student.gender || "",
+    student.religion || "",
+    student.email || "",
+    student.mobile || "",
+    student.phone || "",
+    student.address?.street || "",
+    student.address?.houseNumber || "",
+    student.address?.postalCode || "",
+    student.address?.city || "",
+    student.birthPlace || "",
+    student.birthCountry || "",
+    student.nationality || "",
+    student.nationality2 || "",
+    student.immigrationYear || "",
+    student.familyLanguage || "",
+    cp1?.type || "",
+    cp1?.firstName || "",
+    cp1?.lastName || "",
+    cp1?.street || "",
+    cp1?.houseNumber || "",
+    cp1?.postalCode || "",
+    cp1?.city || "",
+    cp1?.mobile || "",
+    cp1?.phone || "",
+    cp2?.type || "",
+    cp2?.firstName || "",
+    cp2?.lastName || "",
+    cp2?.street || "",
+    cp2?.houseNumber || "",
+    cp2?.postalCode || "",
+    cp2?.city || "",
+    cp2?.mobile || "",
+    cp2?.phone || "",
+    cp3?.type || "",
+    cp3?.firstName || "",
+    cp3?.lastName || "",
+    cp3?.street || "",
+    cp3?.houseNumber || "",
+    cp3?.postalCode || "",
+    cp3?.city || "",
+    cp3?.mobile || "",
+    cp3?.phone || "",
+    student.previousSchool || "",
+    student.previousSchoolType || "",
+    student.previousGrade || "",
+    student.degrees || "",
+    student.trainingOccupation || "",
+    student.employer?.name || "",
+    student.employer?.contactName || "",
+    student.employer?.phone || "",
+    student.employer?.email || "",
+    student.employer?.street || "",
+    student.employer?.houseNumber || "",
+    student.employer?.postalCode || "",
+    student.employer?.city || "",
+    student.employer?.startDate || "",
+    student.agreements?.dataProtection ? "true" : "false",
+    student.agreements?.classParticipation ? "true" : "false",
+    student.agreements?.schoolRules ? "true" : "false",
+    student.agreements?.imageRights ? "true" : "false",
+    student.agreements?.teamsUsage ? "true" : "false",
+    getClassName(),
+    student._id || "",
+    student.status || "",
+    String(student.onboardingStep ?? ""),
+  ];
+
+  return row.map((v) => escapeCSVField(v));
+}
+
+function getCSVHeaders(): string[] {
+  return [
+    "firstName",
+    "lastName",
+    "birthName",
+    "dateOfBirth",
+    "gender",
+    "religion",
+    "email",
+    "mobile",
+    "phone",
+    "street",
+    "houseNumber",
+    "postalCode",
+    "city",
+    "birthPlace",
+    "birthCountry",
+    "nationality",
+    "nationality2",
+    "immigrationYear",
+    "familyLanguage",
+    "cp1_type",
+    "cp1_firstName",
+    "cp1_lastName",
+    "cp1_street",
+    "cp1_houseNumber",
+    "cp1_postalCode",
+    "cp1_city",
+    "cp1_mobile",
+    "cp1_phone",
+    "cp2_type",
+    "cp2_firstName",
+    "cp2_lastName",
+    "cp2_street",
+    "cp2_houseNumber",
+    "cp2_postalCode",
+    "cp2_city",
+    "cp2_mobile",
+    "cp2_phone",
+    "cp3_type",
+    "cp3_firstName",
+    "cp3_lastName",
+    "cp3_street",
+    "cp3_houseNumber",
+    "cp3_postalCode",
+    "cp3_city",
+    "cp3_mobile",
+    "cp3_phone",
+    "previousSchool",
+    "previousSchoolType",
+    "previousGrade",
+    "degrees",
+    "trainingOccupation",
+    "employer_name",
+    "employer_contactName",
+    "employer_phone",
+    "employer_email",
+    "employer_street",
+    "employer_houseNumber",
+    "employer_postalCode",
+    "employer_city",
+    "employer_startDate",
+    "agreement_dataProtection",
+    "agreement_classParticipation",
+    "agreement_schoolRules",
+    "agreement_imageRights",
+    "agreement_teamsUsage",
+    "className",
+    "studentId",
+    "status",
+    "onboardingStep",
+  ];
+}
+
+export async function buildStudentDataCsv(
+  student: Student,
+  settings: ExportSettings = {},
+): Promise<Blob> {
+  const { includeEmptyFields = false } = settings;
+
+  const headers = getCSVHeaders();
+  const dataRow = buildCSVRow(student, includeEmptyFields);
+
+  const csvLines = [headers.join(";"), dataRow.join(";")];
+
+  const csvContent = "\uFEFF" + csvLines.join("\n");
+
+  return new Blob([csvContent], { type: "text/csv;charset=utf-8" });
+}
+
+export async function buildCombinedStudentDataCsv(
+  students: Student[],
+  settings: ExportSettings = {},
+): Promise<Blob> {
+  const { includeEmptyFields = false } = settings;
+
+  const headers = getCSVHeaders();
+  const dataRows = students.map((s) => buildCSVRow(s, includeEmptyFields));
+
+  const csvLines = [headers.join(";"), ...dataRows.map((row) => row.join(";"))];
+
+  const csvContent = "\uFEFF" + csvLines.join("\n");
+
+  return new Blob([csvContent], { type: "text/csv;charset=utf-8" });
 }

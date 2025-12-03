@@ -8,6 +8,7 @@ import AdminSettingsHeader from "@/components/molecules/AdminSettingsHeader";
 import ClassAutocomplete from "@/components/molecules/ClassAutocomplete";
 import AddStudentModal from "@/components/organisms/modals/AddStudentModal";
 import ConfirmationModal from "@/components/organisms/modals/ConfirmationModal";
+import ExportStudentDataModal from "@/components/organisms/modals/ExportStudentDataModal";
 import GenerateQrDialog from "@/components/organisms/modals/GenerateQrModal";
 import DataTable from "@/components/organisms/tables/DataTable";
 import { getClasses } from "@/store/actions/classActions";
@@ -22,6 +23,7 @@ import { CreateStudentInput } from "@/types/student";
 import { ParsedStudent, parseCSVFile } from "@/utils/csv.utils";
 import { filterStudents } from "@/utils/filter.utils";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
+import FileDownloadRoundedIcon from "@mui/icons-material/FileDownloadRounded";
 import QrCode2RoundedIcon from "@mui/icons-material/QrCode2Rounded";
 import UploadFileRoundedIcon from "@mui/icons-material/UploadFileRounded";
 import { Box, styled } from "@mui/material";
@@ -67,6 +69,7 @@ const StudentManagementPage = () => {
   const [openStudentAddModal, setOpenStudentAddModal] = useState(false);
   const [openStudentDeleteModal, setOpenStudentDeleteModal] = useState(false);
   const [openStudentQRModal, setOpenStudentQRModal] = useState(false);
+  const [openStudentExportModal, setOpenStudentExportModal] = useState(false);
   const [searchString, setSearchString] = useState("");
   const [csvData, setCsvData] = useState<ParsedStudent[]>([]);
   const [selectedItems, setSelectedItems] = useState<(string | number)[]>([]);
@@ -120,6 +123,14 @@ const StudentManagementPage = () => {
 
   const handleQRStudentModalClose = useCallback(() => {
     setOpenStudentQRModal(false);
+  }, []);
+
+  const handleExportStudentModalOpen = useCallback(() => {
+    setOpenStudentExportModal(true);
+  }, []);
+
+  const handleExportStudentModalClose = useCallback(() => {
+    setOpenStudentExportModal(false);
   }, []);
 
   const handleAddStudents = useCallback(
@@ -205,6 +216,13 @@ const StudentManagementPage = () => {
           selectedItems.includes(student._id),
         )}
       />
+      <ExportStudentDataModal
+        open={openStudentExportModal}
+        onClose={handleExportStudentModalClose}
+        students={students.filter((student: Student) =>
+          selectedItems.includes(student._id),
+        )}
+      />
       <AdminSettingsHeader
         title={t("navigation.studentManagement")}
         onSearch={(value: string) => {
@@ -228,6 +246,15 @@ const StudentManagementPage = () => {
           isPrimary={false}
           disabled={selectedItems.length === 0}
           startIcon={<QrCode2RoundedIcon />}
+        />
+        <GeneralButton
+          label={t("settings.manageStudent.exportStudentData")}
+          onAction={handleExportStudentModalOpen}
+          fullHeight={false}
+          fullWidth={false}
+          isPrimary={false}
+          disabled={selectedItems.length === 0}
+          startIcon={<FileDownloadRoundedIcon />}
         />
         <GeneralButton
           label={t("settings.manageStudent.importStudents")}

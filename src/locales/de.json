@@ -37,7 +37,9 @@
     "Submit": "Absenden",
     "Submitting": "Wird übermittelt...",
     "Accepted": "Akzeptiert",
-    "NotAccepted": "Nicht akzeptiert"
+    "NotAccepted": "Nicht akzeptiert",
+    "Student": "Schüler",
+    "Students": "Schüler"
   },
   "error": {
     "Page not found": "Seite nicht gefunden",
@@ -142,6 +144,36 @@
       "downloadPdf": "PDF herunterladen",
       "createZip": "ZIP erzeugen",
       "title": "QR-PDFs für ausgewählte Schüler erzeugen"
+    },
+    "exportStudentData": {
+      "title": "Schülerdaten exportieren",
+      "format": "Exportformat",
+      "csvMode": "CSV-Exportmodus",
+      "csvModeSeparate": "Einzelne Dateien",
+      "csvModeCombined": "Kombinierte Datei",
+      "pageSize": "Seitengröße",
+      "orientation": "Ausrichtung",
+      "portrait": "Hochformat",
+      "landscape": "Querformat",
+      "filenameSchema": "Dateimuster",
+      "filenameSchemaExample": "Verfügbar: {vorname}, {nachname}, {klasse}, {date}, {id}, {shortId}",
+      "options": "Optionen",
+      "includeEmptyFields": "Leere Felder einbeziehen",
+      "preview": "Vorschau:",
+      "downloadPdf": "PDF herunterladen",
+      "downloadJson": "JSON herunterladen",
+      "downloadCsv": "CSV herunterladen",
+      "createZip": "ZIP erstellen",
+      "progress": "Fortschritt: {{progress}}%",
+      "creatingZip": "ZIP wird erstellt...",
+      "sections": "Einzuschließende Abschnitte:",
+      "generalInfo": "Persönliche Informationen",
+      "origin": "Herkunft/Einwanderung",
+      "address": "Adresse & Kontakt",
+      "contactPersons": "Ansprechpartner",
+      "education": "Vorherige Ausbildung",
+      "training": "Berufliche Ausbildung",
+      "agreements": "Zustimmungen"
     },
     "addClass": {
       "title": "Klasse hinzufügen",
@@ -500,6 +532,7 @@
       "importStudents": "Schüler hinzufügen",
       "deleteStudents": "Schüler löschen",
       "generateQRCode": "QR-Code generieren",
+      "exportStudentData": "Schülerdaten exportieren",
       "delete Student request": "Sind Sie sicher, dass Sie die ausgewählten Schüler löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
       "noClass": "Keine Klasse",
       "selectClass": "Klasse auswählen..."
@@ -760,7 +793,14 @@
       "verificationCode": "Verifizierungscode:",
       "id": "ID:",
       "portrait": "Hochformat",
-      "landscape": "Querformat"
+      "landscape": "Querformat",
+      "studentData": {
+        "title": "Schüler-Anmeldedokument",
+        "generatedOn": "Erstellt am",
+        "pageOf": "Seite {current} von {total}",
+        "documentId": "Dokument-ID",
+        "noData": "Nicht angegeben"
+      }
     },
     "studentLogin": {
       "title": "Anmeldung der BSO",

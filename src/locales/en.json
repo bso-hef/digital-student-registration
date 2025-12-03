@@ -37,7 +37,9 @@
     "Submit": "Submit",
     "Submitting": "Submitting...",
     "Accepted": "Accepted",
-    "NotAccepted": "Not Accepted"
+    "NotAccepted": "Not Accepted",
+    "Student": "Student",
+    "Students": "Students"
   },
   "error": {
     "Page not found": "Page not found",
@@ -142,6 +144,36 @@
       "downloadPdf": "Download PDF",
       "createZip": "Create ZIP",
       "title": "Generate QR PDFs for selected students"
+    },
+    "exportStudentData": {
+      "title": "Export Student Data",
+      "format": "Export Format",
+      "csvMode": "CSV Export Mode",
+      "csvModeSeparate": "Separate Files",
+      "csvModeCombined": "Combined File",
+      "pageSize": "Page Size",
+      "orientation": "Orientation",
+      "portrait": "Portrait",
+      "landscape": "Landscape",
+      "filenameSchema": "Filename Pattern",
+      "filenameSchemaExample": "Available: {firstName}, {lastName}, {class}, {date}, {id}, {shortId}",
+      "options": "Options",
+      "includeEmptyFields": "Include Empty Fields",
+      "preview": "Preview:",
+      "downloadPdf": "Download PDF",
+      "downloadJson": "Download JSON",
+      "downloadCsv": "Download CSV",
+      "createZip": "Create ZIP",
+      "progress": "Progress: {{progress}}%",
+      "creatingZip": "Creating ZIP...",
+      "sections": "Sections to Include:",
+      "generalInfo": "Personal Information",
+      "origin": "Origin/Immigration",
+      "address": "Address & Contact",
+      "contactPersons": "Contact Persons",
+      "education": "Previous Education",
+      "training": "Vocational Training",
+      "agreements": "Agreements"
     },
     "addClass": {
       "title": "Add Class",
@@ -500,6 +532,7 @@
       "importStudents": "Import Students",
       "deleteStudents": "Delete Students",
       "generateQRCode": "Generate QR Code",
+      "exportStudentData": "Export Student Data",
       "delete Student request": "Are you sure you want to delete the selected student(s)? This action cannot be undone.",
       "noClass": "No Class",
       "selectClass": "Select class..."
@@ -760,7 +793,14 @@
       "verificationCode": "Verification Code:",
       "id": "ID:",
       "portrait": "Portrait",
-      "landscape": "Landscape"
+      "landscape": "Landscape",
+      "studentData": {
+        "title": "Student Onboarding Document",
+        "generatedOn": "Generated on",
+        "pageOf": "Page {current} of {total}",
+        "documentId": "Document ID",
+        "noData": "Not provided"
+      }
     },
     "studentLogin": {
       "title": "BSO Registration",
