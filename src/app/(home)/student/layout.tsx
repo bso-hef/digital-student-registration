@@ -5,6 +5,8 @@ import { useMemo } from "react";
 import Logo from "@/components/atoms/Logo";
 import BackgroundStudyPattern from "@/components/organisms/BackgroundStudyPattern";
 import DynamicPageStepper from "@/components/organisms/DynamicPageStepper";
+import RotationBlocker from "@/components/organisms/RotationBlocker";
+import { SCREEN_BLOCKER_TYPES } from "@/constants/general.constants";
 import {
   getActiveSteps,
   getStudentSteps,
@@ -98,7 +100,8 @@ export default function StudentLayout({
   );
   const theme = useTheme();
   const { t } = useTranslation();
-  const { isMobile, isTabletVertical } = useDeviceTypeDetection();
+  const { isMobile, isTabletVertical, isMobileHorizontal, isTabletHorizontal } =
+    useDeviceTypeDetection();
   const pathname = usePathname();
 
   const isStudentWizzardPage =
@@ -114,6 +117,12 @@ export default function StudentLayout({
 
   return (
     <StyledBox>
+      {(isMobileHorizontal || isTabletHorizontal) && (
+        <RotationBlocker
+          blockerType={SCREEN_BLOCKER_TYPES.LANDSCAPE}
+          message={t("screenBlockers.portrait")}
+        />
+      )}
       <BackgroundStudyPattern
         haveGradient={false}
         density={0.3}

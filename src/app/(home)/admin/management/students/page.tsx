@@ -3,7 +3,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
-import GeneralDropdown from "@/components/atoms/dropdowns/GeneralDropdown";
 import StudentStatus from "@/components/atoms/status/StudentStatus";
 import AdminSettingsHeader from "@/components/molecules/AdminSettingsHeader";
 import ClassAutocomplete from "@/components/molecules/ClassAutocomplete";

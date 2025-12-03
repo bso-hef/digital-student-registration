@@ -60,3 +60,8 @@ export const STUDENT_STATUS = {
 } as const;
 
 export const WIZZARD_URL = "https://localhost:3000/student/{short-id}";
+
+export const SCREEN_BLOCKER_TYPES = {
+  PORTRAIT: "portrait",
+  LANDSCAPE: "landscape",
+} as const;

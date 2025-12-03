@@ -55,6 +55,10 @@
     "Dyslexia Font": "Legasthenie Schriftart",
     "Dyslexia Font Description": "Verwenden Sie die OpenDyslexic für bessere Lesbarkeit"
   },
+  "screenBlockers": {
+    "portrait": "Für ein besseres Erlebnis, drehen Sie das Handy bitte in den Hochformat-Modus.",
+    "landscape": "Für ein besseres Erlebnis, drehen Sie das Handy bitte in den Querformat-Modus."
+  },
   "gender": {
     "male": "Männlich",
     "female": "Weiblich",

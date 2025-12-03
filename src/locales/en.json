@@ -55,6 +55,10 @@
     "Dyslexia Font": "Dyslexia Font",
     "Dyslexia Font Description": "Use OpenDyslexic font designed for better readability"
   },
+  "screenBlockers": {
+    "portrait": "For better experience, please rotate back to portrait mode.",
+    "landscape": "For better experience, please rotate back to landscape mode."
+  },
   "gender": {
     "male": "Male",
     "female": "Female",
