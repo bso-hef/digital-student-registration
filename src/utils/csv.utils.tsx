@@ -196,7 +196,7 @@ type ExportSettings = {
   locale?: string;
 };
 
-function escapeCSVField(value: any): string {
+function escapeCSVField(value: unknown): string {
   if (value === null || value === undefined || value === "") {
     return "";
   }
@@ -210,7 +210,11 @@ function escapeCSVField(value: any): string {
   return str;
 }
 
-function buildCSVRow(student: Student, includeEmptyFields: boolean): string[] {
+function buildCSVRow(
+  student: Student,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  includeEmptyFields: boolean,
+): string[] {
   const getClassName = () => {
     if (
       student.currentClass &&

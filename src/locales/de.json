@@ -535,7 +535,9 @@
       "exportStudentData": "Schülerdaten exportieren",
       "delete Student request": "Sind Sie sicher, dass Sie die ausgewählten Schüler löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
       "noClass": "Keine Klasse",
-      "selectClass": "Klasse auswählen..."
+      "selectClass": "Klasse auswählen...",
+      "copyVerificationCode": "Login-ID kopieren",
+      "verificationCodeCopied": "Login-ID in Zwischenablage kopiert"
     },
     "manageClass": {
       "className": "Klassenname",

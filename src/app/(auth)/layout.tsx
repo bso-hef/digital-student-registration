@@ -2,7 +2,6 @@
 
 import AccessibilityMenu from "@/components/molecules/AccessibilityMenu";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
-import { applicationScrollbar } from "@/utils/styling.utils";
 import { Box, styled } from "@mui/material";
 
 const AuthLayoutContainer = styled(Box)(({ theme }) => ({

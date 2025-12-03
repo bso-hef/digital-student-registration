@@ -29,6 +29,8 @@ import {
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 
+import { RootState } from "@/store/reducers";
+
 import GeneralModal from "../GeneralModal";
 
 const StyledContentStack = styled(Stack)(({}) => ({
@@ -90,7 +92,7 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
 }) => {
   const theme = useTheme();
   const { t } = useTranslation();
-  const locale = useSelector((state: any) => state.ui.locale) || "en";
+  const locale = useSelector((state: RootState) => state.ui.locale) || "en";
 
   const [pageSize, setPageSize] = useState<"A4" | "A5">("A4");
   const [orientation, setOrientation] = useState<"portrait" | "landscape">(

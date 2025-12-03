@@ -3,6 +3,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
+import SmallIconButton from "@/components/atoms/buttons/SmallIconButton";
 import StudentStatus from "@/components/atoms/status/StudentStatus";
 import AdminSettingsHeader from "@/components/molecules/AdminSettingsHeader";
 import ClassAutocomplete from "@/components/molecules/ClassAutocomplete";
@@ -22,11 +23,14 @@ import { Student } from "@/types/db";
 import { CreateStudentInput } from "@/types/student";
 import { ParsedStudent, parseCSVFile } from "@/utils/csv.utils";
 import { filterStudents } from "@/utils/filter.utils";
+import { successNotification } from "@/utils/notification.utils";
+import { copyText } from "@/utils/string.utils";
+import ContentCopyRoundedIcon from "@mui/icons-material/ContentCopyRounded";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import FileDownloadRoundedIcon from "@mui/icons-material/FileDownloadRounded";
 import QrCode2RoundedIcon from "@mui/icons-material/QrCode2Rounded";
 import UploadFileRoundedIcon from "@mui/icons-material/UploadFileRounded";
-import { Box, styled } from "@mui/material";
+import { Box, Typography, styled } from "@mui/material";
 import { debounce, isString } from "lodash";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
@@ -177,11 +181,34 @@ const StudentManagementPage = () => {
             availableClasses={classes}
           />
         ),
-        verificationCode: student?.verificationCode || "-",
-        status: <StudentStatus studentStatus={student?.status} />,
+        verificationCode: student?.verificationCode ? (
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <SmallIconButton
+              icon={<ContentCopyRoundedIcon />}
+              onAction={async (e) => {
+                e.stopPropagation();
+                await copyText(student.verificationCode!);
+                successNotification(
+                  t("settings.manageStudent.verificationCodeCopied"),
+                );
+              }}
+              noMargin
+            />
+            <Typography variant="body2">{student.verificationCode}</Typography>
+          </Box>
+        ) : (
+          "-"
+        ),
+        status: (
+          <Box
+            sx={{ display: "flex", justifyContent: "flex-end", width: "100%" }}
+          >
+            <StudentStatus studentStatus={student?.status} />
+          </Box>
+        ),
       };
     });
-  }, [students, searchString, classes]);
+  }, [students, searchString, classes, t]);
 
   const handleDeleteStudents = useCallback(() => {
     const ids = selectedItems.filter(

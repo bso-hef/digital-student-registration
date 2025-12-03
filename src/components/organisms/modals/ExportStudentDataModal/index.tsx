@@ -28,6 +28,8 @@ import {
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 
+import { RootState } from "@/store/reducers";
+
 import GeneralModal from "../GeneralModal";
 
 const StyledContentStack = styled(Stack)(({}) => ({
@@ -88,7 +90,7 @@ const ExportStudentDataModal: React.FC<ExportStudentDataModalProps> = ({
 }) => {
   const theme = useTheme();
   const { t } = useTranslation();
-  const locale = useSelector((state: any) => state.ui.locale) || "en";
+  const locale = useSelector((state: RootState) => state.ui.locale) || "en";
 
   const [exportFormat, setExportFormat] = useState<"pdf" | "json" | "csv">(
     "pdf",
@@ -182,7 +184,6 @@ const ExportStudentDataModal: React.FC<ExportStudentDataModalProps> = ({
       } else if (students.length === 1) {
         const s = students[0];
         let blob: Blob;
-        let filename: string;
 
         if (exportFormat === "pdf") {
           const pdfSettings = {
@@ -196,22 +197,22 @@ const ExportStudentDataModal: React.FC<ExportStudentDataModalProps> = ({
               pageOf: t("pdf.studentData.pageOf"),
             },
           };
-          blob = await buildStudentDataPdf(s as any, pdfSettings);
+          blob = await buildStudentDataPdf(s, pdfSettings);
         } else if (exportFormat === "json") {
           const { buildStudentDataJson } = await import("@/utils/json.utils");
-          blob = await buildStudentDataJson(s as any, {
+          blob = await buildStudentDataJson(s, {
             includeEmptyFields,
             locale,
           });
         } else {
           const { buildStudentDataCsv } = await import("@/utils/csv.utils");
-          blob = await buildStudentDataCsv(s as any, {
+          blob = await buildStudentDataCsv(s, {
             includeEmptyFields,
             locale,
           });
         }
 
-        filename = resolveFilename(s, exportFormat);
+        const filename = resolveFilename(s, exportFormat);
         downloadBlob(filename, blob);
         setProgress(100);
       } else {
@@ -233,16 +234,16 @@ const ExportStudentDataModal: React.FC<ExportStudentDataModalProps> = ({
                 pageOf: t("pdf.studentData.pageOf"),
               },
             };
-            blob = await buildStudentDataPdf(s as any, pdfSettings);
+            blob = await buildStudentDataPdf(s, pdfSettings);
           } else if (exportFormat === "json") {
             const { buildStudentDataJson } = await import("@/utils/json.utils");
-            blob = await buildStudentDataJson(s as any, {
+            blob = await buildStudentDataJson(s, {
               includeEmptyFields,
               locale,
             });
           } else {
             const { buildStudentDataCsv } = await import("@/utils/csv.utils");
-            blob = await buildStudentDataCsv(s as any, {
+            blob = await buildStudentDataCsv(s, {
               includeEmptyFields,
               locale,
             });

@@ -41,7 +41,6 @@ export async function buildPdfForStudent(
   const pageH = doc.internal.pageSize.getHeight();
 
   const pad = 12;
-  const _innerW = pageW - pad * 2;
   const innerH = pageH - pad * 2;
   const headerH = 10;
   const footerH = 8;
@@ -862,7 +861,7 @@ export async function buildStudentDataPdf(
     layout,
     includeEmpty,
   );
-  currentY = renderAgreementsSection(doc, student, t, currentY, layout);
+  renderAgreementsSection(doc, student, t, currentY, layout);
 
   const totalPages = doc.internal.pages.length - 1;
 

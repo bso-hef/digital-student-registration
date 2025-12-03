@@ -5,7 +5,7 @@ type ExportSettings = {
   locale?: string;
 };
 
-function removeEmptyFields(obj: any): any {
+function removeEmptyFields(obj: unknown): unknown {
   if (obj === null || obj === undefined) {
     return undefined;
   }
@@ -18,7 +18,7 @@ function removeEmptyFields(obj: any): any {
   }
 
   if (typeof obj === "object") {
-    const cleaned: any = {};
+    const cleaned: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(obj)) {
       if (value === "" || value === null || value === undefined) {
         continue;
@@ -40,7 +40,7 @@ export async function buildStudentDataJson(
 ): Promise<Blob> {
   const { includeEmptyFields = false } = settings;
 
-  let data: any = {
+  let data: Record<string, unknown> | unknown = {
     id: student._id,
     personalInfo: {
       firstName: student.firstName,

@@ -101,7 +101,7 @@ const ClassAutocomplete: React.FC<Props> = ({
 
       try {
         await dispatch(updateStudentClass(studentId, newClassId));
-      } catch (error) {
+      } catch {
         setSelectedClass(previousClass); // Rollback on error
       } finally {
         setLoading(false);

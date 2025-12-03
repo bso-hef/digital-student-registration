@@ -535,7 +535,9 @@
       "exportStudentData": "Export Student Data",
       "delete Student request": "Are you sure you want to delete the selected student(s)? This action cannot be undone.",
       "noClass": "No Class",
-      "selectClass": "Select class..."
+      "selectClass": "Select class...",
+      "copyVerificationCode": "Copy Login ID",
+      "verificationCodeCopied": "Login ID copied to clipboard"
     },
     "manageClass": {
       "className": "Class Name",
