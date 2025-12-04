@@ -30,8 +30,8 @@ interface FormValues {
   betriebHausNr: string;
   betriebPlz: string;
   betriebOrt: string;
-  betriebTel: string;
-  betriebMail: string;
+  betriebTelefon1: string;
+  betriebEmail: string;
 }
 
 interface TrainingFormProps {
@@ -66,8 +66,8 @@ const TrainingForm: React.FC<TrainingFormProps> = ({
     betriebHausNr: data?.betriebHausNr || "",
     betriebPlz: data?.betriebPlz || "",
     betriebOrt: data?.betriebOrt || "",
-    betriebTel: data?.betriebTel || "",
-    betriebMail: data?.betriebMail || "",
+    betriebTelefon1: data?.betriebTelefon1 || "",
+    betriebEmail: data?.betriebEmail || "",
   };
 
   // Create dynamic validation schema with settings
@@ -213,29 +213,29 @@ const TrainingForm: React.FC<TrainingFormProps> = ({
             helperText={touched.betriebOrt && errors.betriebOrt}
           />
 
-          {/* betriebTel */}
+          {/* betriebTelefon1 */}
           <Field
             component={TextField}
-            name="betriebTel"
+            name="betriebTelefon1"
             label={t("onboarding.training.phone")}
             variant="outlined"
             margin="normal"
             fullWidth
-            error={touched.betriebTel && Boolean(errors.betriebTel)}
-            helperText={touched.betriebTel && errors.betriebTel}
+            error={touched.betriebTelefon1 && Boolean(errors.betriebTelefon1)}
+            helperText={touched.betriebTelefon1 && errors.betriebTelefon1}
           />
 
-          {/* betriebMail */}
+          {/* betriebEmail */}
           <Field
             component={TextField}
-            name="betriebMail"
+            name="betriebEmail"
             label={t("onboarding.training.email")}
             type="email"
             variant="outlined"
             margin="normal"
             fullWidth
-            error={touched.betriebMail && Boolean(errors.betriebMail)}
-            helperText={touched.betriebMail && errors.betriebMail}
+            error={touched.betriebEmail && Boolean(errors.betriebEmail)}
+            helperText={touched.betriebEmail && errors.betriebEmail}
           />
         </StyledForm>
       )}

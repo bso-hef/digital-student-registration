@@ -29,6 +29,7 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 
 import { RootState } from "@/store/reducers";
+import { Student as StudentType } from "@/types/db";
 
 import GeneralModal from "../GeneralModal";
 
@@ -68,19 +69,10 @@ const StyledPreviewBox = styled(Box, {
   bgcolor: theme.palette.surface.interface.background,
 }));
 
-type Student = {
-  _id: string;
-  firstName: string;
-  lastName: string;
-  className?: string;
-  currentClassName?: string;
-  currentClass?: { name?: string } | string | null;
-};
-
 type ExportStudentDataModalProps = {
   open: boolean;
   onClose: () => void;
-  students: Student[];
+  students: StudentType[];
 };
 
 const ExportStudentDataModal: React.FC<ExportStudentDataModalProps> = ({
@@ -109,29 +101,27 @@ const ExportStudentDataModal: React.FC<ExportStudentDataModalProps> = ({
   const [progress, setProgress] = useState<number | null>(null);
 
   const count = students?.length || 0;
-  const sample = count
+  const sample: StudentType = count
     ? students[Math.min(0, count - 1)]
-    : {
+    : ({
         firstName: "Max",
         lastName: "Muster",
-        className: "7B",
+        currentClassName: "7B",
         _id: "671c23e91f4a9a2d7c3e1b45",
-      };
+        dateOfBirth: null,
+        status: "imported" as const,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      } as StudentType);
 
   const isPortrait = orientation === "portrait";
 
-  const getClassName = (s: Student): string => {
-    return (
-      s.currentClassName ||
-      (s.currentClass && typeof s.currentClass === "object"
-        ? s.currentClass.name || ""
-        : s.currentClass || "") ||
-      s.className ||
-      ""
-    );
+  const getClassName = (s: StudentType): string => {
+    // Use cached class name if available, otherwise use class ID
+    return s.currentClassName || s.currentClass || "";
   };
 
-  const resolveFilename = (s: Student, format: "pdf" | "json" | "csv") => {
+  const resolveFilename = (s: StudentType, format: "pdf" | "json" | "csv") => {
     const sid = s._id || "";
     const dateStr = new Date().toISOString().split("T")[0];
     const classNameStr = getClassName(s) || "ohne_klasse";
@@ -171,7 +161,7 @@ const ExportStudentDataModal: React.FC<ExportStudentDataModalProps> = ({
         const { buildCombinedStudentDataCsv } = await import(
           "@/utils/csv.utils"
         );
-        const blob = await buildCombinedStudentDataCsv(students as Student[], {
+        const blob = await buildCombinedStudentDataCsv(students as StudentType[], {
           includeEmptyFields,
           locale,
         });
@@ -219,7 +209,7 @@ const ExportStudentDataModal: React.FC<ExportStudentDataModalProps> = ({
         const files: Array<{ name: string; blob: Blob }> = [];
         let done = 0;
 
-        for (const s of students as Student[]) {
+        for (const s of students as StudentType[]) {
           let blob: Blob;
 
           if (exportFormat === "pdf") {

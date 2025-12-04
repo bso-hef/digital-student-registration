@@ -216,14 +216,8 @@ function buildCSVRow(
   includeEmptyFields: boolean,
 ): string[] {
   const getClassName = () => {
-    if (
-      student.currentClass &&
-      typeof student.currentClass === "object" &&
-      "name" in student.currentClass
-    ) {
-      return student.currentClass.name || "";
-    }
-    return "";
+    // Use cached class name if available, otherwise current class ID
+    return student.currentClassName || student.currentClass || "";
   };
 
   const cp1 = student.contactPersons?.[0];
@@ -238,59 +232,59 @@ function buildCSVRow(
     student.gender || "",
     student.religion || "",
     student.email || "",
-    student.mobile || "",
+    student.phone || "", // Mobile/Phone merged
     student.phone || "",
     student.address?.street || "",
-    student.address?.houseNumber || "",
-    student.address?.postalCode || "",
+    "", // House number not stored separately
+    student.address?.zip || "",
     student.address?.city || "",
-    student.birthPlace || "",
+    student.birthplace || "",
     student.birthCountry || "",
     student.nationality || "",
-    student.nationality2 || "",
+    student.secondNationality || "",
     student.immigrationYear || "",
     student.familyLanguage || "",
     cp1?.type || "",
     cp1?.firstName || "",
     cp1?.lastName || "",
-    cp1?.street || "",
-    cp1?.houseNumber || "",
-    cp1?.postalCode || "",
-    cp1?.city || "",
+    cp1?.address?.street || "",
+    "", // House number not stored separately
+    cp1?.address?.zip || "",
+    cp1?.address?.city || "",
     cp1?.mobile || "",
     cp1?.phone || "",
     cp2?.type || "",
     cp2?.firstName || "",
     cp2?.lastName || "",
-    cp2?.street || "",
-    cp2?.houseNumber || "",
-    cp2?.postalCode || "",
-    cp2?.city || "",
+    cp2?.address?.street || "",
+    "", // House number not stored separately
+    cp2?.address?.zip || "",
+    cp2?.address?.city || "",
     cp2?.mobile || "",
     cp2?.phone || "",
     cp3?.type || "",
     cp3?.firstName || "",
     cp3?.lastName || "",
-    cp3?.street || "",
-    cp3?.houseNumber || "",
-    cp3?.postalCode || "",
-    cp3?.city || "",
+    cp3?.address?.street || "",
+    "", // House number not stored separately
+    cp3?.address?.zip || "",
+    cp3?.address?.city || "",
     cp3?.mobile || "",
     cp3?.phone || "",
     student.previousSchool || "",
     student.previousSchoolType || "",
-    student.previousGrade || "",
+    student.previousSchoolLevel || "",
     student.degrees || "",
-    student.trainingOccupation || "",
-    student.employer?.name || "",
+    student.profession || "",
+    student.employer?.companyName || "",
     student.employer?.contactName || "",
-    student.employer?.phone || "",
-    student.employer?.email || "",
-    student.employer?.street || "",
-    student.employer?.houseNumber || "",
-    student.employer?.postalCode || "",
-    student.employer?.city || "",
-    student.employer?.startDate || "",
+    student.employer?.contactPhone || "",
+    student.employer?.contactEmail || "",
+    student.employer?.address || "", // Full address string
+    "", // House number not stored separately
+    "", // Postal code not stored separately
+    "", // City not stored separately
+    student.trainingStartDate || "",
     student.agreements?.dataProtection ? "true" : "false",
     student.agreements?.classParticipation ? "true" : "false",
     student.agreements?.schoolRules ? "true" : "false",

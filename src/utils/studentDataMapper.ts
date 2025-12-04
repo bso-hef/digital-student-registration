@@ -126,9 +126,15 @@ export function mapFormDataToModel(
       contactName: [formData.betriebApVorname, formData.betriebApNachname]
         .filter(Boolean)
         .join(" "),
-      contactEmail: formData.betriebEmail || "",
+      contactEmail:
+        formData.betriebEmail ||
+        ((formData as Record<string, unknown>).betriebMail as string) || // Backward compatibility
+        "",
       contactPhone:
-        formData.betriebTelefon1 || formData.betriebApTelefon1 || "",
+        formData.betriebTelefon1 ||
+        ((formData as Record<string, unknown>).betriebTel as string) || // Backward compatibility
+        formData.betriebApTelefon1 ||
+        "",
       contactSalutation: formData.betriebApAnrede || "",
       verified: false, // Default to unverified
     };

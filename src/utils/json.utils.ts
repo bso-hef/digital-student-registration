@@ -52,24 +52,23 @@ export async function buildStudentDataJson(
     },
     contact: {
       email: student.email,
-      mobile: student.mobile,
       phone: student.phone,
     },
     address: student.address
       ? {
           street: student.address.street,
-          houseNumber: student.address.houseNumber,
-          postalCode: student.address.postalCode,
+          zip: student.address.zip,
           city: student.address.city,
           country: student.address.country,
+          state: student.address.state,
           timezone: student.address.timezone,
         }
       : undefined,
     origin: {
-      birthPlace: student.birthPlace,
+      birthplace: student.birthplace,
       birthCountry: student.birthCountry,
       nationality: student.nationality,
-      nationality2: student.nationality2,
+      secondNationality: student.secondNationality,
       immigrationYear: student.immigrationYear,
       familyLanguage: student.familyLanguage,
     },
@@ -77,31 +76,38 @@ export async function buildStudentDataJson(
       type: cp.type,
       firstName: cp.firstName,
       lastName: cp.lastName,
-      street: cp.street,
-      houseNumber: cp.houseNumber,
-      postalCode: cp.postalCode,
-      city: cp.city,
+      address: cp.address
+        ? {
+            street: cp.address.street,
+            zip: cp.address.zip,
+            city: cp.address.city,
+            country: cp.address.country,
+            state: cp.address.state,
+            timezone: cp.address.timezone,
+          }
+        : undefined,
       mobile: cp.mobile,
       phone: cp.phone,
     })),
     education: {
       previousSchool: student.previousSchool,
       previousSchoolType: student.previousSchoolType,
-      previousGrade: student.previousGrade,
+      previousSchoolLevel: student.previousSchoolLevel,
       degrees: student.degrees,
-      trainingOccupation: student.trainingOccupation,
+    },
+    vocationalTraining: {
+      profession: student.profession,
+      trainingStartDate: student.trainingStartDate,
     },
     employer: student.employer
       ? {
-          name: student.employer.name,
+          companyName: student.employer.companyName,
           contactName: student.employer.contactName,
-          phone: student.employer.phone,
-          email: student.employer.email,
-          street: student.employer.street,
-          houseNumber: student.employer.houseNumber,
-          postalCode: student.employer.postalCode,
-          city: student.employer.city,
-          startDate: student.employer.startDate,
+          contactPhone: student.employer.contactPhone,
+          contactEmail: student.employer.contactEmail,
+          contactSalutation: student.employer.contactSalutation,
+          address: student.employer.address,
+          verified: student.employer.verified,
         }
       : undefined,
     agreements: student.agreements
@@ -113,14 +119,11 @@ export async function buildStudentDataJson(
           teamsUsage: student.agreements.teamsUsage,
         }
       : undefined,
-    class:
-      student.currentClass && typeof student.currentClass === "object"
-        ? {
-            id: student.currentClass._id,
-            name: student.currentClass.name,
-          }
-        : student.currentClass
-          ? { id: student.currentClass }
+    class: student.currentClass
+      ? {
+          id: student.currentClass,
+          name: student.currentClassName,
+        }
           : undefined,
     metadata: {
       status: student.status,

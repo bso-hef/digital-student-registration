@@ -15,6 +15,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Digitale Schüleranmeldung",
   description: "A platform for students to onboard digitally.",
+  manifest: "/manifest.json",
 };
 
 export default async function RootLayout({
