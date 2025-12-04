@@ -215,10 +215,7 @@ export const createValidateStudentContactPersonData = (age: number) => {
     ];
 
     // Helper to check if any field has a value
-    const hasAnyValue = (
-      fields: string[],
-      parent: Record<string, unknown>,
-    ) =>
+    const hasAnyValue = (fields: string[], parent: Record<string, unknown>) =>
       fields.some((field) => {
         const value = parent[field];
         return value && String(value).trim() !== "";

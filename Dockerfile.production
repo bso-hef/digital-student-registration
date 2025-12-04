@@ -1,0 +1,136 @@
+# Digital Student Registration - Production Dockerfile
+# Multi-stage build optimized for production deployment
+# Supports amd64 and arm64 architectures
+
+# ============================================
+# Stage 1: Base image with Node.js
+# ============================================
+FROM node:22.20.0-alpine AS base
+
+# Install required system dependencies
+RUN apk add --no-cache \
+    libc6-compat \
+    curl \
+    wget \
+    # Required for health checks
+    netcat-openbsd
+
+WORKDIR /app
+
+# ============================================
+# Stage 2: Install dependencies
+# ============================================
+FROM base AS deps
+
+# Copy package manager files
+COPY package.json yarn.lock ./
+
+# Install production dependencies only
+# Use cache mount for faster builds
+RUN --mount=type=cache,target=/root/.yarn \
+    yarn install --frozen-lockfile --production=true && \
+    # Remove unnecessary files to reduce image size
+    rm -rf /root/.yarn-cache /root/.cache
+
+# ============================================
+# Stage 3: Install dev dependencies for build
+# ============================================
+FROM base AS builder-deps
+
+COPY package.json yarn.lock ./
+
+# Install all dependencies (including dev dependencies for build)
+RUN --mount=type=cache,target=/root/.yarn \
+    yarn install --frozen-lockfile --production=false
+
+# ============================================
+# Stage 4: Build the application
+# ============================================
+FROM base AS builder
+
+WORKDIR /app
+
+# Copy dependencies from builder-deps stage
+COPY --from=builder-deps /app/node_modules ./node_modules
+
+# Copy application source code
+COPY . .
+
+# Set build-time environment variables
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Build Next.js application with increased memory
+# Standalone output creates a minimal server with all dependencies
+RUN NODE_OPTIONS="--max-old-space-size=4096" yarn build && \
+    # Remove source maps in production for smaller size
+    find .next -name "*.map" -type f -delete && \
+    # Clean up build artifacts
+    rm -rf .next/cache
+
+# ============================================
+# Stage 5: Production runtime (minimal)
+# ============================================
+FROM node:22.20.0-alpine AS runner
+
+WORKDIR /app
+
+# Install only runtime dependencies (no build tools)
+RUN apk add --no-cache \
+    curl \
+    wget \
+    netcat-openbsd \
+    dumb-init && \
+    # Remove apk cache to reduce image size
+    rm -rf /var/cache/apk/*
+
+# Create non-root user and group for security
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs && \
+    # Create necessary directories with correct permissions
+    mkdir -p /app/.next /app/public && \
+    chown -R nextjs:nodejs /app
+
+# Set production environment variables
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+# Copy production dependencies from deps stage
+COPY --from=deps --chown=nextjs:nodejs /app/node_modules ./node_modules
+
+# Copy built application from builder
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+# Copy health check script and package.json for version info
+COPY --from=builder --chown=nextjs:nodejs /app/scripts/docker-healthcheck.sh ./scripts/
+COPY --from=builder --chown=nextjs:nodejs /app/package.json ./
+
+# Make health check script executable
+RUN chmod +x ./scripts/docker-healthcheck.sh
+
+# Switch to non-root user
+USER nextjs
+
+# Expose application port
+EXPOSE 3000
+
+# Health check configuration
+# Uses /api/health/live endpoint (no authentication required)
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD ./scripts/docker-healthcheck.sh || exit 1
+
+# Use dumb-init to handle signals properly
+# This ensures graceful shutdown of the Node.js process
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+
+# Start the Next.js standalone server
+CMD ["node", "server.js"]
+
+# Metadata
+LABEL maintainer="Digital Student Registration Team"
+LABEL description="Production-ready Docker image for Digital Student Registration system"
+LABEL version="1.0.0"

@@ -106,9 +106,13 @@ export async function PATCH(
     const shouldUpdateCounts = isClassChanging && oldClassId !== newClassId;
 
     // Fetch new class data if we're assigning a class (for schoolYear calculation)
-    let newClassData = null;
+    let newClassData: { schoolYearFrom: Date; schoolYearTo: Date } | null =
+      null;
     if (shouldUpdateCounts && newClassId) {
-      newClassData = await Class.findById(newClassId).lean();
+      newClassData = (await Class.findById(newClassId).lean()) as {
+        schoolYearFrom: Date;
+        schoolYearTo: Date;
+      } | null;
       if (!newClassData) {
         return NextResponse.json(
           { error: "New class not found" },
@@ -127,7 +131,10 @@ export async function PATCH(
       // Close old class history entry
       if (oldClassId && student.classHistory) {
         const oldEntry = student.classHistory.find(
-          (entry) => entry.classId?.toString() === oldClassId && !entry.endDate,
+          (entry: {
+            classId?: mongoose.Types.ObjectId | string;
+            endDate?: Date | null;
+          }) => entry.classId?.toString() === oldClassId && !entry.endDate,
         );
         if (oldEntry) {
           oldEntry.endDate = now;

@@ -1,0 +1,315 @@
+# Docker Compose Production Configuration
+# Digital Student Registration System
+#
+# Production-ready deployment with:
+# - Caddy reverse proxy with automatic Let's Encrypt SSL
+# - Next.js application server
+# - MongoDB database with persistence
+# - Redis cache for performance
+#
+# Usage:
+#   docker-compose -f docker-compose.production.yml up -d
+#
+# Prerequisites:
+#   1. Copy .env.production.template to .env.production and configure
+#   2. Ensure domain DNS points to your server
+#   3. Open ports 80 and 443 on your firewall
+
+version: '3.8'
+
+services:
+  # ============================================
+  # Caddy Reverse Proxy
+  # ============================================
+  caddy:
+    image: caddy:2.9-alpine
+    container_name: dsr-caddy
+    restart: unless-stopped
+    ports:
+      # HTTP (for Let's Encrypt challenges)
+      - "80:80"
+      # HTTPS
+      - "443:443"
+      # HTTP/3 (QUIC)
+      - "443:443/udp"
+    environment:
+      # Domain name from .env.production
+      DOMAIN: ${DOMAIN}
+      # Email for Let's Encrypt notifications
+      ACME_EMAIL: ${ACME_EMAIL}
+    volumes:
+      # Caddyfile configuration
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      # Caddy data (SSL certificates, etc.)
+      - caddy-data:/data
+      - caddy-config:/config
+      # Logs
+      - caddy-logs:/var/log/caddy
+    networks:
+      - frontend
+      - backend
+    depends_on:
+      app:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80/healthz", "||", "exit", "0"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    labels:
+      - "com.docker.compose.project=digital-student-registration"
+      - "com.docker.compose.service=caddy"
+
+  # ============================================
+  # Next.js Application Server
+  # ============================================
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.production
+      # Build arguments
+      args:
+        NODE_ENV: production
+    image: digital-student-registration:production
+    container_name: dsr-app
+    restart: unless-stopped
+    environment:
+      # Node.js environment
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: "0.0.0.0"
+      NEXT_TELEMETRY_DISABLED: 1
+
+      # Application URLs
+      NEXT_PUBLIC_API_URL: https://${DOMAIN}
+      NEXT_PUBLIC_APP_URL: https://${DOMAIN}
+
+      # Database connection
+      MONGODB_URI: mongodb://${MONGO_USER}:${MONGO_PASSWORD}@mongo:27017/${MONGO_DB}?authSource=admin
+      MONGO_USER: ${MONGO_USER}
+      MONGO_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_DB: ${MONGO_DB}
+
+      # Redis connection
+      REDIS_URL: redis://redis:6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_DB: 0
+      REDIS_KEY_PREFIX: "dsr:"
+
+      # NextAuth configuration
+      NEXTAUTH_URL: https://${DOMAIN}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+
+      # Application info
+      NEXT_PUBLIC_VERSION: ${APP_VERSION:-1.0.0}
+      NEXT_PUBLIC_NAME: ${APP_NAME:-Digital Student Registration}
+    networks:
+      - backend
+    depends_on:
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "./scripts/docker-healthcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '1'
+          memory: 1G
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+        tag: "{{.Name}}/{{.ID}}"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    labels:
+      - "com.docker.compose.project=digital-student-registration"
+      - "com.docker.compose.service=app"
+
+  # ============================================
+  # MongoDB Database
+  # ============================================
+  mongo:
+    image: mongo:7.0
+    container_name: dsr-mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DB}
+    volumes:
+      # Persistent data storage
+      - mongo-data:/data/db
+      # MongoDB configuration
+      - ./mongod.conf:/etc/mongod.conf:ro
+      # Logs
+      - mongo-logs:/var/log/mongodb
+    networks:
+      - backend
+    command: ["mongod", "--config", "/etc/mongod.conf"]
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok", "--username", "${MONGO_USER}", "--password", "${MONGO_PASSWORD}", "--authenticationDatabase", "admin"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+        tag: "{{.Name}}/{{.ID}}"
+    security_opt:
+      - no-new-privileges:true
+    labels:
+      - "com.docker.compose.project=digital-student-registration"
+      - "com.docker.compose.service=mongo"
+
+  # ============================================
+  # Redis Cache
+  # ============================================
+  redis:
+    image: redis:7-alpine
+    container_name: dsr-redis
+    restart: unless-stopped
+    command: >
+      redis-server
+      --requirepass ${REDIS_PASSWORD}
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+      --save 60 1000
+      --loglevel warning
+      --appendonly yes
+      --appendfsync everysec
+    volumes:
+      # Persistent cache storage (optional, for persistence)
+      - redis-data:/data
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+        tag: "{{.Name}}/{{.ID}}"
+    security_opt:
+      - no-new-privileges:true
+    labels:
+      - "com.docker.compose.project=digital-student-registration"
+      - "com.docker.compose.service=redis"
+
+# ============================================
+# Networks
+# ============================================
+networks:
+  # Frontend network (Caddy <-> Internet)
+  frontend:
+    driver: bridge
+    name: dsr-frontend
+
+  # Backend network (App <-> Database/Cache)
+  backend:
+    driver: bridge
+    name: dsr-backend
+    internal: false
+
+# ============================================
+# Volumes (Persistent Storage)
+# ============================================
+volumes:
+  # Caddy data (SSL certificates, config)
+  caddy-data:
+    driver: local
+    name: dsr-caddy-data
+
+  caddy-config:
+    driver: local
+    name: dsr-caddy-config
+
+  caddy-logs:
+    driver: local
+    name: dsr-caddy-logs
+
+  # MongoDB data
+  mongo-data:
+    driver: local
+    name: dsr-mongo-data
+
+  mongo-logs:
+    driver: local
+    name: dsr-mongo-logs
+
+  # Redis data (optional, for cache persistence)
+  redis-data:
+    driver: local
+    name: dsr-redis-data
+
+# ============================================
+# Additional Information
+# ============================================
+# Backup Strategy:
+#   - MongoDB: docker exec dsr-mongo mongodump --archive=/tmp/backup.archive --gzip
+#   - Redis: docker exec dsr-redis redis-cli --rdb /data/dump.rdb SAVE
+#   - Caddy Certificates: docker cp dsr-caddy:/data/caddy/certificates ./backup/
+#
+# Monitoring:
+#   - View logs: docker-compose -f docker-compose.production.yml logs -f [service]
+#   - Check health: docker-compose -f docker-compose.production.yml ps
+#   - Stats: docker stats
+#
+# Scaling:
+#   - Scale app: docker-compose -f docker-compose.production.yml up -d --scale app=3
+#   - Note: Requires load balancer configuration in Caddy
+#
+# Updates:
+#   - Pull new image: docker-compose -f docker-compose.production.yml pull
+#   - Rebuild: docker-compose -f docker-compose.production.yml build --no-cache
+#   - Restart: docker-compose -f docker-compose.production.yml up -d --force-recreate

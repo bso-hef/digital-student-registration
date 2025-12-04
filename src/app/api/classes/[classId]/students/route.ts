@@ -130,7 +130,10 @@ export async function POST(
     const studentsToTransfer = await Student.find({
       _id: { $in: studentObjectIds },
       active: true,
-      currentClass: { $ne: null, $ne: classObjectId },
+      $and: [
+        { currentClass: { $ne: null } },
+        { currentClass: { $ne: classObjectId } },
+      ],
     })
       .select("_id currentClass classHistory")
       .lean();

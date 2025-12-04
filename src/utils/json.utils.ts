@@ -124,7 +124,7 @@ export async function buildStudentDataJson(
           id: student.currentClass,
           name: student.currentClassName,
         }
-          : undefined,
+      : undefined,
     metadata: {
       status: student.status,
       onboardingStep: student.onboardingStep,

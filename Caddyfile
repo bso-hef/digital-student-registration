@@ -1,0 +1,154 @@
+# Caddyfile for Digital Student Registration
+# Production-ready reverse proxy with automatic HTTPS via Let's Encrypt
+#
+# Replace {$DOMAIN} with your actual domain (set in .env.production)
+# Example: student-registration.example.com
+
+{
+    # Global options
+    email {$ACME_EMAIL}
+
+    # Use production ACME server (Let's Encrypt)
+    # Uncomment the next line to use staging server for testing
+    # acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
+
+    # Enable admin API endpoint (optional, for monitoring)
+    # admin off
+}
+
+# Main site configuration
+{$DOMAIN} {
+    # Enable automatic HTTPS via Let's Encrypt
+    # Caddy will automatically obtain and renew certificates
+
+    # Logging configuration
+    log {
+        output file /var/log/caddy/access.log {
+            roll_size 100mb
+            roll_keep 5
+            roll_keep_for 720h
+        }
+        format json
+        level INFO
+    }
+
+    # Compression (gzip and brotli)
+    encode {
+        gzip 6
+        zstd
+        # Prefer Zstandard over gzip for better compression
+        # Fallback to gzip for older browsers
+    }
+
+    # Security headers
+    header {
+        # Remove server header for security
+        -Server
+
+        # Strict Transport Security (HSTS)
+        # Force HTTPS for 1 year, including subdomains
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+
+        # Prevent MIME type sniffing
+        X-Content-Type-Options "nosniff"
+
+        # Enable XSS protection
+        X-XSS-Protection "1; mode=block"
+
+        # Frame options (prevent clickjacking)
+        X-Frame-Options "SAMEORIGIN"
+
+        # Referrer policy
+        Referrer-Policy "strict-origin-when-cross-origin"
+
+        # Content Security Policy (adjust as needed)
+        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'self'"
+
+        # Permissions policy (formerly Feature-Policy)
+        Permissions-Policy "camera=(), microphone=(), geolocation=()"
+    }
+
+    # Cache static assets
+    @static {
+        path /_next/static/* /images/* /fonts/* /icons/* *.css *.js *.woff *.woff2 *.ttf *.eot *.ico *.png *.jpg *.jpeg *.gif *.svg *.webp
+    }
+
+    header @static {
+        # Cache static assets for 1 year
+        Cache-Control "public, max-age=31536000, immutable"
+    }
+
+    # Cache Next.js optimized images
+    @images {
+        path /_next/image*
+    }
+
+    header @images {
+        # Cache images for 1 week
+        Cache-Control "public, max-age=604800, stale-while-revalidate=86400"
+    }
+
+    # API routes - no caching
+    @api {
+        path /api/*
+    }
+
+    header @api {
+        Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate"
+        Pragma "no-cache"
+        Expires "0"
+    }
+
+    # Health check endpoint - bypass caching
+    @health {
+        path /api/health/*
+    }
+
+    header @health {
+        Cache-Control "no-store"
+    }
+
+    # Reverse proxy to Next.js application
+    reverse_proxy app:3000 {
+        # Health check configuration
+        health_uri /api/health/live
+        health_interval 30s
+        health_timeout 10s
+        health_status 200
+
+        # Load balancing (if you scale to multiple containers)
+        lb_policy least_conn
+
+        # Timeouts
+        transport http {
+            dial_timeout 10s
+            response_header_timeout 30s
+            read_timeout 60s
+            write_timeout 60s
+        }
+
+        # Pass real client IP
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+        header_up X-Forwarded-Host {host}
+    }
+
+    # Custom error pages (optional)
+    handle_errors {
+        @502-504 {
+            expression {http.error.status_code} in [502, 503, 504]
+        }
+
+        respond @502-504 "Service temporarily unavailable. Please try again later." 503
+    }
+}
+
+# HTTP -> HTTPS redirect (automatically handled by Caddy)
+# Caddy automatically redirects http://{$DOMAIN} to https://{$DOMAIN}
+
+# Optional: Health check endpoint for Caddy itself
+# Uncomment to enable
+# :2019 {
+#     respond /healthz 200
+# }

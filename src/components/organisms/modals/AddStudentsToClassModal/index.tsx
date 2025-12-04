@@ -56,14 +56,14 @@ const AddStudentsToClassModal: React.FC<Props> = ({
   const getStudentClassId = (student: StudentWithClass): string | null => {
     if (!student.currentClass) return null;
     if (typeof student.currentClass === "string") return student.currentClass;
-    return student.currentClass._id;
+    return (student.currentClass as { _id: string; name: string })._id;
   };
 
   // Helper to get class name from populated currentClass
   const getStudentClassName = (student: StudentWithClass): string | null => {
     if (!student.currentClass) return null;
     if (typeof student.currentClass === "string") return null;
-    return student.currentClass.name;
+    return (student.currentClass as { _id: string; name: string }).name;
   };
 
   // Fetch all active students when modal opens

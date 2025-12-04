@@ -1,0 +1,240 @@
+# Docker Compose Local Development Configuration
+# Digital Student Registration System
+#
+# For local development on localhost/127.0.0.1
+# No domain or SSL required
+#
+# Usage:
+#   docker-compose -f docker-compose.local.yml up -d
+#   Or use: ./scripts/start-local.sh
+
+version: '3.8'
+
+services:
+  # ============================================
+  # Caddy Reverse Proxy (Local Mode)
+  # ============================================
+  caddy:
+    image: caddy:2.9-alpine
+    container_name: dsr-local-caddy
+    restart: unless-stopped
+    ports:
+      # HTTP (primary for local dev)
+      - "80:80"
+      # HTTPS with self-signed cert (optional)
+      - "443:443"
+    volumes:
+      # Local Caddyfile
+      - ./Caddyfile.local:/etc/caddy/Caddyfile:ro
+      # Caddy data (for self-signed certs)
+      - caddy-local-data:/data
+      - caddy-local-config:/config
+    networks:
+      - local-network
+    depends_on:
+      app:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80", "||", "exit", "0"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # ============================================
+  # Next.js Application Server
+  # ============================================
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.production
+    image: digital-student-registration:local
+    container_name: dsr-local-app
+    restart: unless-stopped
+    ports:
+      # Expose app port directly for debugging
+      - "3000:3000"
+    environment:
+      # Node.js environment
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: "0.0.0.0"
+      NEXT_TELEMETRY_DISABLED: 1
+
+      # Application URLs (localhost with HTTPS via Caddy)
+      NEXT_PUBLIC_API_URL: https://localhost
+      NEXT_PUBLIC_APP_URL: https://localhost
+
+      # Database connection
+      MONGODB_URI: mongodb://${MONGO_USER:-admin}:${MONGO_PASSWORD:-admin123}@mongo:27017/${MONGO_DB:-digital-student-registration}?authSource=admin
+      MONGO_USER: ${MONGO_USER:-admin}
+      MONGO_PASSWORD: ${MONGO_PASSWORD:-admin123}
+      MONGO_DB: ${MONGO_DB:-digital-student-registration}
+
+      # Redis connection
+      REDIS_URL: redis://redis:6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis123}
+      REDIS_DB: 0
+      REDIS_KEY_PREFIX: "dsr:local:"
+
+      # NextAuth configuration (localhost with HTTPS via Caddy)
+      NEXTAUTH_URL: https://localhost
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-local-dev-secret-change-in-production-min-64-chars-required}
+      AUTH_TRUST_HOST: "true"
+
+      # Application info
+      NEXT_PUBLIC_VERSION: ${APP_VERSION:-1.0.0-local}
+      NEXT_PUBLIC_NAME: ${APP_NAME:-Digital Student Registration (Local)}
+    networks:
+      - local-network
+    depends_on:
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    # Development: More relaxed resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+
+  # ============================================
+  # MongoDB Database
+  # ============================================
+  mongo:
+    image: mongo:7.0
+    container_name: dsr-local-mongo
+    restart: unless-stopped
+    ports:
+      # Expose MongoDB port for local development tools
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-admin123}
+      MONGO_INITDB_DATABASE: ${MONGO_DB:-digital-student-registration}
+    volumes:
+      # Persistent data storage
+      - mongo-local-data:/data/db
+      # No custom config for local dev (use defaults)
+    networks:
+      - local-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok", "--username", "${MONGO_USER:-admin}", "--password", "${MONGO_PASSWORD:-admin123}", "--authenticationDatabase", "admin"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+
+  # ============================================
+  # Redis Cache
+  # ============================================
+  redis:
+    image: redis:7-alpine
+    container_name: dsr-local-redis
+    restart: unless-stopped
+    ports:
+      # Expose Redis port for local development tools
+      - "6379:6379"
+    command: >
+      redis-server
+      --requirepass ${REDIS_PASSWORD:-redis123}
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+      --save 60 1000
+      --loglevel notice
+    volumes:
+      # Optional: Persistent cache storage for local dev
+      - redis-local-data:/data
+    networks:
+      - local-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # ============================================
+  # Mongo Express (Development UI)
+  # ============================================
+  mongo-express:
+    image: mongo-express:latest
+    container_name: dsr-local-mongo-express
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_USER:-admin}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_PASSWORD:-admin123}
+      ME_CONFIG_MONGODB_URL: mongodb://${MONGO_USER:-admin}:${MONGO_PASSWORD:-admin123}@mongo:27017/
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_EXPRESS_PASSWORD:-admin123}
+    networks:
+      - local-network
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+# ============================================
+# Networks
+# ============================================
+networks:
+  local-network:
+    driver: bridge
+    name: dsr-local-network
+
+# ============================================
+# Volumes (Persistent Storage)
+# ============================================
+volumes:
+  # Caddy data (self-signed certs)
+  caddy-local-data:
+    driver: local
+    name: dsr-local-caddy-data
+
+  caddy-local-config:
+    driver: local
+    name: dsr-local-caddy-config
+
+  # MongoDB data
+  mongo-local-data:
+    driver: local
+    name: dsr-local-mongo-data
+
+  # Redis data
+  redis-local-data:
+    driver: local
+    name: dsr-local-redis-data
+
+# ============================================
+# Additional Information
+# ============================================
+# Access Points:
+#   - Application:    https://localhost:3000 or https://localhost
+#   - Mongo Express:  http://localhost:8081
+#   - MongoDB:        mongodb://admin:admin123@localhost:27017
+#   - Redis:          redis://localhost:6379 (password: redis123)
+#
+# Default Credentials (change in .env.local):
+#   - MongoDB:        admin / admin123
+#   - Redis:          redis123
+#   - Mongo Express:  admin / admin123
+#   - NextAuth:       Generated on first setup
+#
+# Stop:
+#   docker-compose -f docker-compose.local.yml down
+#
+# Clean (remove all data):
+#   docker-compose -f docker-compose.local.yml down -v

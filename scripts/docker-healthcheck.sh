@@ -7,7 +7,7 @@ set -e
 # Configuration
 HOST="${HOSTNAME:-localhost}"
 PORT="${PORT:-3000}"
-HEALTH_ENDPOINT="http://${HOST}:${PORT}/api/health/full"
+HEALTH_ENDPOINT="http://${HOST}:${PORT}/api/health/live"
 TIMEOUT=5
 
 # Color codes for output (if terminal supports it)

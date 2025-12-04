@@ -115,13 +115,19 @@ const ClassAutocomplete: React.FC<Props> = ({
   return (
     <StyledAutocomplete
       value={selectedClass}
-      onChange={(_, newValue) => handleChange(newValue)}
+      onChange={(_, newValue) => handleChange(newValue as ClassOption)}
       options={options}
-      getOptionLabel={(option) => (option ? formatClassOption(option) : "-")}
+      getOptionLabel={(option) =>
+        option && typeof option === "object" && "name" in option
+          ? formatClassOption(option as ClassInterface)
+          : "-"
+      }
       isOptionEqualToValue={(option, value) => {
-        if (!option && !value) return true;
-        if (!option || !value) return false;
-        return option?._id === value?._id;
+        const opt = option as ClassOption;
+        const val = value as ClassOption;
+        if (!opt && !val) return true;
+        if (!opt || !val) return false;
+        return opt?._id === val?._id;
       }}
       popupIcon={
         <StyledExpandIcon>
@@ -130,7 +136,8 @@ const ClassAutocomplete: React.FC<Props> = ({
       }
       renderOption={(props, option) => {
         const { key, ...otherProps } = props;
-        const isSelected = option?._id === selectedClass?._id;
+        const opt = option as ClassOption;
+        const isSelected = opt?._id === selectedClass?._id;
 
         return (
           <Box
@@ -156,7 +163,7 @@ const ClassAutocomplete: React.FC<Props> = ({
               }}
             >
               <Box component="span" sx={{ flexGrow: 1 }}>
-                {option ? formatClassOption(option) : "-"}
+                {opt ? formatClassOption(opt) : "-"}
               </Box>
               {isSelected && (
                 <StyledCheckIcon>

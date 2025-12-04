@@ -1,6 +1,7 @@
 import React, { Fragment, useState } from "react";
 
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
+import { Student as StudentType } from "@/types/db";
 import { downloadBlob } from "@/utils/general.utils";
 import { buildStudentDataPdf } from "@/utils/pdf.utils";
 import { sanitizeFilename } from "@/utils/string.utils";
@@ -29,7 +30,6 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 
 import { RootState } from "@/store/reducers";
-import { Student as StudentType } from "@/types/db";
 
 import GeneralModal from "../GeneralModal";
 
@@ -161,10 +161,13 @@ const ExportStudentDataModal: React.FC<ExportStudentDataModalProps> = ({
         const { buildCombinedStudentDataCsv } = await import(
           "@/utils/csv.utils"
         );
-        const blob = await buildCombinedStudentDataCsv(students as StudentType[], {
-          includeEmptyFields,
-          locale,
-        });
+        const blob = await buildCombinedStudentDataCsv(
+          students as StudentType[],
+          {
+            includeEmptyFields,
+            locale,
+          },
+        );
         setProgress(95);
 
         const dateStr = new Date().toISOString().split("T")[0];

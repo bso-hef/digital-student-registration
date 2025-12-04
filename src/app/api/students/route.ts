@@ -109,9 +109,9 @@ export async function GET(request: NextRequest) {
     }
 
     // Sort by name for assignment dropdown, by date for other views
-    const sortOrder = forAssignment
-      ? { lastName: 1 as const, firstName: 1 as const }
-      : { createdAt: -1 as const, _id: -1 as const };
+    const sortOrder: Record<string, 1 | -1> = forAssignment
+      ? { lastName: 1, firstName: 1 }
+      : { createdAt: -1, _id: -1 };
 
     const [students, total] = await Promise.all([
       Student.find(filter)
