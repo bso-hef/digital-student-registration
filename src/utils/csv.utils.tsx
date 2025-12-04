@@ -4,21 +4,278 @@ import i18n from "i18next";
 
 import { errorNotification, successNotification } from "./notification.utils";
 
+export interface ParsedStudentAddress {
+  street?: string;
+  city?: string;
+  zip?: string;
+}
+
+export interface ParsedContactPerson {
+  type?: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  mobile?: string;
+  address?: ParsedStudentAddress;
+}
+
+export interface ParsedEmployer {
+  companyName?: string;
+  address?: string;
+  contactName?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  contactSalutation?: string;
+}
+
 export interface ParsedStudent {
+  // Required fields
   firstName: string;
   lastName: string;
   dateOfBirth: string;
+  // Optional fields from comprehensive CSV
+  birthName?: string;
+  gender?: string;
+  birthCountry?: string;
+  birthplace?: string;
+  religion?: string;
+  nationality?: string;
+  secondNationality?: string;
+  originCountry?: string;
+  immigrationYear?: string;
+  familyLanguage?: string;
+  phone?: string;
+  mobile?: string;
+  email?: string;
+  address?: ParsedStudentAddress;
+  schoolEntryDate?: string;
+  className?: string;
+  previousSchool?: string;
+  previousSchoolLevel?: string;
+  previousSchoolType?: string;
+  degrees?: string;
+  profession?: string;
+  trainingStartDate?: string;
+  employer?: ParsedEmployer;
+  contactPersons?: ParsedContactPerson[];
+}
+
+// German CSV header to English field mapping
+const CSV_HEADER_MAP: Record<string, string> = {
+  schueler_eintritt_aktuelleSchule: "schoolEntryDate",
+  klassen_klassenbezeichnung: "className",
+  schueler_vorname: "firstName",
+  schueler_nachname: "lastName",
+  schueler_geburtsname: "birthName",
+  schueler_geschlecht: "gender",
+  schueler_geburtsdatum: "dateOfBirth",
+  schueler_geburtsland: "birthCountry",
+  schueler_geburtsort: "birthplace",
+  schueler_konfession: "religion",
+  schueler_staatsangehoerigkeit1: "nationality",
+  schueler_staatsangehoerigkeit2: "secondNationality",
+  schueler_herkunftsland: "originCountry",
+  schueler_zuzugsjahr: "immigrationYear",
+  schueler_familiensprache: "familyLanguage",
+  schueler_postleitzahl: "address.zip",
+  schueler_ort: "address.city",
+  schueler_straße: "address.street",
+  schueler_telefon1: "phone",
+  schueler_mobil: "mobile",
+  schueler_email: "email",
+  ansprechpartner_art: "contactPerson.type",
+  ansprechpartner_1_vorname: "contactPerson.firstName",
+  ansprechpartner_1_nachname: "contactPerson.lastName",
+  ansprechpartner_1_plz: "contactPerson.address.zip",
+  ansprechpartner_1_ort: "contactPerson.address.city",
+  ansprechpartner_1_straße: "contactPerson.address.street",
+  ansprechpartner_1_telefon1: "contactPerson.phone",
+  ansprechpartner_mobil: "contactPerson.mobile",
+  schueler_vorhergehende_schule: "previousSchool",
+  schueler_vorhergehende_stufe: "previousSchoolLevel",
+  schueler_vorhergehende_schulform: "previousSchoolType",
+  schueler_abschlüsse: "degrees",
+  schueler_beruf: "profession",
+  betrieb_eintritt: "trainingStartDate",
+  betrieb_name: "employer.companyName",
+  betrieb_ansprechpartner_anrede: "employer.contactSalutation",
+  betrieb_ap_name: "employer.contactName",
+  betrieb_ap_telefon1: "employer.contactPhone",
+  betrieb_straße: "employer.street",
+  betrieb_plzort: "employer.zipCity",
+  betrieb_telefon1: "employer.phone",
+  betrieb_email: "employer.contactEmail",
+  // Legacy simple format support
+  firstname: "firstName",
+  lastname: "lastName",
+  dateofbirth: "dateOfBirth",
+};
+
+/**
+ * Detect delimiter (comma or semicolon) from header line
+ */
+function detectDelimiter(headerLine: string): "," | ";" {
+  const commaCount = (headerLine.match(/,/g) || []).length;
+  const semicolonCount = (headerLine.match(/;/g) || []).length;
+  return commaCount > semicolonCount ? "," : ";";
 }
 
 /**
- * Parse a semicolon-delimited CSV with expected headers: firstName;lastName;dateOfBirth
- * - Accepts quoted fields
- * - Trims values and strips double quotes
- * - Validates headers and rows
+ * Split a CSV line by delimiter, respecting quoted fields
+ */
+function splitCSVLine(line: string, delimiter: "," | ";"): string[] {
+  const out: string[] = [];
+  let buf = "";
+  let inQuotes = false;
+
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"') {
+      // toggle quotes; handle doubled quotes "" as escaped quote
+      if (inQuotes && line[i + 1] === '"') {
+        buf += '"';
+        i += 1; // skip the escaped quote
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (ch === delimiter && !inQuotes) {
+      out.push(buf);
+      buf = "";
+    } else {
+      buf += ch;
+    }
+  }
+  out.push(buf);
+  return out;
+}
+
+/**
+ * Normalize header name for mapping lookup
+ */
+function normalizeHeader(header: string): string {
+  return header.toLowerCase().replace(/"/g, "").trim().replace(/\s+/g, "_");
+}
+
+/**
+ * Map gender value from German to English
+ */
+function mapGender(value: string): string | undefined {
+  const v = value.toLowerCase().trim();
+  if (v === "m" || v === "männlich" || v === "male") return "male";
+  if (v === "w" || v === "f" || v === "weiblich" || v === "female")
+    return "female";
+  if (v === "d" || v === "divers" || v === "diverse") return "diverse";
+  return undefined;
+}
+
+/**
+ * Set a nested property on an object using dot notation
+ */
+function setNestedValue(
+  obj: Record<string, unknown>,
+  path: string,
+  value: string,
+): void {
+  const parts = path.split(".");
+  let current = obj;
+
+  for (let i = 0; i < parts.length - 1; i++) {
+    const part = parts[i];
+    if (!(part in current)) {
+      current[part] = {};
+    }
+    current = current[part] as Record<string, unknown>;
+  }
+
+  current[parts[parts.length - 1]] = value;
+}
+
+/**
+ * Parse a row of CSV data into a ParsedStudent object
+ */
+function parseCSVRow(
+  fields: string[],
+  headerMapping: { index: number; englishField: string }[],
+): ParsedStudent {
+  const result: Record<string, unknown> = {};
+  const contactPerson: Record<string, unknown> = {};
+  const employer: Record<string, unknown> = {};
+  const address: Record<string, unknown> = {};
+
+  headerMapping.forEach(({ index, englishField }) => {
+    const rawValue = fields[index]?.replace(/(^"|"$)/g, "").trim() || "";
+    if (!rawValue) return;
+
+    // Handle special field mappings
+    if (englishField === "gender") {
+      const mapped = mapGender(rawValue);
+      if (mapped) result.gender = mapped;
+    } else if (englishField.startsWith("contactPerson.")) {
+      const subPath = englishField.replace("contactPerson.", "");
+      setNestedValue(contactPerson, subPath, rawValue);
+    } else if (englishField.startsWith("employer.")) {
+      const subPath = englishField.replace("employer.", "");
+      // Handle special employer.zipCity field (combine zip and city)
+      if (subPath === "zipCity") {
+        employer.address = rawValue;
+      } else if (subPath === "street") {
+        // Append street to address
+        const existing = (employer.address as string) || "";
+        employer.address = existing ? `${rawValue}, ${existing}` : rawValue;
+      } else {
+        setNestedValue(employer, subPath, rawValue);
+      }
+    } else if (englishField.startsWith("address.")) {
+      const subPath = englishField.replace("address.", "");
+      setNestedValue(address, subPath, rawValue);
+    } else {
+      result[englishField] = rawValue;
+    }
+  });
+
+  // Attach nested objects if they have data
+  if (Object.keys(contactPerson).length > 0) {
+    // Only add contact person if they have at least firstName or lastName
+    if (contactPerson.firstName || contactPerson.lastName) {
+      result.contactPersons = [contactPerson];
+    }
+  }
+  if (Object.keys(employer).length > 0) {
+    // Only add employer if they have at least companyName
+    if (employer.companyName) {
+      result.employer = employer;
+    }
+  }
+  if (Object.keys(address).length > 0) {
+    result.address = address;
+  }
+
+  return result as unknown as ParsedStudent;
+}
+
+/**
+ * Check if the CSV uses the comprehensive German format
+ */
+function isComprehensiveFormat(headers: string[]): boolean {
+  const normalizedHeaders = headers.map(normalizeHeader);
+  // Check for at least a few German-specific headers
+  const germanHeaders = [
+    "schueler_vorname",
+    "schueler_nachname",
+    "schueler_geburtsdatum",
+    "klassen_klassenbezeichnung",
+  ];
+  return germanHeaders.some((h) => normalizedHeaders.includes(h));
+}
+
+/**
+ * Parse a CSV file with student data
+ * Supports both simple format (firstName;lastName;dateOfBirth) and
+ * comprehensive German format (43 columns)
  *
  * @param file The File object from an <input type="file">
  * @param setData Optional callback to receive parsed rows
- * @returns Promise<void> (notifications are shown inside)
+ * @returns Promise<ParsedStudent[] | void>
  */
 export function parseCSVFile(
   file: File,
@@ -31,34 +288,6 @@ export function parseCSVFile(
     const addError = (msg: string, details?: unknown) => {
       errors.push(msg);
       if (details !== undefined) ClientLogger.error(details);
-    };
-
-    // Minimal parser for semicolon-separated lines with quotes.
-    // Splits on ';' only when not inside quotes.
-    const splitSemicolons = (line: string): string[] => {
-      const out: string[] = [];
-      let buf = "";
-      let inQuotes = false;
-
-      for (let i = 0; i < line.length; i++) {
-        const ch = line[i];
-        if (ch === '"') {
-          // toggle quotes; handle doubled quotes "" as escaped quote
-          if (inQuotes && line[i + 1] === '"') {
-            buf += '"';
-            i += 1; // skip the escaped quote
-          } else {
-            inQuotes = !inQuotes;
-          }
-        } else if (ch === ";" && !inQuotes) {
-          out.push(buf);
-          buf = "";
-        } else {
-          buf += ch;
-        }
-      }
-      out.push(buf);
-      return out;
     };
 
     reader.onload = () => {
@@ -93,50 +322,71 @@ export function parseCSVFile(
               "Insufficient data rows in CSV",
             );
           } else {
-            const headerFields = splitSemicolons(lines[0]).map((h) =>
+            const delimiter = detectDelimiter(lines[0]);
+            const headerFields = splitCSVLine(lines[0], delimiter).map((h) =>
               h.replace(/"/g, "").trim(),
             );
 
-            const expected = ["firstname", "lastname", "dateofbirth"];
-            const headerValid =
-              expected.length === headerFields.length &&
-              expected.every(
-                (f, i) => headerFields[i].toLowerCase().trim() === f,
-              );
+            const isComprehensive = isComprehensiveFormat(headerFields);
 
-            if (!headerValid) {
-              const expectedHeaderString = expected.join(", ");
+            // Build header mapping
+            const headerMapping: { index: number; englishField: string }[] = [];
+            headerFields.forEach((header, index) => {
+              const normalized = normalizeHeader(header);
+              const englishField = CSV_HEADER_MAP[normalized];
+              if (englishField) {
+                headerMapping.push({ index, englishField });
+              }
+            });
+
+            // Validate we have the minimum required fields
+            const mappedFields = headerMapping.map((m) => m.englishField);
+            const hasFirstName = mappedFields.includes("firstName");
+            const hasLastName = mappedFields.includes("lastName");
+            const hasDateOfBirth = mappedFields.includes("dateOfBirth");
+
+            if (!hasFirstName || !hasLastName || !hasDateOfBirth) {
+              const missing: string[] = [];
+              if (!hasFirstName) missing.push("firstName/Schueler_Vorname");
+              if (!hasLastName) missing.push("lastName/Schueler_Nachname");
+              if (!hasDateOfBirth)
+                missing.push("dateOfBirth/Schueler_Geburtsdatum");
+
               addError(
-                i18n.t("settings.csv.Invalid CSV headers", {
-                  headers: expectedHeaderString,
+                i18n.t("settings.csv.Missing required headers", {
+                  headers: missing.join(", "),
                 }),
-                `Expected: ${expectedHeaderString}; Found: ${headerFields.join(
-                  ", ",
-                )}`,
+                `Missing required headers: ${missing.join(", ")}. Found: ${headerFields.join(", ")}`,
               );
             } else {
               const data: ParsedStudent[] = [];
 
               lines.slice(1).forEach((line, idx) => {
                 const rowNum = idx + 2; // +2 (1-based + header row)
-                const fields = splitSemicolons(line).map((v) => v.trim());
+                const fields = splitCSVLine(line, delimiter);
 
-                if (fields.length < expected.length) {
+                // Parse row using the comprehensive parser
+                const student = parseCSVRow(fields, headerMapping);
+
+                // Validate required fields
+                if (!student.firstName || !student.lastName) {
                   addError(
                     i18n.t("settings.csv.Invalid row format", { row: rowNum }),
-                    `Row ${rowNum} is malformed: ${line}`,
+                    `Row ${rowNum} missing firstName or lastName`,
                   );
                   return;
                 }
 
-                const firstName =
-                  fields[0]?.replace(/(^"|"$)/g, "").trim() || "";
-                const lastName =
-                  fields[1]?.replace(/(^"|"$)/g, "").trim() || "";
-                const dateOfBirth =
-                  fields[2]?.replace(/(^"|"$)/g, "").trim() || "";
+                // dateOfBirth might be empty for some import scenarios
+                if (!student.dateOfBirth) {
+                  addError(
+                    i18n.t("settings.csv.Invalid row format", { row: rowNum }),
+                    `Row ${rowNum} missing dateOfBirth`,
+                  );
+                  return;
+                }
 
-                data.push({ firstName, lastName, dateOfBirth });
+                data.push(student);
               });
 
               if (data.length === 0) {
@@ -147,6 +397,12 @@ export function parseCSVFile(
               } else {
                 try {
                   if (setData) setData(data);
+                  const formatType = isComprehensive
+                    ? "comprehensive"
+                    : "simple";
+                  ClientLogger.info(
+                    `Parsed ${data.length} students from ${formatType} CSV format`,
+                  );
                   successNotification(
                     i18n.t("settings.csv.CSV uploaded and parsed successfully"),
                   );

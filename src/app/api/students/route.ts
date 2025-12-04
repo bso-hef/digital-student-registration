@@ -29,28 +29,161 @@ const parseDob = (value: unknown): Date | null => {
   return null;
 };
 
+interface AddressInput {
+  street?: string;
+  city?: string;
+  zip?: string;
+  state?: string;
+  country?: string;
+}
+
+interface ContactPersonInput {
+  type?: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  mobile?: string;
+  address?: AddressInput;
+}
+
+interface EmployerInput {
+  companyName?: string;
+  address?: string;
+  contactName?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  contactSalutation?: string;
+}
+
 interface StudentInput {
   firstName?: unknown;
   lastName?: unknown;
   dateOfBirth?: unknown;
   verificationCode?: unknown;
+  // Additional fields from comprehensive CSV
+  birthName?: unknown;
+  gender?: unknown;
+  birthCountry?: unknown;
+  birthplace?: unknown;
+  religion?: unknown;
+  nationality?: unknown;
+  secondNationality?: unknown;
+  originCountry?: unknown;
+  immigrationYear?: unknown;
+  familyLanguage?: unknown;
+  phone?: unknown;
+  mobile?: unknown;
+  email?: unknown;
+  address?: AddressInput;
+  schoolEntryDate?: unknown;
+  className?: unknown;
+  previousSchool?: unknown;
+  previousSchoolLevel?: unknown;
+  previousSchoolType?: unknown;
+  degrees?: unknown;
+  profession?: unknown;
+  trainingStartDate?: unknown;
+  employer?: EmployerInput;
+  contactPersons?: ContactPersonInput[];
   [key: string]: unknown;
+}
+
+interface ShapedStudentDoc {
+  firstName: string;
+  lastName: string;
+  dateOfBirth: Date;
+  firstNameNorm: string;
+  lastNameNorm: string;
+  verificationCode?: string;
+  status: string;
+  // Optional fields
+  birthName?: string;
+  gender?: "male" | "female" | "diverse";
+  birthCountry?: string;
+  birthplace?: string;
+  religion?: string;
+  nationality?: string;
+  secondNationality?: string;
+  familyLanguage?: string;
+  immigrationYear?: number;
+  phone?: string;
+  email?: string;
+  address?: {
+    street?: string;
+    city?: string;
+    zip?: string;
+  };
+  schoolEntryDate?: Date;
+  currentClassName?: string;
+  previousSchool?: string;
+  previousSchoolLevel?: string;
+  previousSchoolType?: string;
+  degrees?: string;
+  profession?: string;
+  trainingStartDate?: Date;
+  employer?: {
+    companyName?: string;
+    address?: string;
+    contactName?: string;
+    contactEmail?: string;
+    contactPhone?: string;
+    contactSalutation?: string;
+  };
+  contactPersons?: Array<{
+    type: string;
+    firstName: string;
+    lastName: string;
+    phone?: string;
+    mobile?: string;
+    address?: {
+      street?: string;
+      city?: string;
+      zip?: string;
+    };
+  }>;
 }
 
 type ShapedStudentInvalid = { ok: false; reason: string };
 type ShapedStudentValid = {
   ok: true;
-  doc: {
-    firstName: string;
-    lastName: string;
-    dateOfBirth: Date;
-    firstNameNorm: string;
-    lastNameNorm: string;
-    verificationCode?: string;
-    status: string;
-  };
+  doc: ShapedStudentDoc;
 };
 type ShapedStudent = ShapedStudentInvalid | ShapedStudentValid;
+
+/**
+ * Map gender from various formats to standard enum value
+ */
+function mapGender(value: unknown): "male" | "female" | "diverse" | undefined {
+  if (typeof value !== "string") return undefined;
+  const v = value.toLowerCase().trim();
+  if (v === "m" || v === "männlich" || v === "male") return "male";
+  if (v === "w" || v === "f" || v === "weiblich" || v === "female")
+    return "female";
+  if (v === "d" || v === "divers" || v === "diverse") return "diverse";
+  return undefined;
+}
+
+/**
+ * Safely get string value from unknown input
+ */
+function getString(value: unknown): string | undefined {
+  if (typeof value === "string" && value.trim()) {
+    return value.trim();
+  }
+  return undefined;
+}
+
+/**
+ * Safely get number value from unknown input
+ */
+function getNumber(value: unknown): number | undefined {
+  if (typeof value === "number") return value;
+  if (typeof value === "string") {
+    const num = parseInt(value, 10);
+    if (!isNaN(num)) return num;
+  }
+  return undefined;
+}
 
 const shapeStudent = (row: StudentInput): ShapedStudent => {
   const firstName =
@@ -65,16 +198,132 @@ const shapeStudent = (row: StudentInput): ShapedStudent => {
     };
   }
 
+  // Build the base document
+  const doc: ShapedStudentDoc = {
+    firstName,
+    lastName,
+    dateOfBirth: dob,
+    firstNameNorm: norm(firstName),
+    lastNameNorm: norm(lastName),
+    status: "imported",
+  };
+
+  // Add optional fields if present
+  const birthName = getString(row.birthName);
+  if (birthName) doc.birthName = birthName;
+
+  const gender = mapGender(row.gender);
+  if (gender) doc.gender = gender;
+
+  const birthCountry = getString(row.birthCountry);
+  if (birthCountry) doc.birthCountry = birthCountry;
+
+  const birthplace = getString(row.birthplace);
+  if (birthplace) doc.birthplace = birthplace;
+
+  const religion = getString(row.religion);
+  if (religion) doc.religion = religion;
+
+  const nationality = getString(row.nationality);
+  if (nationality) doc.nationality = nationality;
+
+  const secondNationality = getString(row.secondNationality);
+  if (secondNationality) doc.secondNationality = secondNationality;
+
+  const familyLanguage = getString(row.familyLanguage);
+  if (familyLanguage) doc.familyLanguage = familyLanguage;
+
+  const immigrationYear = getNumber(row.immigrationYear);
+  if (immigrationYear) doc.immigrationYear = immigrationYear;
+
+  const phone = getString(row.phone) || getString(row.mobile);
+  if (phone) doc.phone = phone;
+
+  const email = getString(row.email);
+  if (email) doc.email = email.toLowerCase();
+
+  // Address
+  if (row.address && typeof row.address === "object") {
+    const addr = row.address;
+    if (addr.street || addr.city || addr.zip) {
+      doc.address = {
+        street: getString(addr.street),
+        city: getString(addr.city),
+        zip: getString(addr.zip),
+      };
+    }
+  }
+
+  // School info
+  const schoolEntryDate = parseDob(row.schoolEntryDate);
+  if (schoolEntryDate) doc.schoolEntryDate = schoolEntryDate;
+
+  const className = getString(row.className);
+  if (className) doc.currentClassName = className;
+
+  // Previous education
+  const previousSchool = getString(row.previousSchool);
+  if (previousSchool) doc.previousSchool = previousSchool;
+
+  const previousSchoolLevel = getString(row.previousSchoolLevel);
+  if (previousSchoolLevel) doc.previousSchoolLevel = previousSchoolLevel;
+
+  const previousSchoolType = getString(row.previousSchoolType);
+  if (previousSchoolType) doc.previousSchoolType = previousSchoolType;
+
+  const degrees = getString(row.degrees);
+  if (degrees) doc.degrees = degrees;
+
+  // Vocational info
+  const profession = getString(row.profession);
+  if (profession) doc.profession = profession;
+
+  const trainingStartDate = parseDob(row.trainingStartDate);
+  if (trainingStartDate) doc.trainingStartDate = trainingStartDate;
+
+  // Employer
+  if (row.employer && typeof row.employer === "object") {
+    const emp = row.employer;
+    if (emp.companyName) {
+      doc.employer = {
+        companyName: getString(emp.companyName),
+        address: getString(emp.address),
+        contactName: getString(emp.contactName),
+        contactEmail: getString(emp.contactEmail),
+        contactPhone: getString(emp.contactPhone),
+        contactSalutation: getString(emp.contactSalutation),
+      };
+    }
+  }
+
+  // Contact persons
+  if (Array.isArray(row.contactPersons) && row.contactPersons.length > 0) {
+    const validContacts = row.contactPersons
+      .filter((cp) => cp && (cp.firstName || cp.lastName))
+      .map((cp) => ({
+        type: getString(cp.type) || "guardian",
+        firstName: getString(cp.firstName) || "",
+        lastName: getString(cp.lastName) || "",
+        phone: getString(cp.phone),
+        mobile: getString(cp.mobile),
+        address:
+          cp.address && (cp.address.street || cp.address.city || cp.address.zip)
+            ? {
+                street: getString(cp.address.street),
+                city: getString(cp.address.city),
+                zip: getString(cp.address.zip),
+              }
+            : undefined,
+      }));
+
+    if (validContacts.length > 0) {
+      doc.contactPersons = validContacts;
+    }
+  }
+
   return {
     ok: true as const,
-    doc: {
-      firstName,
-      lastName,
-      dateOfBirth: dob,
-      firstNameNorm: norm(firstName),
-      lastNameNorm: norm(lastName),
-      status: "imported",
-    },
+    doc,
   };
 };
 

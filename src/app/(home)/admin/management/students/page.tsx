@@ -78,6 +78,8 @@ const StudentManagementPage = () => {
   const [csvData, setCsvData] = useState<ParsedStudent[]>([]);
   const [selectedItems, setSelectedItems] = useState<(string | number)[]>([]);
   const [clearSelected, setClearSelected] = useState(false);
+  const [isParsingCSV, setIsParsingCSV] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
 
   useEffect(() => {
     dispatch(getStudents());
@@ -97,8 +99,13 @@ const StudentManagementPage = () => {
       const target = event.target as HTMLInputElement;
       const file = target.files?.[0];
       if (file) {
-        const rows = (await parseCSVFile(file)) ?? [];
-        setCsvData(rows as ParsedStudent[]);
+        setIsParsingCSV(true);
+        try {
+          const rows = (await parseCSVFile(file)) ?? [];
+          setCsvData(rows as ParsedStudent[]);
+        } finally {
+          setIsParsingCSV(false);
+        }
       }
     };
     input.click();
@@ -138,9 +145,14 @@ const StudentManagementPage = () => {
   }, []);
 
   const handleAddStudents = useCallback(
-    (students: CreateStudentInput[]) => {
-      dispatch(addStudents(students));
-      handleAddStudentModalClose();
+    async (students: CreateStudentInput[]) => {
+      setIsImporting(true);
+      try {
+        await dispatch(addStudents(students));
+        handleAddStudentModalClose();
+      } finally {
+        setIsImporting(false);
+      }
     },
     [dispatch, handleAddStudentModalClose],
   );
@@ -228,6 +240,8 @@ const StudentManagementPage = () => {
         onUploadCSV={handleUploadCSV}
         csvData={csvData}
         onAddStudents={handleAddStudents}
+        isParsingCSV={isParsingCSV}
+        isImporting={isImporting}
       />
       <ConfirmationModal
         open={openStudentDeleteModal}
