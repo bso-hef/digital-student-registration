@@ -122,7 +122,7 @@ const ExportStudentDataModal: React.FC<ExportStudentDataModalProps> = ({
   };
 
   const resolveFilename = (s: StudentType, format: "pdf" | "json" | "csv") => {
-    const sid = s._id || "";
+    const sid = String(s._id || "");
     const dateStr = new Date().toISOString().split("T")[0];
     const classNameStr = getClassName(s) || "ohne_klasse";
 

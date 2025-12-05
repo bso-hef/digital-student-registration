@@ -139,14 +139,12 @@ const PreEducationForm: React.FC<PreEducationFormProps> = ({
   // Track validation state changes (must be before early return)
   useEffect(() => {
     if (formikRef?.current && onValidationChange) {
-      // Validate form and report status
-      formikRef.current.validateForm().then(() => {
-        if (formikRef.current) {
-          onValidationChange(formikRef.current.isValid);
-        }
-      });
+      const { isValid, isValidating } = formikRef.current;
+      if (!isValidating) {
+        onValidationChange(isValid);
+      }
     }
-  });
+  }, [formikRef, onValidationChange]);
 
   if (loading) {
     return <div>Loading settings...</div>;

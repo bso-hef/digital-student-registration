@@ -203,19 +203,27 @@ function renderField(
   const displayValue =
     value && value.toString().trim() !== "" ? value.toString() : "—";
 
-  const labelWidth = 70;
-  const maxValueWidth =
-    layout.pageWidth - layout.leftMargin - layout.rightMargin - labelWidth - 3;
+  // Calculate 50/50 split
+  const availableWidth =
+    layout.pageWidth - layout.leftMargin - layout.rightMargin;
+  const splitPoint = layout.leftMargin + availableWidth / 2;
+  const labelMaxWidth = availableWidth / 2 - 5; // 5mm padding
+  const valueMaxWidth = availableWidth / 2 - 5; // 5mm padding
 
+  // Render label (left 50%)
   doc.setFont("helvetica", "bold");
   doc.setFontSize(10);
-  doc.text(`${label}:`, layout.leftMargin, y);
+  const labelLines = doc.splitTextToSize(`${label}:`, labelMaxWidth);
+  doc.text(labelLines, layout.leftMargin, y);
 
+  // Render value (right 50%)
   doc.setFont("helvetica", "normal");
-  const valueLines = doc.splitTextToSize(displayValue, maxValueWidth);
-  doc.text(valueLines, layout.leftMargin + labelWidth, y);
+  const valueLines = doc.splitTextToSize(displayValue, valueMaxWidth);
+  doc.text(valueLines, splitPoint, y);
 
-  return y + layout.fieldRowHeight * valueLines.length;
+  // Calculate height based on whichever is taller
+  const maxLines = Math.max(labelLines.length, valueLines.length);
+  return y + layout.fieldRowHeight * maxLines;
 }
 
 function checkPageBreak(
@@ -329,6 +337,17 @@ function renderGeneralSection(
     layout,
     includeEmptyFields,
   );
+  y = renderField(
+    doc,
+    t("onboarding.general.schoolEntryDate"),
+    formatDate(
+      student.schoolEntryDate,
+      t("general.Language") === "English" ? "en" : "de",
+    ),
+    y,
+    layout,
+    includeEmptyFields,
+  );
 
   return y + layout.sectionGap;
 }
@@ -366,7 +385,7 @@ function renderOriginSection(
   );
   y = renderField(
     doc,
-    t("onboarding.origin.immigrationYear"),
+    t("onboarding.origin.yearOfImmigration"),
     student.immigrationYear?.toString(),
     y,
     layout,
@@ -458,7 +477,7 @@ function renderContactPersonsSection(
     doc.setFont("helvetica", "bold");
     doc.setFontSize(11);
     doc.text(
-      `${t("onboarding.legalGuardian.contactPerson")} ${index + 1}`,
+      t(`onboarding.legalGuardian.contactPerson${index + 1}`),
       layout.leftMargin + 2,
       y,
     );
@@ -728,6 +747,15 @@ function renderAgreementsSection(
   doc.text(t("onboarding.summary.agreements"), layout.leftMargin, y);
   y += 8;
 
+  // Map database keys to translation keys
+  const agreementKeyMap: Record<string, string> = {
+    dataProtection: "datenschutz",
+    classParticipation: "teilnahmeunterricht",
+    schoolRules: "schulordnung",
+    imageRights: "personenabbildung",
+    teamsUsage: "teamsnutzung",
+  };
+
   const agreementsList = [
     { key: "dataProtection", value: student.agreements.dataProtection },
     { key: "classParticipation", value: student.agreements.classParticipation },
@@ -739,14 +767,31 @@ function renderAgreementsSection(
   doc.setFont("helvetica", "normal");
   doc.setFontSize(10);
 
-  agreementsList.forEach(({ key, value }) => {
-    const label = t(`onboarding.agreements.${key}`);
-    const status = value ? "✓" : "✗";
-    const statusText = value ? t("general.Accepted") : t("general.NotAccepted");
+  // Calculate 50/50 split for consistent layout
+  const availableWidth =
+    layout.pageWidth - layout.leftMargin - layout.rightMargin;
+  const splitPoint = layout.leftMargin + availableWidth / 2;
 
-    doc.text(`${status} ${label}:`, layout.leftMargin + 4, y);
-    doc.setFont("helvetica", "italic");
-    doc.text(statusText, layout.leftMargin + 100, y);
+  agreementsList.forEach(({ key, value }) => {
+    y = checkPageBreak(doc, y, layout);
+
+    const translationKey = agreementKeyMap[key] || key;
+    const label = t(`onboarding.agreements.${translationKey}`);
+
+    // Explicit boolean check to ensure correct status
+    const isAccepted = value === true;
+    const statusText = isAccepted
+      ? t("general.Accepted")
+      : t("general.NotAccepted");
+
+    // Render label (left 50%) without Unicode character
+    doc.setFont("helvetica", "bold");
+    doc.text(`${label}:`, layout.leftMargin + 4, y);
+
+    // Render status (right 50%) with visual distinction
+    doc.setFont("helvetica", isAccepted ? "bold" : "normal");
+    doc.text(statusText, splitPoint, y);
+
     doc.setFont("helvetica", "normal");
     y += layout.fieldRowHeight;
   });
