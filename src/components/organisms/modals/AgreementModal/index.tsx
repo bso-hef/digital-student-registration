@@ -168,112 +168,122 @@ const AgreementModal: React.FC<Props> = ({
     onClose();
   };
 
+  // Ctrl+Enter or Cmd+Enter to submit (for forms with multiline fields)
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === "Enter" && (event.ctrlKey || event.metaKey) && isValid) {
+      event.preventDefault();
+      handleSave();
+    }
+  };
+
   const contentChildren = (
-    <FormWrap>
-      {/* Key Field */}
-      <GeneralInput
-        label={t("settings.agreements.fields.key")}
-        value={key}
-        onChange={(e) => {
-          setKey(e.target.value);
-          setTouched((prev) => ({ ...prev, key: true }));
-        }}
-        onBlur={() => setTouched((prev) => ({ ...prev, key: true }))}
-        error={!!errors.key}
-        helperText={
-          errors.key ||
-          (!isEditMode ? t("settings.agreements.keyHelperText") : undefined)
-        }
-        placeholder={
-          isEditMode ? undefined : t("settings.agreements.keyPlaceholder")
-        }
-        fullWidth
-        required
-        disabled
-      />
-
-      {/* Label (English) */}
-      <GeneralInput
-        label={t("settings.agreements.fields.labelEn")}
-        value={labelEn}
-        onChange={(e) => {
-          setLabelEn(e.target.value);
-          setTouched((prev) => ({ ...prev, labelEn: true }));
-        }}
-        onBlur={() => setTouched((prev) => ({ ...prev, labelEn: true }))}
-        error={!!errors.labelEn}
-        helperText={errors.labelEn}
-        placeholder={t("settings.agreements.labelEnPlaceholder")}
-        required
-        fullWidth
-      />
-
-      {/* Label (German) */}
-      <GeneralInput
-        label={t("settings.agreements.fields.labelDe")}
-        value={labelDe}
-        onChange={(e) => {
-          setLabelDe(e.target.value);
-          setTouched((prev) => ({ ...prev, labelDe: true }));
-        }}
-        onBlur={() => setTouched((prev) => ({ ...prev, labelDe: true }))}
-        error={!!errors.labelDe}
-        helperText={errors.labelDe}
-        placeholder={t("settings.agreements.labelDePlaceholder")}
-        required
-        fullWidth
-      />
-
-      {/* Description (English) - Optional */}
-      <GeneralInput
-        label={t("settings.agreements.descriptionEn")}
-        value={descriptionEn}
-        onChange={(e) => setDescriptionEn(e.target.value)}
-        placeholder={t("settings.agreements.descriptionEnPlaceholder")}
-        multiline
-        rows={3}
-        fullWidth
-      />
-
-      {/* Description (German) - Optional */}
-      <GeneralInput
-        label={t("settings.agreements.descriptionDe")}
-        value={descriptionDe}
-        onChange={(e) => setDescriptionDe(e.target.value)}
-        placeholder={t("settings.agreements.descriptionDePlaceholder")}
-        multiline
-        rows={3}
-        fullWidth
-      />
-
-      {/* Icon - Optional */}
-      <GeneralInput
-        label={t("settings.agreements.icon")}
-        value={icon}
-        onChange={(e) => setIcon(e.target.value)}
-        helperText={t("settings.agreements.iconHelperText")}
-        placeholder={t("settings.agreements.iconPlaceholder")}
-        fullWidth
-      />
-
-      {/* Enabled Switch */}
-      <SwitchRow>
-        <SwitchLabel>{t("settings.agreements.fields.enabled")}</SwitchLabel>
-        <AppleSwitch
-          checked={enabled}
-          onChange={(e, checked) => setEnabled(checked)}
+    <Box onKeyDown={handleKeyDown}>
+      <FormWrap>
+        {/* Key Field */}
+        <GeneralInput
+          label={t("settings.agreements.fields.key")}
+          value={key}
+          onChange={(e) => {
+            setKey(e.target.value);
+            setTouched((prev) => ({ ...prev, key: true }));
+          }}
+          onBlur={() => setTouched((prev) => ({ ...prev, key: true }))}
+          error={!!errors.key}
+          helperText={
+            errors.key ||
+            (!isEditMode ? t("settings.agreements.keyHelperText") : undefined)
+          }
+          placeholder={
+            isEditMode ? undefined : t("settings.agreements.keyPlaceholder")
+          }
+          fullWidth
+          required
+          disabled
         />
-      </SwitchRow>
 
-      {/* Required Switch */}
-      <SwitchRow>
-        <SwitchLabel>{t("settings.agreements.fields.required")}</SwitchLabel>
-        <AppleSwitch
-          checked={required}
-          onChange={(e, checked) => setRequired(checked)}
+        {/* Label (English) */}
+        <GeneralInput
+          label={t("settings.agreements.fields.labelEn")}
+          value={labelEn}
+          onChange={(e) => {
+            setLabelEn(e.target.value);
+            setTouched((prev) => ({ ...prev, labelEn: true }));
+          }}
+          onBlur={() => setTouched((prev) => ({ ...prev, labelEn: true }))}
+          error={!!errors.labelEn}
+          helperText={errors.labelEn}
+          placeholder={t("settings.agreements.labelEnPlaceholder")}
+          required
+          fullWidth
         />
-      </SwitchRow>
-    </FormWrap>
+
+        {/* Label (German) */}
+        <GeneralInput
+          label={t("settings.agreements.fields.labelDe")}
+          value={labelDe}
+          onChange={(e) => {
+            setLabelDe(e.target.value);
+            setTouched((prev) => ({ ...prev, labelDe: true }));
+          }}
+          onBlur={() => setTouched((prev) => ({ ...prev, labelDe: true }))}
+          error={!!errors.labelDe}
+          helperText={errors.labelDe}
+          placeholder={t("settings.agreements.labelDePlaceholder")}
+          required
+          fullWidth
+        />
+
+        {/* Description (English) - Optional */}
+        <GeneralInput
+          label={t("settings.agreements.descriptionEn")}
+          value={descriptionEn}
+          onChange={(e) => setDescriptionEn(e.target.value)}
+          placeholder={t("settings.agreements.descriptionEnPlaceholder")}
+          multiline
+          rows={3}
+          fullWidth
+        />
+
+        {/* Description (German) - Optional */}
+        <GeneralInput
+          label={t("settings.agreements.descriptionDe")}
+          value={descriptionDe}
+          onChange={(e) => setDescriptionDe(e.target.value)}
+          placeholder={t("settings.agreements.descriptionDePlaceholder")}
+          multiline
+          rows={3}
+          fullWidth
+        />
+
+        {/* Icon - Optional */}
+        <GeneralInput
+          label={t("settings.agreements.icon")}
+          value={icon}
+          onChange={(e) => setIcon(e.target.value)}
+          helperText={t("settings.agreements.iconHelperText")}
+          placeholder={t("settings.agreements.iconPlaceholder")}
+          fullWidth
+        />
+
+        {/* Enabled Switch */}
+        <SwitchRow>
+          <SwitchLabel>{t("settings.agreements.fields.enabled")}</SwitchLabel>
+          <AppleSwitch
+            checked={enabled}
+            onChange={(e, checked) => setEnabled(checked)}
+          />
+        </SwitchRow>
+
+        {/* Required Switch */}
+        <SwitchRow>
+          <SwitchLabel>{t("settings.agreements.fields.required")}</SwitchLabel>
+          <AppleSwitch
+            checked={required}
+            onChange={(e, checked) => setRequired(checked)}
+          />
+        </SwitchRow>
+      </FormWrap>
+    </Box>
   );
 
   const actionsChildren = (

@@ -206,6 +206,13 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
     await generateExport();
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === "Enter" && !event.shiftKey && count && !busy) {
+      event.preventDefault();
+      handleGenerate();
+    }
+  };
+
   const contentChildren = (
     <Fragment>
       {busy && (
@@ -229,6 +236,7 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
         direction={{ xs: "column", md: "row" }}
         spacing={3}
         divider={<Divider flexItem orientation="vertical" />}
+        onKeyDown={handleKeyDown}
       >
         <Stack
           sx={{

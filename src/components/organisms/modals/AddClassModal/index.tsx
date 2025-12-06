@@ -133,145 +133,159 @@ const AddSingleClassModal: React.FC<Props> = ({
     onAddClass,
   ]);
 
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent) => {
+      if (event.key === "Enter" && !event.shiftKey && formValid) {
+        event.preventDefault();
+        handleSubmit();
+      }
+    },
+    [formValid, handleSubmit],
+  );
+
   const contentChildren = (
-    <FormWrap>
-      <Grid2>
-        <DatePicker
-          views={["year"]}
-          value={yearFrom}
-          onChange={handleFromChange}
-          format="YYYY"
-          slotProps={{
-            textField: {
-              fullWidth: true,
-              label:
-                touched.yearFrom && !yearFrom
-                  ? t("modals.addClass.required")
-                  : t("modals.addClass.schoolYearFrom"),
-              InputLabelProps: { shrink: true },
-              size: "small",
-              style: {
-                height: "50px",
-                marginTop: "6px",
-                marginBottom: "8px",
-              },
-              error: Boolean(touched.yearFrom && !yearFrom),
-              sx: {
-                "& .MuiOutlinedInput-root": {
-                  height: 50,
-                  borderRadius: 10,
-                  marginTop: 0.5,
+    <Box onKeyDown={handleKeyDown}>
+      <FormWrap>
+        <Grid2>
+          <DatePicker
+            views={["year"]}
+            value={yearFrom}
+            onChange={handleFromChange}
+            format="YYYY"
+            slotProps={{
+              textField: {
+                fullWidth: true,
+                label:
+                  touched.yearFrom && !yearFrom
+                    ? t("modals.addClass.required")
+                    : t("modals.addClass.schoolYearFrom"),
+                InputLabelProps: { shrink: true },
+                size: "small",
+                style: {
+                  height: "50px",
+                  marginTop: "6px",
+                  marginBottom: "8px",
+                },
+                error: Boolean(touched.yearFrom && !yearFrom),
+                sx: {
+                  "& .MuiOutlinedInput-root": {
+                    height: 50,
+                    borderRadius: 10,
+                    marginTop: 0.5,
+                  },
                 },
               },
-            },
-          }}
-        />
-        <DatePicker
-          views={["year"]}
-          value={yearTo}
-          onChange={handleToChange}
-          format="YYYY"
-          slotProps={{
-            textField: {
-              fullWidth: true,
-              label:
-                touched.yearTo &&
-                (!yearTo || !yearFrom || yearTo.year() <= yearFrom.year())
-                  ? t("modals.addClass.yearOrderError")
-                  : t("modals.addClass.schoolYearTo"),
-              InputLabelProps: { shrink: true },
-              size: "small",
-              style: {
-                height: "50px",
-                marginTop: "6px",
-                marginBottom: "8px",
-              },
-              error: Boolean(
-                touched.yearTo &&
-                  (!yearTo || !yearFrom || yearTo.year() <= yearFrom.year()),
-              ),
-              sx: {
-                "& .MuiOutlinedInput-root": {
-                  height: 50,
-                  borderRadius: 10,
+            }}
+          />
+          <DatePicker
+            views={["year"]}
+            value={yearTo}
+            onChange={handleToChange}
+            format="YYYY"
+            slotProps={{
+              textField: {
+                fullWidth: true,
+                label:
+                  touched.yearTo &&
+                  (!yearTo || !yearFrom || yearTo.year() <= yearFrom.year())
+                    ? t("modals.addClass.yearOrderError")
+                    : t("modals.addClass.schoolYearTo"),
+                InputLabelProps: { shrink: true },
+                size: "small",
+                style: {
+                  height: "50px",
+                  marginTop: "6px",
+                  marginBottom: "8px",
+                },
+                error: Boolean(
+                  touched.yearTo &&
+                    (!yearTo || !yearFrom || yearTo.year() <= yearFrom.year()),
+                ),
+                sx: {
+                  "& .MuiOutlinedInput-root": {
+                    height: 50,
+                    borderRadius: 10,
+                  },
                 },
               },
-            },
-          }}
-        />
-      </Grid2>
-      <Grid2>
-        <GeneralInput
-          fullWidth
-          label={
-            touched.name && !name
-              ? t("modals.addClass.required")
-              : t("modals.addClass.className")
-          }
-          placeholder={t("modals.addClass.classNamePlaceholder")}
-          style={{
-            height: "50px",
-            flexShrink: 0,
-          }}
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          onBlur={() => setTouched((p) => ({ ...p, name: true }))}
-          error={touched.name && !name}
-        />
-        <GeneralInput
-          fullWidth
-          label={
-            touched.grade && !gradeValid
-              ? t("modals.addClass.onlyNumbers")
-              : t("modals.addClass.grade")
-          }
-          placeholder={t("modals.addClass.gradePlaceholder")}
-          style={{
-            height: "50px",
-            flexShrink: 0,
-          }}
-          value={grade ?? ""}
-          onChange={(e) => {
-            const v = e.target.value.trim();
-            if (v === "") {
-              setGrade(null);
-            } else {
-              const n = Number(v);
-              setGrade(Number.isFinite(n) ? n : grade); // nur setzen, wenn numerisch
+            }}
+          />
+        </Grid2>
+        <Grid2>
+          <GeneralInput
+            fullWidth
+            label={
+              touched.name && !name
+                ? t("modals.addClass.required")
+                : t("modals.addClass.className")
             }
+            placeholder={t("modals.addClass.classNamePlaceholder")}
+            style={{
+              height: "50px",
+              flexShrink: 0,
+            }}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            onBlur={() => setTouched((p) => ({ ...p, name: true }))}
+            error={touched.name && !name}
+          />
+          <GeneralInput
+            fullWidth
+            label={
+              touched.grade && !gradeValid
+                ? t("modals.addClass.onlyNumbers")
+                : t("modals.addClass.grade")
+            }
+            placeholder={t("modals.addClass.gradePlaceholder")}
+            style={{
+              height: "50px",
+              flexShrink: 0,
+            }}
+            value={grade ?? ""}
+            onChange={(e) => {
+              const v = e.target.value.trim();
+              if (v === "") {
+                setGrade(null);
+              } else {
+                const n = Number(v);
+                setGrade(Number.isFinite(n) ? n : grade); // nur setzen, wenn numerisch
+              }
+            }}
+            onBlur={() => setTouched((p) => ({ ...p, grade: true }))}
+            error={touched.grade && !gradeValid}
+            inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+          />
+        </Grid2>
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "1fr auto",
+            rowGap: 1.5,
+            alignItems: "center",
+            mt: 0.5,
           }}
-          onBlur={() => setTouched((p) => ({ ...p, grade: true }))}
-          error={touched.grade && !gradeValid}
-          inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
-        />
-      </Grid2>
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: "1fr auto",
-          rowGap: 1.5,
-          alignItems: "center",
-          mt: 0.5,
-        }}
-      >
-        <Box sx={{ fontWeight: 600 }}>{t("modals.addClass.companyClass")}</Box>
-        <AppleSwitch
-          checked={isVocational}
-          onChange={(_, c) => setIsVocational(c)}
-        />
+        >
+          <Box sx={{ fontWeight: 600 }}>
+            {t("modals.addClass.companyClass")}
+          </Box>
+          <AppleSwitch
+            checked={isVocational}
+            onChange={(_, c) => setIsVocational(c)}
+          />
 
-        <Box sx={{ fontWeight: 600 }}>
-          {t("modals.addClass.requiresEmployerInfo")}
+          <Box sx={{ fontWeight: 600 }}>
+            {t("modals.addClass.requiresEmployerInfo")}
+          </Box>
+          <AppleSwitch
+            checked={requiresEmployerInfo}
+            onChange={(_, c) => setRequiresEmployerInfo(c)}
+          />
+
+          <Box sx={{ fontWeight: 600 }}>{t("modals.addClass.active")}</Box>
+          <AppleSwitch checked={active} onChange={(_, c) => setActive(c)} />
         </Box>
-        <AppleSwitch
-          checked={requiresEmployerInfo}
-          onChange={(_, c) => setRequiresEmployerInfo(c)}
-        />
-
-        <Box sx={{ fontWeight: 600 }}>{t("modals.addClass.active")}</Box>
-        <AppleSwitch checked={active} onChange={(_, c) => setActive(c)} />
-      </Box>
-    </FormWrap>
+      </FormWrap>
+    </Box>
   );
 
   const actionsChildren = (

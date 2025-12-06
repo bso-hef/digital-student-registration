@@ -377,250 +377,294 @@ export default function SetupPage() {
           setFieldValue,
           validateField,
           setFieldTouched,
-        }) => (
-          <StyledForm>
-            <AuthContent>
-              {/* Step 0: Welcome */}
-              {activeStep === 0 && (
-                <Box>
-                  <Typography variant="h5" gutterBottom>
-                    {t("auth.setup.welcome.title")}
-                  </Typography>
-                  <Typography variant="body1">
-                    {t("auth.setup.welcome.description")}
-                  </Typography>
-                  <StepList>
-                    <StepListItem variant="body1">
-                      <CheckRoundedIcon color="success" />
-                      {t("auth.setup.welcome.step1")}
-                    </StepListItem>
-                    <StepListItem variant="body1">
-                      <CheckRoundedIcon color="success" />
-                      {t("auth.setup.welcome.step2")}
-                    </StepListItem>
-                    <StepListItem variant="body1">
-                      <CheckRoundedIcon color="success" />
-                      {t("auth.setup.welcome.step3")}
-                    </StepListItem>
-                  </StepList>
-                  <StyledAlert severity="warning">
-                    {t("auth.setup.welcome.warning")}
-                  </StyledAlert>
-                  <ButtonContainer>
-                    <GeneralButton
-                      onAction={handleNext}
-                      label={t("auth.setup.welcome.startButton")}
-                      maxWidth="auto"
-                    />
-                  </ButtonContainer>
-                </Box>
-              )}
+        }) => {
+          // Handle Enter key for email step
+          const handleEmailKeyDown = async (event: React.KeyboardEvent) => {
+            if (
+              event.key === "Enter" &&
+              !event.shiftKey &&
+              values.email &&
+              !errors.email
+            ) {
+              event.preventDefault();
+              setFieldTouched("email", true);
+              const error = await validateField("email");
+              if (!error) {
+                dispatch(
+                  updateSetupWizard({
+                    step: activeStep + 1,
+                    email: values.email,
+                  }),
+                );
+              }
+            }
+          };
 
-              {/* Step 1: Email Input */}
-              {activeStep === 1 && (
-                <Box>
-                  <Typography variant="h5" gutterBottom>
-                    {t("auth.setup.email.title")}
-                  </Typography>
-                  <Typography variant="body1" color="text.information">
-                    {t("auth.setup.email.description")}
-                  </Typography>
-                  <br />
-                  <Field
-                    as={GeneralInput}
-                    fullWidth
-                    name="email"
-                    label={t("auth.setup.email.emailLabel")}
-                    placeholder="admin@email.com"
-                    type="email"
-                    error={touched.email && Boolean(errors.email)}
-                    helperText={touched.email && errors.email}
-                    required
-                    margin="normal"
-                  />
-                  <ButtonContainerSpaceBetween>
-                    <GeneralButton
-                      onAction={handleBack}
-                      label={t("auth.common.back")}
-                      isPrimary={false}
-                      maxWidth="auto"
-                    />
-                    <GeneralButton
-                      onAction={async () => {
-                        setFieldTouched("email", true);
-                        const error = await validateField("email");
-                        if (!error) {
-                          dispatch(
-                            updateSetupWizard({
-                              step: activeStep + 1,
-                              email: values.email,
-                            }),
-                          );
-                        }
-                      }}
-                      label={t("auth.common.next")}
-                      disabled={!values.email || Boolean(errors.email)}
-                      maxWidth="auto"
-                    />
-                  </ButtonContainerSpaceBetween>
-                </Box>
-              )}
+          // Handle Enter key for password step
+          const handlePasswordKeyDown = (event: React.KeyboardEvent) => {
+            if (
+              event.key === "Enter" &&
+              !event.shiftKey &&
+              values.password &&
+              !errors.password &&
+              !isLoading
+            ) {
+              event.preventDefault();
+              handlePasswordSubmit(values.email, values.password);
+            }
+          };
 
-              {/* Step 2: Password Input */}
-              {activeStep === 2 && (
-                <Box>
-                  <Typography variant="h5" gutterBottom>
-                    {t("auth.setup.password.title")}
-                  </Typography>
-                  <Typography variant="body1" paragraph>
-                    {t("auth.setup.password.description")}
-                  </Typography>
-                  <PasswordInput
-                    value={values.password}
-                    onChange={(e) =>
-                      setFieldValue(
-                        "password",
-                        e.target.value.replace(/\s/g, ""),
-                      )
-                    }
-                    label={t("auth.setup.password.passwordLabel")}
-                    placeholder={t("auth.setup.password.passwordLabel")}
-                    error={touched.password && Boolean(errors.password)}
-                    helperText={
-                      touched.password
-                        ? (errors.password as string | undefined)
-                        : undefined
-                    }
-                    showCubeIcon
-                    showEyeIcon
-                    showProgressBar
-                    showGuidelines
-                    fullWidth
-                    autoComplete="new-password"
-                    required
-                  />
-
-                  <ButtonContainerSpaceBetween>
-                    <GeneralButton
-                      onAction={handleBack}
-                      label={t("auth.common.back")}
-                      isPrimary={false}
-                      maxWidth="auto"
-                    />
-                    <GeneralButton
-                      label={
-                        isLoading
-                          ? t("auth.setup.password.creatingAccount")
-                          : t("auth.setup.password.createButton")
-                      }
-                      disabled={
-                        !values.password ||
-                        Boolean(errors.password) ||
-                        isLoading
-                      }
-                      maxWidth="auto"
-                      onAction={() =>
-                        handlePasswordSubmit(values.email, values.password)
-                      }
-                    />
-                  </ButtonContainerSpaceBetween>
-                </Box>
-              )}
-
-              {/* Step 3: Recovery Code Display */}
-              {activeStep === 3 && recoveryCode && (
-                <Box>
-                  <Typography variant="h5" gutterBottom>
-                    {t("auth.setup.recovery.title")}
-                  </Typography>
-                  <StyledAlertError severity="error">
-                    {t("auth.setup.recovery.warning")}
-                  </StyledAlertError>
-
-                  <Typography variant="body1" paragraph>
-                    {t("auth.setup.recovery.codeLabel")}
-                  </Typography>
-
-                  <RecoveryCodeBox>
-                    <RecoveryCodeTypography variant="h4">
-                      {recoveryCode}
-                    </RecoveryCodeTypography>
-                    <RecoveryButtonContainer>
-                      <GeneralButton
-                        onAction={copyRecoveryCode}
-                        label={
-                          copied
-                            ? t("auth.setup.recovery.copied")
-                            : t("auth.setup.recovery.copyButton")
-                        }
-                        startIcon={copied ? <CheckCircle /> : <ContentCopy />}
-                        isPrimary={false}
-                        maxWidth="auto"
-                      />
-                      <GeneralButton
-                        onAction={downloadRecoveryCode}
-                        label={t("auth.setup.recovery.downloadButton")}
-                        startIcon={<Download />}
-                        isPrimary={false}
-                        maxWidth="auto"
-                      />
-                    </RecoveryButtonContainer>
-                  </RecoveryCodeBox>
-
-                  <ButtonContainer>
-                    <GeneralButton
-                      onAction={handleNext}
-                      label={t("auth.setup.recovery.continueButton")}
-                      maxWidth="auto"
-                    />
-                  </ButtonContainer>
-                </Box>
-              )}
-
-              {/* Step 4: Confirmation */}
-              {activeStep === 4 && (
-                <Box>
-                  <Typography variant="h5" gutterBottom>
-                    {t("auth.setup.confirmation.title")}
-                  </Typography>
-                  <Typography variant="body1" paragraph>
-                    {t("auth.setup.confirmation.description")}
-                  </Typography>
-
-                  <StyledAlertWarning severity="warning">
-                    {t("auth.setup.confirmation.warning")}
-                  </StyledAlertWarning>
-
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={values.recoveryCodeSaved}
-                        onChange={(e) =>
-                          setFieldValue("recoveryCodeSaved", e.target.checked)
-                        }
-                      />
-                    }
-                    label={t("auth.setup.confirmation.checkboxLabel")}
-                  />
-                  {touched.recoveryCodeSaved && errors.recoveryCodeSaved && (
-                    <Typography color="error" variant="caption" display="block">
-                      {errors.recoveryCodeSaved}
+          return (
+            <StyledForm>
+              <AuthContent>
+                {/* Step 0: Welcome */}
+                {activeStep === 0 && (
+                  <Box>
+                    <Typography variant="h5" gutterBottom>
+                      {t("auth.setup.welcome.title")}
                     </Typography>
-                  )}
-                </Box>
+                    <Typography variant="body1">
+                      {t("auth.setup.welcome.description")}
+                    </Typography>
+                    <StepList>
+                      <StepListItem variant="body1">
+                        <CheckRoundedIcon color="success" />
+                        {t("auth.setup.welcome.step1")}
+                      </StepListItem>
+                      <StepListItem variant="body1">
+                        <CheckRoundedIcon color="success" />
+                        {t("auth.setup.welcome.step2")}
+                      </StepListItem>
+                      <StepListItem variant="body1">
+                        <CheckRoundedIcon color="success" />
+                        {t("auth.setup.welcome.step3")}
+                      </StepListItem>
+                    </StepList>
+                    <StyledAlert severity="warning">
+                      {t("auth.setup.welcome.warning")}
+                    </StyledAlert>
+                    <ButtonContainer>
+                      <GeneralButton
+                        onAction={handleNext}
+                        label={t("auth.setup.welcome.startButton")}
+                        maxWidth="auto"
+                      />
+                    </ButtonContainer>
+                  </Box>
+                )}
+
+                {/* Step 1: Email Input */}
+                {activeStep === 1 && (
+                  <Box>
+                    <Typography variant="h5" gutterBottom>
+                      {t("auth.setup.email.title")}
+                    </Typography>
+                    <Typography variant="body1" color="text.information">
+                      {t("auth.setup.email.description")}
+                    </Typography>
+                    <br />
+                    <Field
+                      as={GeneralInput}
+                      fullWidth
+                      name="email"
+                      label={t("auth.setup.email.emailLabel")}
+                      placeholder="admin@email.com"
+                      type="email"
+                      error={touched.email && Boolean(errors.email)}
+                      helperText={touched.email && errors.email}
+                      required
+                      margin="normal"
+                      onKeyDown={handleEmailKeyDown}
+                    />
+                    <ButtonContainerSpaceBetween>
+                      <GeneralButton
+                        onAction={handleBack}
+                        label={t("auth.common.back")}
+                        isPrimary={false}
+                        maxWidth="auto"
+                      />
+                      <GeneralButton
+                        onAction={async () => {
+                          setFieldTouched("email", true);
+                          const error = await validateField("email");
+                          if (!error) {
+                            dispatch(
+                              updateSetupWizard({
+                                step: activeStep + 1,
+                                email: values.email,
+                              }),
+                            );
+                          }
+                        }}
+                        label={t("auth.common.next")}
+                        disabled={!values.email || Boolean(errors.email)}
+                        maxWidth="auto"
+                      />
+                    </ButtonContainerSpaceBetween>
+                  </Box>
+                )}
+
+                {/* Step 2: Password Input */}
+                {activeStep === 2 && (
+                  <Box>
+                    <Typography variant="h5" gutterBottom>
+                      {t("auth.setup.password.title")}
+                    </Typography>
+                    <Typography variant="body1" paragraph>
+                      {t("auth.setup.password.description")}
+                    </Typography>
+                    <PasswordInput
+                      value={values.password}
+                      onChange={(e) =>
+                        setFieldValue(
+                          "password",
+                          e.target.value.replace(/\s/g, ""),
+                        )
+                      }
+                      label={t("auth.setup.password.passwordLabel")}
+                      placeholder={t("auth.setup.password.passwordLabel")}
+                      error={touched.password && Boolean(errors.password)}
+                      helperText={
+                        touched.password
+                          ? (errors.password as string | undefined)
+                          : undefined
+                      }
+                      showCubeIcon
+                      showEyeIcon
+                      showProgressBar
+                      showGuidelines
+                      fullWidth
+                      autoComplete="new-password"
+                      required
+                      onKeyDown={handlePasswordKeyDown}
+                    />
+
+                    <ButtonContainerSpaceBetween>
+                      <GeneralButton
+                        onAction={handleBack}
+                        label={t("auth.common.back")}
+                        isPrimary={false}
+                        maxWidth="auto"
+                      />
+                      <GeneralButton
+                        label={
+                          isLoading
+                            ? t("auth.setup.password.creatingAccount")
+                            : t("auth.setup.password.createButton")
+                        }
+                        disabled={
+                          !values.password ||
+                          Boolean(errors.password) ||
+                          isLoading
+                        }
+                        maxWidth="auto"
+                        onAction={() =>
+                          handlePasswordSubmit(values.email, values.password)
+                        }
+                      />
+                    </ButtonContainerSpaceBetween>
+                  </Box>
+                )}
+
+                {/* Step 3: Recovery Code Display */}
+                {activeStep === 3 && recoveryCode && (
+                  <Box>
+                    <Typography variant="h5" gutterBottom>
+                      {t("auth.setup.recovery.title")}
+                    </Typography>
+                    <StyledAlertError severity="error">
+                      {t("auth.setup.recovery.warning")}
+                    </StyledAlertError>
+
+                    <Typography variant="body1" paragraph>
+                      {t("auth.setup.recovery.codeLabel")}
+                    </Typography>
+
+                    <RecoveryCodeBox>
+                      <RecoveryCodeTypography variant="h4">
+                        {recoveryCode}
+                      </RecoveryCodeTypography>
+                      <RecoveryButtonContainer>
+                        <GeneralButton
+                          onAction={copyRecoveryCode}
+                          label={
+                            copied
+                              ? t("auth.setup.recovery.copied")
+                              : t("auth.setup.recovery.copyButton")
+                          }
+                          startIcon={copied ? <CheckCircle /> : <ContentCopy />}
+                          isPrimary={false}
+                          maxWidth="auto"
+                        />
+                        <GeneralButton
+                          onAction={downloadRecoveryCode}
+                          label={t("auth.setup.recovery.downloadButton")}
+                          startIcon={<Download />}
+                          isPrimary={false}
+                          maxWidth="auto"
+                        />
+                      </RecoveryButtonContainer>
+                    </RecoveryCodeBox>
+
+                    <ButtonContainer>
+                      <GeneralButton
+                        onAction={handleNext}
+                        label={t("auth.setup.recovery.continueButton")}
+                        maxWidth="auto"
+                      />
+                    </ButtonContainer>
+                  </Box>
+                )}
+
+                {/* Step 4: Confirmation */}
+                {activeStep === 4 && (
+                  <Box>
+                    <Typography variant="h5" gutterBottom>
+                      {t("auth.setup.confirmation.title")}
+                    </Typography>
+                    <Typography variant="body1" paragraph>
+                      {t("auth.setup.confirmation.description")}
+                    </Typography>
+
+                    <StyledAlertWarning severity="warning">
+                      {t("auth.setup.confirmation.warning")}
+                    </StyledAlertWarning>
+
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={values.recoveryCodeSaved}
+                          onChange={(e) =>
+                            setFieldValue("recoveryCodeSaved", e.target.checked)
+                          }
+                        />
+                      }
+                      label={t("auth.setup.confirmation.checkboxLabel")}
+                    />
+                    {touched.recoveryCodeSaved && errors.recoveryCodeSaved && (
+                      <Typography
+                        color="error"
+                        variant="caption"
+                        display="block"
+                      >
+                        {errors.recoveryCodeSaved}
+                      </Typography>
+                    )}
+                  </Box>
+                )}
+              </AuthContent>
+              {activeStep === 4 && (
+                <AuthActions>
+                  <GeneralButton
+                    label={t("auth.setup.confirmation.completeButton")}
+                    onAction={finalizeSetup}
+                    disabled={!values.recoveryCodeSaved}
+                  />
+                </AuthActions>
               )}
-            </AuthContent>
-            {activeStep === 4 && (
-              <AuthActions>
-                <GeneralButton
-                  label={t("auth.setup.confirmation.completeButton")}
-                  onAction={finalizeSetup}
-                  disabled={!values.recoveryCodeSaved}
-                />
-              </AuthActions>
-            )}
-          </StyledForm>
-        )}
+            </StyledForm>
+          );
+        }}
       </Formik>
     </AuthCard>
   );

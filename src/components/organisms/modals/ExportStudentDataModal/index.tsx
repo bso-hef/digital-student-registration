@@ -271,6 +271,13 @@ const ExportStudentDataModal: React.FC<ExportStudentDataModalProps> = ({
     await generateExport();
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === "Enter" && !event.shiftKey && count && !busy) {
+      event.preventDefault();
+      handleGenerate();
+    }
+  };
+
   const contentChildren = (
     <Fragment>
       {busy && (
@@ -294,6 +301,7 @@ const ExportStudentDataModal: React.FC<ExportStudentDataModalProps> = ({
         direction={{ xs: "column", md: "row" }}
         spacing={3}
         divider={<Divider flexItem orientation="vertical" />}
+        onKeyDown={handleKeyDown}
       >
         <Stack
           sx={{
