@@ -83,61 +83,68 @@ const IconButton = styled(Box, {
           ? customColor
           : theme.palette.text.default,
     border: forChat ? `1px solid ${theme.palette.border.seperator}` : undefined,
+    cursor: disabled ? "not-allowed" : "pointer",
+    // Mobile touch optimizations
+    touchAction: "manipulation", // Removes 300ms click delay
+    WebkitTapHighlightColor: "transparent", // Removes iOS tap flash
+    userSelect: "none", // Prevents text selection on long press
     ...(hoverAllowed && {
-      "&:hover": {
-        backgroundColor:
-          disabled || noBackground
-            ? "transparent"
-            : customBackgroundColor
-              ? customBackgroundColor
-              : theme.palette.surface.button.hoverLight,
-        "& path": {
-          fill: disabled
-            ? theme.palette.icon.disabled
-            : customColor
-              ? customColor
-              : theme.palette.icon.primary,
+      "@media (hover: hover) and (pointer: fine)": {
+        "&:hover": {
+          backgroundColor:
+            disabled || noBackground
+              ? "transparent"
+              : customBackgroundColor
+                ? customBackgroundColor
+                : theme.palette.surface.button.hoverLight,
+          "& path": {
+            fill: disabled
+              ? theme.palette.icon.disabled
+              : customColor
+                ? customColor
+                : theme.palette.icon.primary,
+          },
+          "& span": {
+            color: disabled
+              ? theme.palette.icon.disabled
+              : customColor
+                ? customColor
+                : theme.palette.icon.primary,
+          },
+          "& svg": {
+            color: disabled
+              ? theme.palette.icon.disabled
+              : customColor
+                ? customColor
+                : theme.palette.icon.primary,
+          },
         },
-        "& span": {
-          color: disabled
-            ? theme.palette.icon.disabled
-            : customColor
-              ? customColor
-              : theme.palette.icon.primary,
-        },
-        "& svg": {
-          color: disabled
-            ? theme.palette.icon.disabled
-            : customColor
-              ? customColor
-              : theme.palette.icon.primary,
-        },
-      },
-      "&:active": {
-        backgroundColor:
-          disabled || noBackground
-            ? "transparent"
-            : theme.palette.surface.button.secondary,
-        "& path": {
-          fill: disabled
-            ? theme.palette.icon.disabled
-            : customColor
-              ? customColor
-              : theme.palette.icon.primary,
-        },
-        "& span": {
-          color: disabled
-            ? theme.palette.icon.disabled
-            : customColor
-              ? customColor
-              : theme.palette.icon.primary,
-        },
-        "& svg": {
-          color: disabled
-            ? theme.palette.icon.disabled
-            : customColor
-              ? customColor
-              : theme.palette.icon.primary,
+        "&:active": {
+          backgroundColor:
+            disabled || noBackground
+              ? "transparent"
+              : theme.palette.surface.button.secondary,
+          "& path": {
+            fill: disabled
+              ? theme.palette.icon.disabled
+              : customColor
+                ? customColor
+                : theme.palette.icon.primary,
+          },
+          "& span": {
+            color: disabled
+              ? theme.palette.icon.disabled
+              : customColor
+                ? customColor
+                : theme.palette.icon.primary,
+          },
+          "& svg": {
+            color: disabled
+              ? theme.palette.icon.disabled
+              : customColor
+                ? customColor
+                : theme.palette.icon.primary,
+          },
         },
       },
     }),
@@ -237,8 +244,10 @@ const SmallIconButton: React.FC<SmallIconButtonProps> = ({
   const eventProps =
     isMobile || isTablet
       ? {
-          onTouchEnd: (e: React.TouchEvent<HTMLElement>) => onAction?.(e),
-          onClick: (e: React.MouseEvent<HTMLElement>) => onAction?.(e),
+          onTouchEnd: (e: React.TouchEvent<HTMLElement>) => {
+            e.preventDefault(); // Prevent synthetic click event
+            onAction?.(e);
+          },
           onKeyDown: handleKeyDown,
         }
       : {
