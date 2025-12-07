@@ -145,11 +145,16 @@ export const getAvatarFullURL = (path: string) => {
   if (!path || path === "" || path === null) {
     return "";
   }
-  // if (path?.startsWith("/img")) {
-  //   return `${benovaApplicationURL()}${path}`;
-  // } else {
-  //   return `${AVATAR_URL}/${path}`;
-  // }
+  // If already a data URL (base64), return as-is
+  if (path.startsWith("data:")) {
+    return path;
+  }
+  // For external URLs, return as-is
+  if (path.startsWith("http")) {
+    return path;
+  }
+  // Default: return the path
+  return path;
 };
 
 export const ua =

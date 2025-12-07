@@ -4,6 +4,12 @@ import { AppAction } from "../types";
 export interface AuthUser {
   email: string;
   role: string;
+  firstName?: string;
+  lastName?: string;
+  avatar?: string | null;
+  phone?: string;
+  jobTitle?: string;
+  timezone?: string;
 }
 
 export interface AuthState {
@@ -208,6 +214,72 @@ const authReducer = (state = initialAuthState, action: AppAction) => {
         setupWizardStep: 0,
         setupWizardEmail: "",
         setupWizardPassword: "",
+      };
+
+    // Profile update actions
+    case TYPES.AUTH_UPDATE_PROFILE_REQUEST:
+      return {
+        ...state,
+        isLoading: true,
+        error: null,
+      };
+
+    case TYPES.AUTH_UPDATE_PROFILE_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        user: state.user
+          ? {
+              ...state.user,
+              firstName: action.payload.firstName,
+              lastName: action.payload.lastName,
+              avatar: action.payload.avatar,
+              phone: action.payload.phone,
+              jobTitle: action.payload.jobTitle,
+              timezone: action.payload.timezone,
+            }
+          : null,
+        error: null,
+      };
+
+    case TYPES.AUTH_UPDATE_PROFILE_FAILURE:
+      return {
+        ...state,
+        isLoading: false,
+        error: action.payload,
+      };
+
+    // Fetch profile actions
+    case TYPES.AUTH_FETCH_PROFILE_REQUEST:
+      return {
+        ...state,
+        isLoading: true,
+        error: null,
+      };
+
+    case TYPES.AUTH_FETCH_PROFILE_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        user: state.user
+          ? {
+              ...state.user,
+              firstName: action.payload.firstName,
+              lastName: action.payload.lastName,
+              avatar: action.payload.avatar,
+              phone: action.payload.phone,
+              jobTitle: action.payload.jobTitle,
+              timezone: action.payload.timezone,
+            }
+          : null,
+        error: null,
+      };
+
+    case TYPES.AUTH_FETCH_PROFILE_FAILURE:
+      return {
+        ...state,
+        isLoading: false,
+        error: action.payload,
       };
 
     default:

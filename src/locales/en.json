@@ -100,16 +100,19 @@
     "manageStudent": "Manage Data",
     "dataOverview": "Data Overview",
     "settings": "Settings",
+    "profileSettings": "Profile",
     "onboardingSettings": "Onboarding",
     "agreementSettings": "Agreements",
     "integrationSettings": "Integrations",
     "auditLog": "Audit Log",
+    "systemSettings": "System",
     "Browse settings": "Browse settings",
     "welcome": "Welcome {{name}}",
     "Logged in as": "Logged in as",
     "Logout": "Logout",
     "Logged out successfully": "Logged out successfully",
-    "Failed to logout": "Failed to logout"
+    "Failed to logout": "Failed to logout",
+    "openMenu": "Open menu"
   },
   "modals": {
     "addStudent": {
@@ -289,6 +292,9 @@
   "dashboard": {
     "title": "Dashboard",
     "resetLayout": "Reset Layout",
+    "actions": {
+      "refresh": "Refresh"
+    },
     "quickStats": {
       "totalStudents": "Total Students",
       "totalClasses": "Total Classes",
@@ -312,16 +318,27 @@
       "status": "Status",
       "up": "Operational",
       "down": "Down",
+      "overallStatus": "Overall Status",
+      "systemOperational": "All systems are operational",
+      "systemDown": "System is experiencing issues",
       "database": "Database",
+      "databaseStatus": "Database Status",
       "uptime": "Uptime",
       "memory": "Memory Usage",
+      "memoryFree": "Memory Free",
+      "memoryTotal": "Memory Total",
       "cpu": "CPU Cores",
       "loadAverage": "Load Average",
       "hostname": "Hostname",
       "platform": "Platform",
       "nodeVersion": "Node Version",
       "lastUpdated": "Last Updated",
-      "refresh": "Refresh"
+      "refresh": "Refresh",
+      "systemMetrics": "System Metrics",
+      "serverInfo": "Server Information",
+      "service": "Service",
+      "version": "Version",
+      "architecture": "Architecture"
     },
     "errors": {
       "loadFailed": "Failed to load dashboard data",
@@ -496,6 +513,62 @@
     }
   },
   "settings": {
+    "profile": {
+      "title": "Profile Settings",
+      "avatar": {
+        "title": "Profile Picture",
+        "upload": "Upload Photo",
+        "change": "Change Photo",
+        "remove": "Remove",
+        "sizeLimit": "Max 1MB (JPEG, PNG, GIF, WebP)"
+      },
+      "personal": {
+        "title": "Personal Information",
+        "subtitle": "Manage your profile picture and personal details",
+        "details": "Name Details",
+        "firstName": "First Name",
+        "firstNamePlaceholder": "Enter your first name",
+        "lastName": "Last Name",
+        "lastNamePlaceholder": "Enter your last name"
+      },
+      "account": {
+        "title": "Account Settings",
+        "email": "Email Address",
+        "emailPlaceholder": "Enter your email address"
+      },
+      "contact": {
+        "title": "Contact & Work",
+        "phone": "Phone Number",
+        "phonePlaceholder": "Enter your phone number",
+        "jobTitle": "Job Title",
+        "jobTitlePlaceholder": "e.g. Administrator, Secretary, Principal"
+      },
+      "preferences": {
+        "title": "Preferences",
+        "timezone": "Timezone"
+      },
+      "security": {
+        "title": "Change Password",
+        "subtitle": "Update your password",
+        "currentPassword": "Current Password",
+        "newPassword": "New Password",
+        "confirmPassword": "Confirm Password",
+        "changeButton": "Change Password",
+        "changingButton": "Changing..."
+      },
+      "messages": {
+        "updateSuccess": "Profile updated successfully",
+        "updateFailed": "Failed to update profile",
+        "passwordSuccess": "Password changed successfully",
+        "passwordFailed": "Failed to change password",
+        "invalidPassword": "Current password is incorrect",
+        "avatarUploadSuccess": "Profile picture updated",
+        "avatarRemoveSuccess": "Profile picture removed",
+        "avatarSizeError": "Image size must be less than 1MB",
+        "avatarTypeError": "Only JPEG, PNG, GIF, and WebP images are allowed",
+        "noChanges": "No changes to save"
+      }
+    },
     "onboarding": {
       "dropdownOptions": "Dropdown Options",
       "fieldConfiguration": "Field Configuration",
@@ -687,7 +760,11 @@
     },
     "descriptions": {
       "updatedAgreementSettings": "Updated agreement settings",
-      "failedUpdateAgreementSettings": "Failed to update agreement settings"
+      "failedUpdateAgreementSettings": "Failed to update agreement settings",
+      "updatedProfile": "Updated user profile",
+      "failedUpdateProfile": "Failed to update user profile",
+      "changedPassword": "Changed account password",
+      "failedPasswordChange": "Failed to change password"
     }
   },
   "auth": {

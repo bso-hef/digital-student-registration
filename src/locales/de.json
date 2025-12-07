@@ -100,16 +100,19 @@
     "manageStudent": "Datenverwaltung",
     "dataOverview": "Datenübersicht",
     "settings": "Einstellungen",
+    "profileSettings": "Profil",
     "onboardingSettings": "Onboarding",
     "agreementSettings": "Vereinbarungen",
     "integrationSettings": "Integrationen",
     "auditLog": "Audit-Log",
+    "systemSettings": "System",
     "Browse settings": "Einstellungen durchsuchen",
     "welcome": "Willkommen {{name}}",
     "Logged in as": "Angemeldet als",
     "Logout": "Abmelden",
     "Logged out successfully": "Erfolgreich abgemeldet",
-    "Failed to logout": "Abmeldung fehlgeschlagen"
+    "Failed to logout": "Abmeldung fehlgeschlagen",
+    "openMenu": "Menü öffnen"
   },
   "modals": {
     "addStudent": {
@@ -289,6 +292,9 @@
   "dashboard": {
     "title": "Dashboard",
     "resetLayout": "Layout zurücksetzen",
+    "actions": {
+      "refresh": "Aktualisieren"
+    },
     "quickStats": {
       "totalStudents": "Schüler gesamt",
       "totalClasses": "Klassen gesamt",
@@ -312,16 +318,27 @@
       "status": "Status",
       "up": "Betriebsbereit",
       "down": "Ausgefallen",
+      "overallStatus": "Gesamtstatus",
+      "systemOperational": "Alle Systeme sind betriebsbereit",
+      "systemDown": "Das System hat Probleme",
       "database": "Datenbank",
+      "databaseStatus": "Datenbankstatus",
       "uptime": "Betriebszeit",
       "memory": "Speichernutzung",
+      "memoryFree": "Freier Speicher",
+      "memoryTotal": "Gesamtspeicher",
       "cpu": "CPU-Kerne",
       "loadAverage": "Systemlast",
       "hostname": "Hostname",
       "platform": "Plattform",
       "nodeVersion": "Node-Version",
       "lastUpdated": "Zuletzt aktualisiert",
-      "refresh": "Aktualisieren"
+      "refresh": "Aktualisieren",
+      "systemMetrics": "Systemmetriken",
+      "serverInfo": "Serverinformationen",
+      "service": "Dienst",
+      "version": "Version",
+      "architecture": "Architektur"
     },
     "errors": {
       "loadFailed": "Laden der Dashboard-Daten fehlgeschlagen",
@@ -496,6 +513,62 @@
     }
   },
   "settings": {
+    "profile": {
+      "title": "Profileinstellungen",
+      "avatar": {
+        "title": "Profilbild",
+        "upload": "Foto hochladen",
+        "change": "Foto ändern",
+        "remove": "Entfernen",
+        "sizeLimit": "Max. 1MB (JPEG, PNG, GIF, WebP)"
+      },
+      "personal": {
+        "title": "Persönliche Informationen",
+        "subtitle": "Verwalten Sie Ihr Profilbild und persönliche Daten",
+        "details": "Namensdetails",
+        "firstName": "Vorname",
+        "firstNamePlaceholder": "Geben Sie Ihren Vornamen ein",
+        "lastName": "Nachname",
+        "lastNamePlaceholder": "Geben Sie Ihren Nachnamen ein"
+      },
+      "account": {
+        "title": "Kontoeinstellungen",
+        "email": "E-Mail-Adresse",
+        "emailPlaceholder": "Geben Sie Ihre E-Mail-Adresse ein"
+      },
+      "contact": {
+        "title": "Kontakt & Beruf",
+        "phone": "Telefonnummer",
+        "phonePlaceholder": "Geben Sie Ihre Telefonnummer ein",
+        "jobTitle": "Berufsbezeichnung",
+        "jobTitlePlaceholder": "z.B. Administrator, Sekretär, Schulleiter"
+      },
+      "preferences": {
+        "title": "Einstellungen",
+        "timezone": "Zeitzone"
+      },
+      "security": {
+        "title": "Passwort ändern",
+        "subtitle": "Aktualisieren Sie Ihr Passwort",
+        "currentPassword": "Aktuelles Passwort",
+        "newPassword": "Neues Passwort",
+        "confirmPassword": "Passwort bestätigen",
+        "changeButton": "Passwort ändern",
+        "changingButton": "Wird geändert..."
+      },
+      "messages": {
+        "updateSuccess": "Profil erfolgreich aktualisiert",
+        "updateFailed": "Fehler beim Aktualisieren des Profils",
+        "passwordSuccess": "Passwort erfolgreich geändert",
+        "passwordFailed": "Fehler beim Ändern des Passworts",
+        "invalidPassword": "Aktuelles Passwort ist falsch",
+        "avatarUploadSuccess": "Profilbild aktualisiert",
+        "avatarRemoveSuccess": "Profilbild entfernt",
+        "avatarSizeError": "Bildgröße muss kleiner als 1MB sein",
+        "avatarTypeError": "Nur JPEG, PNG, GIF und WebP Bilder sind erlaubt",
+        "noChanges": "Keine Änderungen zum Speichern"
+      }
+    },
     "onboarding": {
       "dropdownOptions": "Dropdown-Optionen",
       "fieldConfiguration": "Feldkonfiguration",
@@ -687,7 +760,11 @@
     },
     "descriptions": {
       "updatedAgreementSettings": "Vereinbarungseinstellungen aktualisiert",
-      "failedUpdateAgreementSettings": "Aktualisierung der Vereinbarungseinstellungen fehlgeschlagen"
+      "failedUpdateAgreementSettings": "Aktualisierung der Vereinbarungseinstellungen fehlgeschlagen",
+      "updatedProfile": "Benutzerprofil aktualisiert",
+      "failedUpdateProfile": "Fehler beim Aktualisieren des Benutzerprofils",
+      "changedPassword": "Kontopasswort geändert",
+      "failedPasswordChange": "Fehler beim Ändern des Passworts"
     }
   },
   "auth": {

@@ -5,10 +5,13 @@ import { useEffect } from "react";
 import LeftNavigation from "@/components/organisms/LeftNavigation";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { useAuth } from "@/lib/auth/useAuth";
+import { fetchProfile } from "@/store/actions/authActions";
+import { AppDispatch, RootState } from "@/store/store";
 import { applicationScrollbar } from "@/utils/styling.utils";
 import { Box, CircularProgress, styled } from "@mui/material";
 import { useDeviceTypeDetection } from "device-type-detection";
 import { useRouter } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
 
 const StyledBox = styled(Box)({
   position: "relative",
@@ -93,6 +96,8 @@ export default function AdminLayout({
   const { isMobile, isTabletVertical } = useDeviceTypeDetection();
   const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
+  const authUser = useSelector((state: RootState) => state.auth.user);
 
   const showMobileView = isMobile || isTabletVertical;
 
@@ -104,6 +109,13 @@ export default function AdminLayout({
       router.push("/login");
     }
   }, [isAuthenticated, isLoading, router]);
+
+  // Fetch profile data when authenticated and profile not yet loaded
+  useEffect(() => {
+    if (isAuthenticated && !authUser?.firstName) {
+      dispatch(fetchProfile());
+    }
+  }, [isAuthenticated, authUser?.firstName, dispatch]);
 
   // Show loading state while checking authentication
   if (isLoading) {

@@ -37,6 +37,8 @@ const AuditLogSchema = new Schema(
         "auth.login",
         "auth.logout",
         "auth.permission_change",
+        "auth.profile_update",
+        "auth.password_change",
       ],
       index: true,
     },

@@ -1,3 +1,4 @@
+import profileService, { ProfileData } from "@/lib/services/profileService";
 import {
   errorNotification,
   successNotification,
@@ -257,3 +258,71 @@ export const updateSetupWizard = (data: {
 export const clearSetupWizard = () => ({
   type: TYPES.AUTH_CLEAR_SETUP_WIZARD,
 });
+
+/**
+ * Update profile action
+ */
+export const updateProfile =
+  (
+    data: Partial<ProfileData>,
+  ): AppThunk<Promise<{ success: boolean; error?: string }>> =>
+  async (dispatch) => {
+    dispatch({ type: TYPES.AUTH_UPDATE_PROFILE_REQUEST });
+    try {
+      const response = await profileService.updateProfile(data);
+      const profileData = response.data.data;
+
+      successNotification(i18n.t("settings.profile.messages.updateSuccess"));
+      dispatch({
+        type: TYPES.AUTH_UPDATE_PROFILE_SUCCESS,
+        payload: {
+          firstName: profileData.firstName,
+          lastName: profileData.lastName,
+          avatar: profileData.avatar,
+          phone: profileData.phone,
+          jobTitle: profileData.jobTitle,
+          timezone: profileData.timezone,
+        },
+      });
+      return { success: true };
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
+      errorNotification(i18n.t("settings.profile.messages.updateFailed"));
+      dispatch({
+        type: TYPES.AUTH_UPDATE_PROFILE_FAILURE,
+        payload: errorMessage,
+      });
+      return { success: false, error: errorMessage };
+    }
+  };
+
+/**
+ * Fetch profile action - loads profile data on admin entry
+ */
+export const fetchProfile = (): AppThunk<Promise<void>> => async (dispatch) => {
+  dispatch({ type: TYPES.AUTH_FETCH_PROFILE_REQUEST });
+  try {
+    const response = await profileService.getProfile();
+    const profileData = response.data.data;
+
+    dispatch({
+      type: TYPES.AUTH_FETCH_PROFILE_SUCCESS,
+      payload: {
+        firstName: profileData.firstName,
+        lastName: profileData.lastName,
+        avatar: profileData.avatar,
+        phone: profileData.phone,
+        jobTitle: profileData.jobTitle,
+        timezone: profileData.timezone,
+      },
+    });
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to fetch profile";
+    dispatch({
+      type: TYPES.AUTH_FETCH_PROFILE_FAILURE,
+      payload: errorMessage,
+    });
+  }
+};

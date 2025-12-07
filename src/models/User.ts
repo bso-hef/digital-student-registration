@@ -10,6 +10,12 @@ export interface IUser extends Document {
   role: string;
   active: boolean;
   lastLogin: Date | null;
+  firstName: string;
+  lastName: string;
+  avatar: string | null;
+  phone: string;
+  jobTitle: string;
+  timezone: string;
   createdAt: Date;
   updatedAt: Date;
   verifyPassword(candidatePassword: string): Promise<boolean>;
@@ -54,6 +60,47 @@ const UserSchema = new Schema(
     lastLogin: {
       type: Date,
       default: null,
+    },
+    firstName: {
+      type: String,
+      default: "",
+      trim: true,
+      maxlength: 100,
+    },
+    lastName: {
+      type: String,
+      default: "",
+      trim: true,
+      maxlength: 100,
+    },
+    avatar: {
+      type: String,
+      default: null,
+      validate: {
+        validator: function (v: string | null) {
+          if (!v) return true;
+          // Validate base64 string size (~1MB limit = ~1.37MB base64)
+          return v.length <= 1400000;
+        },
+        message: "Avatar image size exceeds 1MB limit",
+      },
+    },
+    phone: {
+      type: String,
+      default: "",
+      trim: true,
+      maxlength: 30,
+    },
+    jobTitle: {
+      type: String,
+      default: "",
+      trim: true,
+      maxlength: 100,
+    },
+    timezone: {
+      type: String,
+      default: "Europe/Berlin",
+      trim: true,
     },
   },
   { versionKey: false, timestamps: true },
