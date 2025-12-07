@@ -275,8 +275,10 @@ describe("general.utils", () => {
       expect(getAvatarFullURL(null as unknown as string)).toBe("");
     });
 
-    it("should return undefined for valid path (implementation pending)", () => {
-      expect(getAvatarFullURL("/path/to/avatar.jpg")).toBeUndefined();
+    it("should return path as-is for relative paths", () => {
+      expect(getAvatarFullURL("/path/to/avatar.jpg")).toBe(
+        "/path/to/avatar.jpg",
+      );
     });
   });
 });

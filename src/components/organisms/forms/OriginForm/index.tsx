@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo } from "react";
 
+import FormikDropdown from "@/components/atoms/dropdowns/FormikDropdown";
 import { useOnboardingSettings } from "@/hooks/useOnboardingSettings";
 import {
   createValidateStudentOriginData,
@@ -7,10 +8,10 @@ import {
 } from "@/lib/validate/student.validate";
 import { updateStudentOnboardingData } from "@/store/actions/studentActions";
 import { useAppDispatch } from "@/store/store";
-import { Autocomplete, MenuItem, styled } from "@mui/material";
+import { Autocomplete, styled } from "@mui/material";
 import { FormikProps } from "formik";
 import { Field, Form, Formik } from "formik";
-import { Select, TextField } from "formik-mui";
+import { TextField } from "formik-mui";
 import { useTranslation } from "react-i18next";
 
 const StyledForm = styled(Form)(() => ({
@@ -155,23 +156,11 @@ const OriginForm: React.FC<OriginFormProps> = ({
                 helperText={touched.familiensprache && errors.familiensprache}
               />
             ) : (
-              <Field
-                component={Select}
+              <FormikDropdown
                 name="familiensprache"
                 label={t("onboarding.origin.familyLanguage", "Familiensprache")}
-                variant="outlined"
-                margin="normal"
-                fullWidth
-                error={
-                  touched.familiensprache && Boolean(errors.familiensprache)
-                }
-              >
-                {getEnabledOptions(languageOptions).map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </Field>
+                options={getEnabledOptions(languageOptions)}
+              />
             )}
           </StyledForm>
         );

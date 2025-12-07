@@ -3,6 +3,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
+import GeneralDropdown from "@/components/atoms/dropdowns/GeneralDropdown";
 import AdminSettingsHeader from "@/components/molecules/AdminSettingsHeader";
 import ConfirmationModal from "@/components/organisms/modals/ConfirmationModal";
 import GeneralModal from "@/components/organisms/modals/GeneralModal";
@@ -18,15 +19,7 @@ import { AppDispatch, RootState } from "@/store/store";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import DeleteSweepRoundedIcon from "@mui/icons-material/DeleteSweepRounded";
 import DownloadRoundedIcon from "@mui/icons-material/DownloadRounded";
-import {
-  Box,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  styled,
-} from "@mui/material";
+import { Box, SelectChangeEvent, styled } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -104,8 +97,8 @@ const AdminSettingsAuditPage = () => {
   }, [dispatch]);
 
   const handleCategoryFilter = useCallback(
-    (event: SelectChangeEvent<string>) => {
-      const value = event.target.value;
+    (event: SelectChangeEvent<string | number>) => {
+      const value = event.target.value as string;
       dispatch(
         setAuditLogFilters({
           ...filters,
@@ -117,8 +110,8 @@ const AdminSettingsAuditPage = () => {
   );
 
   const handleStatusFilter = useCallback(
-    (event: SelectChangeEvent<string>) => {
-      const value = event.target.value;
+    (event: SelectChangeEvent<string | number>) => {
+      const value = event.target.value as string;
       dispatch(
         setAuditLogFilters({
           ...filters,
@@ -211,37 +204,37 @@ const AdminSettingsAuditPage = () => {
 
       <StyledTableBox>
         <FiltersBox>
-          <FormControl size="small" sx={{ minWidth: 200 }}>
-            <InputLabel>{t("audit.filterByCategory")}</InputLabel>
-            <Select
+          <Box sx={{ minWidth: 200 }}>
+            <GeneralDropdown
               value={filters.category || ""}
               onChange={handleCategoryFilter}
               label={t("audit.filterByCategory")}
-            >
-              <MenuItem value="">{t("general.All")}</MenuItem>
-              <MenuItem value="student">{t("audit.category.student")}</MenuItem>
-              <MenuItem value="class">{t("audit.category.class")}</MenuItem>
-              <MenuItem value="settings">
-                {t("audit.category.settings")}
-              </MenuItem>
-              <MenuItem value="auth">{t("audit.category.auth")}</MenuItem>
-              <MenuItem value="system">{t("audit.category.system")}</MenuItem>
-            </Select>
-          </FormControl>
+              size="small"
+              options={[
+                { value: "", label: t("general.All") },
+                { value: "student", label: t("audit.category.student") },
+                { value: "class", label: t("audit.category.class") },
+                { value: "settings", label: t("audit.category.settings") },
+                { value: "auth", label: t("audit.category.auth") },
+                { value: "system", label: t("audit.category.system") },
+              ]}
+            />
+          </Box>
 
-          <FormControl size="small" sx={{ minWidth: 200 }}>
-            <InputLabel>{t("audit.filterByStatus")}</InputLabel>
-            <Select
+          <Box sx={{ minWidth: 200 }}>
+            <GeneralDropdown
               value={filters.status || ""}
               onChange={handleStatusFilter}
               label={t("audit.filterByStatus")}
-            >
-              <MenuItem value="">{t("general.All")}</MenuItem>
-              <MenuItem value="success">{t("audit.status.success")}</MenuItem>
-              <MenuItem value="failure">{t("audit.status.failure")}</MenuItem>
-              <MenuItem value="partial">{t("audit.status.partial")}</MenuItem>
-            </Select>
-          </FormControl>
+              size="small"
+              options={[
+                { value: "", label: t("general.All") },
+                { value: "success", label: t("audit.status.success") },
+                { value: "failure", label: t("audit.status.failure") },
+                { value: "partial", label: t("audit.status.partial") },
+              ]}
+            />
+          </Box>
         </FiltersBox>
 
         <DataTable

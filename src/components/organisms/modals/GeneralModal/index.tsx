@@ -103,7 +103,7 @@ const GeneralModal = ({
   maxWidth = "md",
   disableBackdropClick = false,
   closeIcon = true,
-  textCapitalize = true,
+  textCapitalize = false,
   transparentBackdrop = false,
   withTransition = true,
   ...otherProps

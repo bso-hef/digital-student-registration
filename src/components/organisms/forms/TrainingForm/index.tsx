@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo } from "react";
 
+import FormikDropdown from "@/components/atoms/dropdowns/FormikDropdown";
 import { useOnboardingSettings } from "@/hooks/useOnboardingSettings";
 import {
   createValidateStudentCompanyData,
@@ -7,10 +8,10 @@ import {
 } from "@/lib/validate/student.validate";
 import { updateStudentOnboardingData } from "@/store/actions/studentActions";
 import { useAppDispatch } from "@/store/store";
-import { MenuItem, styled } from "@mui/material";
+import { styled } from "@mui/material";
 import { FormikProps } from "formik";
 import { Field, Form, Formik } from "formik";
-import { Select, TextField } from "formik-mui";
+import { TextField } from "formik-mui";
 import { useTranslation } from "react-i18next";
 
 const StyledForm = styled(Form)(() => ({
@@ -122,21 +123,11 @@ const TrainingForm: React.FC<TrainingFormProps> = ({
               helperText={touched.beruf && errors.beruf}
             />
           ) : (
-            <Field
-              component={Select}
+            <FormikDropdown
               name="beruf"
               label={t("onboarding.training.profession")}
-              variant="outlined"
-              margin="normal"
-              fullWidth
-              error={touched.beruf && Boolean(errors.beruf)}
-            >
-              {getEnabledOptions(professionOptions).map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </Field>
+              options={getEnabledOptions(professionOptions)}
+            />
           )}
 
           {/* betriebEintritt */}

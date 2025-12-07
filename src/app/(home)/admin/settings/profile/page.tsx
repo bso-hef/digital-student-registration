@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
 import SmallIconButton from "@/components/atoms/buttons/SmallIconButton";
+import FormikDropdown from "@/components/atoms/dropdowns/FormikDropdown";
 import PasswordInput from "@/components/atoms/inputs/PasswordInput";
 import AdminSettingsHeader from "@/components/molecules/AdminSettingsHeader";
 import EnhancedCollapse from "@/components/molecules/EnhancedCollapse";
@@ -29,12 +30,8 @@ import {
   Button,
   CircularProgress,
   Divider,
-  FormControl,
   IconButton,
   InputAdornment,
-  InputLabel,
-  MenuItem,
-  Select,
   TextField,
   Typography,
   styled,
@@ -517,25 +514,12 @@ const AdminProfilePage = () => {
                     <StyledTitle>
                       {t("settings.profile.preferences.title")}
                     </StyledTitle>
-                    <FormControl fullWidth size="small">
-                      <InputLabel id="timezone-label">
-                        {t("settings.profile.preferences.timezone")}
-                      </InputLabel>
-                      <Select
-                        labelId="timezone-label"
-                        name="timezone"
-                        value={values.timezone}
-                        label={t("settings.profile.preferences.timezone")}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                      >
-                        {TIMEZONES.map((tz) => (
-                          <MenuItem key={tz.value} value={tz.value}>
-                            {tz.label}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
+                    <FormikDropdown
+                      name="timezone"
+                      label={t("settings.profile.preferences.timezone")}
+                      options={TIMEZONES}
+                      size="small"
+                    />
                   </Box>
                 </Box>
               </EnhancedCollapse>
