@@ -7,6 +7,7 @@ import HealthIndicator from "@/components/atoms/dashboard/HealthIndicator";
 import MetricLabel from "@/components/atoms/dashboard/MetricLabel";
 import AdminSettingsHeader from "@/components/molecules/AdminSettingsHeader";
 import { getDashboardHealth } from "@/store/actions/dashboardActions";
+import { getSettings, updateSettings } from "@/store/actions/settingsActions";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import {
@@ -15,6 +16,8 @@ import {
   CardContent,
   CircularProgress,
   Divider,
+  FormControlLabel,
+  Switch,
   Typography,
   styled,
 } from "@mui/material";
@@ -90,6 +93,7 @@ const AdminSystemPage = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { health, loading } = useAppSelector((state) => state.dashboard);
+  const appSettings = useAppSelector((state) => state.appSettings.data);
 
   const fetchHealth = useCallback(() => {
     dispatch(getDashboardHealth());
@@ -97,11 +101,25 @@ const AdminSystemPage = () => {
 
   useEffect(() => {
     fetchHealth();
+    dispatch(getSettings());
 
-    // Auto-refresh every 30 seconds
+    // Auto-refresh health every 30 seconds
     const interval = setInterval(fetchHealth, 30000);
     return () => clearInterval(interval);
-  }, [fetchHealth]);
+  }, [fetchHealth, dispatch]);
+
+  const handleMobileBlockerToggle = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const newValue = event.target.checked;
+    dispatch(
+      updateSettings({
+        system: {
+          mobileBlockerEnabled: newValue,
+        },
+      }),
+    );
+  };
 
   return (
     <Wrapper>
@@ -118,6 +136,30 @@ const AdminSystemPage = () => {
       </AdminSettingsHeader>
 
       <ContentWrapper>
+        {/* Mobile Blocker Settings */}
+        <StatusCard>
+          <StatusCardContent>
+            <SectionTitle>{t("settings.system.mobileBlocker")}</SectionTitle>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              {t("settings.system.mobileBlockerDescription")}
+            </Typography>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={appSettings?.system?.mobileBlockerEnabled ?? true}
+                  onChange={handleMobileBlockerToggle}
+                  color="primary"
+                />
+              }
+              label={
+                appSettings?.system?.mobileBlockerEnabled
+                  ? t("settings.system.mobileBlockerEnabled")
+                  : t("settings.system.mobileBlockerDisabled")
+              }
+            />
+          </StatusCardContent>
+        </StatusCard>
+
         {/* Overall Status */}
         <StatusCard>
           <StatusCardContent>

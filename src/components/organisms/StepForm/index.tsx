@@ -388,17 +388,12 @@ const StepForm = ({ studentId }: StepFormProps) => {
       <StyledFormBox>{renderFormByStep(currentStep)}</StyledFormBox>
       {/* Welcome step (Step 0) - Start button only */}
       {isFirstStep && (
-        <StyledMenuOptions>
-          <Box /> {/* Spacer for flexbox layout */}
-          <GeneralButton
-            label={t("general.Start")}
-            isPrimary={true}
-            fullHeight={false}
-            fullWidth={false}
-            endIcon={<KeyboardArrowRightRoundedIcon />}
-            onAction={handleNextStep}
-          />
-        </StyledMenuOptions>
+        <GeneralButton
+          label={t("general.Start")}
+          isPrimary={true}
+          endIcon={<KeyboardArrowRightRoundedIcon />}
+          onAction={handleNextStep}
+        />
       )}
 
       {/* Form steps (1-7) - Previous and Next buttons */}

@@ -59,7 +59,10 @@
   },
   "screenBlockers": {
     "portrait": "For better experience, please rotate back to portrait mode.",
-    "landscape": "For better experience, please rotate back to landscape mode."
+    "landscape": "For better experience, please rotate back to landscape mode.",
+    "desktopOnly": "The admin area is only available on desktop devices.",
+    "desktopOnlyTitle": "Desktop Required",
+    "desktopOnlyDescription": "Please access this page from a desktop computer or laptop for the best experience."
   },
   "gender": {
     "male": "Male",
@@ -191,7 +194,21 @@
       "verificationCode": "Verification Code:",
       "downloadPdf": "Download PDF",
       "createZip": "Create ZIP",
-      "title": "Generate QR PDFs for selected students"
+      "title": "Generate QR PDFs for selected students",
+      "exportMode": "Export Mode",
+      "separateFiles": "ZIP (Separate Files)",
+      "combinedPdf": "Combined PDF (Single File)",
+      "downloadCombinedPdf": "Download Combined PDF",
+      "creatingPdf": "Creating PDF...",
+      "pdfInstructions": {
+        "title": "How to complete your registration:",
+        "option1Title": "Option 1: Scan the QR code",
+        "option1Text": "Please scan the QR code above with your smartphone camera to open the registration form directly.",
+        "option2Title": "Option 2: Manual entry",
+        "option2Step1": "Visit:",
+        "option2Step2": "Enter your first name and last name",
+        "option2Step3": "Enter your verification code:"
+      }
     },
     "exportStudentData": {
       "title": "Export Student Data",
@@ -456,11 +473,10 @@
     },
     "welcome": {
       "title": "BSO Registration",
-      "subtitle": "Complete your registration in 10 steps.",
-      "paragraph1": "In the following steps, you will be guided through your school registration.",
-      "paragraph2": "Your data will be displayed and you can easily modify outdated or incorrect information.",
-      "paragraph3": "If you notice that you have accidentally changed something, you can simply go back and change it again.",
-      "paragraph4": "If you still need help, simply speak to your teacher."
+      "subtitle": "Complete your registration in {{count}} steps.",
+      "paragraph1": "We'll guide you step by step through the registration.",
+      "paragraph2": "Check your information and update anything that's incorrect.",
+      "paragraph3": "You can go back anytime to make changes."
     },
     "summary": {
       "title": "Summary",
@@ -723,6 +739,12 @@
         "keyExists": "An agreement with this key already exists",
         "labelRequired": "Label is required in both languages"
       }
+    },
+    "system": {
+      "mobileBlocker": "Mobile Device Blocking",
+      "mobileBlockerDescription": "Block mobile and tablet devices from accessing the admin area",
+      "mobileBlockerEnabled": "Enabled",
+      "mobileBlockerDisabled": "Disabled"
     }
   },
   "audit": {

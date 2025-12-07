@@ -375,6 +375,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
                       noMargin
                       title={t("onboarding.legalGuardian.removeContactTooltip")}
                       placement="top"
+                      onAction={() => handleRemoveContact(contactNumber)}
                     />
                   ) : undefined
                 }

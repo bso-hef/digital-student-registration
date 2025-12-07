@@ -3,9 +3,11 @@
 import { useEffect } from "react";
 
 import LeftNavigation from "@/components/organisms/LeftNavigation";
+import MobileBlocker from "@/components/organisms/MobileBlocker";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { useAuth } from "@/lib/auth/useAuth";
 import { fetchProfile } from "@/store/actions/authActions";
+import { getSettings } from "@/store/actions/settingsActions";
 import { AppDispatch, RootState } from "@/store/store";
 import { applicationScrollbar } from "@/utils/styling.utils";
 import { Box, CircularProgress, styled } from "@mui/material";
@@ -98,6 +100,7 @@ export default function AdminLayout({
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const authUser = useSelector((state: RootState) => state.auth.user);
+  const appSettings = useSelector((state: RootState) => state.appSettings.data);
 
   const showMobileView = isMobile || isTabletVertical;
 
@@ -110,10 +113,13 @@ export default function AdminLayout({
     }
   }, [isAuthenticated, isLoading, router]);
 
-  // Fetch profile data when authenticated and profile not yet loaded
+  // Fetch profile data and app settings when authenticated
   useEffect(() => {
-    if (isAuthenticated && !authUser?.firstName) {
-      dispatch(fetchProfile());
+    if (isAuthenticated) {
+      if (!authUser?.firstName) {
+        dispatch(fetchProfile());
+      }
+      dispatch(getSettings());
     }
   }, [isAuthenticated, authUser?.firstName, dispatch]);
 
@@ -142,6 +148,9 @@ export default function AdminLayout({
 
   return (
     <StyledBox className="admin-layout">
+      <MobileBlocker
+        enabled={appSettings?.system?.mobileBlockerEnabled ?? true}
+      />
       <AdminLayoutContainer showMobileView={showMobileView}>
         <LeftNavigation />
         <LayoutBox showMobileView={showMobileView}>{children}</LayoutBox>

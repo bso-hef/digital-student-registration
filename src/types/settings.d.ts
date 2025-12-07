@@ -102,12 +102,18 @@ export interface AuditSettings {
   exportEnabled: boolean;
 }
 
+// System Settings (admin preferences)
+export interface SystemSettings {
+  mobileBlockerEnabled: boolean;
+}
+
 export interface AppSettings {
   _id?: string;
   onboarding: OnboardingSettings;
   agreements: AgreementSettings;
   integrations: IntegrationSettings;
   audit: AuditSettings;
+  system: SystemSettings;
   createdAt?: Date;
   updatedAt?: Date;
 }

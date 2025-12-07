@@ -1,5 +1,6 @@
 import MuiCssBaselineOverride from "./MuiCssBaseline";
 import MuiDateCalendarOverride from "./MuiDateCalendar";
+import MuiDayCalendarOverride from "./MuiDayCalendar";
 import MuiDividerOverride from "./MuiDivider";
 import MuiFormControlOverride from "./MuiFormControl";
 import MuiFormControlLabelOverride from "./MuiFormControlLabel";
@@ -7,8 +8,13 @@ import MuiFormLabelOverride from "./MuiFormLabel";
 import MuiInputBaseOverride from "./MuiInputBase";
 import MuiOutlinedInputOverride from "./MuiOutlinedInput";
 import MuiPickerPopperOverride from "./MuiPickerPopper";
+import MuiPickersArrowSwitcherOverride from "./MuiPickersArrowSwitcher";
+import MuiPickersCalendarHeaderOverride from "./MuiPickersCalendarHeader";
+import MuiPickersDayOverride from "./MuiPickersDay";
+import MuiPickersYearOverride from "./MuiPickersYear";
 import MuiSelectOverride from "./MuiSelect";
 import MuiTextFieldOverride from "./MuiTextField";
+import MuiYearCalendarOverride from "./MuiYearCalendar";
 
 const overrides = {
   MuiCssBaseline: {
@@ -40,6 +46,24 @@ const overrides = {
   },
   MuiDateCalendar: {
     styleOverrides: MuiDateCalendarOverride,
+  },
+  MuiYearCalendar: {
+    styleOverrides: MuiYearCalendarOverride,
+  },
+  MuiPickersYear: {
+    styleOverrides: MuiPickersYearOverride,
+  },
+  MuiPickersDay: {
+    styleOverrides: MuiPickersDayOverride,
+  },
+  MuiPickersCalendarHeader: {
+    styleOverrides: MuiPickersCalendarHeaderOverride,
+  },
+  MuiDayCalendar: {
+    styleOverrides: MuiDayCalendarOverride,
+  },
+  MuiPickersArrowSwitcher: {
+    styleOverrides: MuiPickersArrowSwitcherOverride,
   },
   MuiSelect: {
     styleOverrides: MuiSelectOverride,

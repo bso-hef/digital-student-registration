@@ -84,6 +84,14 @@ const AuditSettingsSchema = new Schema(
   { _id: false },
 );
 
+// System settings schema (admin preferences)
+const SystemSettingsSchema = new Schema(
+  {
+    mobileBlockerEnabled: { type: Boolean, default: true },
+  },
+  { _id: false },
+);
+
 const AppSettingsSchema = new Schema(
   {
     isSystemSetup: { type: Boolean, default: false, required: true },
@@ -453,6 +461,12 @@ const AppSettingsSchema = new Schema(
         logSettingsChanges: true,
         retentionPeriodDays: 90,
         exportEnabled: false,
+      },
+    },
+    system: {
+      type: SystemSettingsSchema,
+      default: {
+        mobileBlockerEnabled: true,
       },
     },
     createdAt: { type: Date, default: Date.now },

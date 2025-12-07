@@ -59,7 +59,10 @@
   },
   "screenBlockers": {
     "portrait": "Für ein besseres Erlebnis, drehen Sie das Handy bitte in den Hochformat-Modus.",
-    "landscape": "Für ein besseres Erlebnis, drehen Sie das Handy bitte in den Querformat-Modus."
+    "landscape": "Für ein besseres Erlebnis, drehen Sie das Handy bitte in den Querformat-Modus.",
+    "desktopOnly": "Der Admin-Bereich ist nur auf Desktop-Geräten verfügbar.",
+    "desktopOnlyTitle": "Desktop erforderlich",
+    "desktopOnlyDescription": "Bitte greifen Sie für die beste Erfahrung von einem Desktop-Computer oder Laptop auf diese Seite zu."
   },
   "gender": {
     "male": "Männlich",
@@ -191,7 +194,21 @@
       "verificationCode": "Verifizierungscode:",
       "downloadPdf": "PDF herunterladen",
       "createZip": "ZIP erzeugen",
-      "title": "QR-PDFs für ausgewählte Schüler erzeugen"
+      "title": "QR-PDFs für ausgewählte Schüler erzeugen",
+      "exportMode": "Exportmodus",
+      "separateFiles": "ZIP (Einzelne Dateien)",
+      "combinedPdf": "Kombiniertes PDF (Eine Datei)",
+      "downloadCombinedPdf": "Kombiniertes PDF herunterladen",
+      "creatingPdf": "PDF wird erstellt...",
+      "pdfInstructions": {
+        "title": "So vervollständigen Sie Ihre Anmeldung:",
+        "option1Title": "Option 1: QR-Code scannen",
+        "option1Text": "Scannen Sie den QR-Code oben mit Ihrer Smartphone-Kamera, um das Anmeldeformular direkt zu öffnen.",
+        "option2Title": "Option 2: Manuelle Eingabe",
+        "option2Step1": "Besuchen Sie:",
+        "option2Step2": "Geben Sie Ihren Vor- und Nachnamen ein",
+        "option2Step3": "Geben Sie Ihren Verifizierungscode ein:"
+      }
     },
     "exportStudentData": {
       "title": "Schülerdaten exportieren",
@@ -456,11 +473,10 @@
     },
     "welcome": {
       "title": "Anmeldung der BSO",
-      "subtitle": "Schließen Sie in 10 Schritten ihre Anmeldung ab.",
-      "paragraph1": "In den nachfolgenden Schritten wirst du durch deine Schuleinschreibung geführt.",
-      "paragraph2": "Dort werden dir deine eigenen Daten angezeigt, und du kannst einfach veraltete oder fehlerhaft Daten bearbeiten.",
-      "paragraph3": "Solltest du bemerken, dass du etwas versehentlich geändert hast, kannst du einfach zurück gehen und es erneut ändern.",
-      "paragraph4": "Solltest du dennoch Hilfe brauchen, wende dich einfach an deinen Lehrer."
+      "subtitle": "Schließe deine Anmeldung in {{count}} Schritten ab.",
+      "paragraph1": "Wir führen dich Schritt für Schritt durch die Anmeldung.",
+      "paragraph2": "Überprüfe deine Daten und korrigiere, was nicht stimmt.",
+      "paragraph3": "Du kannst jederzeit zurückgehen und Änderungen vornehmen."
     },
     "summary": {
       "title": "Zusammenfassung",
@@ -723,6 +739,12 @@
         "keyExists": "Eine Vereinbarung mit diesem Schlüssel existiert bereits",
         "labelRequired": "Bezeichnung ist in beiden Sprachen erforderlich"
       }
+    },
+    "system": {
+      "mobileBlocker": "Mobile Gerätesperre",
+      "mobileBlockerDescription": "Mobile Geräte und Tablets vom Zugriff auf den Admin-Bereich blockieren",
+      "mobileBlockerEnabled": "Aktiviert",
+      "mobileBlockerDisabled": "Deaktiviert"
     }
   },
   "audit": {

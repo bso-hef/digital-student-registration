@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import * as Yup from "yup";
 
 // Verification Form Validation
@@ -110,14 +111,16 @@ export const createValidateGeneralStudentData = (
 // Step 2: Herkunft (Optional)
 export const validateStudentOriginData = Yup.object({
   herkunftsland: Yup.string().required("Herkunftsland ist erforderlich"),
-  zuzugjahr: Yup.number()
-    .typeError("Zuzugsjahr muss eine Zahl sein")
-    .integer("Zuzugsjahr muss eine ganze Zahl sein")
-    .min(1900, "Ungültiges Jahr")
-    .max(
-      new Date().getFullYear(),
-      "Zuzugsjahr darf nicht in der Zukunft liegen",
-    )
+  zuzugjahr: Yup.mixed()
+    .nullable()
+    .test("valid-year", "Ungültiges Jahr", (value) => {
+      if (!value) return false; // Required field
+      if (dayjs.isDayjs(value)) {
+        const year = value.year();
+        return year >= 1900 && year <= new Date().getFullYear();
+      }
+      return false;
+    })
     .required("Zuzugsjahr ist erforderlich"),
   familiensprache: Yup.string().required("Familiensprache ist erforderlich"),
 });
@@ -135,14 +138,16 @@ export const createValidateStudentOriginData = (
 
   return Yup.object({
     herkunftsland: Yup.string().required("Herkunftsland ist erforderlich"),
-    zuzugjahr: Yup.number()
-      .typeError("Zuzugsjahr muss eine Zahl sein")
-      .integer("Zuzugsjahr muss eine ganze Zahl sein")
-      .min(1900, "Ungültiges Jahr")
-      .max(
-        new Date().getFullYear(),
-        "Zuzugsjahr darf nicht in der Zukunft liegen",
-      )
+    zuzugjahr: Yup.mixed()
+      .nullable()
+      .test("valid-year", "Ungültiges Jahr", (value) => {
+        if (!value) return false; // Required field
+        if (dayjs.isDayjs(value)) {
+          const year = value.year();
+          return year >= 1900 && year <= new Date().getFullYear();
+        }
+        return false;
+      })
       .required("Zuzugsjahr ist erforderlich"),
     familiensprache: familienspracheValidation,
   });

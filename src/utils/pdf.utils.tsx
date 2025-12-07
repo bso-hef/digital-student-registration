@@ -21,7 +21,124 @@ export type PdfSettings = {
   shortenId: boolean;
   wizardUrlTemplate: string; // z.B. WIZZARD_URL mit {short-id}
   locale?: string;
+  hidePageLabel?: boolean; // Hide the page size label in actual PDF exports (keep in preview)
 };
+
+/**
+ * Extracts the base URL from a wizard URL template.
+ * E.g., "https://school.example.com/student/{short-id}" -> "https://school.example.com"
+ */
+function extractBaseUrl(wizardUrlTemplate: string): string {
+  try {
+    const url = new URL(wizardUrlTemplate.replace("{short-id}", "temp"));
+    return `${url.protocol}//${url.host}`;
+  } catch {
+    // Fallback: just return the template without the path
+    return wizardUrlTemplate.split("/student")[0] || wizardUrlTemplate;
+  }
+}
+
+/**
+ * Renders an instruction box on the PDF explaining how students can complete their registration.
+ */
+function renderInstructionBox(
+  doc: jsPDF,
+  startY: number,
+  pageW: number,
+  pageH: number,
+  pad: number,
+  verificationCode: string,
+  baseUrl: string,
+  t: (key: string) => string,
+): void {
+  const boxPad = 4;
+  const boxX = pad;
+  const boxY = startY + 4;
+  const boxW = pageW - pad * 2;
+  const lineHeight = 5;
+
+  // Calculate box height based on content
+  const boxH = lineHeight * 8 + boxPad * 2;
+
+  // Don't render if it would go past the page
+  if (boxY + boxH > pageH - pad - 10) {
+    return;
+  }
+
+  // Draw light gray background box
+  doc.setFillColor(245, 245, 245);
+  doc.setDrawColor(220, 220, 220);
+  doc.roundedRect(boxX, boxY, boxW, boxH, 2, 2, "FD");
+
+  let y = boxY + boxPad + 4;
+
+  // Title
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(9);
+  doc.setTextColor(0);
+  doc.text(t("modals.generateQrModal.pdfInstructions.title"), boxX + boxPad, y);
+  y += lineHeight + 1;
+
+  // Option 1
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(8);
+  doc.text(
+    t("modals.generateQrModal.pdfInstructions.option1Title"),
+    boxX + boxPad,
+    y,
+  );
+  y += lineHeight;
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8);
+  const option1Lines = doc.splitTextToSize(
+    t("modals.generateQrModal.pdfInstructions.option1Text"),
+    boxW - boxPad * 2 - 4,
+  );
+  doc.text(option1Lines, boxX + boxPad + 4, y);
+  y += lineHeight * Math.max(option1Lines.length, 1) + 1;
+
+  // Option 2
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(8);
+  doc.text(
+    t("modals.generateQrModal.pdfInstructions.option2Title"),
+    boxX + boxPad,
+    y,
+  );
+  y += lineHeight;
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8);
+  // Step 1: Visit URL
+  doc.text(
+    `1. ${t("modals.generateQrModal.pdfInstructions.option2Step1")} ${baseUrl}/student`,
+    boxX + boxPad + 4,
+    y,
+  );
+  y += lineHeight;
+
+  // Step 2: Enter name
+  doc.text(
+    `2. ${t("modals.generateQrModal.pdfInstructions.option2Step2")}`,
+    boxX + boxPad + 4,
+    y,
+  );
+  y += lineHeight;
+
+  // Step 3: Enter verification code
+  doc.setFont("helvetica", "normal");
+  doc.text(
+    `3. ${t("modals.generateQrModal.pdfInstructions.option2Step3")} `,
+    boxX + boxPad + 4,
+    y,
+  );
+  // Add the code in bold
+  const step3Text = `3. ${t("modals.generateQrModal.pdfInstructions.option2Step3")} `;
+  const step3Width = doc.getTextWidth(step3Text);
+  doc.setFont("helvetica", "bold");
+  doc.text(verificationCode, boxX + boxPad + 4 + step3Width, y);
+}
 
 export async function buildPdfForStudent(
   s: Student,
@@ -121,13 +238,30 @@ export async function buildPdfForStudent(
   const urlLines = doc.splitTextToSize(wizUrl, textMaxW);
   doc.text(urlLines, textX, ty);
 
-  doc.setFontSize(9);
-  doc.setTextColor(100);
-  doc.text(
-    `${settings.pageSize} • ${isPortrait ? t("modals.generateQrModal.portrait") : t("modals.generateQrModal.landscape")}`,
+  // Render instruction box below the QR code section
+  const instructionStartY = qrY + qrSize + 2;
+  const baseUrl = extractBaseUrl(settings.wizardUrlTemplate);
+  renderInstructionBox(
+    doc,
+    instructionStartY,
+    pageW,
+    pageH,
     pad,
-    pageH - pad,
+    s.verificationCode || "",
+    baseUrl,
+    t,
   );
+
+  // Only show page label if not hidden (for preview purposes)
+  if (!settings.hidePageLabel) {
+    doc.setFontSize(9);
+    doc.setTextColor(100);
+    doc.text(
+      `${settings.pageSize} • ${isPortrait ? t("modals.generateQrModal.portrait") : t("modals.generateQrModal.landscape")}`,
+      pad,
+      pageH - pad,
+    );
+  }
   const classNameForFilename =
     s.currentClassName ||
     (s.currentClass && typeof s.currentClass === "object"
@@ -144,6 +278,167 @@ export async function buildPdfForStudent(
     pageH - pad,
     { align: "right" },
   );
+
+  return doc.output("blob");
+}
+
+/**
+ * Renders a single student's QR content onto the current page of a jsPDF document.
+ * This is an internal helper used by buildCombinedQrPdf to avoid code duplication.
+ */
+async function renderStudentQrContent(
+  doc: jsPDF,
+  s: Student,
+  settings: PdfSettings,
+): Promise<void> {
+  const { locale = "en" } = settings;
+  const t = (key: string) => i18next.t(key, { lng: locale });
+
+  const isPortrait = settings.orientation === "portrait";
+  const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
+
+  const pad = 12;
+  const innerH = pageH - pad * 2;
+  const headerH = 10;
+  const footerH = 8;
+  const contentY = pad + headerH + 4;
+  const contentH = innerH - headerH - footerH - 6;
+
+  doc.setFontSize(11);
+  doc.setFont("helvetica");
+  doc.text(t("modals.generateQrModal.onboardingWizard"), pad, pad + 7);
+
+  const sid = s._id || "";
+  const wizUrl = settings.wizardUrlTemplate.replace(
+    "{short-id}",
+    settings.shortenId ? sid.slice(0, 8) : sid,
+  );
+  const qrSize = Math.min(isPortrait ? 45 : 35, contentH);
+  const qrX = pad;
+  const qrY = contentY;
+  const qrData = await makeQrDataUrl(wizUrl);
+  doc.addImage(qrData, "PNG", qrX, qrY, qrSize, qrSize);
+
+  const textX = qrX + qrSize + 8;
+  const textMaxW = pageW - pad - textX;
+
+  doc.setFont("helvetica");
+  doc.setFontSize(18);
+  doc.text(`${s.firstName} ${s.lastName}`, textX, qrY + 6, {
+    maxWidth: textMaxW,
+  });
+
+  doc.setFont("helvetica");
+  doc.setFontSize(12);
+  let ty = qrY + 14;
+
+  const classNameToDisplay =
+    s.currentClassName ||
+    (s.currentClass && typeof s.currentClass === "object"
+      ? s.currentClass.name
+      : s.currentClass) ||
+    s.className;
+  if (
+    settings.includeClass &&
+    classNameToDisplay &&
+    classNameToDisplay.trim()
+  ) {
+    doc.text(
+      `${t("modals.generateQrModal.class")} ${classNameToDisplay}`,
+      textX,
+      ty,
+      {
+        maxWidth: textMaxW,
+      },
+    );
+    ty += 7;
+  }
+
+  if (s.verificationCode) {
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(0);
+    doc.setFontSize(14);
+    doc.text(
+      `${t("modals.generateQrModal.verificationCode")} ${s.verificationCode}`,
+      textX,
+      ty,
+    );
+    ty += 8;
+  }
+
+  const shownId = settings.shortenId ? sid.slice(0, 8) : sid;
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(120);
+  doc.setFontSize(8);
+  doc.text(`${t("modals.generateQrModal.id")} ${shownId}`, textX, ty);
+  ty += 6;
+
+  doc.setTextColor(0);
+  doc.setFontSize(9);
+  const urlLines = doc.splitTextToSize(wizUrl, textMaxW);
+  doc.text(urlLines, textX, ty);
+
+  // Render instruction box below the QR code section
+  const instructionStartY = qrY + qrSize + 2;
+  const baseUrl = extractBaseUrl(settings.wizardUrlTemplate);
+  renderInstructionBox(
+    doc,
+    instructionStartY,
+    pageW,
+    pageH,
+    pad,
+    s.verificationCode || "",
+    baseUrl,
+    t,
+  );
+
+  // Filename in bottom right
+  const classNameForFilename =
+    s.currentClassName ||
+    (s.currentClass && typeof s.currentClass === "object"
+      ? s.currentClass.name
+      : s.currentClass) ||
+    s.className;
+  const filenameClass =
+    settings.includeClass && classNameForFilename && classNameForFilename.trim()
+      ? `_${classNameForFilename}`
+      : "";
+  doc.text(
+    `${s.lastName}_${s.firstName}${filenameClass}.pdf`,
+    pageW - pad,
+    pageH - pad,
+    { align: "right" },
+  );
+}
+
+/**
+ * Builds a single combined PDF with multiple students, one per page.
+ * Used when exporting multiple students as a single printable document.
+ */
+export async function buildCombinedQrPdf(
+  students: Student[],
+  settings: PdfSettings,
+  onProgress?: (percent: number) => void,
+): Promise<Blob> {
+  const isPortrait = settings.orientation === "portrait";
+  const doc = new jsPDF({
+    orientation: isPortrait ? "portrait" : "landscape",
+    unit: "mm",
+    format: settings.pageSize.toLowerCase(),
+  });
+
+  for (let i = 0; i < students.length; i++) {
+    if (i > 0) {
+      doc.addPage();
+    }
+
+    await renderStudentQrContent(doc, students[i], settings);
+
+    if (onProgress) {
+      onProgress(Math.round(((i + 1) / students.length) * 100));
+    }
+  }
 
   return doc.output("blob");
 }

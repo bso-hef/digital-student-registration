@@ -210,9 +210,7 @@ const AddressForm: React.FC<AddressFormProps> = ({
                 }
               }}
             />
-          </FormSection>
 
-          <FullWidthField>
             {/* E-Mail */}
             <Field
               component={TextField}
@@ -223,7 +221,7 @@ const AddressForm: React.FC<AddressFormProps> = ({
               fullWidth
               required
             />
-          </FullWidthField>
+          </FormSection>
         </StyledForm>
       )}
     </Formik>
