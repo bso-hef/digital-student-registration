@@ -13,10 +13,10 @@ Choose your deployment mode and follow the instructions below.
 
 ```bash
 # 1. Copy environment
-cp .env.local.template .env.local
+cp .env.docker.example .env
 
-# 2. Run start script
-./scripts/start-local.sh
+# 2. Start development environment
+docker-compose up -d
 
 # 3. Open browser
 open https://localhost:3000
@@ -33,10 +33,10 @@ open https://localhost:3000
 
 ```bash
 # Logs
-docker-compose -f docker-compose.local.yml logs -f
+docker-compose logs -f
 
 # Stop
-docker-compose -f docker-compose.local.yml down
+docker-compose down
 ```
 
 ---
@@ -147,9 +147,9 @@ docker-compose -f docker-compose.windows.yml down
 
 → Stop conflicting service or change port in docker-compose file
 
-### "Permission denied"
+### "Permission denied" (scripts)
 
-→ Make script executable: `chmod +x scripts/start-local.sh`
+→ Make script executable: `chmod +x scripts/*.sh`
 
 ### Windows: "Cannot switch to Windows containers"
 

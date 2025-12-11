@@ -214,11 +214,11 @@ docker-compose up -d
 
 ```bash
 # 1. Umgebungsvariablen konfigurieren
-cp .env.docker.example .env
+cp .env.production.template .env.production
 # Alle Sicherheitseinstellungen anpassen!
 
 # 2. Container bauen und starten
-docker-compose -f docker-compose.prod.yml up -d --build
+docker-compose -f docker-compose.production.yml up -d --build
 
 # 3. Reverse Proxy für SSL einrichten
 # Siehe DOCKER.md für Details

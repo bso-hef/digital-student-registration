@@ -93,10 +93,10 @@ docker-compose logs -f app
 
 ```bash
 # 1. Copy environment template
-cp .env.docker.example .env
+cp .env.production.template .env.production
 
 # 2. Configure production environment variables
-nano .env
+nano .env.production
 # CRITICAL: Update all security-sensitive values:
 #   - MONGO_PASSWORD (strong random password)
 #   - NEXTAUTH_SECRET (64+ character random string)
@@ -104,13 +104,13 @@ nano .env
 #   - NEXT_PUBLIC_API_URL (your domain: https://your-domain.com)
 
 # 3. Build and start production containers
-docker-compose -f docker-compose.prod.yml up -d --build
+docker-compose -f docker-compose.production.yml up -d --build
 
 # 4. Check container health
-docker-compose -f docker-compose.prod.yml ps
+docker-compose -f docker-compose.production.yml ps
 
 # 5. View logs
-docker-compose -f docker-compose.prod.yml logs -f app
+docker-compose -f docker-compose.production.yml logs -f app
 
 # 6. Set up reverse proxy (nginx/Caddy) for SSL
 # See "Reverse Proxy Setup" section below
@@ -161,11 +161,17 @@ node -e "console.log(require('crypto').randomBytes(64).toString('base64'))"
   - Includes Mongo Express (DB UI)
   - Self-signed SSL certificates
 
-- **`docker-compose.prod.yml`**: Production environment
-  - Optimized builds
-  - No development tools
+- **`docker-compose.production.yml`**: Production environment (RECOMMENDED)
+  - Full-featured production stack
+  - Includes Caddy reverse proxy with automatic HTTPS
+  - Redis caching layer
+  - Optimized builds with security hardening
   - Resource limits configured
-  - Security hardening applied
+
+- **`docker-compose.windows.yml`**: Windows container deployment
+  - Uses Windows Server 2022 base image
+  - Supports LCOW (Linux Containers on Windows)
+  - Includes Memurai Redis option
 
 ---
 
@@ -283,35 +289,35 @@ docker-compose down -v
 
 ```bash
 # Build images without starting
-docker-compose -f docker-compose.prod.yml build
+docker-compose -f docker-compose.production.yml build
 
 # Build with no cache (clean build)
-docker-compose -f docker-compose.prod.yml build --no-cache
+docker-compose -f docker-compose.production.yml build --no-cache
 
 # Build and start
-docker-compose -f docker-compose.prod.yml up -d --build
+docker-compose -f docker-compose.production.yml up -d --build
 ```
 
 ### Production Commands
 
 ```bash
 # Start production environment
-docker-compose -f docker-compose.prod.yml up -d
+docker-compose -f docker-compose.production.yml up -d
 
 # View logs (detached)
-docker-compose -f docker-compose.prod.yml logs -f
+docker-compose -f docker-compose.production.yml logs -f
 
 # Check service health
-docker-compose -f docker-compose.prod.yml ps
+docker-compose -f docker-compose.production.yml ps
 
 # Update application (after git pull)
-docker-compose -f docker-compose.prod.yml up -d --build app
+docker-compose -f docker-compose.production.yml up -d --build app
 
 # Stop services
-docker-compose -f docker-compose.prod.yml down
+docker-compose -f docker-compose.production.yml down
 
 # Restart services
-docker-compose -f docker-compose.prod.yml restart
+docker-compose -f docker-compose.production.yml restart
 ```
 
 ### Production Health Checks
@@ -321,10 +327,10 @@ docker-compose -f docker-compose.prod.yml restart
 docker ps
 
 # Test health endpoint directly
-docker-compose -f docker-compose.prod.yml exec app ./docker-healthcheck.sh
+docker-compose -f docker-compose.production.yml exec app ./docker-healthcheck.sh
 
 # Check MongoDB health
-docker-compose -f docker-compose.prod.yml exec mongo mongosh --eval "db.adminCommand('ping')"
+docker-compose -f docker-compose.production.yml exec mongo mongosh --eval "db.adminCommand('ping')"
 
 # View resource usage
 docker stats
@@ -370,7 +376,7 @@ See [Reverse Proxy Setup](#reverse-proxy-setup) section below.
 If you prefer to handle SSL directly in the container:
 
 ```yaml
-# docker-compose.prod.yml
+# docker-compose.production.yml
 services:
   app:
     volumes:
@@ -560,7 +566,7 @@ networks:
 
 ```bash
 # Using docker-compose
-docker-compose -f docker-compose.prod.yml exec mongo mongodump \
+docker-compose -f docker-compose.production.yml exec mongo mongodump \
   --username=admin \
   --password=your-password \
   --authenticationDatabase=admin \
@@ -584,7 +590,7 @@ docker run --rm \
 docker cp ./backup digital-student-mongo-prod:/data/restore
 
 # Restore database
-docker-compose -f docker-compose.prod.yml exec mongo mongorestore \
+docker-compose -f docker-compose.production.yml exec mongo mongorestore \
   --username=admin \
   --password=your-password \
   --authenticationDatabase=admin \
@@ -605,42 +611,42 @@ docker run --rm \
 git pull origin main
 
 # 2. Rebuild and restart containers
-docker-compose -f docker-compose.prod.yml up -d --build app
+docker-compose -f docker-compose.production.yml up -d --build app
 
 # 3. Check logs for errors
-docker-compose -f docker-compose.prod.yml logs -f app
+docker-compose -f docker-compose.production.yml logs -f app
 
 # 4. Verify health
-docker-compose -f docker-compose.prod.yml ps
+docker-compose -f docker-compose.production.yml ps
 ```
 
 ### View Logs
 
 ```bash
 # All services
-docker-compose -f docker-compose.prod.yml logs -f
+docker-compose -f docker-compose.production.yml logs -f
 
 # Specific service
-docker-compose -f docker-compose.prod.yml logs -f app
+docker-compose -f docker-compose.production.yml logs -f app
 
 # Last 100 lines
-docker-compose -f docker-compose.prod.yml logs --tail=100 app
+docker-compose -f docker-compose.production.yml logs --tail=100 app
 
 # Since specific time
-docker-compose -f docker-compose.prod.yml logs --since 2025-01-01T12:00:00
+docker-compose -f docker-compose.production.yml logs --since 2025-01-01T12:00:00
 
 # Export logs to file
-docker-compose -f docker-compose.prod.yml logs app > app-logs.txt
+docker-compose -f docker-compose.production.yml logs app > app-logs.txt
 ```
 
 ### Clean Up
 
 ```bash
 # Remove stopped containers
-docker-compose -f docker-compose.prod.yml down
+docker-compose -f docker-compose.production.yml down
 
 # Remove containers and volumes (CAUTION: deletes database)
-docker-compose -f docker-compose.prod.yml down -v
+docker-compose -f docker-compose.production.yml down -v
 
 # Clean up unused Docker resources
 docker system prune -a
@@ -765,7 +771,7 @@ sudo systemctl start docker
 docker stats
 ```
 
-**Increase memory limits** in `docker-compose.prod.yml`:
+**Increase memory limits** in `docker-compose.production.yml`:
 
 ```yaml
 deploy:
@@ -843,7 +849,7 @@ node server.js
 
 ### Performance
 
-1. **Use production builds** (`docker-compose.prod.yml`)
+1. **Use production builds** (`docker-compose.production.yml`)
 2. **Enable caching** in reverse proxy (nginx, Caddy)
 3. **Monitor resource usage**: `docker stats`
 4. **Set appropriate resource limits**

@@ -108,7 +108,7 @@ Open [https://localhost:3000](https://localhost:3000)
 
 ```bash
 # 1. Local Development (localhost with HTTPS)
-./scripts/start-local.sh
+docker-compose up -d
 # → https://localhost:3000 (self-signed cert)
 
 # 2. Production (Linux Server with SSL)
