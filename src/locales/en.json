@@ -265,6 +265,39 @@
       "noOptions": "No unassigned students available",
       "addButton": "Add Students",
       "selectedCount": "{{count}} student(s) selected"
+    },
+    "duplicateWarning": {
+      "title": "Duplicate Student Found",
+      "message": "A student with the same name and date of birth was recently updated {{daysText}}. Would you like to create a new student anyway?",
+      "today": "today",
+      "yesterday": "yesterday",
+      "daysAgo": "{{count}} days ago",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "dateOfBirth": "Date of Birth",
+      "status": "Status",
+      "confirmText": "Creating a duplicate student will generate a new profile with separate credentials.",
+      "cancel": "Cancel",
+      "createAnyway": "Create Anyway"
+    },
+    "createStudent": {
+      "title": "Create New Student Profile",
+      "subtitle": "Enter student details to create a new onboarding profile",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "dateOfBirth": "Date of Birth",
+      "firstNamePlaceholder": "John",
+      "lastNamePlaceholder": "Doe",
+      "cancel": "Cancel",
+      "create": "Create",
+      "validating": "Validating",
+      "checkingDuplicates": "Checking for duplicates",
+      "creatingStudent": "Creating student",
+      "preparingProfile": "Preparing profile",
+      "redirecting": "Redirecting",
+      "success": "Student profile created successfully!",
+      "error": "Failed to create student profile",
+      "validationError": "Please fill in all required fields correctly"
     }
   },
   "actions": {
@@ -956,7 +989,10 @@
       "lastNamePlaceholder": "Last Name",
       "verificationCodePlaceholder": "Registration ID (e.g. A1B2C3)",
       "submit": "Submit",
-      "verifying": "Verifying..."
+      "verifying": "Verifying...",
+      "verifyButton": "Verify & Continue",
+      "createButton": "Create New Student Profile",
+      "createNewProfile": "Create New Profile"
     }
   }
 }

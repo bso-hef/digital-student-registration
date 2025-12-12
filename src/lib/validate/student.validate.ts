@@ -22,6 +22,37 @@ export const validateVerificationForm = Yup.object({
     .transform((value) => value.toUpperCase()),
 });
 
+// Manual Student Creation Validation
+export const validateManualCreationForm = Yup.object({
+  firstName: Yup.string()
+    .required("Vorname ist erforderlich")
+    .trim()
+    .min(2, "Vorname muss mindestens 2 Zeichen lang sein")
+    .max(50, "Vorname darf maximal 50 Zeichen lang sein"),
+  lastName: Yup.string()
+    .required("Nachname ist erforderlich")
+    .trim()
+    .min(2, "Nachname muss mindestens 2 Zeichen lang sein")
+    .max(50, "Nachname darf maximal 50 Zeichen lang sein"),
+  dateOfBirth: Yup.date()
+    .typeError("Ungültiges Datum")
+    .required("Geburtsdatum ist erforderlich")
+    .max(dayjs().toDate(), "Geburtsdatum darf nicht in der Zukunft liegen")
+    .min(
+      dayjs().subtract(120, "years").toDate(),
+      "Geburtsdatum darf nicht mehr als 120 Jahre zurückliegen",
+    )
+    .test(
+      "reasonable-age",
+      "Schüler muss zwischen 3 und 100 Jahre alt sein",
+      function (value) {
+        if (!value) return false;
+        const age = dayjs().diff(dayjs(value), "years");
+        return age >= 3 && age <= 100;
+      },
+    ),
+});
+
 // Dynamic validation schema builders
 export const createGenderValidation = (
   allowedValues: string[],

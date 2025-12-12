@@ -101,29 +101,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Check if student is assigned to a class
-    if (!student.currentClass) {
-      return NextResponse.json(
-        {
-          error:
-            "Schüler ist noch keiner Klasse zugewiesen. Bitte kontaktieren Sie die Verwaltung",
-          code: "NO_CLASS_ASSIGNED",
-        },
-        { status: 400 },
-      );
-    }
-
-    // Check if class is active
-    if (student.currentClass && !student.currentClass.active) {
-      return NextResponse.json(
-        {
-          error:
-            "Die zugewiesene Klasse ist nicht aktiv. Bitte kontaktieren Sie die Verwaltung",
-          code: "CLASS_INACTIVE",
-        },
-        { status: 400 },
-      );
-    }
+    // Note: Students can verify and start onboarding without class assignment
+    // Class assignment is now optional
 
     // Verification successful - return student ID
     return NextResponse.json(

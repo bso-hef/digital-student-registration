@@ -265,6 +265,39 @@
       "noOptions": "Keine nicht zugewiesenen Schüler verfügbar",
       "addButton": "Schüler hinzufügen",
       "selectedCount": "{{count}} Schüler ausgewählt"
+    },
+    "duplicateWarning": {
+      "title": "Doppelter Schüler gefunden",
+      "message": "Ein Schüler mit demselben Namen und Geburtsdatum wurde kürzlich {{daysText}} aktualisiert. Möchten Sie trotzdem einen neuen Schüler anlegen?",
+      "today": "heute",
+      "yesterday": "gestern",
+      "daysAgo": "vor {{count}} Tagen",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "dateOfBirth": "Geburtsdatum",
+      "status": "Status",
+      "confirmText": "Das Anlegen eines doppelten Schülers erstellt ein neues Profil mit separaten Zugangsdaten.",
+      "cancel": "Abbrechen",
+      "createAnyway": "Trotzdem erstellen"
+    },
+    "createStudent": {
+      "title": "Neues Schülerprofil erstellen",
+      "subtitle": "Geben Sie die Schülerdaten ein, um ein neues Onboarding-Profil zu erstellen",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "dateOfBirth": "Geburtsdatum",
+      "firstNamePlaceholder": "Max",
+      "lastNamePlaceholder": "Mustermann",
+      "cancel": "Abbrechen",
+      "create": "Erstellen",
+      "validating": "Validierung",
+      "checkingDuplicates": "Prüfung auf Duplikate",
+      "creatingStudent": "Schüler wird erstellt",
+      "preparingProfile": "Profil wird vorbereitet",
+      "redirecting": "Weiterleitung",
+      "success": "Schülerprofil erfolgreich erstellt!",
+      "error": "Fehler beim Erstellen des Schülerprofils",
+      "validationError": "Bitte füllen Sie alle Pflichtfelder korrekt aus"
     }
   },
   "actions": {
@@ -956,7 +989,10 @@
       "lastNamePlaceholder": "Nachname",
       "verificationCodePlaceholder": "Anmelde-ID (z.B. A1B2C3)",
       "submit": "Absenden",
-      "verifying": "Wird überprüft..."
+      "verifying": "Wird überprüft...",
+      "verifyButton": "Verifizieren & Fortfahren",
+      "createButton": "Neues Schülerprofil erstellen",
+      "createNewProfile": "Neues Profil erstellen"
     }
   }
 }

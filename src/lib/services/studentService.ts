@@ -44,6 +44,26 @@ const studentService = {
       verificationCode,
     });
   },
+  // Duplicate check method
+  checkDuplicate: (
+    firstName: string,
+    lastName: string,
+    dateOfBirth: string | Date,
+  ) => {
+    // Format date as ISO string if it's a Date object
+    const dobString =
+      dateOfBirth instanceof Date
+        ? dateOfBirth.toISOString()
+        : dateOfBirth.toString();
+
+    return http.get("/api/students/check-duplicate", {
+      params: {
+        firstName,
+        lastName,
+        dateOfBirth: dobString,
+      },
+    });
+  },
   // Onboarding methods
   updateOnboarding: (id: string, data: Record<string, unknown>) => {
     return http.patch(`/api/students/${id}/onboarding`, data);

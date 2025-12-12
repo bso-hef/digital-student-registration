@@ -192,25 +192,11 @@ export const loadStudentForOnboarding =
       }
 
       // Extract currentClass from populated field (if available)
+      // Note: currentClass can be null - students can onboard without class assignment
       const currentClass =
         typeof data.currentClass === "object" && data.currentClass !== null
           ? data.currentClass
           : null;
-
-      if (!data.currentClass || !currentClass) {
-        throw new ValidationError(
-          "Student is not assigned to a class",
-          OnboardingErrorCode.NO_CLASS_ASSIGNED,
-        );
-      }
-
-      // Validation 5: Check if assigned class is active
-      if (!currentClass.active) {
-        throw new ValidationError(
-          "The assigned class is not active",
-          OnboardingErrorCode.CLASS_INACTIVE,
-        );
-      }
 
       // Convert database model (English) to form data (German)
       const formData = mapModelToFormData(data);
