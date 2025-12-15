@@ -4,6 +4,7 @@ import React, { Fragment, memo, useCallback, useEffect, useState } from "react";
 
 import { CHECKBOX_COL_WIDTH } from "@/constants/ui.constants";
 import { getComparator, stableSort } from "@/utils/table.utils";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ReportGmailerrorredRoundedIcon from "@mui/icons-material/ReportGmailerrorredRounded";
 import {
   Box,
@@ -356,9 +357,29 @@ const DataTable: React.FC<DataTableProps> = ({
                                 header.clickable &&
                                 onClickRowItem(row.id as string | number)
                               }
+                              sx={header.clickable ? { cursor: "pointer" } : {}}
                             >
-                              <StyledBox>
+                              <StyledBox
+                                sx={
+                                  header.clickable
+                                    ? {
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: 0.5,
+                                      }
+                                    : {}
+                                }
+                              >
                                 {row[header.id] as React.ReactNode}
+                                {header.clickable && (
+                                  <ChevronRightIcon
+                                    sx={{
+                                      color: "text.secondary",
+                                      fontSize: 18,
+                                      flexShrink: 0,
+                                    }}
+                                  />
+                                )}
                               </StyledBox>
                             </StyledTableCell>
                           );

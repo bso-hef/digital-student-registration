@@ -83,8 +83,12 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
 }) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const { contactPersonTypeOptions, getEnabledOptions, loading } =
-    useOnboardingSettings();
+  const {
+    contactPersonTypeOptions,
+    getEnabledOptions,
+    loading,
+    maxContactPersons,
+  } = useOnboardingSettings();
 
   // Get data from Redux if not provided via props
   const studentDataFromRedux = useAppSelector((state) => state.student.data);
@@ -165,7 +169,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
 
   const handleAddContact = () => {
     const nextContact = visibleContacts.length + 1;
-    if (nextContact <= 3) {
+    if (nextContact <= maxContactPersons) {
       setVisibleContacts([...visibleContacts, nextContact]);
       setExpandedContact(nextContact);
     }
@@ -333,7 +337,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
           )}
 
           {/* Add Contact button at the top */}
-          {visibleContacts.length < 3 && (
+          {visibleContacts.length < maxContactPersons && (
             <GeneralButton
               label={t("onboarding.legalGuardian.addContact")}
               onAction={handleAddContact}

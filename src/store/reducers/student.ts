@@ -16,6 +16,7 @@ interface StudentState {
   studentStatus: string | null;
   currentStudentId: string | null;
   currentStudent: Student | null;
+  currentStudentLoading: boolean;
 }
 
 const initialStudentState: StudentState = {
@@ -100,6 +101,7 @@ const initialStudentState: StudentState = {
   studentStatus: null,
   currentStudentId: null,
   currentStudent: null,
+  currentStudentLoading: false,
 };
 
 const studentReducer = (state = initialStudentState, action: AppAction) => {
@@ -232,6 +234,40 @@ const studentReducer = (state = initialStudentState, action: AppAction) => {
 
     case TYPES.UPDATE_STUDENT_CLASS_FAILURE:
       return { ...state, loading: false, error: action.payload };
+
+    // Admin student detail actions
+    case TYPES.GET_STUDENT_REQUEST:
+      return { ...state, currentStudentLoading: true, error: null };
+
+    case TYPES.GET_STUDENT_SUCCESS:
+      return {
+        ...state,
+        currentStudentLoading: false,
+        currentStudent: action.payload,
+      };
+
+    case TYPES.GET_STUDENT_FAILURE:
+      return { ...state, currentStudentLoading: false, error: action.payload };
+
+    case TYPES.UPDATE_STUDENT_REQUEST:
+      return { ...state, currentStudentLoading: true, error: null };
+
+    case TYPES.UPDATE_STUDENT_SUCCESS:
+      return {
+        ...state,
+        currentStudentLoading: false,
+        currentStudent: action.payload,
+      };
+
+    case TYPES.UPDATE_STUDENT_FAILURE:
+      return { ...state, currentStudentLoading: false, error: action.payload };
+
+    case TYPES.CLEAR_CURRENT_STUDENT:
+      return {
+        ...state,
+        currentStudent: null,
+        currentStudentLoading: false,
+      };
 
     default:
       return state;

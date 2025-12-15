@@ -3,6 +3,7 @@ import type { StudentData } from "@/types/student.d";
 
 export function mapFormDataToModel(
   formData: Partial<StudentData>,
+  maxContactPersons: number = 3,
 ): Partial<Student> {
   const mapped: Partial<Student> = {};
 
@@ -134,7 +135,7 @@ export function mapFormDataToModel(
     };
   }> = [];
 
-  for (let i = 1; i <= 3; i++) {
+  for (let i = 1; i <= maxContactPersons; i++) {
     const vorname = formData[`ansprechpartner${i}Vorname` as keyof StudentData];
     const nachname =
       formData[`ansprechpartner${i}Nachname` as keyof StudentData];
@@ -206,6 +207,7 @@ export function mapFormDataToModel(
 
 export function mapModelToFormData(
   student: Partial<Student>,
+  maxContactPersons: number = 3,
 ): Partial<StudentData> {
   console.log("[mapModelToFormData] Input student:", {
     firstName: student.firstName,
@@ -305,7 +307,7 @@ export function mapModelToFormData(
 
   if (student.contactPersons && student.contactPersons.length > 0) {
     student.contactPersons.forEach((contact, index) => {
-      if (index >= 3) return;
+      if (index >= maxContactPersons) return;
 
       const contactNumber = index + 1;
       const prefix = `ansprechpartner${contactNumber}` as

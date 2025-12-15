@@ -275,7 +275,7 @@ const SummaryForm: React.FC<SummaryFormProps> = ({
         {renderDataRow(t("onboarding.address.email"), studentData.email)}
       </EnhancedCollapse>
 
-      {/* Contact Person / Legal Guardian */}
+      {/* Contact Person */}
       {studentData.ansprechpartner1Vorname && (
         <EnhancedCollapse
           title={t("onboarding.summary.contactPerson")}

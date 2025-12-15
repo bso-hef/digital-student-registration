@@ -1,5 +1,6 @@
 export interface AppAction {
   type: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload?: any;
   [key: string]: unknown;
 }
@@ -59,6 +60,17 @@ export const SUBMIT_ONBOARDING_FAILURE = "SUBMIT_ONBOARDING_FAILURE";
 export const UPDATE_STUDENT_CLASS_REQUEST = "UPDATE_STUDENT_CLASS_REQUEST";
 export const UPDATE_STUDENT_CLASS_SUCCESS = "UPDATE_STUDENT_CLASS_SUCCESS";
 export const UPDATE_STUDENT_CLASS_FAILURE = "UPDATE_STUDENT_CLASS_FAILURE";
+
+// Admin student detail
+export const GET_STUDENT_REQUEST = "GET_STUDENT_REQUEST";
+export const GET_STUDENT_SUCCESS = "GET_STUDENT_SUCCESS";
+export const GET_STUDENT_FAILURE = "GET_STUDENT_FAILURE";
+
+export const UPDATE_STUDENT_REQUEST = "UPDATE_STUDENT_REQUEST";
+export const UPDATE_STUDENT_SUCCESS = "UPDATE_STUDENT_SUCCESS";
+export const UPDATE_STUDENT_FAILURE = "UPDATE_STUDENT_FAILURE";
+
+export const CLEAR_CURRENT_STUDENT = "CLEAR_CURRENT_STUDENT";
 
 // class:
 export const GET_CLASSES_REQUEST = "GET_CLASSES_REQUEST";

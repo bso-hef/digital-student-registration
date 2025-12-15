@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
 import SmallIconButton from "@/components/atoms/buttons/SmallIconButton";
+import GeneralDropdown from "@/components/atoms/dropdowns/GeneralDropdown";
 import StudentStatus from "@/components/atoms/status/StudentStatus";
 import AdminSettingsHeader from "@/components/molecules/AdminSettingsHeader";
 import ClassAutocomplete from "@/components/molecules/ClassAutocomplete";
@@ -30,8 +31,9 @@ import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import FileDownloadRoundedIcon from "@mui/icons-material/FileDownloadRounded";
 import QrCode2RoundedIcon from "@mui/icons-material/QrCode2Rounded";
 import UploadFileRoundedIcon from "@mui/icons-material/UploadFileRounded";
-import { Box, Typography, styled } from "@mui/material";
+import { Box, SelectChangeEvent, Typography, styled } from "@mui/material";
 import { debounce, isString } from "lodash";
+import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -62,9 +64,18 @@ const StyledTableBox = styled(Box)(({ theme }) => ({
   padding: theme.spacing(4),
 }));
 
+const FiltersBox = styled(Box)(({ theme }) => ({
+  display: "flex",
+  gap: theme.spacing(2),
+  marginBottom: theme.spacing(3),
+  flexWrap: "wrap",
+  alignItems: "center",
+}));
+
 const StudentManagementPage = () => {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
+  const router = useRouter();
   const { students, loading } = useSelector(
     (state: RootState) => state.student,
   );
@@ -80,6 +91,11 @@ const StudentManagementPage = () => {
   const [clearSelected, setClearSelected] = useState(false);
   const [isParsingCSV, setIsParsingCSV] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
+
+  // Filter states
+  const [classFilter, setClassFilter] = useState<string>("all");
+  const [vocationalFilter, setVocationalFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
 
   useEffect(() => {
     dispatch(getStudents());
@@ -174,8 +190,79 @@ const StudentManagementPage = () => {
     [setSearchString],
   );
 
+  // Filter handlers
+  const handleClassFilter = useCallback(
+    (event: SelectChangeEvent<string | number>) => {
+      setClassFilter(event.target.value as string);
+    },
+    [],
+  );
+
+  const handleVocationalFilter = useCallback(
+    (event: SelectChangeEvent<string | number>) => {
+      setVocationalFilter(event.target.value as string);
+    },
+    [],
+  );
+
+  const handleStatusFilter = useCallback(
+    (event: SelectChangeEvent<string | number>) => {
+      setStatusFilter(event.target.value as string);
+    },
+    [],
+  );
+
   const getTableData = useCallback(() => {
-    return filterStudents(searchString, students).map((student: Student) => {
+    // Apply search filter first
+    let filteredStudents = filterStudents(searchString, students);
+
+    // Helper to extract class ID from currentClass (can be object, string, or null)
+    const getClassId = (
+      currentClass: { _id: string; name: string } | string | null | undefined,
+    ): string | null | undefined => {
+      if (!currentClass) return currentClass;
+      if (typeof currentClass === "string") return currentClass;
+      return currentClass._id;
+    };
+
+    // Apply class filter
+    if (classFilter && classFilter !== "all") {
+      filteredStudents = filteredStudents.filter((student: Student) => {
+        const studentWithClass = student as Student & {
+          currentClass?: { _id: string; name: string } | string | null;
+        };
+        const classId = getClassId(studentWithClass.currentClass);
+
+        // Filter for unassigned students
+        if (classFilter === "unassigned") {
+          return !classId;
+        }
+
+        return classId === classFilter;
+      });
+    }
+
+    // Apply vocational filter
+    if (vocationalFilter && vocationalFilter !== "all") {
+      filteredStudents = filteredStudents.filter((student: Student) => {
+        const studentWithClass = student as Student & {
+          currentClass?: { _id: string; name: string } | string | null;
+        };
+        const classId = getClassId(studentWithClass.currentClass);
+        const classObj = classes.find((c) => c._id === classId);
+        const isVocational = classObj?.isVocational ?? false;
+        return vocationalFilter === "yes" ? isVocational : !isVocational;
+      });
+    }
+
+    // Apply status filter
+    if (statusFilter && statusFilter !== "all") {
+      filteredStudents = filteredStudents.filter(
+        (student: Student) => student.status === statusFilter,
+      );
+    }
+
+    return filteredStudents.map((student: Student) => {
       const currentClass = (
         student as Student & {
           currentClass?: { _id: string; name: string } | string | null;
@@ -220,7 +307,15 @@ const StudentManagementPage = () => {
         ),
       };
     });
-  }, [students, searchString, classes, t]);
+  }, [
+    students,
+    searchString,
+    classes,
+    classFilter,
+    vocationalFilter,
+    statusFilter,
+    t,
+  ]);
 
   const handleDeleteStudents = useCallback(() => {
     const ids = selectedItems.filter(
@@ -231,6 +326,13 @@ const StudentManagementPage = () => {
     setClearSelected(true);
     handleDeleteStudentModalClose();
   }, [dispatch, handleDeleteStudentModalClose, selectedItems, students]);
+
+  const handleRowClick = useCallback(
+    (id: string | number) => {
+      router.push(`/admin/management/students/${id}/general`);
+    },
+    [router],
+  );
 
   return (
     <Wrapper>
@@ -306,6 +408,54 @@ const StudentManagementPage = () => {
         />
       </AdminSettingsHeader>
       <StyledTableBox>
+        <FiltersBox>
+          <Box sx={{ minWidth: 200 }}>
+            <GeneralDropdown
+              value={classFilter}
+              onChange={handleClassFilter}
+              label={t("settings.manageStudent.filterByClass")}
+              size="small"
+              options={[
+                { value: "all", label: t("general.All") },
+                {
+                  value: "unassigned",
+                  label: t("settings.manageStudent.notAssigned"),
+                },
+                ...classes.map((c) => ({ value: c._id, label: c.name })),
+              ]}
+            />
+          </Box>
+
+          <Box sx={{ minWidth: 200 }}>
+            <GeneralDropdown
+              value={vocationalFilter}
+              onChange={handleVocationalFilter}
+              label={t("settings.manageStudent.filterByVocational")}
+              size="small"
+              options={[
+                { value: "all", label: t("general.All") },
+                { value: "yes", label: t("general.Yes") },
+                { value: "no", label: t("general.No") },
+              ]}
+            />
+          </Box>
+
+          <Box sx={{ minWidth: 200 }}>
+            <GeneralDropdown
+              value={statusFilter}
+              onChange={handleStatusFilter}
+              label={t("settings.manageStudent.filterByStatus")}
+              size="small"
+              options={[
+                { value: "all", label: t("general.All") },
+                { value: "imported", label: t("dashboard.status.imported") },
+                { value: "invited", label: t("dashboard.status.invited") },
+                { value: "onboarded", label: t("dashboard.status.onboarded") },
+              ]}
+            />
+          </Box>
+        </FiltersBox>
+
         <DataTable
           headers={manageTableHeaders(t)}
           data={getTableData()}
@@ -313,6 +463,7 @@ const StudentManagementPage = () => {
           setSelectedItems={setSelectedItems}
           clearSelected={clearSelected}
           setClearSelected={setClearSelected}
+          onClickRowItem={handleRowClick}
         />
       </StyledTableBox>
     </Wrapper>

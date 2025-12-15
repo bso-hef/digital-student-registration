@@ -49,6 +49,7 @@ export const useOnboardingSettings = () => {
     professionOptions: onboarding?.professionOptions || [],
     countryOptions: onboarding?.countryOptions || [],
     fieldConfigs: onboarding?.fieldConfigs || {},
+    maxContactPersons: onboarding?.maxContactPersons ?? 3,
     getEnabledOptions,
     getOptionValues,
     getSelectOptions,

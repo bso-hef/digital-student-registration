@@ -31,10 +31,6 @@ const FormSection = styled(Box)(({ theme }) => ({
   },
 }));
 
-const FullWidthField = styled(Box)(() => ({
-  gridColumn: "1 / -1",
-}));
-
 interface FormValues {
   straße: string;
   hausnr: string;

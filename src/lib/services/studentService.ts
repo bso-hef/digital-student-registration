@@ -78,6 +78,10 @@ const studentService = {
   updateClass: (id: string, classId: string | null) => {
     return http.patch(`/api/students/${id}`, { currentClass: classId });
   },
+  // Admin update method for student detail page
+  patch: (id: string, data: Record<string, unknown>) => {
+    return http.patch(`/api/students/${id}`, data);
+  },
 };
 
 export default studentService;

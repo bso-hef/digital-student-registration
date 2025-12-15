@@ -280,3 +280,55 @@ export const updateStudentClass =
       throw error;
     }
   };
+
+// Admin student detail actions
+export const getStudent =
+  (studentId: string): AppThunk =>
+  async (dispatch) => {
+    dispatch({ type: TYPES.GET_STUDENT_REQUEST });
+    try {
+      const response = await studentService.getById(studentId);
+      const data = response.data.data;
+
+      dispatch({
+        type: TYPES.GET_STUDENT_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      errorNotification(i18n.t("actions.studentFetchFailed"));
+      dispatch({
+        type: TYPES.GET_STUDENT_FAILURE,
+        payload: error,
+      });
+    }
+  };
+
+export const updateStudent =
+  (studentId: string, patch: Record<string, unknown>): AppThunk =>
+  async (dispatch) => {
+    dispatch({ type: TYPES.UPDATE_STUDENT_REQUEST });
+    try {
+      const response = await studentService.patch(studentId, patch);
+      const data = response.data.data;
+
+      dispatch({
+        type: TYPES.UPDATE_STUDENT_SUCCESS,
+        payload: data,
+      });
+
+      successNotification(i18n.t("actions.studentUpdateSuccess"));
+
+      // Refresh the students list
+      dispatch(getStudents());
+    } catch (error) {
+      errorNotification(i18n.t("actions.studentUpdateFailed"));
+      dispatch({
+        type: TYPES.UPDATE_STUDENT_FAILURE,
+        payload: error,
+      });
+    }
+  };
+
+export const clearCurrentStudent = (): AppThunk => (dispatch) => {
+  dispatch({ type: TYPES.CLEAR_CURRENT_STUDENT });
+};

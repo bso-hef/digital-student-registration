@@ -19,9 +19,9 @@
     "System": "System",
     "Rows per page": "Rows per page:",
     "Search": "Search",
-    "Imported": "Imported",
+    "Imported": "Created",
     "Invited": "Invited",
-    "Onboarded": "Onboarded",
+    "Onboarded": "Enrolled",
     "Unknown": "Unknown",
     "Are you sure you want to close this modal": "Are you sure you want to close this modal?",
     "Add": "Add",
@@ -40,6 +40,12 @@
     "NotAccepted": "Not Accepted",
     "Student": "Student",
     "Students": "Students"
+  },
+  "common": {
+    "notSpecified": "Not Specified",
+    "male": "Male",
+    "female": "Female",
+    "diverse": "Diverse"
   },
   "error": {
     "Page not found": "Page not found",
@@ -83,7 +89,7 @@
       "General": "General",
       "Origin": "Origin",
       "Address": "Address",
-      "Legal Guardian": "Legal Guardian",
+      "Legal Guardian": "Contact Person",
       "Pre Education": "Previous Education",
       "Training": "Training",
       "Company Contact": "Company Contact",
@@ -337,7 +343,9 @@
     "auditLogClearSuccess": "Audit logs cleared successfully.",
     "auditLogClearFailed": "Failed to clear audit logs.",
     "studentClassUpdateSuccess": "Student class updated successfully.",
-    "studentClassUpdateFailed": "Failed to update student class."
+    "studentClassUpdateFailed": "Failed to update student class.",
+    "studentUpdateSuccess": "Student updated successfully.",
+    "studentUpdateFailed": "Failed to update student."
   },
   "dashboard": {
     "title": "Dashboard",
@@ -358,9 +366,9 @@
       "systemMetrics": "System Metrics"
     },
     "status": {
-      "imported": "Imported",
+      "imported": "Created",
       "invited": "Invited",
-      "onboarded": "Onboarded",
+      "onboarded": "Enrolled",
       "other": "Other"
     },
     "health": {
@@ -449,14 +457,14 @@
       "houseNumber": "House Number",
       "mobileNumber": "Mobile Number",
       "phoneNumber": "Phone Number",
-      "contactPerson1": "Legal Guardian 1",
-      "contactPerson2": "Legal Guardian 2",
-      "contactPerson3": "Legal Guardian 3",
-      "addContact": "Add Legal Guardian",
-      "addContactTooltip": "Add another legal guardian",
-      "removeContact": "Remove Legal Guardian",
-      "removeContactTooltip": "Remove this legal guardian",
-      "adultOptionalInfo": "Since you are an adult (18 years or older), legal guardian information is optional. You only need to fill these fields if you wish."
+      "contactPerson1": "Contact Person 1",
+      "contactPerson2": "Contact Person 2",
+      "contactPerson3": "Contact Person 3",
+      "addContact": "Add Contact Person",
+      "addContactTooltip": "Add another contact person",
+      "removeContact": "Remove Contact Person",
+      "removeContactTooltip": "Remove this contact person",
+      "adultOptionalInfo": "Since you are an adult (18 years or older), contact person information is optional. You only need to fill these fields if you wish."
     },
     "preEducation": {
       "previousSchool": "Previous School",
@@ -677,6 +685,11 @@
         "valuePlaceholder": "männlich",
         "labelPlaceholder": "Männlich",
         "valuePrefix": "Value:"
+      },
+      "maxContactPersons": {
+        "title": "Contact Persons Limit",
+        "subtitle": "Set the maximum number of contact persons that can be added per student during onboarding.",
+        "label": "Maximum number"
       }
     },
     "csv": {
@@ -705,7 +718,67 @@
       "noClass": "No Class",
       "selectClass": "Select class...",
       "copyVerificationCode": "Copy Login ID",
-      "verificationCodeCopied": "Login ID copied to clipboard"
+      "verificationCodeCopied": "Login ID copied to clipboard",
+      "filterByClass": "Filter by Class",
+      "filterByVocational": "Vocational Students",
+      "filterByStatus": "Filter by Status",
+      "notAssigned": "Not Assigned",
+      "studentSettings": {
+        "settings": "Student Settings",
+        "tabs": {
+          "general": "General",
+          "contact": "Contact",
+          "education": "Education",
+          "guardians": "Contacts"
+        }
+      },
+      "birthName": "Birth Name",
+      "gender": "Gender",
+      "birthplace": "Place of Birth",
+      "birthCountry": "Country of Birth",
+      "religion": "Religion",
+      "nationality": "Nationality",
+      "secondNationality": "Second Nationality",
+      "familyLanguage": "Family Language",
+      "immigrationYear": "Immigration Year",
+      "isActive": "Active",
+      "email": "Email",
+      "phone": "Phone",
+      "mobile": "Mobile",
+      "street": "Street",
+      "city": "City",
+      "zip": "ZIP Code",
+      "country": "Country",
+      "address": "Address",
+      "currentClass": "Current Class",
+      "schoolEntryDate": "School Entry Date",
+      "previousSchool": "Previous School",
+      "previousSchoolType": "Previous School Type",
+      "previousSchoolLevel": "Previous School Level",
+      "degrees": "Degrees",
+      "currentEducation": "Current Education",
+      "previousEducation": "Previous Education",
+      "vocationalTraining": "Vocational Training",
+      "profession": "Profession",
+      "trainingStartDate": "Training Start Date",
+      "employer": "Employer",
+      "employerCompanyName": "Company Name",
+      "employerAddress": "Company Address",
+      "employerContactName": "Contact Person Name",
+      "employerContactEmail": "Contact Email",
+      "employerContactPhone": "Contact Phone",
+      "employerContactSalutation": "Salutation",
+      "contactPerson": "Contact Person",
+      "contactType": "Contact Type",
+      "addContactPerson": "Add Contact Person",
+      "contactTypes": {
+        "Mother": "Mother",
+        "Father": "Father",
+        "ContactPerson": "Contact Person",
+        "Grandparent": "Grandparent",
+        "Sibling": "Sibling",
+        "Other": "Other"
+      }
     },
     "manageClass": {
       "className": "Class Name",

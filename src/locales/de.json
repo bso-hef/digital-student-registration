@@ -19,7 +19,7 @@
     "System": "System",
     "Rows per page": "Zeilen pro Seite:",
     "Search": "Suche",
-    "Imported": "Importiert",
+    "Imported": "Angelegt",
     "Invited": "Eingeladen",
     "Onboarded": "Eingeschrieben",
     "Unknown": "Unbekannt",
@@ -40,6 +40,12 @@
     "NotAccepted": "Nicht akzeptiert",
     "Student": "Schüler",
     "Students": "Schüler"
+  },
+  "common": {
+    "notSpecified": "Keine Angabe",
+    "male": "Männlich",
+    "female": "Weiblich",
+    "diverse": "Divers"
   },
   "error": {
     "Page not found": "Seite nicht gefunden",
@@ -83,7 +89,7 @@
       "General": "Allgemein",
       "Origin": "Herkunft",
       "Address": "Adresse",
-      "Legal Guardian": "Erziehungsberechtigte",
+      "Legal Guardian": "Ansprechpartner",
       "Pre Education": "Vorbildung",
       "Training": "Ausbildung",
       "Company Contact": "Unternehmenskontakt",
@@ -337,7 +343,9 @@
     "auditLogClearSuccess": "Audit-Protokolle erfolgreich gelöscht.",
     "auditLogClearFailed": "Löschen der Audit-Protokolle fehlgeschlagen.",
     "studentClassUpdateSuccess": "Schülerklasse erfolgreich aktualisiert.",
-    "studentClassUpdateFailed": "Fehler beim Aktualisieren der Schülerklasse."
+    "studentClassUpdateFailed": "Fehler beim Aktualisieren der Schülerklasse.",
+    "studentUpdateSuccess": "Schüler erfolgreich aktualisiert.",
+    "studentUpdateFailed": "Fehler beim Aktualisieren des Schülers."
   },
   "dashboard": {
     "title": "Dashboard",
@@ -358,9 +366,9 @@
       "systemMetrics": "Systemmetriken"
     },
     "status": {
-      "imported": "Importiert",
+      "imported": "Angelegt",
       "invited": "Eingeladen",
-      "onboarded": "Angemeldet",
+      "onboarded": "Eingeschrieben",
       "other": "Sonstige"
     },
     "health": {
@@ -449,14 +457,14 @@
       "houseNumber": "Hausnummer",
       "mobileNumber": "Mobilnummer",
       "phoneNumber": "Telefon",
-      "contactPerson1": "Erziehungsberechtigte(r) 1",
-      "contactPerson2": "Erziehungsberechtigte(r) 2",
-      "contactPerson3": "Erziehungsberechtigte(r) 3",
-      "addContact": "Erziehungsberechtigte(n) hinzufügen",
-      "addContactTooltip": "Einen weiteren Erziehungsberechtigten hinzufügen",
-      "removeContact": "Erziehungsberechtigte(n) entfernen",
-      "removeContactTooltip": "Diesen Erziehungsberechtigten entfernen",
-      "adultOptionalInfo": "Da Sie volljährig sind (18 Jahre oder älter), sind die Angaben zu Erziehungsberechtigten optional. Sie müssen diese Felder nur ausfüllen, wenn Sie möchten."
+      "contactPerson1": "Ansprechpartner 1",
+      "contactPerson2": "Ansprechpartner 2",
+      "contactPerson3": "Ansprechpartner 3",
+      "addContact": "Ansprechpartner hinzufügen",
+      "addContactTooltip": "Einen weiteren Ansprechpartner hinzufügen",
+      "removeContact": "Ansprechpartner entfernen",
+      "removeContactTooltip": "Diesen Ansprechpartner entfernen",
+      "adultOptionalInfo": "Da Sie volljährig sind (18 Jahre oder älter), sind die Angaben zu Ansprechpartnern optional. Sie müssen diese Felder nur ausfüllen, wenn Sie möchten."
     },
     "preEducation": {
       "previousSchool": "Vorherige Schule",
@@ -677,6 +685,11 @@
         "valuePlaceholder": "männlich",
         "labelPlaceholder": "Männlich",
         "valuePrefix": "Wert:"
+      },
+      "maxContactPersons": {
+        "title": "Ansprechpartner-Limit",
+        "subtitle": "Legen Sie die maximale Anzahl der Ansprechpartner fest, die pro Schüler während der Anmeldung hinzugefügt werden können.",
+        "label": "Maximale Anzahl"
       }
     },
     "csv": {
@@ -705,7 +718,67 @@
       "noClass": "Keine Klasse",
       "selectClass": "Klasse auswählen...",
       "copyVerificationCode": "Login-ID kopieren",
-      "verificationCodeCopied": "Login-ID in Zwischenablage kopiert"
+      "verificationCodeCopied": "Login-ID in Zwischenablage kopiert",
+      "filterByClass": "Nach Klasse filtern",
+      "filterByVocational": "Berufsschüler",
+      "filterByStatus": "Nach Status filtern",
+      "notAssigned": "Nicht zugewiesen",
+      "studentSettings": {
+        "settings": "Schülereinstellungen",
+        "tabs": {
+          "general": "Allgemein",
+          "contact": "Kontakt",
+          "education": "Ausbildung",
+          "guardians": "Ansprechpartner"
+        }
+      },
+      "birthName": "Geburtsname",
+      "gender": "Geschlecht",
+      "birthplace": "Geburtsort",
+      "birthCountry": "Geburtsland",
+      "religion": "Konfession",
+      "nationality": "Staatsangehörigkeit",
+      "secondNationality": "Zweite Staatsangehörigkeit",
+      "familyLanguage": "Familiensprache",
+      "immigrationYear": "Zuzugsjahr",
+      "isActive": "Aktiv",
+      "email": "E-Mail",
+      "phone": "Telefon",
+      "mobile": "Mobil",
+      "street": "Straße",
+      "city": "Ort",
+      "zip": "PLZ",
+      "country": "Land",
+      "address": "Adresse",
+      "currentClass": "Aktuelle Klasse",
+      "schoolEntryDate": "Schuleintritt",
+      "previousSchool": "Vorherige Schule",
+      "previousSchoolType": "Vorherige Schulform",
+      "previousSchoolLevel": "Vorherige Stufe",
+      "degrees": "Abschlüsse",
+      "currentEducation": "Aktuelle Ausbildung",
+      "previousEducation": "Vorbildung",
+      "vocationalTraining": "Berufliche Ausbildung",
+      "profession": "Beruf",
+      "trainingStartDate": "Ausbildungsbeginn",
+      "employer": "Ausbildungsbetrieb",
+      "employerCompanyName": "Firmenname",
+      "employerAddress": "Firmenadresse",
+      "employerContactName": "Ansprechpartner",
+      "employerContactEmail": "E-Mail Ansprechpartner",
+      "employerContactPhone": "Telefon Ansprechpartner",
+      "employerContactSalutation": "Anrede",
+      "contactPerson": "Ansprechpartner",
+      "contactType": "Art",
+      "addContactPerson": "Ansprechpartner hinzufügen",
+      "contactTypes": {
+        "Mother": "Mutter",
+        "Father": "Vater",
+        "ContactPerson": "Ansprechpartner",
+        "Grandparent": "Großeltern",
+        "Sibling": "Geschwister",
+        "Other": "Andere"
+      }
     },
     "manageClass": {
       "className": "Klassenname",

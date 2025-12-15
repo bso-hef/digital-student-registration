@@ -35,6 +35,8 @@ export interface OnboardingSettings {
   professionOptions: DropdownOption[];
   countryOptions: DropdownOption[];
 
+  maxContactPersons?: number;
+
   fieldConfigs: {
     geschlecht: FieldConfig;
     religion: FieldConfig;

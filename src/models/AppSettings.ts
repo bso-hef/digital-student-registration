@@ -367,6 +367,12 @@ const AppSettingsSchema = new Schema(
         ],
       },
 
+      maxContactPersons: {
+        type: Number,
+        default: 3,
+        min: 1,
+      },
+
       fieldConfigs: {
         geschlecht: {
           type: FieldConfigSchema,
