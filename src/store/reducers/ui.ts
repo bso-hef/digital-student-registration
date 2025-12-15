@@ -10,7 +10,6 @@ export interface UIState {
   locale: string;
   loading: boolean;
   error: Error | null;
-  // Accessibility settings
   highContrast: boolean;
   dyslexiaFont: boolean;
 }
@@ -22,7 +21,6 @@ const initialUIState: UIState = {
   locale: LANGUAGES.GERMAN.isoCode,
   loading: false,
   error: null,
-  // Accessibility defaults
   highContrast: false,
   dyslexiaFont: false,
 };

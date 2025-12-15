@@ -1,6 +1,3 @@
-/**
- * Background job to recalculate student counts for all classes
- */
 import { dbConnect } from "@/lib/config/mongo";
 import Logger from "@/lib/server-logger";
 import Class from "@/models/Class";
@@ -14,10 +11,6 @@ export interface RecalculateResult {
   errors: string[];
 }
 
-/**
- * Recalculates studentCount for all classes based on actual student assignments
- * This ensures the cached count matches the reality in the database
- */
 export async function recalculateStudentCounts(): Promise<RecalculateResult> {
   const result: RecalculateResult = {
     success: true,
@@ -28,20 +21,17 @@ export async function recalculateStudentCounts(): Promise<RecalculateResult> {
   try {
     await dbConnect();
 
-    // Get all classes
     const classes = await Class.find({ active: true });
 
     logger.info(`Recalculating student counts for ${classes.length} classes`);
 
     for (const classDoc of classes) {
       try {
-        // Count students in this class
         const studentCount = await Student.countDocuments({
           currentClass: classDoc._id,
           active: true,
         });
 
-        // Update if different
         if (classDoc.studentCount !== studentCount) {
           classDoc.studentCount = studentCount;
           await classDoc.save();

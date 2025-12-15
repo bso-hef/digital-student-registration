@@ -38,7 +38,6 @@ ClassSchema.index(
 );
 ClassSchema.plugin(mongoosePaginate);
 
-// Ensure model is properly registered
 const ClassModel =
   mongoose.models.Class || mongoose.model(SCHEMA.CLASS, ClassSchema);
 

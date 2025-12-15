@@ -10,9 +10,6 @@ import { persistor } from "../store";
 import { AppThunk } from "../store";
 import * as TYPES from "../types";
 
-/**
- * Login action - integrates with NextAuth
- */
 export const loginUser =
   (
     email: string,
@@ -37,7 +34,6 @@ export const loginUser =
       }
 
       if (result?.ok) {
-        // Note: NextAuth will update the session, which we can sync
         successNotification(i18n.t("auth.login.loginSuccess"));
         dispatch({
           type: TYPES.AUTH_LOGIN_SUCCESS,
@@ -59,21 +55,15 @@ export const loginUser =
     }
   };
 
-/**
- * Logout action - integrates with NextAuth
- */
 export const logoutUser =
   (): AppThunk<Promise<{ success: boolean; error?: string }>> =>
   async (dispatch) => {
     dispatch({ type: TYPES.AUTH_LOGOUT_REQUEST });
     try {
-      // First, sign out from NextAuth
       await signOut({ redirect: false });
 
-      // Clear all persisted Redux state (including cached admin data)
       await persistor.purge();
 
-      // Also clear localStorage to ensure no data remains
       if (typeof window !== "undefined") {
         localStorage.clear();
       }
@@ -93,9 +83,6 @@ export const logoutUser =
     }
   };
 
-/**
- * Setup admin account action
- */
 export const setupAdmin =
   (
     email: string,
@@ -117,7 +104,6 @@ export const setupAdmin =
       const data = await response.json();
 
       if (!response.ok) {
-        // Always show user-friendly i18n message, log technical error
         console.error("Setup API error:", data.error);
         errorNotification(i18n.t("auth.setup.messages.setupFailed"));
         dispatch({
@@ -145,9 +131,6 @@ export const setupAdmin =
     }
   };
 
-/**
- * Reset password action
- */
 export const resetPassword =
   (
     email: string,
@@ -168,7 +151,6 @@ export const resetPassword =
       const data = await response.json();
 
       if (!response.ok) {
-        // Always show user-friendly i18n message, log technical error
         console.error("Reset password API error:", data.error);
         errorNotification(i18n.t("auth.resetPassword.resetFailed"));
         dispatch({
@@ -193,9 +175,6 @@ export const resetPassword =
     }
   };
 
-/**
- * Check setup status action
- */
 export const checkSetupStatus =
   (): AppThunk<Promise<{ success: boolean; setupCompleted: boolean }>> =>
   async (dispatch) => {
@@ -217,10 +196,6 @@ export const checkSetupStatus =
     }
   };
 
-/**
- * Sync session with Redux state
- * Useful for when NextAuth session changes externally
- */
 export const syncSession =
   (
     isAuthenticated: boolean,
@@ -233,16 +208,10 @@ export const syncSession =
     });
   };
 
-/**
- * Clear auth error
- */
 export const clearAuthError = (): AppThunk<void> => (dispatch) => {
   dispatch({ type: TYPES.AUTH_CLEAR_ERROR });
 };
 
-/**
- * Update setup wizard state (persisted via redux-persist)
- */
 export const updateSetupWizard = (data: {
   step?: number;
   email?: string;
@@ -252,16 +221,10 @@ export const updateSetupWizard = (data: {
   payload: data,
 });
 
-/**
- * Clear setup wizard state
- */
 export const clearSetupWizard = () => ({
   type: TYPES.AUTH_CLEAR_SETUP_WIZARD,
 });
 
-/**
- * Update profile action
- */
 export const updateProfile =
   (
     data: Partial<ProfileData>,
@@ -297,9 +260,6 @@ export const updateProfile =
     }
   };
 
-/**
- * Fetch profile action - loads profile data on admin entry
- */
 export const fetchProfile = (): AppThunk<Promise<void>> => async (dispatch) => {
   dispatch({ type: TYPES.AUTH_FETCH_PROFILE_REQUEST });
   try {

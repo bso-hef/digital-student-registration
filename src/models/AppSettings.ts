@@ -2,7 +2,6 @@ import { SCHEMA } from "@/constants/db.constants";
 import mongoose, { Schema } from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
 
-// Dropdown option schema with enabled/disabled state
 const DropdownOptionSchema = new Schema(
   {
     value: { type: String, required: true },
@@ -13,7 +12,6 @@ const DropdownOptionSchema = new Schema(
   { _id: false },
 );
 
-// Field configuration schema
 const FieldConfigSchema = new Schema(
   {
     required: { type: Boolean, default: false },
@@ -23,7 +21,6 @@ const FieldConfigSchema = new Schema(
   { _id: false },
 );
 
-// Agreement item schema (for configurable agreements)
 const AgreementItemSchema = new Schema(
   {
     id: { type: String, required: true },
@@ -44,14 +41,12 @@ const AgreementItemSchema = new Schema(
   { _id: false },
 );
 
-// Agreements settings schema
 const AgreementSettingsSchema = new Schema(
   {
     agreements: {
       type: [AgreementItemSchema],
       default: [],
     },
-    // Old fields kept temporarily for migration
     privacyPolicyEnabled: { type: Boolean, default: false },
     termsOfServiceEnabled: { type: Boolean, default: false },
     parentalConsentEnabled: { type: Boolean, default: true },
@@ -60,7 +55,6 @@ const AgreementSettingsSchema = new Schema(
   { _id: false },
 );
 
-// Integration settings schema
 const IntegrationSettingsSchema = new Schema(
   {
     emailServiceEnabled: { type: Boolean, default: false },
@@ -72,7 +66,6 @@ const IntegrationSettingsSchema = new Schema(
   { _id: false },
 );
 
-// Audit settings schema
 const AuditSettingsSchema = new Schema(
   {
     logStudentChanges: { type: Boolean, default: true },
@@ -84,7 +77,6 @@ const AuditSettingsSchema = new Schema(
   { _id: false },
 );
 
-// System settings schema (admin preferences)
 const SystemSettingsSchema = new Schema(
   {
     mobileBlockerEnabled: { type: Boolean, default: true },
@@ -96,7 +88,6 @@ const AppSettingsSchema = new Schema(
   {
     isSystemSetup: { type: Boolean, default: false, required: true },
     onboarding: {
-      // Dropdown Options
       genderOptions: {
         type: [DropdownOptionSchema],
         default: [
@@ -376,7 +367,6 @@ const AppSettingsSchema = new Schema(
         ],
       },
 
-      // Field Configurations
       fieldConfigs: {
         geschlecht: {
           type: FieldConfigSchema,
@@ -420,7 +410,6 @@ const AppSettingsSchema = new Schema(
         },
       },
 
-      // Form Step Visibility
       formSteps: {
         welcomeStep: { type: Boolean, default: true },
         generalStep: { type: Boolean, default: true },

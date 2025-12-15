@@ -60,7 +60,6 @@ const initialStudentState: StudentState = {
     betriebOrt: "",
     betriebTelefon1: "",
     betriebEmail: "",
-    // Contact Person 1
     ansprechpartner1Art: "",
     ansprechpartner1Vorname: "",
     ansprechpartner1Nachname: "",
@@ -70,7 +69,6 @@ const initialStudentState: StudentState = {
     ansprechpartner1Ort: "",
     ansprechpartner1Mobil: "",
     ansprechpartner1Telefon1: "",
-    // Contact Person 2
     ansprechpartner2Art: "",
     ansprechpartner2Vorname: "",
     ansprechpartner2Nachname: "",
@@ -80,7 +78,6 @@ const initialStudentState: StudentState = {
     ansprechpartner2Ort: "",
     ansprechpartner2Mobil: "",
     ansprechpartner2Telefon1: "",
-    // Contact Person 3
     ansprechpartner3Art: "",
     ansprechpartner3Vorname: "",
     ansprechpartner3Nachname: "",
@@ -90,7 +87,6 @@ const initialStudentState: StudentState = {
     ansprechpartner3Ort: "",
     ansprechpartner3Mobil: "",
     ansprechpartner3Telefon1: "",
-    // Agreements
     datenschutz: false,
     teilnahmeunterricht: false,
     schulordnung: false,
@@ -111,7 +107,7 @@ const studentReducer = (state = initialStudentState, action: AppAction) => {
     case TYPES.SET_STUDENT_CURRENT_STEP:
       return {
         ...state,
-        previousStep: state.currentStep, // Save current step as previous before changing
+        previousStep: state.currentStep,
         currentStep: action.payload,
       };
 
@@ -144,7 +140,6 @@ const studentReducer = (state = initialStudentState, action: AppAction) => {
     case TYPES.DELETE_STUDENTS_FAILURE:
       return { ...state, loading: false, error: action.payload };
 
-    // Onboarding actions
     case TYPES.UPDATE_STUDENT_ONBOARDING_DATA:
       return {
         ...state,

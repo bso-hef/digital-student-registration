@@ -20,7 +20,6 @@ export interface AuthState {
   setupCompleted: boolean;
   checkingSession: boolean;
   checkingSetup: boolean;
-  // Setup wizard persistence
   setupWizardStep: number;
   setupWizardEmail: string;
   setupWizardPassword: string;
@@ -34,7 +33,6 @@ const initialAuthState: AuthState = {
   setupCompleted: false,
   checkingSession: false,
   checkingSetup: false,
-  // Setup wizard persistence
   setupWizardStep: 0,
   setupWizardEmail: "",
   setupWizardPassword: "",
@@ -42,7 +40,6 @@ const initialAuthState: AuthState = {
 
 const authReducer = (state = initialAuthState, action: AppAction) => {
   switch (action.type) {
-    // Login actions
     case TYPES.AUTH_LOGIN_REQUEST:
       return {
         ...state,
@@ -68,7 +65,6 @@ const authReducer = (state = initialAuthState, action: AppAction) => {
         error: action.payload,
       };
 
-    // Logout actions
     case TYPES.AUTH_LOGOUT_REQUEST:
       return {
         ...state,
@@ -80,7 +76,6 @@ const authReducer = (state = initialAuthState, action: AppAction) => {
       return {
         ...initialAuthState,
         setupCompleted: state.setupCompleted,
-        // Clear setup wizard state on logout
         setupWizardStep: 0,
         setupWizardEmail: "",
         setupWizardPassword: "",
@@ -93,7 +88,6 @@ const authReducer = (state = initialAuthState, action: AppAction) => {
         error: action.payload,
       };
 
-    // Setup actions
     case TYPES.AUTH_SETUP_REQUEST:
       return {
         ...state,
@@ -107,8 +101,6 @@ const authReducer = (state = initialAuthState, action: AppAction) => {
         isLoading: false,
         setupCompleted: true,
         error: null,
-        // Don't clear setup wizard here - we need email for finalizeSetup
-        // State is cleared in finalizeSetup after completion
       };
 
     case TYPES.AUTH_SETUP_FAILURE:
@@ -118,7 +110,6 @@ const authReducer = (state = initialAuthState, action: AppAction) => {
         error: action.payload,
       };
 
-    // Reset password actions
     case TYPES.AUTH_RESET_PASSWORD_REQUEST:
       return {
         ...state,
@@ -140,7 +131,6 @@ const authReducer = (state = initialAuthState, action: AppAction) => {
         error: action.payload,
       };
 
-    // Check session actions
     case TYPES.AUTH_CHECK_SESSION_REQUEST:
       return {
         ...state,
@@ -163,7 +153,6 @@ const authReducer = (state = initialAuthState, action: AppAction) => {
         user: null,
       };
 
-    // Check setup status actions
     case TYPES.AUTH_CHECK_SETUP_REQUEST:
       return {
         ...state,
@@ -183,7 +172,6 @@ const authReducer = (state = initialAuthState, action: AppAction) => {
         checkingSetup: false,
       };
 
-    // Sync session (for when session changes externally)
     case TYPES.AUTH_SYNC_SESSION:
       return {
         ...state,
@@ -191,14 +179,12 @@ const authReducer = (state = initialAuthState, action: AppAction) => {
         user: action.payload.user,
       };
 
-    // Clear error
     case TYPES.AUTH_CLEAR_ERROR:
       return {
         ...state,
         error: null,
       };
 
-    // Setup wizard persistence
     case TYPES.AUTH_UPDATE_SETUP_WIZARD:
       return {
         ...state,
@@ -216,7 +202,6 @@ const authReducer = (state = initialAuthState, action: AppAction) => {
         setupWizardPassword: "",
       };
 
-    // Profile update actions
     case TYPES.AUTH_UPDATE_PROFILE_REQUEST:
       return {
         ...state,
@@ -249,7 +234,6 @@ const authReducer = (state = initialAuthState, action: AppAction) => {
         error: action.payload,
       };
 
-    // Fetch profile actions
     case TYPES.AUTH_FETCH_PROFILE_REQUEST:
       return {
         ...state,

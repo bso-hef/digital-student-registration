@@ -52,7 +52,6 @@ export const exportAuditLogs =
     try {
       const { data } = await auditLogService.export(format, filters);
 
-      // Trigger download
       const blob = new Blob([data], {
         type: format === "csv" ? "text/csv" : "application/json",
       });

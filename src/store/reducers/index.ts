@@ -8,7 +8,6 @@ import dashboardReducer from "./dashboard";
 import studentReducer from "./student";
 import uiReducer from "./ui";
 
-// Re-export AppAction from types for backwards compatibility (type-only export)
 export type { AppAction } from "../types";
 
 const rootReducer = combineReducers({

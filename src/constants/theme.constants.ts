@@ -59,7 +59,6 @@ export const DARK_THEME_COLORS = {
   900: "#121314",
 };
 
-// High Contrast Mode Colors (WCAG AAA Compliant - 7:1 ratio)
 export const HIGH_CONTRAST_LIGHT_COLORS = {
   BACKGROUND: "#FFFFFF",
   SURFACE: "#FFFFFF",
@@ -67,11 +66,11 @@ export const HIGH_CONTRAST_LIGHT_COLORS = {
   TEXT_SECONDARY: "#1A1A1A",
   BORDER: "#000000",
   BORDER_STRONG: "#000000",
-  PRIMARY: "#005A9C", // Dark blue with high contrast
-  SUCCESS: "#0F5D0F", // Dark green
-  ERROR: "#C10000", // Dark red
-  WARNING: "#7A4A00", // Dark orange
-  INFO: "#005F8C", // Dark cyan
+  PRIMARY: "#005A9C",
+  SUCCESS: "#0F5D0F",
+  ERROR: "#C10000",
+  WARNING: "#7A4A00",
+  INFO: "#005F8C",
 };
 
 export const HIGH_CONTRAST_DARK_COLORS = {
@@ -81,14 +80,13 @@ export const HIGH_CONTRAST_DARK_COLORS = {
   TEXT_SECONDARY: "#E6E6E6",
   BORDER: "#FFFFFF",
   BORDER_STRONG: "#FFFFFF",
-  PRIMARY: "#66CFFF", // Bright blue
-  SUCCESS: "#5AFF5A", // Bright green
-  ERROR: "#FF6B6B", // Bright red
-  WARNING: "#FFB84D", // Bright orange
-  INFO: "#4DC3FF", // Bright cyan
+  PRIMARY: "#66CFFF",
+  SUCCESS: "#5AFF5A",
+  ERROR: "#FF6B6B",
+  WARNING: "#FFB84D",
+  INFO: "#4DC3FF",
 };
 
-// Dashboard Gradient Colors (Modern Style)
 export const DASHBOARD_GRADIENTS = {
   TOTAL_STUDENTS: {
     gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",

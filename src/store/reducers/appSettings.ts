@@ -20,7 +20,6 @@ const appSettingsReducer = (
   action: AppAction,
 ) => {
   switch (action.type) {
-    // Get all settings
     case TYPES.GET_SETTINGS_REQUEST:
       return {
         ...state,
@@ -41,7 +40,6 @@ const appSettingsReducer = (
         error: action.payload,
       };
 
-    // Get onboarding settings
     case TYPES.GET_ONBOARDING_SETTINGS_REQUEST:
       return {
         ...state,

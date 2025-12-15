@@ -14,9 +14,6 @@ import i18n from "i18next";
 import { AppThunk } from "../store";
 import * as TYPES from "../types";
 
-/**
- * Fetches all application settings
- */
 export const getSettings = (): AppThunk => async (dispatch) => {
   dispatch({ type: TYPES.GET_SETTINGS_REQUEST });
   try {
@@ -30,9 +27,6 @@ export const getSettings = (): AppThunk => async (dispatch) => {
   }
 };
 
-/**
- * Fetches only onboarding settings
- */
 export const getOnboardingSettings = (): AppThunk => async (dispatch) => {
   dispatch({ type: TYPES.GET_ONBOARDING_SETTINGS_REQUEST });
   try {
@@ -52,9 +46,6 @@ export const getOnboardingSettings = (): AppThunk => async (dispatch) => {
   }
 };
 
-/**
- * Updates all application settings
- */
 export const updateSettings =
   (settings: Partial<AppSettings>): AppThunk =>
   async (dispatch) => {
@@ -71,9 +62,6 @@ export const updateSettings =
     }
   };
 
-/**
- * Updates only onboarding settings
- */
 export const updateOnboardingSettings =
   (onboarding: Partial<OnboardingSettings>): AppThunk =>
   async (dispatch) => {
@@ -96,9 +84,6 @@ export const updateOnboardingSettings =
     }
   };
 
-/**
- * Fetches only agreement settings
- */
 export const getAgreementSettings = (): AppThunk => async (dispatch) => {
   dispatch({ type: TYPES.GET_AGREEMENT_SETTINGS_REQUEST });
   try {
@@ -118,9 +103,6 @@ export const getAgreementSettings = (): AppThunk => async (dispatch) => {
   }
 };
 
-/**
- * Updates only agreement settings
- */
 export const updateAgreementSettings =
   (agreements: Partial<AgreementSettings>): AppThunk =>
   async (dispatch) => {

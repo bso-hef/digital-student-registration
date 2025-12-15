@@ -79,7 +79,6 @@ const UserSchema = new Schema(
       validate: {
         validator: function (v: string | null) {
           if (!v) return true;
-          // Validate base64 string size (~1MB limit = ~1.37MB base64)
           return v.length <= 1400000;
         },
         message: "Avatar image size exceeds 1MB limit",
@@ -106,17 +105,13 @@ const UserSchema = new Schema(
   { versionKey: false, timestamps: true },
 );
 
-// Hash password before saving if it's modified
 UserSchema.pre("save", async function (next) {
-  // Only hash the password if it has been modified (or is new)
   if (!this.isModified("password")) {
     return next();
   }
 
   try {
-    // Generate salt with 12 rounds (recommended for security)
     const salt = await bcrypt.genSalt(12);
-    // Hash the password
     this.password = await bcrypt.hash(this.password, salt);
     next();
   } catch (err) {
@@ -124,17 +119,13 @@ UserSchema.pre("save", async function (next) {
   }
 });
 
-// Hash recovery code before saving if it's modified
 UserSchema.pre("save", async function (next) {
-  // Only hash the recovery code if it has been modified (or is new)
   if (!this.isModified("recoveryCode")) {
     return next();
   }
 
   try {
-    // Generate salt with 12 rounds
     const salt = await bcrypt.genSalt(12);
-    // Hash the recovery code
     this.recoveryCode = await bcrypt.hash(this.recoveryCode, salt);
     next();
   } catch (err) {
@@ -142,7 +133,6 @@ UserSchema.pre("save", async function (next) {
   }
 });
 
-// Method to verify password
 UserSchema.methods.verifyPassword = async function (
   candidatePassword: string,
 ): Promise<boolean> {
@@ -153,7 +143,6 @@ UserSchema.methods.verifyPassword = async function (
   }
 };
 
-// Method to verify recovery code
 UserSchema.methods.verifyRecoveryCode = async function (
   candidateCode: string,
 ): Promise<boolean> {

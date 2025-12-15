@@ -1,6 +1,5 @@
 import { PaletteMode } from "@mui/material";
 
-// Custom theme mode that extends MUI's PaletteMode with "auto"
 export type ThemeMode = PaletteMode | "auto";
 
 export const THEME = {

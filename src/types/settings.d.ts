@@ -1,5 +1,3 @@
-// Settings types for Admin Onboarding Configuration
-
 export interface DropdownOption {
   value: string;
   label: string;
@@ -26,7 +24,6 @@ export interface FormSteps {
 }
 
 export interface OnboardingSettings {
-  // Dropdown Options
   genderOptions: DropdownOption[];
   salutationOptions: DropdownOption[];
   religionOptions: DropdownOption[];
@@ -38,7 +35,6 @@ export interface OnboardingSettings {
   professionOptions: DropdownOption[];
   countryOptions: DropdownOption[];
 
-  // Field Configurations
   fieldConfigs: {
     geschlecht: FieldConfig;
     religion: FieldConfig;
@@ -52,11 +48,9 @@ export interface OnboardingSettings {
     ansprechpartnerArt: FieldConfig;
   };
 
-  // Form Step Visibility
   formSteps: FormSteps;
 }
 
-// Agreement Item (individual configurable agreement)
 export interface AgreementItem {
   id: string;
   key: string;
@@ -74,17 +68,14 @@ export interface AgreementItem {
   icon?: string;
 }
 
-// Agreements Settings (for consent forms, privacy policies, etc.)
 export interface AgreementSettings {
   agreements: AgreementItem[];
-  // Old fields kept for migration
   privacyPolicyEnabled?: boolean;
   termsOfServiceEnabled?: boolean;
   parentalConsentEnabled?: boolean;
   dataProcessingAgreementEnabled?: boolean;
 }
 
-// Integration Settings (for third-party integrations)
 export interface IntegrationSettings {
   emailServiceEnabled: boolean;
   emailServiceProvider: string;
@@ -93,7 +84,6 @@ export interface IntegrationSettings {
   calendarSyncEnabled: boolean;
 }
 
-// Audit Settings (for logging and monitoring)
 export interface AuditSettings {
   logStudentChanges: boolean;
   logClassChanges: boolean;
@@ -102,7 +92,6 @@ export interface AuditSettings {
   exportEnabled: boolean;
 }
 
-// System Settings (admin preferences)
 export interface SystemSettings {
   mobileBlockerEnabled: boolean;
 }
@@ -118,7 +107,6 @@ export interface AppSettings {
   updatedAt?: Date;
 }
 
-// API Request/Response types
 export interface UpdateOnboardingSettingsRequest {
   onboarding: Partial<OnboardingSettings>;
 }

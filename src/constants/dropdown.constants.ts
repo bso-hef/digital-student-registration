@@ -1,6 +1,5 @@
 import { DropdownOption } from "@/types/settings";
 
-// Default dropdown options matching AppSettings model defaults
 export const GENDER_OPTIONS: DropdownOption[] = [
   { value: "männlich", label: "Männlich", enabled: true, order: 0 },
   { value: "weiblich", label: "Weiblich", enabled: true, order: 1 },
@@ -111,12 +110,10 @@ export const PROFESSION_OPTIONS: DropdownOption[] = [
   },
 ];
 
-// Helper function to get enabled options only
 export const getEnabledOptions = (
   options: DropdownOption[],
 ): DropdownOption[] =>
   options.filter((opt) => opt.enabled).sort((a, b) => a.order - b.order);
 
-// Helper function to get option values for validation
 export const getOptionValues = (options: DropdownOption[]): string[] =>
   getEnabledOptions(options).map((opt) => opt.value);
