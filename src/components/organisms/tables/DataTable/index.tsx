@@ -4,7 +4,7 @@ import React, { Fragment, memo, useCallback, useEffect, useState } from "react";
 
 import { CHECKBOX_COL_WIDTH } from "@/constants/ui.constants";
 import { getComparator, stableSort } from "@/utils/table.utils";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import ReportGmailerrorredRoundedIcon from "@mui/icons-material/ReportGmailerrorredRounded";
 import {
   Box,
@@ -372,7 +372,7 @@ const DataTable: React.FC<DataTableProps> = ({
                               >
                                 {row[header.id] as React.ReactNode}
                                 {header.clickable && (
-                                  <ChevronRightIcon
+                                  <ChevronRightRoundedIcon
                                     sx={{
                                       color: "text.secondary",
                                       fontSize: 18,

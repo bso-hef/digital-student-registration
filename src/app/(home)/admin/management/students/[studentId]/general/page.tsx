@@ -117,6 +117,18 @@ const GeneralStudentSettingsTab = () => {
     }
   };
 
+  const getStatusLabel = (status: string | undefined) => {
+    switch (status) {
+      case "onboarded":
+        return t("dashboard.status.onboarded");
+      case "invited":
+        return t("dashboard.status.invited");
+      case "imported":
+      default:
+        return t("dashboard.status.imported");
+    }
+  };
+
   return (
     <Formik
       initialValues={initialValues}
@@ -315,7 +327,7 @@ const GeneralStudentSettingsTab = () => {
                             {t("settings.manageStudent.status")}:
                           </Typography>
                           <Chip
-                            label={currentStudent?.status || "imported"}
+                            label={getStatusLabel(currentStudent?.status)}
                             color={getStatusColor(currentStudent?.status)}
                             size="small"
                           />
