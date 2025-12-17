@@ -1,116 +1,232 @@
-# Docker Compose configuration for DEVELOPMENT
-# This setup includes hot-reload, debugging, and development tools
+# Docker Compose Configuration for Production
+# Digital Student Registration System
+#
+# Production-ready deployment with:
+# - Caddy reverse proxy with automatic Let's Encrypt SSL
+# - Next.js application server
+# - MongoDB database with persistence
+# - Redis cache for performance
+#
+# Usage:
+#   docker-compose up -d
+#
+# Prerequisites:
+#   1. Copy .env.production.template to .env and configure all values
+#   2. Ensure domain DNS points to your server
+#   3. Open ports 80 and 443 on your firewall
+#
+# Development:
+#   Use `yarn dev` locally for development (no Docker needed)
 
 services:
-  # MongoDB Database Service
-  mongo:
-    image: mongo:7.0
-    container_name: digital-student-mongo-dev
+  # ============================================
+  # Caddy Reverse Proxy
+  # ============================================
+  caddy:
+    image: caddy:2.9-alpine
+    container_name: dsr-caddy
     restart: unless-stopped
-    env_file:
-      - .env.docker
     ports:
-      - '27017:27017'
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-admin}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-devpassword123}
-      MONGO_INITDB_DATABASE: digital-student-onboarding
+      DOMAIN: ${DOMAIN}
+      ACME_EMAIL: ${ACME_EMAIL}
     volumes:
-      # Persist database data
-      - mongo_data_dev:/data/db
-      # Persist MongoDB configuration
-      - mongo_config_dev:/data/configdb
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+      - caddy-logs:/var/log/caddy
     networks:
-      - student_network
+      - frontend
+      - proxy
+    depends_on:
+      - app
     healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:80/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
       start_period: 20s
+    mem_limit: 256m
+    cpus: 0.5
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    labels:
+      - "com.docker.compose.project=digital-student-registration"
+      - "com.docker.compose.service=caddy"
 
-  # Next.js Application Service (Development Mode)
+  # ============================================
+  # Next.js Application Server
+  # ============================================
   app:
     build:
       context: .
       dockerfile: Dockerfile
-      target: builder
-    container_name: digital-student-app-dev
+      args:
+        NODE_ENV: production
+    image: digital-student-registration:latest
+    container_name: dsr-app
     restart: unless-stopped
-    env_file:
-      - .env.docker
-    ports:
-      - '3000:3000'
     environment:
-      # Node environment
-      NODE_ENV: development
-
-      # MongoDB connection
-      MONGODB_URI: mongodb://${MONGO_USER:-admin}:${MONGO_PASSWORD:-devpassword123}@mongo:27017/digital-student-onboarding?authSource=admin
-
-      # NextAuth configuration
-      NEXTAUTH_URL: https://localhost:3000
-      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-dev-secret-change-in-production-min-64-chars-required-for-jwt}
-
-      # API URL
-      NEXT_PUBLIC_API_URL: https://localhost:3000
-
-      # Application info
-      NEXT_PUBLIC_VERSION: ${npm_package_version:-1.0.0}
-      NEXT_PUBLIC_NAME: ${npm_package_name:-digital-student-registration}
-
-      # Development settings
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: "0.0.0.0"
       NEXT_TELEMETRY_DISABLED: 1
-    volumes:
-      # Mount source code for hot-reload
-      - .:/app
-      - /app/node_modules
-      - /app/.next
-
-      # Mount SSL certificates for HTTPS development
-      - ./certificates:/app/certificates:ro
-    depends_on:
-      mongo:
-        condition: service_healthy
+      NEXT_PUBLIC_API_URL: https://${DOMAIN}
+      NEXT_PUBLIC_APP_URL: https://${DOMAIN}
+      MONGODB_URI: mongodb://${MONGO_USER}:${MONGO_PASSWORD}@mongo:27017/${MONGO_DB}?authSource=admin
+      MONGO_USER: ${MONGO_USER}
+      MONGO_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_DB: ${MONGO_DB}
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_DB: 0
+      REDIS_KEY_PREFIX: "dsr:"
+      NEXTAUTH_URL: https://${DOMAIN}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      NEXT_PUBLIC_VERSION: ${APP_VERSION:-1.0.0}
+      NEXT_PUBLIC_NAME: ${APP_NAME:-Digital Student Registration}
     networks:
-      - student_network
+      - proxy
+      - backend
+    depends_on:
+      - mongo
+      - redis
     healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/health/live', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"]
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:3000/api/health/live || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 60s
-    # Development: run in watch mode
-    command: yarn dev
+    mem_limit: 2g
+    cpus: 2
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    labels:
+      - "com.docker.compose.project=digital-student-registration"
+      - "com.docker.compose.service=app"
 
-  # MongoDB Express - Web-based MongoDB admin interface (Development only)
-  mongo-express:
-    image: mongo-express:1.0.2
-    container_name: digital-student-mongo-express
+  # ============================================
+  # MongoDB Database
+  # ============================================
+  mongo:
+    image: mongo:7.0
+    container_name: dsr-mongo
     restart: unless-stopped
-    env_file:
-      - .env.docker
-    ports:
-      - '8081:8081'
     environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_USER:-admin}
-      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_PASSWORD:-devpassword123}
-      ME_CONFIG_MONGODB_URL: mongodb://${MONGO_USER:-admin}:${MONGO_PASSWORD:-devpassword123}@mongo:27017/
-      ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_EXPRESS_USER:-admin}
-      ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_EXPRESS_PASSWORD:-pass}
-    depends_on:
-      mongo:
-        condition: service_healthy
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DB}
+    volumes:
+      - mongo-data:/data/db
+      - ./mongod.conf:/etc/mongod.conf:ro
     networks:
-      - student_network
+      - backend
+    command: ["mongod", "--config", "/etc/mongod.conf"]
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --quiet --eval \"db.adminCommand('ping').ok\" --username \"$MONGO_USER\" --password \"$MONGO_PASSWORD\" --authenticationDatabase admin || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    mem_limit: 1g
+    cpus: 1
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+    security_opt:
+      - no-new-privileges:true
+    labels:
+      - "com.docker.compose.project=digital-student-registration"
+      - "com.docker.compose.service=mongo"
 
-volumes:
-  mongo_data_dev:
-    name: digital_student_mongo_data_dev
-  mongo_config_dev:
-    name: digital_student_mongo_config_dev
+  # ============================================
+  # Redis Cache
+  # ============================================
+  redis:
+    image: redis:7-alpine
+    container_name: dsr-redis
+    restart: unless-stopped
+    command: >
+      redis-server
+      --requirepass ${REDIS_PASSWORD}
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+      --save 60 1000
+      --loglevel warning
+      --appendonly yes
+      --appendfsync everysec
+    volumes:
+      - redis-data:/data
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$REDIS_PASSWORD\" ping || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    mem_limit: 512m
+    cpus: 0.5
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+    security_opt:
+      - no-new-privileges:true
+    labels:
+      - "com.docker.compose.project=digital-student-registration"
+      - "com.docker.compose.service=redis"
 
 networks:
-  student_network:
-    name: digital_student_network_dev
+  frontend:
     driver: bridge
+    name: dsr-frontend
+
+  proxy:
+    driver: bridge
+    name: dsr-proxy
+
+  backend:
+    driver: bridge
+    name: dsr-backend
+
+volumes:
+  caddy-data:
+    driver: local
+    name: dsr-caddy-data
+
+  caddy-config:
+    driver: local
+    name: dsr-caddy-config
+
+  caddy-logs:
+    driver: local
+    name: dsr-caddy-logs
+
+  mongo-data:
+    driver: local
+    name: dsr-mongo-data
+
+  redis-data:
+    driver: local
+    name: dsr-redis-data

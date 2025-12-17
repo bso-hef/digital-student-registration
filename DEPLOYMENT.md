@@ -354,7 +354,7 @@ The script will:
 
 ```bash
 # Check all services are running
-docker-compose -f docker-compose.production.yml ps
+docker-compose ps
 
 # Expected output:
 # NAME         IMAGE                                    STATUS
@@ -410,29 +410,29 @@ Navigate to `/admin/settings` to configure:
 **All services:**
 
 ```bash
-docker-compose -f docker-compose.production.yml logs -f
+docker-compose logs -f
 ```
 
 **Specific service:**
 
 ```bash
-docker-compose -f docker-compose.production.yml logs -f app
-docker-compose -f docker-compose.production.yml logs -f caddy
-docker-compose -f docker-compose.production.yml logs -f mongo
-docker-compose -f docker-compose.production.yml logs -f redis
+docker-compose logs -f app
+docker-compose logs -f caddy
+docker-compose logs -f mongo
+docker-compose logs -f redis
 ```
 
 **Last 100 lines:**
 
 ```bash
-docker-compose -f docker-compose.production.yml logs --tail=100 app
+docker-compose logs --tail=100 app
 ```
 
 ### Check Status
 
 ```bash
 # Container status
-docker-compose -f docker-compose.production.yml ps
+docker-compose ps
 
 # Resource usage
 docker stats
@@ -460,31 +460,31 @@ curl https://your-domain.com/api/health/full
 git pull origin main
 
 # Rebuild and restart
-docker-compose -f docker-compose.production.yml build --no-cache
-docker-compose -f docker-compose.production.yml up -d --force-recreate
+docker-compose build --no-cache
+docker-compose up -d --force-recreate
 
 # Check logs
-docker-compose -f docker-compose.production.yml logs -f app
+docker-compose logs -f app
 ```
 
 ### Restart Services
 
 ```bash
 # Restart all
-docker-compose -f docker-compose.production.yml restart
+docker-compose restart
 
 # Restart specific service
-docker-compose -f docker-compose.production.yml restart app
+docker-compose restart app
 ```
 
 ### Stop Services
 
 ```bash
 # Stop all (keeps data)
-docker-compose -f docker-compose.production.yml down
+docker-compose down
 
 # Stop and remove volumes (WARNING: deletes data!)
-docker-compose -f docker-compose.production.yml down -v
+docker-compose down -v
 ```
 
 ---
@@ -588,13 +588,13 @@ docker exec dsr-mongo mongorestore \
 
 ```bash
 # Stop Redis
-docker-compose -f docker-compose.production.yml stop redis
+docker-compose stop redis
 
 # Copy backup
 docker cp ./redis-backup.rdb dsr-redis:/data/dump.rdb
 
 # Start Redis
-docker-compose -f docker-compose.production.yml start redis
+docker-compose start redis
 ```
 
 ---
@@ -605,14 +605,14 @@ docker-compose -f docker-compose.production.yml start redis
 
 ```bash
 # Scale to 3 app containers
-docker-compose -f docker-compose.production.yml up -d --scale app=3
+docker-compose up -d --scale app=3
 ```
 
 Caddy will automatically load balance between containers.
 
 ### Vertical Scaling (More Resources)
 
-Edit `docker-compose.production.yml`:
+Edit `docker-compose.yml`:
 
 ```yaml
 services:
@@ -627,7 +627,7 @@ services:
 Restart:
 
 ```bash
-docker-compose -f docker-compose.production.yml up -d
+docker-compose up -d
 ```
 
 ---
@@ -658,7 +658,7 @@ docker-compose -f docker-compose.production.yml up -d
 3. **Check Caddy logs:**
 
    ```bash
-   docker-compose -f docker-compose.production.yml logs caddy
+   docker-compose logs caddy
    # Look for ACME errors
    ```
 
@@ -679,7 +679,7 @@ docker-compose -f docker-compose.production.yml up -d
 **Check logs:**
 
 ```bash
-docker-compose -f docker-compose.production.yml logs [service]
+docker-compose logs [service]
 ```
 
 **Common issues:**
@@ -742,7 +742,7 @@ docker stats
 
 **Solutions:**
 
-1. **Increase limits** in `docker-compose.production.yml`
+1. **Increase limits** in `docker-compose.yml`
 2. **Scale horizontally** (multiple containers)
 3. **Upgrade server** (more RAM/CPU)
 4. **Optimize queries** (add database indexes)
@@ -760,7 +760,7 @@ docker stats
 1. **Check app logs:**
 
    ```bash
-   docker-compose -f docker-compose.production.yml logs app
+   docker-compose logs app
    ```
 
 2. **Check app health:**
@@ -771,7 +771,7 @@ docker stats
 
 3. **Restart app:**
    ```bash
-   docker-compose -f docker-compose.production.yml restart app
+   docker-compose restart app
    ```
 
 ---
@@ -805,8 +805,8 @@ sudo systemctl restart sshd
 sudo apt-get update && sudo apt-get upgrade -y
 
 # Update Docker images
-docker-compose -f docker-compose.production.yml pull
-docker-compose -f docker-compose.production.yml up -d
+docker-compose pull
+docker-compose up -d
 ```
 
 ### 5. Regular Backups

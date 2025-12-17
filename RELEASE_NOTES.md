@@ -218,7 +218,7 @@ cp .env.production.template .env.production
 # Alle Sicherheitseinstellungen anpassen!
 
 # 2. Container bauen und starten
-docker-compose -f docker-compose.production.yml up -d --build
+docker-compose up -d --build
 
 # 3. Reverse Proxy für SSL einrichten
 # Siehe DOCKER.md für Details

@@ -72,10 +72,10 @@ nano .env.production  # Set DOMAIN and ACME_EMAIL
 
 ```bash
 # Logs
-docker-compose -f docker-compose.production.yml logs -f
+docker-compose logs -f
 
 # Stop
-docker-compose -f docker-compose.production.yml down
+docker-compose down
 ```
 
 **See:** [DEPLOYMENT.md](./DEPLOYMENT.md) for full production guide

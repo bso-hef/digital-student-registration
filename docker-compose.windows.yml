@@ -1,35 +1,35 @@
-# Docker Compose Windows Container Configuration
+# Docker Compose Windows Configuration
 # Digital Student Registration System
 #
-# For Windows Server 2022 or Windows 10/11 Pro with Hyper-V
-# Requires Docker Desktop switched to Windows containers
+# This configuration is for running on Windows with Docker Desktop (WSL2 backend).
+# All containers run as Linux containers via WSL2 - this is the modern default.
 #
 # Prerequisites:
-#   1. Windows Server 2022 or Windows 10/11 Pro
-#   2. Docker Desktop for Windows
-#   3. Switch Docker to Windows containers:
-#      Right-click Docker icon → "Switch to Windows containers"
-#   4. Hyper-V enabled
+#   1. Windows 10/11 with Docker Desktop installed
+#   2. WSL2 backend enabled (default for Docker Desktop)
+#   3. Copy .env.production.template to .env and configure
 #
 # Usage:
 #   docker-compose -f docker-compose.windows.yml up -d
-#   Or use: .\scripts\start-windows.ps1
-
-version: '3.8'
+#
+# Note: For most Windows users, the main docker-compose.yml works fine.
+# Use this file only if you need Windows-specific settings (host paths, etc.)
 
 services:
   # ============================================
-  # Next.js Application Server (Windows)
+  # Next.js Application Server
   # ============================================
   app:
     build:
       context: .
-      dockerfile: Dockerfile.windows
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: production
     image: digital-student-registration:windows
     container_name: dsr-windows-app
     restart: unless-stopped
     ports:
-      # HTTP port
+      # Expose directly on port 3000 (no Caddy reverse proxy)
       - "3000:3000"
     environment:
       # Node.js environment
@@ -38,19 +38,18 @@ services:
       HOSTNAME: "0.0.0.0"
       NEXT_TELEMETRY_DISABLED: 1
 
-      # Application URLs (localhost)
+      # Application URLs (localhost for Windows dev)
       NEXT_PUBLIC_API_URL: http://localhost:3000
       NEXT_PUBLIC_APP_URL: http://localhost:3000
 
       # Database connection
-      # Note: Windows containers use host.docker.internal for host connectivity
       MONGODB_URI: mongodb://${MONGO_USER:-admin}:${MONGO_PASSWORD:-admin123}@mongo:27017/${MONGO_DB:-digital-student-registration}?authSource=admin
       MONGO_USER: ${MONGO_USER:-admin}
       MONGO_PASSWORD: ${MONGO_PASSWORD:-admin123}
       MONGO_DB: ${MONGO_DB:-digital-student-registration}
 
-      # Redis connection (Memurai for Windows)
-      REDIS_URL: redis://redis:6379
+      # Redis connection
+      REDIS_URL: redis://:${REDIS_PASSWORD:-redis123}@redis:6379
       REDIS_PASSWORD: ${REDIS_PASSWORD:-redis123}
       REDIS_DB: 0
       REDIS_KEY_PREFIX: "dsr:windows:"
@@ -60,42 +59,43 @@ services:
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-windows-dev-secret-change-in-production-min-64-chars}
 
       # Application info
-      NEXT_PUBLIC_VERSION: ${APP_VERSION:-1.0.0-windows}
-      NEXT_PUBLIC_NAME: ${APP_NAME:-Digital Student Registration (Windows)}
+      NEXT_PUBLIC_VERSION: ${APP_VERSION:-1.0.0}
+      NEXT_PUBLIC_NAME: ${APP_NAME:-Digital Student Registration}
     networks:
-      - windows-network
+      - app-network
     depends_on:
-      - mongo
-      - redis
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     healthcheck:
-      test: ["CMD", "powershell", "-Command", "try { $response = Invoke-WebRequest -Uri http://localhost:3000/api/health/live -UseBasicParsing; if ($response.StatusCode -eq 200) { exit 0 } else { exit 1 } } catch { exit 1 }"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health/live"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 90s
+      start_period: 60s
     deploy:
       resources:
         limits:
           cpus: '2'
           memory: 2G
+        reservations:
+          cpus: '1'
+          memory: 1G
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+    labels:
+      - "com.docker.compose.project=digital-student-registration-windows"
+      - "com.docker.compose.service=app"
 
   # ============================================
-  # MongoDB (Windows)
+  # MongoDB Database
   # ============================================
-  # Note: Official MongoDB Windows container support is limited
-  # Alternative: Use MongoDB Atlas (cloud) or install MongoDB on Windows host
-  #              and connect via host.docker.internal
-  #
-  # For this setup, we use a community Windows MongoDB container
-  # or run MongoDB on the Windows host
   mongo:
-    # Option 1: MongoDB Community Windows (if available)
-    # image: mongodb/mongodb-community-server:latest-windows
-    #
-    # Option 2: Use Linux container via LCOW (Windows 10/Server 2019+)
-    # Requires: Docker with LCOW support
     image: mongo:7.0
-    platform: linux
     container_name: dsr-windows-mongo
     restart: unless-stopped
     ports:
@@ -105,29 +105,34 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-admin123}
       MONGO_INITDB_DATABASE: ${MONGO_DB:-digital-student-registration}
     volumes:
-      # Windows path for data storage
       - mongo-windows-data:/data/db
     networks:
-      - windows-network
+      - app-network
     healthcheck:
       test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok", "--username", "${MONGO_USER:-admin}", "--password", "${MONGO_PASSWORD:-admin123}", "--authenticationDatabase", "admin"]
       interval: 30s
       timeout: 10s
       retries: 5
       start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+    labels:
+      - "com.docker.compose.project=digital-student-registration-windows"
+      - "com.docker.compose.service=mongo"
 
   # ============================================
-  # Redis (Windows) - Using Memurai
+  # Redis Cache
   # ============================================
-  # Memurai is a Redis-compatible cache for Windows
-  # Alternative: Use Redis Linux container via LCOW
   redis:
-    # Option 1: Memurai (Redis-compatible for Windows)
-    # image: memurai/memurai-developer:latest
-    #
-    # Option 2: Use Linux Redis via LCOW
     image: redis:7-alpine
-    platform: linux
     container_name: dsr-windows-redis
     restart: unless-stopped
     ports:
@@ -137,85 +142,82 @@ services:
       --requirepass ${REDIS_PASSWORD:-redis123}
       --maxmemory 256mb
       --maxmemory-policy allkeys-lru
+      --save 60 1000
+      --appendonly yes
     volumes:
       - redis-windows-data:/data
     networks:
-      - windows-network
+      - app-network
     healthcheck:
-      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-redis123}", "ping"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+    labels:
+      - "com.docker.compose.project=digital-student-registration-windows"
+      - "com.docker.compose.service=redis"
 
 # ============================================
 # Networks
 # ============================================
 networks:
-  windows-network:
-    driver: nat
+  app-network:
+    driver: bridge
     name: dsr-windows-network
 
 # ============================================
 # Volumes (Persistent Storage)
 # ============================================
 volumes:
-  # MongoDB data
   mongo-windows-data:
     driver: local
     name: dsr-windows-mongo-data
 
-  # Redis data
   redis-windows-data:
     driver: local
     name: dsr-windows-redis-data
 
 # ============================================
-# Important Notes for Windows Containers
+# Notes for Windows Users
 # ============================================
 #
-# 1. Docker Mode:
-#    - Must switch Docker Desktop to "Windows containers"
-#    - Right-click Docker icon → "Switch to Windows containers"
+# 1. Docker Desktop with WSL2:
+#    - This is the default and recommended setup
+#    - All containers run as Linux containers via WSL2
+#    - No special configuration needed
 #
-# 2. Base Images:
-#    - Windows Server Core (LTSC 2022): ~1.5GB
-#    - Windows images are significantly larger than Linux
+# 2. Accessing Services:
+#    - Application: http://localhost:3000
+#    - MongoDB:     mongodb://admin:admin123@localhost:27017
+#    - Redis:       redis://localhost:6379 (password: redis123)
 #
-# 3. MongoDB & Redis:
-#    - Official Windows containers have limited support
-#    - This config uses Linux containers via LCOW (platform: linux)
-#    - Or run MongoDB/Redis directly on Windows host
+# 3. Windows Firewall:
+#    - Docker Desktop usually configures firewall automatically
+#    - If ports aren't accessible, check Windows Firewall settings
 #
-# 4. LCOW (Linux Containers on Windows):
-#    - Available on Windows 10 (1809+) and Windows Server 2019+
-#    - Allows running Linux containers on Windows
-#    - Enable: Docker Desktop Settings → Experimental → "Use LCOW"
+# 4. Performance:
+#    - WSL2 provides near-native Linux performance
+#    - For best results, store project files in WSL2 filesystem
+#    - Access via: \\wsl$\Ubuntu\home\your-user\projects
 #
-# 5. Alternative Setup (Recommended for Production):
-#    - Run Next.js app in Windows container
-#    - Run MongoDB and Redis on Windows host or as Windows services
-#    - Connect via host.docker.internal:27017
-#
-# 6. Host Connection:
-#    - From container to Windows host: host.docker.internal
-#    - Example: mongodb://host.docker.internal:27017
-#
-# 7. Performance:
-#    - Windows containers have more overhead than Linux
-#    - Consider using Linux containers via LCOW or WSL2
-#
-# 8. Firewall:
-#    - Ensure Windows Firewall allows Docker network access
-#    - Add rules for ports 3000, 27017, 6379
-#
-# Access Points:
-#   - Application:  http://localhost:3000
-#   - MongoDB:      mongodb://admin:admin123@localhost:27017
-#   - Redis:        redis://localhost:6379 (password: redis123)
+# 5. Alternative - Using Host MongoDB:
+#    If you have MongoDB installed on Windows:
+#    - Comment out the mongo service above
+#    - Change MONGODB_URI to: mongodb://host.docker.internal:27017/...
 #
 # Commands:
-#   - Start:  docker-compose -f docker-compose.windows.yml up -d
-#   - Stop:   docker-compose -f docker-compose.windows.yml down
-#   - Logs:   docker-compose -f docker-compose.windows.yml logs -f
-#   - Clean:  docker-compose -f docker-compose.windows.yml down -v
+#   Start:  docker-compose -f docker-compose.windows.yml up -d
+#   Stop:   docker-compose -f docker-compose.windows.yml down
+#   Logs:   docker-compose -f docker-compose.windows.yml logs -f
+#   Clean:  docker-compose -f docker-compose.windows.yml down -v

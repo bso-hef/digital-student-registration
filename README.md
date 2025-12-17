@@ -129,7 +129,7 @@ docker-compose up -d
 docker compose up -d
 
 # Production Deployment
-docker-compose -f docker-compose.production.yml up -d
+docker-compose up -d
 ```
 
 **Full Documentation:**

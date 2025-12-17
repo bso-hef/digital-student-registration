@@ -37,23 +37,7 @@ RUN node --version; `
     npm --version
 
 # ============================================
-# Stage 2: Install dependencies
-# ============================================
-FROM base AS deps
-
-WORKDIR C:\app
-
-# Copy package files
-COPY package.json yarn.lock .\
-
-# Install Yarn globally
-RUN npm install -g yarn
-
-# Install production dependencies
-RUN yarn install --frozen-lockfile --production=true
-
-# ============================================
-# Stage 3: Install dev dependencies for build
+# Stage 2: Install dependencies for build
 # ============================================
 FROM base AS builder-deps
 
@@ -68,7 +52,7 @@ RUN npm install -g yarn
 RUN yarn install --frozen-lockfile --production=false
 
 # ============================================
-# Stage 4: Build the application
+# Stage 3: Build the application
 # ============================================
 FROM base AS builder
 
@@ -95,7 +79,7 @@ RUN $env:NODE_OPTIONS='--max-old-space-size=4096'; `
 RUN Get-ChildItem -Path .\.next -Filter *.map -Recurse | Remove-Item -Force
 
 # ============================================
-# Stage 5: Production runtime
+# Stage 4: Production runtime
 # ============================================
 FROM base AS runner
 
@@ -107,10 +91,8 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 
-# Copy production dependencies from deps stage
-COPY --from=deps C:\app\node_modules .\node_modules
-
 # Copy built application from builder
+# Note: Standalone output includes all required dependencies
 COPY --from=builder C:\app\public .\public
 COPY --from=builder C:\app\.next\standalone .\
 COPY --from=builder C:\app\.next\static .\.next\static
