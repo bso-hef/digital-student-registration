@@ -3,9 +3,11 @@ import { dbConnect } from "@/lib/config/mongo";
 import { norm } from "@/lib/config/norm";
 import { tServer } from "@/lib/server-i18n";
 import Logger from "@/lib/server-logger";
+import Class from "@/models/Class";
 import Student from "@/models/Student";
 import { createAuditLog } from "@/server/middleware/audit.middleware";
 import { generateUniqueVerificationCode } from "@/utils/verification.utils";
+import { Types } from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
@@ -115,6 +117,7 @@ interface ShapedStudentDoc {
   };
   schoolEntryDate?: Date;
   currentClassName?: string;
+  currentClass?: Types.ObjectId | null;
   previousSchool?: string;
   previousSchoolLevel?: string;
   previousSchoolType?: string;
@@ -420,6 +423,35 @@ export async function POST(request: Request) {
       );
     }
 
+    // Link students to existing classes
+    const classNames = [
+      ...new Set(
+        docs
+          .map((d) => d.currentClassName?.trim())
+          .filter((name): name is string => !!name),
+      ),
+    ];
+
+    const classMap = new Map<string, Types.ObjectId>();
+    if (classNames.length > 0) {
+      const existingClasses = await Class.find(
+        { name: { $in: classNames } },
+        { name: 1, _id: 1 },
+      ).lean();
+
+      existingClasses.forEach((c) => {
+        classMap.set(c.name, c._id as Types.ObjectId);
+      });
+
+      // Set currentClass ObjectId on docs where class exists
+      for (const doc of docs) {
+        if (doc.currentClassName) {
+          const classId = classMap.get(doc.currentClassName);
+          doc.currentClass = classId || null;
+        }
+      }
+    }
+
     const generatedCodes = new Set<string>();
 
     for (const doc of docs) {
@@ -447,6 +479,29 @@ export async function POST(request: Request) {
 
     // Create students with verification codes
     const result = await Student.create(docs);
+
+    // Update class student counts for affected classes
+    if (classMap.size > 0) {
+      const classCountMap = new Map<string, number>();
+      for (const student of result) {
+        if (student.currentClass) {
+          const classId = student.currentClass.toString();
+          classCountMap.set(classId, (classCountMap.get(classId) || 0) + 1);
+        }
+      }
+
+      if (classCountMap.size > 0) {
+        const bulkOps = Array.from(classCountMap.entries()).map(
+          ([classId, count]) => ({
+            updateOne: {
+              filter: { _id: classId },
+              update: { $inc: { studentCount: count } },
+            },
+          }),
+        );
+        await Class.bulkWrite(bulkOps);
+      }
+    }
 
     // Log audit entry
     await createAuditLog(

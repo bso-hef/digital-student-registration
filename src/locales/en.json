@@ -286,6 +286,15 @@
       "cancel": "Cancel",
       "createAnyway": "Create Anyway"
     },
+    "missingClasses": {
+      "title": "Classes Not Found",
+      "message": "The following classes from your CSV don't exist yet:",
+      "hint": "You can create these classes and import, or import students without class assignment.",
+      "createFirst": "Create Classes First",
+      "createAndImport": "Create Classes & Import",
+      "creating": "Creating Classes...",
+      "importAnyway": "Import Without Classes"
+    },
     "createStudent": {
       "title": "Create New Student Profile",
       "subtitle": "Enter student details to create a new onboarding profile",

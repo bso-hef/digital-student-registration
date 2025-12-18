@@ -26,9 +26,12 @@ import { ParsedStudent, parseCSVFile } from "@/utils/csv.utils";
 import { filterStudents } from "@/utils/filter.utils";
 import { successNotification } from "@/utils/notification.utils";
 import { copyText } from "@/utils/string.utils";
+import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import ContentCopyRoundedIcon from "@mui/icons-material/ContentCopyRounded";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
+import FileDownloadDoneRoundedIcon from "@mui/icons-material/FileDownloadDoneRounded";
 import FileDownloadRoundedIcon from "@mui/icons-material/FileDownloadRounded";
+import MailOutlineRoundedIcon from "@mui/icons-material/MailOutlineRounded";
 import QrCode2RoundedIcon from "@mui/icons-material/QrCode2Rounded";
 import UploadFileRoundedIcon from "@mui/icons-material/UploadFileRounded";
 import { Box, SelectChangeEvent, Typography, styled } from "@mui/material";
@@ -94,7 +97,6 @@ const StudentManagementPage = () => {
 
   // Filter states
   const [classFilter, setClassFilter] = useState<string>("all");
-  const [vocationalFilter, setVocationalFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
   useEffect(() => {
@@ -198,13 +200,6 @@ const StudentManagementPage = () => {
     [],
   );
 
-  const handleVocationalFilter = useCallback(
-    (event: SelectChangeEvent<string | number>) => {
-      setVocationalFilter(event.target.value as string);
-    },
-    [],
-  );
-
   const handleStatusFilter = useCallback(
     (event: SelectChangeEvent<string | number>) => {
       setStatusFilter(event.target.value as string);
@@ -239,19 +234,6 @@ const StudentManagementPage = () => {
         }
 
         return classId === classFilter;
-      });
-    }
-
-    // Apply vocational filter
-    if (vocationalFilter && vocationalFilter !== "all") {
-      filteredStudents = filteredStudents.filter((student: Student) => {
-        const studentWithClass = student as Student & {
-          currentClass?: { _id: string; name: string } | string | null;
-        };
-        const classId = getClassId(studentWithClass.currentClass);
-        const classObj = classes.find((c) => c._id === classId);
-        const isVocational = classObj?.isVocational ?? false;
-        return vocationalFilter === "yes" ? isVocational : !isVocational;
       });
     }
 
@@ -307,15 +289,7 @@ const StudentManagementPage = () => {
         ),
       };
     });
-  }, [
-    students,
-    searchString,
-    classes,
-    classFilter,
-    vocationalFilter,
-    statusFilter,
-    t,
-  ]);
+  }, [students, searchString, classes, classFilter, statusFilter, t]);
 
   const handleDeleteStudents = useCallback(() => {
     const ids = selectedItems.filter(
@@ -408,53 +382,53 @@ const StudentManagementPage = () => {
         />
       </AdminSettingsHeader>
       <StyledTableBox>
-        <FiltersBox>
-          <Box sx={{ minWidth: 200 }}>
-            <GeneralDropdown
-              value={classFilter}
-              onChange={handleClassFilter}
-              label={t("settings.manageStudent.filterByClass")}
-              size="small"
-              options={[
-                { value: "all", label: t("general.All") },
-                {
-                  value: "unassigned",
-                  label: t("settings.manageStudent.notAssigned"),
-                },
-                ...classes.map((c) => ({ value: c._id, label: c.name })),
-              ]}
-            />
-          </Box>
+        {students.length > 0 && (
+          <FiltersBox>
+            <Box sx={{ minWidth: 200 }}>
+              <GeneralDropdown
+                value={classFilter}
+                onChange={handleClassFilter}
+                label={t("settings.manageStudent.filterByClass")}
+                size="small"
+                options={[
+                  { value: "all", label: t("general.All") },
+                  {
+                    value: "unassigned",
+                    label: t("settings.manageStudent.notAssigned"),
+                  },
+                  ...classes.map((c) => ({ value: c._id, label: c.name })),
+                ]}
+              />
+            </Box>
 
-          <Box sx={{ minWidth: 200 }}>
-            <GeneralDropdown
-              value={vocationalFilter}
-              onChange={handleVocationalFilter}
-              label={t("settings.manageStudent.filterByVocational")}
-              size="small"
-              options={[
-                { value: "all", label: t("general.All") },
-                { value: "yes", label: t("general.Yes") },
-                { value: "no", label: t("general.No") },
-              ]}
-            />
-          </Box>
-
-          <Box sx={{ minWidth: 200 }}>
-            <GeneralDropdown
-              value={statusFilter}
-              onChange={handleStatusFilter}
-              label={t("settings.manageStudent.filterByStatus")}
-              size="small"
-              options={[
-                { value: "all", label: t("general.All") },
-                { value: "imported", label: t("dashboard.status.imported") },
-                { value: "invited", label: t("dashboard.status.invited") },
-                { value: "onboarded", label: t("dashboard.status.onboarded") },
-              ]}
-            />
-          </Box>
-        </FiltersBox>
+            <Box sx={{ minWidth: 200 }}>
+              <GeneralDropdown
+                value={statusFilter}
+                onChange={handleStatusFilter}
+                label={t("settings.manageStudent.filterByStatus")}
+                size="small"
+                options={[
+                  { value: "all", label: t("general.All") },
+                  {
+                    value: "imported",
+                    label: t("dashboard.status.imported"),
+                    leftIcon: <FileDownloadDoneRoundedIcon />,
+                  },
+                  {
+                    value: "invited",
+                    label: t("dashboard.status.invited"),
+                    leftIcon: <MailOutlineRoundedIcon />,
+                  },
+                  {
+                    value: "onboarded",
+                    label: t("dashboard.status.onboarded"),
+                    leftIcon: <CheckCircleRoundedIcon />,
+                  },
+                ]}
+              />
+            </Box>
+          </FiltersBox>
+        )}
 
         <DataTable
           headers={manageTableHeaders(t)}

@@ -286,6 +286,15 @@
       "cancel": "Abbrechen",
       "createAnyway": "Trotzdem erstellen"
     },
+    "missingClasses": {
+      "title": "Klassen nicht gefunden",
+      "message": "Die folgenden Klassen aus Ihrer CSV existieren noch nicht:",
+      "hint": "Sie können diese Klassen erstellen und importieren, oder die Schüler ohne Klassenzuweisung importieren.",
+      "createFirst": "Klassen zuerst erstellen",
+      "createAndImport": "Klassen erstellen & importieren",
+      "creating": "Klassen werden erstellt...",
+      "importAnyway": "Ohne Klassen importieren"
+    },
     "createStudent": {
       "title": "Neues Schülerprofil erstellen",
       "subtitle": "Geben Sie die Schülerdaten ein, um ein neues Onboarding-Profil zu erstellen",
