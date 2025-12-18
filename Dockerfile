@@ -24,8 +24,30 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# Build-time arguments for NEXT_PUBLIC variables
+ARG NEXT_PUBLIC_APP_URL
+ARG NEXT_PUBLIC_API_URL
+
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+
+# Validate and display build configuration
+# This helps debug port configuration issues in Docker deployments
+RUN echo "========================================" && \
+    echo "Build Configuration:" && \
+    echo "  NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}" && \
+    echo "  NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}" && \
+    echo "========================================" && \
+    if [ -z "$NEXT_PUBLIC_APP_URL" ]; then \
+      echo "WARNING: NEXT_PUBLIC_APP_URL is not set. Using relative URLs for API calls." && \
+      echo "This is acceptable since the app uses relative URLs for same-origin API calls."; \
+    fi && \
+    if [ -z "$NEXT_PUBLIC_API_URL" ]; then \
+      echo "WARNING: NEXT_PUBLIC_API_URL is not set. Using relative URLs for API calls." && \
+      echo "This is acceptable since the app uses relative URLs for same-origin API calls."; \
+    fi
 
 RUN NODE_OPTIONS="--max-old-space-size=4096" yarn build && \
     find .next -name "*.map" -type f -delete && \
@@ -36,13 +58,16 @@ FROM node:22.20.0-alpine AS runner
 
 WORKDIR /app
 
+# Accept port as build argument
+ARG APP_PORT=3000
+
 RUN apk add --no-cache wget dumb-init && \
     addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
-ENV PORT=3000
+ENV PORT=${APP_PORT}
 ENV HOSTNAME="0.0.0.0"
 
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
@@ -56,7 +81,7 @@ RUN mkdir -p ./logs/server-logs && \
 
 USER nextjs
 
-EXPOSE 3000
+EXPOSE ${APP_PORT}
 
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 CMD ["node", "server.js"]

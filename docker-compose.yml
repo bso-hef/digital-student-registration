@@ -32,6 +32,13 @@ services:
       dockerfile: Dockerfile
       args:
         NODE_ENV: production
+        # APP_PORT is passed to Docker for the EXPOSE directive and PORT env var
+        APP_PORT: ${APP_PORT:-3000}
+        # NEXT_PUBLIC_* variables are embedded in the JavaScript bundle at build time
+        # These MUST be set correctly before building, or the client will use wrong URLs
+        # Set these in your .env file to override the defaults
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3000}
     image: digital-student-registration:linux
     container_name: dsr-app
     restart: unless-stopped
@@ -42,7 +49,7 @@ services:
       PORT: ${APP_PORT:-3000}
       HOSTNAME: "0.0.0.0"
       NEXT_TELEMETRY_DISABLED: 1
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3000}
       NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
       MONGODB_URI: mongodb://${MONGO_USER:-admin}:${MONGO_PASSWORD}@mongo:27017/${MONGO_DB:-digital-student-registration}?authSource=admin
       REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
@@ -78,6 +85,13 @@ services:
       dockerfile: Dockerfile.windows
       args:
         NODE_ENV: production
+        # APP_PORT is passed to Docker for the EXPOSE directive and PORT env var
+        APP_PORT: ${APP_PORT:-3000}
+        # NEXT_PUBLIC_* variables are embedded in the JavaScript bundle at build time
+        # These MUST be set correctly before building, or the client will use wrong URLs
+        # Set these in your .env file to override the defaults
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3000}
     image: digital-student-registration:windows
     container_name: dsr-app
     restart: unless-stopped
@@ -88,7 +102,7 @@ services:
       PORT: ${APP_PORT:-3000}
       HOSTNAME: "0.0.0.0"
       NEXT_TELEMETRY_DISABLED: 1
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3000}
       NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
       MONGODB_URI: mongodb://${MONGO_USER:-admin}:${MONGO_PASSWORD}@mongo:27017/${MONGO_DB:-digital-student-registration}?authSource=admin
       REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379

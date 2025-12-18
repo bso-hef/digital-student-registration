@@ -77,7 +77,7 @@ web_modules/
 .env
 .env.local
 .env.*.local
-.env.backup
+.env.*.backup
 .env.development
 
 # Committed environment files (safe to commit):
