@@ -48,7 +48,6 @@ export const addStudents =
       });
 
       successNotification(i18n.t("actions.studentAddSuccess"));
-      // Refetch students to get populated class data
       dispatch(getStudents());
     } catch (error) {
       errorNotification(i18n.t("actions.studentAddFailed"));
@@ -65,7 +64,6 @@ export const deleteStudents =
 
       dispatch({ type: TYPES.DELETE_STUDENTS_SUCCESS, payload: ids });
       successNotification(i18n.t("actions.studentDeleteSuccess"));
-      // Refetch students for consistency
       dispatch(getStudents());
     } catch (error) {
       errorNotification(i18n.t("actions.studentDeleteFailed"));
@@ -73,12 +71,6 @@ export const deleteStudents =
     }
   };
 
-// ===== Student Verification Action =====
-
-/**
- * Verifies student identity using first name, last name, and verification code
- * Returns student ID on success, which can be used to load onboarding
- */
 export const verifyStudent =
   (firstName: string, lastName: string, verificationCode: string): AppThunk =>
   async (dispatch) => {
@@ -97,9 +89,8 @@ export const verifyStudent =
 
       successNotification(i18n.t("actions.verificationSuccess"));
 
-      return data.studentId; // Return for navigation
+      return data.studentId;
     } catch (error) {
-      // Extract specific error message from API response
       const err = error as { response?: { data?: { error?: string } } };
       const errorMessage =
         err?.response?.data?.error || i18n.t("actions.verificationFailed");
@@ -110,16 +101,10 @@ export const verifyStudent =
         payload: error,
       });
 
-      throw error; // Re-throw for component to handle
+      throw error;
     }
   };
 
-// ===== Student Onboarding Actions =====
-
-/**
- * Updates student onboarding data in Redux
- * This is called after each form submission to persist data across steps
- */
 export const updateStudentOnboardingData =
   (data: Partial<StudentData>): AppThunk =>
   (dispatch) => {
@@ -129,42 +114,23 @@ export const updateStudentOnboardingData =
     });
   };
 
-/**
- * Clears student onboarding data from Redux
- * Called after successful onboarding completion or when starting fresh
- */
 export const clearStudentOnboardingData = (): AppThunk => (dispatch) => {
   dispatch({ type: TYPES.CLEAR_STUDENT_ONBOARDING_DATA });
 };
 
-/**
- * Clears student error state
- * Called when retrying after an error or when error should be dismissed
- */
 export const clearStudentError = (): AppThunk => (dispatch) => {
   dispatch({ type: TYPES.CLEAR_STUDENT_ERROR });
 };
 
-/**
- * Validates MongoDB ObjectId format
- * @param id - String to validate
- * @returns true if valid ObjectId format
- */
 function isValidObjectId(id: string): boolean {
   return /^[a-f\d]{24}$/i.test(id);
 }
 
-/**
- * Loads student data for onboarding
- * Fetches student from database and pre-fills form data
- * Performs comprehensive validation before allowing onboarding
- */
 export const loadStudentForOnboarding =
   (studentId: string): AppThunk =>
   async (dispatch) => {
     dispatch({ type: TYPES.LOAD_STUDENT_FOR_ONBOARDING_REQUEST });
     try {
-      // Validation 1: Check if studentId is valid MongoDB ObjectId format
       if (!isValidObjectId(studentId)) {
         throw new ValidationError(
           "Invalid student ID format",
@@ -175,7 +141,6 @@ export const loadStudentForOnboarding =
       const response = await studentService.getById(studentId);
       const data = response.data.data;
 
-      // Validation 2: Check if student exists in system
       if (!data) {
         throw new ValidationError(
           "Student not found",
@@ -183,7 +148,6 @@ export const loadStudentForOnboarding =
         );
       }
 
-      // Validation 3: Check if student has already completed onboarding
       if (data.status === "onboarded") {
         throw new ValidationError(
           "Student has already completed onboarding",
@@ -191,31 +155,13 @@ export const loadStudentForOnboarding =
         );
       }
 
-      // Extract currentClass from populated field (if available)
       const currentClass =
         typeof data.currentClass === "object" && data.currentClass !== null
           ? data.currentClass
           : null;
 
-      if (!data.currentClass || !currentClass) {
-        throw new ValidationError(
-          "Student is not assigned to a class",
-          OnboardingErrorCode.NO_CLASS_ASSIGNED,
-        );
-      }
-
-      // Validation 5: Check if assigned class is active
-      if (!currentClass.active) {
-        throw new ValidationError(
-          "The assigned class is not active",
-          OnboardingErrorCode.CLASS_INACTIVE,
-        );
-      }
-
-      // Convert database model (English) to form data (German)
       const formData = mapModelToFormData(data);
 
-      // Get onboarding step from database (default to 0 if not set)
       const onboardingStep = data.onboardingStep || 0;
       const previousStep = data.previousStep ?? null;
 
@@ -228,7 +174,7 @@ export const loadStudentForOnboarding =
           status: data.status,
           onboardingStep,
           previousStep,
-          studentId, // Include studentId in payload
+          studentId,
         },
       });
     } catch (error) {
@@ -240,10 +186,6 @@ export const loadStudentForOnboarding =
     }
   };
 
-/**
- * Saves onboarding progress to database (auto-save)
- * Called after each step to persist data
- */
 export const saveOnboardingProgress =
   (
     studentId: string,
@@ -254,17 +196,14 @@ export const saveOnboardingProgress =
   async (dispatch, getState) => {
     dispatch({ type: TYPES.SAVE_ONBOARDING_PROGRESS_REQUEST });
     try {
-      // Convert form data (German) to database model (English)
       const modelData = mapFormDataToModel(formData);
 
-      // Get previousStep from Redux state if not provided
       const state = getState();
       const prevStep =
         previousStep !== undefined
           ? previousStep
           : (state.student.previousStep ?? null);
 
-      // Add current step and previousStep if provided
       const dataToSave =
         currentStep !== undefined
           ? {
@@ -283,11 +222,7 @@ export const saveOnboardingProgress =
         type: TYPES.SAVE_ONBOARDING_PROGRESS_SUCCESS,
         payload: data,
       });
-
-      // Silent success - no notification for auto-save
     } catch (error) {
-      // Don't show error notification for auto-save failures
-      // Just log to console for debugging
       console.error("Auto-save failed:", error);
       dispatch({
         type: TYPES.SAVE_ONBOARDING_PROGRESS_FAILURE,
@@ -296,16 +231,11 @@ export const saveOnboardingProgress =
     }
   };
 
-/**
- * Submits final onboarding data
- * Marks student status as "onboarded" in database
- */
 export const submitOnboarding =
   (studentId: string, formData: StudentData): AppThunk =>
   async (dispatch) => {
     dispatch({ type: TYPES.SUBMIT_ONBOARDING_REQUEST });
     try {
-      // Convert form data (German) to database model (English)
       const modelData = mapFormDataToModel(formData);
 
       const { data } = await studentService.submitOnboarding(
@@ -320,7 +250,6 @@ export const submitOnboarding =
 
       successNotification(i18n.t("actions.onboardingSubmitSuccess"));
 
-      // Clear onboarding data after successful submission
       dispatch(clearStudentOnboardingData());
     } catch (error) {
       errorNotification(i18n.t("actions.onboardingSubmitFailed"));
@@ -330,3 +259,76 @@ export const submitOnboarding =
       });
     }
   };
+
+export const updateStudentClass =
+  (studentId: string, classId: string | null): AppThunk =>
+  async (dispatch) => {
+    dispatch({ type: TYPES.UPDATE_STUDENT_CLASS_REQUEST });
+    try {
+      await studentService.updateClass(studentId, classId);
+
+      dispatch({ type: TYPES.UPDATE_STUDENT_CLASS_SUCCESS });
+      successNotification(i18n.t("actions.studentClassUpdateSuccess"));
+
+      dispatch(getStudents());
+    } catch (error) {
+      errorNotification(i18n.t("actions.studentClassUpdateFailed"));
+      dispatch({
+        type: TYPES.UPDATE_STUDENT_CLASS_FAILURE,
+        payload: error,
+      });
+      throw error;
+    }
+  };
+
+// Admin student detail actions
+export const getStudent =
+  (studentId: string): AppThunk =>
+  async (dispatch) => {
+    dispatch({ type: TYPES.GET_STUDENT_REQUEST });
+    try {
+      const response = await studentService.getById(studentId);
+      const data = response.data.data;
+
+      dispatch({
+        type: TYPES.GET_STUDENT_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      errorNotification(i18n.t("actions.studentFetchFailed"));
+      dispatch({
+        type: TYPES.GET_STUDENT_FAILURE,
+        payload: error,
+      });
+    }
+  };
+
+export const updateStudent =
+  (studentId: string, patch: Record<string, unknown>): AppThunk =>
+  async (dispatch) => {
+    dispatch({ type: TYPES.UPDATE_STUDENT_REQUEST });
+    try {
+      const response = await studentService.patch(studentId, patch);
+      const data = response.data.data;
+
+      dispatch({
+        type: TYPES.UPDATE_STUDENT_SUCCESS,
+        payload: data,
+      });
+
+      successNotification(i18n.t("actions.studentUpdateSuccess"));
+
+      // Refresh the students list
+      dispatch(getStudents());
+    } catch (error) {
+      errorNotification(i18n.t("actions.studentUpdateFailed"));
+      dispatch({
+        type: TYPES.UPDATE_STUDENT_FAILURE,
+        payload: error,
+      });
+    }
+  };
+
+export const clearCurrentStudent = (): AppThunk => (dispatch) => {
+  dispatch({ type: TYPES.CLEAR_CURRENT_STUDENT });
+};

@@ -3,12 +3,17 @@
 import { useEffect } from "react";
 
 import LeftNavigation from "@/components/organisms/LeftNavigation";
+import MobileBlocker from "@/components/organisms/MobileBlocker";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { useAuth } from "@/lib/auth/useAuth";
+import { fetchProfile } from "@/store/actions/authActions";
+import { getSettings } from "@/store/actions/settingsActions";
+import { AppDispatch, RootState } from "@/store/store";
 import { applicationScrollbar } from "@/utils/styling.utils";
 import { Box, CircularProgress, styled } from "@mui/material";
 import { useDeviceTypeDetection } from "device-type-detection";
 import { useRouter } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
 
 const StyledBox = styled(Box)({
   position: "relative",
@@ -93,6 +98,9 @@ export default function AdminLayout({
   const { isMobile, isTabletVertical } = useDeviceTypeDetection();
   const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
+  const authUser = useSelector((state: RootState) => state.auth.user);
+  const appSettings = useSelector((state: RootState) => state.appSettings.data);
 
   const showMobileView = isMobile || isTabletVertical;
 
@@ -104,6 +112,16 @@ export default function AdminLayout({
       router.push("/login");
     }
   }, [isAuthenticated, isLoading, router]);
+
+  // Fetch profile data and app settings when authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      if (!authUser?.firstName) {
+        dispatch(fetchProfile());
+      }
+      dispatch(getSettings());
+    }
+  }, [isAuthenticated, authUser?.firstName, dispatch]);
 
   // Show loading state while checking authentication
   if (isLoading) {
@@ -130,6 +148,9 @@ export default function AdminLayout({
 
   return (
     <StyledBox className="admin-layout">
+      <MobileBlocker
+        enabled={appSettings?.system?.mobileBlockerEnabled ?? true}
+      />
       <AdminLayoutContainer showMobileView={showMobileView}>
         <LeftNavigation />
         <LayoutBox showMobileView={showMobileView}>{children}</LayoutBox>

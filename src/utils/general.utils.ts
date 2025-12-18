@@ -24,30 +24,25 @@ const wordMimeTypes = new Set([
   "vnd.openxmlformats-officedocument.wordprocessingml.document",
 ]);
 
-/** Wandelt einen MIME‑Typ in eine Anzeige‑Dateiendung um */
 export function getDisplayFileExtension(mimeType: string): string {
   if (mimeType === "plain") return "txt";
   if (wordMimeTypes.has(mimeType)) return "docx";
   return mimeType;
 }
 
-/** Extrahiert die Dateiendung aus einem Dateinamen */
 export function getFileExtension(filename: string): string {
   const parts = filename.split(".");
   return getDisplayFileExtension(parts.pop() ?? "");
 }
 
-/** Entfernt die Endung aus einem Dateinamen */
 export function getFileName(fullFileName: string): string {
   return fullFileName.replace(/\.[^/.]+$/, "");
 }
 
-/** Sicheres Lowercasing */
 export function toLowerCase(text?: string): string {
   return typeof text === "string" ? text.toLowerCase() : "";
 }
 
-/** Kompletter Dateiname mit kleingeschriebener Endung */
 export function fullFileNameWithLowerCaseExtension(
   fullFileName: string,
 ): string {
@@ -56,10 +51,8 @@ export function fullFileNameWithLowerCaseExtension(
   return `${name}.${ext}`;
 }
 
-/** Prüft, ob ein String eine valide URL ist */
 export function isValidURL(url: string): boolean {
   try {
-    // URL-Konstruktor wirft bei ungültigen URLs
     new URL(url);
     return true;
   } catch {
@@ -67,7 +60,6 @@ export function isValidURL(url: string): boolean {
   }
 }
 
-/** Wandelt URLs im Text in anklickbare Links um */
 export function linkify(text: string): string {
   const urlRegex = /https?:\/\/[^\s/$.?#].[^\s]*/gi;
   return text.replace(
@@ -77,7 +69,6 @@ export function linkify(text: string): string {
   );
 }
 
-/** Formatiert Millisekunden in "HH:MM:SS" */
 export function msToTime(ms: number): string {
   const totalSeconds = Math.floor(ms / 1000);
   const hrs = Math.floor(totalSeconds / 3600);
@@ -87,12 +78,10 @@ export function msToTime(ms: number): string {
   return `${pad(hrs)}:${pad(mins)}:${pad(secs)}`;
 }
 
-/** Verzögert asynchrone Ausführung um ms Millisekunden */
 export function delay(ms: number): Promise<void> {
   return new Promise((res) => setTimeout(res, ms));
 }
 
-/** Löst einen Download aus, indem ein Blob als Textdatei gespeichert wird */
 export async function downloadFileFromText(text: string): Promise<void> {
   try {
     const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
@@ -145,11 +134,13 @@ export const getAvatarFullURL = (path: string) => {
   if (!path || path === "" || path === null) {
     return "";
   }
-  // if (path?.startsWith("/img")) {
-  //   return `${benovaApplicationURL()}${path}`;
-  // } else {
-  //   return `${AVATAR_URL}/${path}`;
-  // }
+  if (path.startsWith("data:")) {
+    return path;
+  }
+  if (path.startsWith("http")) {
+    return path;
+  }
+  return path;
 };
 
 export const ua =

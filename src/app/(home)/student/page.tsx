@@ -4,10 +4,13 @@ import { useState } from "react";
 
 import CustomTitle from "@/components/atoms/CustomTitle";
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
+import CreateStudentModal from "@/components/organisms/modals/CreateStudentModal";
 import { validateVerificationForm } from "@/lib/validate/student.validate";
 import { verifyStudent } from "@/store/actions/studentActions";
 import { useAppDispatch } from "@/store/store";
 import BadgeRoundedIcon from "@mui/icons-material/BadgeRounded";
+import LoginIcon from "@mui/icons-material/Login";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import { Box, InputAdornment, styled } from "@mui/material";
 import { Field, Form, Formik } from "formik";
@@ -37,12 +40,13 @@ const StyledForm = styled(Form)(({ theme }) => ({
   gap: theme.spacing(2),
 }));
 
-const StyledEndContainer = styled(Box)(() => ({
+const StyledEndContainer = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
   width: "100%",
+  gap: theme.spacing(2),
 }));
 
 interface FormValues {
@@ -56,6 +60,7 @@ export default function StudentPage() {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const initialValues: FormValues = {
     firstName: "",
@@ -84,6 +89,14 @@ export default function StudentPage() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleOpenCreateModal = () => {
+    setIsCreateModalOpen(true);
+  };
+
+  const handleCloseCreateModal = () => {
+    setIsCreateModalOpen(false);
   };
 
   return (
@@ -169,18 +182,32 @@ export default function StudentPage() {
             <StyledEndContainer>
               <GeneralButton
                 onAction={() => handleSubmit()}
-                isPrimary={false}
                 label={
                   isSubmitting
                     ? t("auth.studentLogin.verifying")
-                    : t("auth.studentLogin.submit")
+                    : t("auth.studentLogin.verifyButton")
                 }
                 disabled={isSubmitting || !isValid || !dirty}
+                startIcon={<LoginIcon />}
+                fullWidth
+              />
+              <GeneralButton
+                onAction={handleOpenCreateModal}
+                isPrimary={false}
+                label={t("auth.studentLogin.createButton")}
+                disabled={isSubmitting}
+                startIcon={<PersonAddIcon />}
+                fullWidth
               />
             </StyledEndContainer>
           </StyledForm>
         )}
       </Formik>
+
+      <CreateStudentModal
+        open={isCreateModalOpen}
+        onClose={handleCloseCreateModal}
+      />
     </Wrapper>
   );
 }

@@ -2,7 +2,7 @@ import { ClassInterface } from "@/types/class";
 import { Student } from "@/types/db";
 
 import * as TYPES from "../types";
-import { AppAction } from "./index";
+import { AppAction } from "../types";
 
 interface CurrentClassState {
   data: ClassInterface | null;

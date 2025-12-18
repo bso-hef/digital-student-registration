@@ -68,8 +68,16 @@ export function uuid_v4() {
   });
 }
 
-export function sanitizeFilename(input = ""): string {
-  return input
+export function sanitizeFilename(input: unknown = ""): string {
+  // Handle null, undefined, or empty values
+  if (input == null || input === "") {
+    return "";
+  }
+
+  // Convert to string if not already (handles ObjectId, numbers, etc.)
+  const strInput = String(input);
+
+  return strInput
     .normalize("NFKD")
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^\w.-]+/g, "_")

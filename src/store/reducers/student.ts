@@ -3,7 +3,7 @@ import { Student } from "@/types/db";
 import { StudentData } from "@/types/student";
 
 import * as TYPES from "../types";
-import { AppAction } from "./index";
+import { AppAction } from "../types";
 
 interface StudentState {
   currentStep: number;
@@ -16,6 +16,7 @@ interface StudentState {
   studentStatus: string | null;
   currentStudentId: string | null;
   currentStudent: Student | null;
+  currentStudentLoading: boolean;
 }
 
 const initialStudentState: StudentState = {
@@ -60,7 +61,6 @@ const initialStudentState: StudentState = {
     betriebOrt: "",
     betriebTelefon1: "",
     betriebEmail: "",
-    // Contact Person 1
     ansprechpartner1Art: "",
     ansprechpartner1Vorname: "",
     ansprechpartner1Nachname: "",
@@ -70,7 +70,6 @@ const initialStudentState: StudentState = {
     ansprechpartner1Ort: "",
     ansprechpartner1Mobil: "",
     ansprechpartner1Telefon1: "",
-    // Contact Person 2
     ansprechpartner2Art: "",
     ansprechpartner2Vorname: "",
     ansprechpartner2Nachname: "",
@@ -80,7 +79,6 @@ const initialStudentState: StudentState = {
     ansprechpartner2Ort: "",
     ansprechpartner2Mobil: "",
     ansprechpartner2Telefon1: "",
-    // Contact Person 3
     ansprechpartner3Art: "",
     ansprechpartner3Vorname: "",
     ansprechpartner3Nachname: "",
@@ -90,7 +88,6 @@ const initialStudentState: StudentState = {
     ansprechpartner3Ort: "",
     ansprechpartner3Mobil: "",
     ansprechpartner3Telefon1: "",
-    // Agreements
     datenschutz: false,
     teilnahmeunterricht: false,
     schulordnung: false,
@@ -104,6 +101,7 @@ const initialStudentState: StudentState = {
   studentStatus: null,
   currentStudentId: null,
   currentStudent: null,
+  currentStudentLoading: false,
 };
 
 const studentReducer = (state = initialStudentState, action: AppAction) => {
@@ -111,7 +109,7 @@ const studentReducer = (state = initialStudentState, action: AppAction) => {
     case TYPES.SET_STUDENT_CURRENT_STEP:
       return {
         ...state,
-        previousStep: state.currentStep, // Save current step as previous before changing
+        previousStep: state.currentStep,
         currentStep: action.payload,
       };
 
@@ -144,7 +142,6 @@ const studentReducer = (state = initialStudentState, action: AppAction) => {
     case TYPES.DELETE_STUDENTS_FAILURE:
       return { ...state, loading: false, error: action.payload };
 
-    // Onboarding actions
     case TYPES.UPDATE_STUDENT_ONBOARDING_DATA:
       return {
         ...state,
@@ -228,6 +225,49 @@ const studentReducer = (state = initialStudentState, action: AppAction) => {
     case TYPES.SAVE_ONBOARDING_PROGRESS_FAILURE:
     case TYPES.SUBMIT_ONBOARDING_FAILURE:
       return { ...state, loading: false, error: action.payload };
+
+    case TYPES.UPDATE_STUDENT_CLASS_REQUEST:
+      return { ...state, loading: true, error: null };
+
+    case TYPES.UPDATE_STUDENT_CLASS_SUCCESS:
+      return { ...state, loading: false };
+
+    case TYPES.UPDATE_STUDENT_CLASS_FAILURE:
+      return { ...state, loading: false, error: action.payload };
+
+    // Admin student detail actions
+    case TYPES.GET_STUDENT_REQUEST:
+      return { ...state, currentStudentLoading: true, error: null };
+
+    case TYPES.GET_STUDENT_SUCCESS:
+      return {
+        ...state,
+        currentStudentLoading: false,
+        currentStudent: action.payload,
+      };
+
+    case TYPES.GET_STUDENT_FAILURE:
+      return { ...state, currentStudentLoading: false, error: action.payload };
+
+    case TYPES.UPDATE_STUDENT_REQUEST:
+      return { ...state, currentStudentLoading: true, error: null };
+
+    case TYPES.UPDATE_STUDENT_SUCCESS:
+      return {
+        ...state,
+        currentStudentLoading: false,
+        currentStudent: action.payload,
+      };
+
+    case TYPES.UPDATE_STUDENT_FAILURE:
+      return { ...state, currentStudentLoading: false, error: action.payload };
+
+    case TYPES.CLEAR_CURRENT_STUDENT:
+      return {
+        ...state,
+        currentStudent: null,
+        currentStudentLoading: false,
+      };
 
     default:
       return state;

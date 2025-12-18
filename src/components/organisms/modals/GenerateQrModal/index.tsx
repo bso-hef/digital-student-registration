@@ -3,13 +3,14 @@ import React, { Fragment, useState } from "react";
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
 import { WIZZARD_URL } from "@/constants/general.constants";
 import { downloadBlob } from "@/utils/general.utils";
-import { buildPdfForStudent } from "@/utils/pdf.utils";
+import { buildCombinedQrPdf, buildPdfForStudent } from "@/utils/pdf.utils";
 import { sanitizeFilename } from "@/utils/string.utils";
 import { buildZip } from "@/utils/zip.utils";
 import CropLandscapeRoundedIcon from "@mui/icons-material/CropLandscapeRounded";
 import CropPortraitRoundedIcon from "@mui/icons-material/CropPortraitRounded";
 import DownloadRoundedIcon from "@mui/icons-material/DownloadRounded";
 import FolderZipRoundedIcon from "@mui/icons-material/FolderZipRounded";
+import PictureAsPdfRoundedIcon from "@mui/icons-material/PictureAsPdfRounded";
 import QrCode2RoundedIcon from "@mui/icons-material/QrCode2Rounded";
 import {
   Box,
@@ -27,6 +28,9 @@ import {
   useTheme,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
+
+import { RootState } from "@/store/reducers";
 
 import GeneralModal from "../GeneralModal";
 
@@ -89,6 +93,7 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
 }) => {
   const theme = useTheme();
   const { t } = useTranslation();
+  const locale = useSelector((state: RootState) => state.ui.locale) || "en";
 
   const [pageSize, setPageSize] = useState<"A4" | "A5">("A4");
   const [orientation, setOrientation] = useState<"portrait" | "landscape">(
@@ -99,6 +104,7 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
   );
   const [includeClass, setIncludeClass] = useState(true);
   const [shortenId, setShortenId] = useState(true);
+  const [exportMode, setExportMode] = useState<"zip" | "combined">("zip");
 
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState<number | null>(null);
@@ -148,31 +154,42 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
     setBusy(true);
     setProgress(0);
 
+    const pdfSettings = {
+      pageSize,
+      orientation,
+      includeClass,
+      shortenId,
+      wizardUrlTemplate: WIZZARD_URL,
+      locale,
+      hidePageLabel: true, // Hide the A4/Portrait label in actual exports
+    };
+
     try {
       if (students.length === 1) {
+        // Single student: download individual PDF
         const s = students[0];
-        const pdf = await buildPdfForStudent(s, {
-          pageSize,
-          orientation,
-          includeClass,
-          shortenId,
-          wizardUrlTemplate: WIZZARD_URL,
-        });
+        const pdf = await buildPdfForStudent(s, pdfSettings);
         const filename = resolveFilename(s);
         downloadBlob(filename, pdf);
         setProgress(100);
+      } else if (exportMode === "combined") {
+        // Multiple students with combined mode: single multi-page PDF
+        const pdf = await buildCombinedQrPdf(
+          students as Student[],
+          pdfSettings,
+          (p) => setProgress(p),
+        );
+        downloadBlob(
+          `schueler_qr_pdfs_combined_${pageSize}_${orientation}.pdf`,
+          pdf,
+        );
       } else {
+        // Multiple students with ZIP mode: separate PDFs in a ZIP
         const files: Array<{ name: string; blob: Blob }> = [];
         let done = 0;
 
         for (const s of students as Student[]) {
-          const pdf = await buildPdfForStudent(s, {
-            pageSize,
-            orientation,
-            includeClass,
-            shortenId,
-            wizardUrlTemplate: WIZZARD_URL,
-          });
+          const pdf = await buildPdfForStudent(s, pdfSettings);
           files.push({ name: resolveFilename(s), blob: pdf });
           done += 1;
           setProgress(Math.round((done / students.length) * 95));
@@ -200,6 +217,13 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
     await generateExport();
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === "Enter" && !event.shiftKey && count && !busy) {
+      event.preventDefault();
+      handleGenerate();
+    }
+  };
+
   const contentChildren = (
     <Fragment>
       {busy && (
@@ -211,7 +235,11 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
           />
           <Typography variant="caption" sx={{ opacity: 0.7 }}>
             {progress == null
-              ? t("modals.generateQrModal.creatingZip")
+              ? t(
+                  exportMode === "combined"
+                    ? "modals.generateQrModal.creatingPdf"
+                    : "modals.generateQrModal.creatingZip",
+                )
               : t("modals.generateQrModal.progress", {
                   progress: Math.round(progress),
                 })}
@@ -223,6 +251,7 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
         direction={{ xs: "column", md: "row" }}
         spacing={3}
         divider={<Divider flexItem orientation="vertical" />}
+        onKeyDown={handleKeyDown}
       >
         <Stack
           sx={{
@@ -267,6 +296,29 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
               </ToggleButton>
             </ToggleButtonGroup>
           </Stack>
+
+          {count >= 2 && (
+            <Stack spacing={1}>
+              <StyledOptionLabel>
+                {t("modals.generateQrModal.exportMode")}
+              </StyledOptionLabel>
+              <ToggleButtonGroup
+                value={exportMode}
+                exclusive
+                onChange={(_, v) => v && setExportMode(v)}
+                size="small"
+              >
+                <ToggleButton value="zip">
+                  <FolderZipRoundedIcon sx={{ mr: 1 }} />
+                  {t("modals.generateQrModal.separateFiles")}
+                </ToggleButton>
+                <ToggleButton value="combined">
+                  <PictureAsPdfRoundedIcon sx={{ mr: 1 }} />
+                  {t("modals.generateQrModal.combinedPdf")}
+                </ToggleButton>
+              </ToggleButtonGroup>
+            </Stack>
+          )}
 
           <Stack>
             <StyledOptionLabel
@@ -446,6 +498,27 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
     </Fragment>
   );
 
+  // Determine button label and icon based on count and export mode
+  const getButtonLabel = () => {
+    if (count === 1) {
+      return t("modals.generateQrModal.downloadPdf");
+    }
+    if (exportMode === "combined") {
+      return t("modals.generateQrModal.downloadCombinedPdf");
+    }
+    return t("modals.generateQrModal.createZip");
+  };
+
+  const getButtonIcon = () => {
+    if (count === 1) {
+      return <DownloadRoundedIcon />;
+    }
+    if (exportMode === "combined") {
+      return <PictureAsPdfRoundedIcon />;
+    }
+    return <FolderZipRoundedIcon />;
+  };
+
   const actionsChildren = (
     <Fragment>
       <GeneralButton
@@ -455,16 +528,10 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
         isPrimary={false}
       />
       <GeneralButton
-        label={t(
-          count === 1
-            ? "modals.generateQrModal.downloadPdf"
-            : "modals.generateQrModal.createZip",
-        )}
+        label={getButtonLabel()}
         onAction={handleGenerate}
         disabled={!count || busy}
-        startIcon={
-          count === 1 ? <DownloadRoundedIcon /> : <FolderZipRoundedIcon />
-        }
+        startIcon={getButtonIcon()}
       />
     </Fragment>
   );

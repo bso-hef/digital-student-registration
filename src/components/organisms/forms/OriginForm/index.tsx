@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo } from "react";
 
+import FormikDropdown from "@/components/atoms/dropdowns/FormikDropdown";
 import { useOnboardingSettings } from "@/hooks/useOnboardingSettings";
 import {
   createValidateStudentOriginData,
@@ -7,11 +8,16 @@ import {
 } from "@/lib/validate/student.validate";
 import { updateStudentOnboardingData } from "@/store/actions/studentActions";
 import { useAppDispatch } from "@/store/store";
-import { Autocomplete, MenuItem, styled } from "@mui/material";
+import { Autocomplete, styled } from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs, { Dayjs } from "dayjs";
 import { FormikProps } from "formik";
 import { Field, Form, Formik } from "formik";
-import { Select, TextField } from "formik-mui";
+import { TextField } from "formik-mui";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
+
+import { RootState } from "@/store/reducers";
 
 const StyledForm = styled(Form)(() => ({
   display: "flex",
@@ -24,25 +30,30 @@ const StyledForm = styled(Form)(() => ({
 
 interface FormValues {
   herkunftsland: string;
-  zuzugjahr: number;
+  zuzugjahr: Dayjs | null;
   familiensprache: string;
 }
 
 interface OriginFormProps {
-  data?: Partial<FormValues>;
-  onSubmit?: (values: FormValues) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onSubmit?: (values: any) => void;
   formikRef?: React.RefObject<FormikProps<FormValues> | null>;
   onValidationChange?: (isValid: boolean) => void;
 }
 
 const OriginForm: React.FC<OriginFormProps> = ({
-  data,
   onSubmit,
   formikRef,
   onValidationChange,
 }) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
+
+  // Get student data from Redux to pre-fill form values
+  const { data: studentData } = useSelector(
+    (state: RootState) => state.student,
+  );
+
   const {
     languageOptions,
     countryOptions,
@@ -52,10 +63,31 @@ const OriginForm: React.FC<OriginFormProps> = ({
     loading,
   } = useOnboardingSettings();
 
+  // Convert geburtsland code to country label for pre-filling herkunftsland
+  const defaultHerkunftsland = useMemo(() => {
+    // If already has herkunftsland, use it
+    if (studentData?.herkunftsland) return studentData.herkunftsland;
+    // Convert geburtsland code to label
+    if (studentData?.geburtsland) {
+      const country = getEnabledOptions(countryOptions).find(
+        (c) => c.value === studentData.geburtsland,
+      );
+      return country?.label || "";
+    }
+    return "";
+  }, [
+    studentData?.herkunftsland,
+    studentData?.geburtsland,
+    countryOptions,
+    getEnabledOptions,
+  ]);
+
   const initialValues: FormValues = {
-    herkunftsland: data?.herkunftsland || "",
-    zuzugjahr: data?.zuzugjahr || 0,
-    familiensprache: data?.familiensprache || "",
+    herkunftsland: defaultHerkunftsland,
+    zuzugjahr: studentData?.zuzugjahr
+      ? dayjs().year(studentData.zuzugjahr)
+      : null,
+    familiensprache: studentData?.familiensprache || "",
   };
 
   // Create dynamic validation schema with settings
@@ -89,9 +121,14 @@ const OriginForm: React.FC<OriginFormProps> = ({
       initialValues={initialValues}
       validationSchema={validationSchema}
       onSubmit={(values) => {
-        dispatch(updateStudentOnboardingData(values));
+        // Convert Dayjs to year number for storage
+        const dataToSave = {
+          ...values,
+          zuzugjahr: values.zuzugjahr ? values.zuzugjahr.year() : null,
+        };
+        dispatch(updateStudentOnboardingData(dataToSave));
         // Pass values to parent to ensure immediate save to database
-        if (onSubmit) onSubmit(values);
+        if (onSubmit) onSubmit(dataToSave);
       }}
       innerRef={formikRef}
     >
@@ -127,17 +164,26 @@ const OriginForm: React.FC<OriginFormProps> = ({
               fullWidth
             />
 
-            {/* Zuzugsjahr */}
-            <Field
-              component={TextField}
-              name="zuzugjahr"
+            {/* Zuzugsjahr - Year Picker */}
+            <DatePicker
+              value={values.zuzugjahr}
+              onChange={(newValue) => setFieldValue("zuzugjahr", newValue)}
               label={t("onboarding.origin.yearOfImmigration", "Zuzugsjahr")}
-              type="number"
-              variant="outlined"
-              margin="normal"
-              fullWidth
-              error={touched.zuzugjahr && Boolean(errors.zuzugjahr)}
-              helperText={touched.zuzugjahr && errors.zuzugjahr}
+              views={["year"]}
+              format="YYYY"
+              disableFuture
+              slotProps={{
+                textField: {
+                  variant: "outlined",
+                  fullWidth: true,
+                  margin: "normal",
+                  error: touched.zuzugjahr && Boolean(errors.zuzugjahr),
+                  helperText:
+                    touched.zuzugjahr && errors.zuzugjahr
+                      ? String(errors.zuzugjahr)
+                      : undefined,
+                },
+              }}
             />
 
             {/* Familiensprache - Dynamic Dropdown or Text Field */}
@@ -155,23 +201,11 @@ const OriginForm: React.FC<OriginFormProps> = ({
                 helperText={touched.familiensprache && errors.familiensprache}
               />
             ) : (
-              <Field
-                component={Select}
+              <FormikDropdown
                 name="familiensprache"
                 label={t("onboarding.origin.familyLanguage", "Familiensprache")}
-                variant="outlined"
-                margin="normal"
-                fullWidth
-                error={
-                  touched.familiensprache && Boolean(errors.familiensprache)
-                }
-              >
-                {getEnabledOptions(languageOptions).map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </Field>
+                options={getEnabledOptions(languageOptions)}
+              />
             )}
           </StyledForm>
         );

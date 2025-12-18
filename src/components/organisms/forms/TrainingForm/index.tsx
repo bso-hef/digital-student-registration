@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo } from "react";
 
+import FormikDropdown from "@/components/atoms/dropdowns/FormikDropdown";
 import { useOnboardingSettings } from "@/hooks/useOnboardingSettings";
 import {
   createValidateStudentCompanyData,
@@ -7,10 +8,10 @@ import {
 } from "@/lib/validate/student.validate";
 import { updateStudentOnboardingData } from "@/store/actions/studentActions";
 import { useAppDispatch } from "@/store/store";
-import { MenuItem, styled } from "@mui/material";
+import { styled } from "@mui/material";
 import { FormikProps } from "formik";
 import { Field, Form, Formik } from "formik";
-import { Select, TextField } from "formik-mui";
+import { TextField } from "formik-mui";
 import { useTranslation } from "react-i18next";
 
 const StyledForm = styled(Form)(() => ({
@@ -30,8 +31,8 @@ interface FormValues {
   betriebHausNr: string;
   betriebPlz: string;
   betriebOrt: string;
-  betriebTel: string;
-  betriebMail: string;
+  betriebTelefon1: string;
+  betriebEmail: string;
 }
 
 interface TrainingFormProps {
@@ -66,8 +67,8 @@ const TrainingForm: React.FC<TrainingFormProps> = ({
     betriebHausNr: data?.betriebHausNr || "",
     betriebPlz: data?.betriebPlz || "",
     betriebOrt: data?.betriebOrt || "",
-    betriebTel: data?.betriebTel || "",
-    betriebMail: data?.betriebMail || "",
+    betriebTelefon1: data?.betriebTelefon1 || "",
+    betriebEmail: data?.betriebEmail || "",
   };
 
   // Create dynamic validation schema with settings
@@ -122,21 +123,11 @@ const TrainingForm: React.FC<TrainingFormProps> = ({
               helperText={touched.beruf && errors.beruf}
             />
           ) : (
-            <Field
-              component={Select}
+            <FormikDropdown
               name="beruf"
               label={t("onboarding.training.profession")}
-              variant="outlined"
-              margin="normal"
-              fullWidth
-              error={touched.beruf && Boolean(errors.beruf)}
-            >
-              {getEnabledOptions(professionOptions).map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </Field>
+              options={getEnabledOptions(professionOptions)}
+            />
           )}
 
           {/* betriebEintritt */}
@@ -213,29 +204,29 @@ const TrainingForm: React.FC<TrainingFormProps> = ({
             helperText={touched.betriebOrt && errors.betriebOrt}
           />
 
-          {/* betriebTel */}
+          {/* betriebTelefon1 */}
           <Field
             component={TextField}
-            name="betriebTel"
+            name="betriebTelefon1"
             label={t("onboarding.training.phone")}
             variant="outlined"
             margin="normal"
             fullWidth
-            error={touched.betriebTel && Boolean(errors.betriebTel)}
-            helperText={touched.betriebTel && errors.betriebTel}
+            error={touched.betriebTelefon1 && Boolean(errors.betriebTelefon1)}
+            helperText={touched.betriebTelefon1 && errors.betriebTelefon1}
           />
 
-          {/* betriebMail */}
+          {/* betriebEmail */}
           <Field
             component={TextField}
-            name="betriebMail"
+            name="betriebEmail"
             label={t("onboarding.training.email")}
             type="email"
             variant="outlined"
             margin="normal"
             fullWidth
-            error={touched.betriebMail && Boolean(errors.betriebMail)}
-            helperText={touched.betriebMail && errors.betriebMail}
+            error={touched.betriebEmail && Boolean(errors.betriebEmail)}
+            helperText={touched.betriebEmail && errors.betriebEmail}
           />
         </StyledForm>
       )}

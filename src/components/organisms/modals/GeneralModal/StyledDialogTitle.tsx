@@ -73,7 +73,7 @@ const StyledDialogTitle = ({
   onClose,
   onCopy,
   onOpenInNewTab,
-  textCapitalize = true,
+  textCapitalize = false,
   ...otherTitleProps
 }: TitleOwnProps) => {
   const theme = useTheme();

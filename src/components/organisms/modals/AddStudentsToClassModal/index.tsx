@@ -13,6 +13,7 @@ import {
   Chip,
   CircularProgress,
   TextField,
+  Typography,
   styled,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
@@ -26,43 +27,66 @@ const FormWrap = styled(Box)(({ theme }) => ({
   ...applicationScrollbar(theme),
 }));
 
+// Extended type for students with populated currentClass
+type StudentWithClass = Student & {
+  currentClass?: { _id: string; name: string } | string | null;
+};
+
 type Props = {
   open: boolean;
   onClose: () => void;
   onAddStudents: (studentIds: string[]) => void;
+  classId: string;
 };
 
 const AddStudentsToClassModal: React.FC<Props> = ({
   open,
   onClose,
   onAddStudents,
+  classId,
 }) => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
-  const [students, setStudents] = useState<Student[]>([]);
-  const [selectedStudents, setSelectedStudents] = useState<Student[]>([]);
+  const [students, setStudents] = useState<StudentWithClass[]>([]);
+  const [selectedStudents, setSelectedStudents] = useState<StudentWithClass[]>(
+    [],
+  );
 
-  // Fetch unassigned students when modal opens
+  // Helper to get class ID from populated or string currentClass
+  const getStudentClassId = (student: StudentWithClass): string | null => {
+    if (!student.currentClass) return null;
+    if (typeof student.currentClass === "string") return student.currentClass;
+    return (student.currentClass as { _id: string; name: string })._id;
+  };
+
+  // Helper to get class name from populated currentClass
+  const getStudentClassName = (student: StudentWithClass): string | null => {
+    if (!student.currentClass) return null;
+    if (typeof student.currentClass === "string") return null;
+    return (student.currentClass as { _id: string; name: string }).name;
+  };
+
+  // Fetch all active students when modal opens
   useEffect(() => {
     if (!open) {
       setSelectedStudents([]);
       return;
     }
 
-    const fetchUnassignedStudents = async () => {
+    const fetchStudentsForAssignment = async () => {
       setLoading(true);
       try {
-        const { data } = await studentService.getUnassigned();
+        const { data } = await studentService.getForAssignment();
         setStudents(data.students || []);
       } catch (error) {
-        console.error("Failed to fetch unassigned students:", error);
+        console.error("Failed to fetch students:", error);
         setStudents([]);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUnassignedStudents();
+    fetchStudentsForAssignment();
   }, [open]);
 
   const handleSubmit = useCallback(() => {
@@ -72,7 +96,7 @@ const AddStudentsToClassModal: React.FC<Props> = ({
     onClose();
   }, [selectedStudents, onAddStudents, onClose]);
 
-  const formatStudentOption = (student: Student) => {
+  const formatStudentOption = (student: StudentWithClass) => {
     const dob = student.dateOfBirth
       ? new Date(student.dateOfBirth).toLocaleDateString("de-DE", {
           day: "2-digit",
@@ -80,8 +104,15 @@ const AddStudentsToClassModal: React.FC<Props> = ({
           year: "numeric",
         })
       : "-";
-    return `${student.firstName} ${student.lastName} (${dob})`;
+    const className = getStudentClassName(student);
+    const base = `${student.firstName} ${student.lastName} (${dob})`;
+    return className ? `${base} - ${className}` : base;
   };
+
+  // Filter out students already in the target class
+  const availableStudents = students.filter(
+    (student) => getStudentClassId(student) !== classId,
+  );
 
   const contentChildren = (
     <FormWrap>
@@ -98,7 +129,7 @@ const AddStudentsToClassModal: React.FC<Props> = ({
         <Fragment>
           <Autocomplete
             multiple
-            options={students}
+            options={availableStudents}
             value={selectedStudents}
             onChange={(_, newValue) => setSelectedStudents(newValue)}
             getOptionLabel={formatStudentOption}
@@ -113,6 +144,40 @@ const AddStudentsToClassModal: React.FC<Props> = ({
                 margin="normal"
               />
             )}
+            renderOption={(props, student) => {
+              const className = getStudentClassName(student);
+              const dob = student.dateOfBirth
+                ? new Date(student.dateOfBirth).toLocaleDateString("de-DE", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })
+                : "-";
+              return (
+                <li {...props} key={student._id}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      width: "100%",
+                    }}
+                  >
+                    <Typography variant="body2" sx={{ flexGrow: 1 }}>
+                      {student.firstName} {student.lastName} ({dob})
+                    </Typography>
+                    {className && (
+                      <Chip
+                        size="small"
+                        label={className}
+                        color="warning"
+                        sx={{ ml: 1 }}
+                      />
+                    )}
+                  </Box>
+                </li>
+              );
+            }}
             renderTags={(value, getTagProps) =>
               value.map((option, index) => (
                 <Chip

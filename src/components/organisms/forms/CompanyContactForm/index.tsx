@@ -1,14 +1,15 @@
 import React, { useEffect } from "react";
 
+import FormikDropdown from "@/components/atoms/dropdowns/FormikDropdown";
 import { useOnboardingSettings } from "@/hooks/useOnboardingSettings";
 import { validateStudentCompanyData } from "@/lib/validate/student.validate";
 import { updateStudentOnboardingData } from "@/store/actions/studentActions";
 import { useAppDispatch } from "@/store/store";
 import { StudentData } from "@/types/student";
-import { MenuItem, styled } from "@mui/material";
+import { styled } from "@mui/material";
 import { FormikProps } from "formik";
 import { Field, Form, Formik } from "formik";
-import { Select, TextField } from "formik-mui";
+import { TextField } from "formik-mui";
 import { useTranslation } from "react-i18next";
 
 const StyledForm = styled(Form)(() => ({
@@ -77,21 +78,11 @@ const CompanyContactForm: React.FC<CompanyContactFormProps> = ({
       {({ errors, touched }) => (
         <StyledForm>
           {/* betriebApAnrede - Dynamic Dropdown */}
-          <Field
-            component={Select}
+          <FormikDropdown
             name="betriebApAnrede"
             label={t("onboarding.companyContact.salutation")}
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            error={touched.betriebApAnrede && Boolean(errors.betriebApAnrede)}
-          >
-            {getEnabledOptions(salutationOptions).map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </Field>
+            options={getEnabledOptions(salutationOptions)}
+          />
 
           {/* betriebApVorname */}
           <Field

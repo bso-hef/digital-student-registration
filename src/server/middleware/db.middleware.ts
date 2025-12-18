@@ -132,7 +132,6 @@ export async function getItem<T extends Document>(
   }
 }
 
-/** Create new item */
 export async function createItem<T extends Document>(
   data: Partial<T>,
   model: Model<T>,
@@ -144,7 +143,6 @@ export async function createItem<T extends Document>(
   }
 }
 
-/** Update existing item by ID */
 export async function updateItem<T extends Document>(
   model: Model<T>,
   id: string,
@@ -164,7 +162,6 @@ export async function updateItem<T extends Document>(
   }
 }
 
-/** Generic updateOne */
 export async function updateOneItem<T extends Document>(
   model: Model<T>,
   query: FilterQuery<T>,
@@ -182,7 +179,6 @@ export async function updateOneItem<T extends Document>(
   }
 }
 
-/** Generic findOneAndUpdate */
 export async function findOneAndUpdateItem<T extends Document>(
   model: Model<T>,
   query: FilterQuery<T>,
@@ -220,7 +216,6 @@ export async function findOneAndUpdateItem<T extends Document>(
   }
 }
 
-/** Update many */
 export async function updateManyItem<T extends Document>(
   model: Model<T>,
   conditions: FilterQuery<T>,
@@ -235,7 +230,6 @@ export async function updateManyItem<T extends Document>(
   }
 }
 
-/** Delete item */
 export async function deleteItem<T extends Document>(
   id: string,
   model: Model<T>,
@@ -251,7 +245,6 @@ export async function deleteItem<T extends Document>(
   }
 }
 
-/** Soft-delete item */
 export async function softDeleteItem<T extends Document>(
   id: string,
   model: Model<T>,
@@ -271,7 +264,6 @@ export async function softDeleteItem<T extends Document>(
   }
 }
 
-/** Delete many */
 export async function deleteManyItem<T extends Document>(
   condition: FilterQuery<T>,
   model: Model<T>,
@@ -287,7 +279,6 @@ export async function deleteManyItem<T extends Document>(
   }
 }
 
-/** Get many items (without paginate) */
 export async function getItemsWithoutPaginate<T extends Document>(
   model: Model<T>,
   query: FilterQuery<T>,
@@ -318,7 +309,6 @@ export async function getItemsWithoutPaginate<T extends Document>(
   }
 }
 
-/** Get one item by query */
 export async function getOneItem<T extends Document>(
   model: Model<T>,
   query: FilterQuery<T>,

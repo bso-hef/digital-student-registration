@@ -37,6 +37,7 @@ interface PasswordInputProps {
   value: string;
   placeholder?: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   onStrengthChange?: (strength: number) => void;
   onValidationFail?: () => void;
   id?: string;
@@ -59,6 +60,7 @@ const PasswordInput: React.FC<PasswordInputProps> = memo(
     value,
     placeholder,
     onChange,
+    onKeyDown,
     onStrengthChange,
     onValidationFail,
     id,
@@ -200,6 +202,7 @@ const PasswordInput: React.FC<PasswordInputProps> = memo(
           value={value}
           autoComplete={autoComplete}
           onChange={onChange}
+          onKeyDown={onKeyDown}
           id={id}
           error={error}
           helperText={helperText}

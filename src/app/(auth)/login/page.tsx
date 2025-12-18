@@ -95,82 +95,98 @@ export default function LoginPage() {
         validationSchema={loginSchema}
         onSubmit={handleSubmit}
       >
-        {({ values, errors, touched, submitForm }) => (
-          <StyledForm>
-            <AuthContent>
-              {error && (
-                <Alert severity="error">
-                  {error === "CredentialsSignin"
-                    ? t("auth.login.invalidCredentials")
-                    : t("auth.login.loginError")}
-                </Alert>
-              )}
+        {({ values, errors, touched, submitForm, isValid, dirty }) => {
+          const handleKeyDown = (event: React.KeyboardEvent) => {
+            if (
+              event.key === "Enter" &&
+              !event.shiftKey &&
+              isValid &&
+              dirty &&
+              !isLoading
+            ) {
+              event.preventDefault();
+              submitForm();
+            }
+          };
 
-              <Field
-                as={TextField}
-                fullWidth
-                name="email"
-                label={t("auth.login.emailLabel")}
-                type="email"
-                autoComplete="email"
-                autoFocus
-                margin="normal"
-                error={touched.email && Boolean(errors.email)}
-                helperText={touched.email && errors.email}
-              />
+          return (
+            <StyledForm>
+              <AuthContent>
+                {error && (
+                  <Alert severity="error">
+                    {error === "CredentialsSignin"
+                      ? t("auth.login.invalidCredentials")
+                      : t("auth.login.loginError")}
+                  </Alert>
+                )}
 
-              <Field
-                as={TextField}
-                fullWidth
-                name="password"
-                margin="normal"
-                label={t("auth.login.passwordLabel")}
-                type={showPassword ? "text" : "password"}
-                autoComplete="current-password"
-                error={touched.password && Boolean(errors.password)}
-                helperText={touched.password && errors.password}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={() => setShowPassword(!showPassword)}
-                        edge="end"
-                      >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
+                <Field
+                  as={TextField}
+                  fullWidth
+                  name="email"
+                  label={t("auth.login.emailLabel")}
+                  type="email"
+                  autoComplete="email"
+                  autoFocus
+                  margin="normal"
+                  error={touched.email && Boolean(errors.email)}
+                  helperText={touched.email && errors.email}
+                />
 
-              <ForgotPasswordContainer>
-                <StyledLink href="/reset-password">
-                  <HoverableTypography variant="body2" color="primary">
-                    {t("auth.login.forgotPassword")}
-                  </HoverableTypography>
-                </StyledLink>
-              </ForgotPasswordContainer>
-            </AuthContent>
+                <Field
+                  as={TextField}
+                  fullWidth
+                  name="password"
+                  margin="normal"
+                  label={t("auth.login.passwordLabel")}
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
+                  error={touched.password && Boolean(errors.password)}
+                  helperText={touched.password && errors.password}
+                  onKeyDown={handleKeyDown}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={() => setShowPassword(!showPassword)}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
 
-            <AuthActions>
-              <GeneralButton
-                label={
-                  isLoading
-                    ? t("auth.login.signingIn")
-                    : t("auth.login.signInButton")
-                }
-                onAction={submitForm}
-                disabled={
-                  isLoading ||
-                  !values.email ||
-                  !values.password ||
-                  Boolean(errors.email) ||
-                  Boolean(errors.password)
-                }
-              />
-            </AuthActions>
-          </StyledForm>
-        )}
+                <ForgotPasswordContainer>
+                  <StyledLink href="/reset-password">
+                    <HoverableTypography variant="body2" color="primary">
+                      {t("auth.login.forgotPassword")}
+                    </HoverableTypography>
+                  </StyledLink>
+                </ForgotPasswordContainer>
+              </AuthContent>
+
+              <AuthActions>
+                <GeneralButton
+                  label={
+                    isLoading
+                      ? t("auth.login.signingIn")
+                      : t("auth.login.signInButton")
+                  }
+                  onAction={submitForm}
+                  disabled={
+                    isLoading ||
+                    !values.email ||
+                    !values.password ||
+                    Boolean(errors.email) ||
+                    Boolean(errors.password)
+                  }
+                />
+              </AuthActions>
+            </StyledForm>
+          );
+        }}
       </Formik>
     </AuthCard>
   );

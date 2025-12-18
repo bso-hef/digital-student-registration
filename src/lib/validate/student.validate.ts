@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import * as Yup from "yup";
 
 // Verification Form Validation
@@ -19,6 +20,37 @@ export const validateVerificationForm = Yup.object({
       "Der Code darf nur Zahlen (0-9) und Großbuchstaben (A-Z) enthalten",
     )
     .transform((value) => value.toUpperCase()),
+});
+
+// Manual Student Creation Validation
+export const validateManualCreationForm = Yup.object({
+  firstName: Yup.string()
+    .required("Vorname ist erforderlich")
+    .trim()
+    .min(2, "Vorname muss mindestens 2 Zeichen lang sein")
+    .max(50, "Vorname darf maximal 50 Zeichen lang sein"),
+  lastName: Yup.string()
+    .required("Nachname ist erforderlich")
+    .trim()
+    .min(2, "Nachname muss mindestens 2 Zeichen lang sein")
+    .max(50, "Nachname darf maximal 50 Zeichen lang sein"),
+  dateOfBirth: Yup.date()
+    .typeError("Ungültiges Datum")
+    .required("Geburtsdatum ist erforderlich")
+    .max(dayjs().toDate(), "Geburtsdatum darf nicht in der Zukunft liegen")
+    .min(
+      dayjs().subtract(120, "years").toDate(),
+      "Geburtsdatum darf nicht mehr als 120 Jahre zurückliegen",
+    )
+    .test(
+      "reasonable-age",
+      "Schüler muss zwischen 3 und 100 Jahre alt sein",
+      function (value) {
+        if (!value) return false;
+        const age = dayjs().diff(dayjs(value), "years");
+        return age >= 3 && age <= 100;
+      },
+    ),
 });
 
 // Dynamic validation schema builders
@@ -110,14 +142,16 @@ export const createValidateGeneralStudentData = (
 // Step 2: Herkunft (Optional)
 export const validateStudentOriginData = Yup.object({
   herkunftsland: Yup.string().required("Herkunftsland ist erforderlich"),
-  zuzugjahr: Yup.number()
-    .typeError("Zuzugsjahr muss eine Zahl sein")
-    .integer("Zuzugsjahr muss eine ganze Zahl sein")
-    .min(1900, "Ungültiges Jahr")
-    .max(
-      new Date().getFullYear(),
-      "Zuzugsjahr darf nicht in der Zukunft liegen",
-    )
+  zuzugjahr: Yup.mixed()
+    .nullable()
+    .test("valid-year", "Ungültiges Jahr", (value) => {
+      if (!value) return false; // Required field
+      if (dayjs.isDayjs(value)) {
+        const year = value.year();
+        return year >= 1900 && year <= new Date().getFullYear();
+      }
+      return false;
+    })
     .required("Zuzugsjahr ist erforderlich"),
   familiensprache: Yup.string().required("Familiensprache ist erforderlich"),
 });
@@ -135,14 +169,16 @@ export const createValidateStudentOriginData = (
 
   return Yup.object({
     herkunftsland: Yup.string().required("Herkunftsland ist erforderlich"),
-    zuzugjahr: Yup.number()
-      .typeError("Zuzugsjahr muss eine Zahl sein")
-      .integer("Zuzugsjahr muss eine ganze Zahl sein")
-      .min(1900, "Ungültiges Jahr")
-      .max(
-        new Date().getFullYear(),
-        "Zuzugsjahr darf nicht in der Zukunft liegen",
-      )
+    zuzugjahr: Yup.mixed()
+      .nullable()
+      .test("valid-year", "Ungültiges Jahr", (value) => {
+        if (!value) return false; // Required field
+        if (dayjs.isDayjs(value)) {
+          const year = value.year();
+          return year >= 1900 && year <= new Date().getFullYear();
+        }
+        return false;
+      })
       .required("Zuzugsjahr ist erforderlich"),
     familiensprache: familienspracheValidation,
   });
@@ -204,10 +240,8 @@ export const createValidateStudentContactPersonData = (age: number) => {
 
   if (isAdult) {
     // Adult: Optional unless any field is filled
-    const allContactFields = [
-      "ansprechpartner1Art",
-      "ansprechpartner1Vorname",
-      "ansprechpartner1Nachname",
+    // Using .test() instead of .when() to avoid cyclic dependency errors
+    const optionalFields = [
       "ansprechpartner1Plz",
       "ansprechpartner1Ort",
       "ansprechpartner1Straße",
@@ -216,27 +250,71 @@ export const createValidateStudentContactPersonData = (age: number) => {
       "ansprechpartner1Telefon1",
     ];
 
+    // Helper to check if any field has a value
+    const hasAnyValue = (fields: string[], parent: Record<string, unknown>) =>
+      fields.some((field) => {
+        const value = parent[field];
+        return value && String(value).trim() !== "";
+      });
+
     return Yup.object({
-      // If ANY field is filled, require basic fields
-      ansprechpartner1Vorname: Yup.string().when(allContactFields, {
-        is: (...values: string[]) => values.some((v) => v && v.trim() !== ""),
-        then: (schema) =>
-          schema.required("Vorname ist erforderlich wenn Kontakt ausgefüllt"),
-        otherwise: (schema) => schema.notRequired(),
-      }),
-      ansprechpartner1Nachname: Yup.string().when(allContactFields, {
-        is: (...values: string[]) => values.some((v) => v && v.trim() !== ""),
-        then: (schema) =>
-          schema.required("Nachname ist erforderlich wenn Kontakt ausgefüllt"),
-        otherwise: (schema) => schema.notRequired(),
-      }),
-      ansprechpartner1Art: Yup.string().when(allContactFields, {
-        is: (...values: string[]) => values.some((v) => v && v.trim() !== ""),
-        then: (schema) =>
-          schema.required("Art ist erforderlich wenn Kontakt ausgefüllt"),
-        otherwise: (schema) => schema.notRequired(),
-      }),
-      // Other fields optional
+      // Using .test() instead of .when() to avoid circular dependencies
+      ansprechpartner1Vorname: Yup.string().test(
+        "conditional-required",
+        "Vorname ist erforderlich wenn Kontakt ausgefüllt",
+        function (value) {
+          const parent = this.parent;
+          const otherFields = [
+            "ansprechpartner1Art",
+            "ansprechpartner1Nachname",
+            ...optionalFields,
+          ];
+
+          // If any other field has value, this field is required
+          if (hasAnyValue(otherFields, parent)) {
+            return !!value && String(value).trim() !== "";
+          }
+          return true; // Optional if no other fields filled
+        },
+      ),
+
+      ansprechpartner1Nachname: Yup.string().test(
+        "conditional-required",
+        "Nachname ist erforderlich wenn Kontakt ausgefüllt",
+        function (value) {
+          const parent = this.parent;
+          const otherFields = [
+            "ansprechpartner1Art",
+            "ansprechpartner1Vorname",
+            ...optionalFields,
+          ];
+
+          if (hasAnyValue(otherFields, parent)) {
+            return !!value && String(value).trim() !== "";
+          }
+          return true;
+        },
+      ),
+
+      ansprechpartner1Art: Yup.string().test(
+        "conditional-required",
+        "Art ist erforderlich wenn Kontakt ausgefüllt",
+        function (value) {
+          const parent = this.parent;
+          const otherFields = [
+            "ansprechpartner1Vorname",
+            "ansprechpartner1Nachname",
+            ...optionalFields,
+          ];
+
+          if (hasAnyValue(otherFields, parent)) {
+            return !!value && String(value).trim() !== "";
+          }
+          return true;
+        },
+      ),
+
+      // Other fields remain optional
       ansprechpartner1Plz: Yup.string()
         .matches(/^\d{5}$/, "PLZ muss 5 Ziffern haben")
         .nullable(),
@@ -309,10 +387,12 @@ export const validateStudentCompanyData = Yup.object({
     .matches(/^\d{5}$/, "PLZ muss 5 Ziffern haben")
     .required("PLZ ist erforderlich"),
   betriebOrt: Yup.string().required("Ort ist erforderlich"),
-  betriebTel: Yup.string()
+  betriebTelefon1: Yup.string()
     .matches(/^\+?[0-9 ]{6,20}$/, "Ungültige Telefonnummer")
     .nullable(),
-  betriebMail: Yup.string().email("Ungültige E-Mail-Adresse").nullable(),
+  betriebEmail: Yup.string()
+    .email("Ungültige E-Mail-Adresse")
+    .required("E-Mail ist erforderlich für Betriebe"),
   // Betriebskontakt hinzufügen:
   betriebAnsprechpartnerAnrede: Yup.string()
     .oneOf(["Herr", "Frau", "Divers"], "Ungültige Anrede")
@@ -352,10 +432,12 @@ export const createValidateStudentCompanyData = (
       .matches(/^\d{5}$/, "PLZ muss 5 Ziffern haben")
       .required("PLZ ist erforderlich"),
     betriebOrt: Yup.string().required("Ort ist erforderlich"),
-    betriebTel: Yup.string()
+    betriebTelefon1: Yup.string()
       .matches(/^\+?[0-9 ]{6,20}$/, "Ungültige Telefonnummer")
       .nullable(),
-    betriebMail: Yup.string().email("Ungültige E-Mail-Adresse").nullable(),
+    betriebEmail: Yup.string()
+      .email("Ungültige E-Mail-Adresse")
+      .required("E-Mail ist erforderlich für Betriebe"),
     betriebAnsprechpartnerAnrede: Yup.string()
       .oneOf(salutationOptions, "Ungültige Anrede")
       .required("Anrede ist erforderlich"),

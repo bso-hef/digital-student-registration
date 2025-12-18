@@ -1,6 +1,6 @@
 import { PaletteMode } from "@mui/material";
+import { appConfig, configHelpers } from "@/lib/config/app-config";
 
-// Custom theme mode that extends MUI's PaletteMode with "auto"
 export type ThemeMode = PaletteMode | "auto";
 
 export const THEME = {
@@ -50,7 +50,8 @@ export const LANGUAGES = {
 
 export type LanguageKey = keyof typeof LANGUAGES;
 
-export const CONTEXT_PATH = process.env.NEXT_PUBLIC_API_URL || "";
+// Use centralized config for API URL
+export const CONTEXT_PATH = appConfig.api.url;
 export const NO_AVATAR_FOUND = `/images/no-avatar-found.png`;
 
 export const STUDENT_STATUS = {
@@ -59,4 +60,14 @@ export const STUDENT_STATUS = {
   ONBOARDED: "onboarded",
 } as const;
 
-export const WIZZARD_URL = "https://localhost:3000/student/{short-id}";
+// Wizard URL template with placeholder for short-id (used in PDF generation)
+// This will automatically use the configured app URL from environment
+export const WIZZARD_URL = `${appConfig.app.url}/student/{short-id}`;
+
+// Helper function to get the actual wizard URL with a student short ID
+export const getWizardUrl = (shortId: string): string => configHelpers.getWizardUrl(shortId);
+
+export const SCREEN_BLOCKER_TYPES = {
+  PORTRAIT: "portrait",
+  LANDSCAPE: "landscape",
+} as const;

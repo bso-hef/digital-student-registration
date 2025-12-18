@@ -23,8 +23,8 @@ export const Default: Story = {
       betriebHausNr: "50",
       betriebPlz: "10115",
       betriebOrt: "Berlin",
-      betriebTel: "+49 30 123456",
-      betriebMail: "info@ausbildungsbetrieb.de",
+      betriebTelefon1: "+49 30 123456",
+      betriebEmail: "info@ausbildungsbetrieb.de",
     },
   },
   play: async ({ canvasElement }) => {

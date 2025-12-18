@@ -6,7 +6,7 @@ import {
 } from "@/types/dashboard";
 
 import * as TYPES from "../types";
-import { AppAction } from "./index";
+import { AppAction } from "../types";
 
 const DEFAULT_LAYOUT: DashboardLayout = {
   quickStats: [

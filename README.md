@@ -5,6 +5,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node Version](https://img.shields.io/badge/node-v22.20.0-brightgreen)](https://nodejs.org/)
 [![Yarn Version](https://img.shields.io/badge/yarn-1.22.22-blue)](https://yarnpkg.com/)
+[![Docker](https://img.shields.io/badge/docker-supported-blue)](https://www.docker.com/)
+[![Windows Container](https://img.shields.io/badge/windows%20container-supported-blue)](https://docs.microsoft.com/en-us/virtualization/windowscontainers/)
 
 ---
 
@@ -102,23 +104,40 @@ Open [https://localhost:3000](https://localhost:3000)
 
 ### Docker (Recommended)
 
-**Testing (Zero Configuration):**
+**Quick Setup - Choose Your Mode:**
+
 ```bash
-# Just one command - uses committed .env.docker
+# 1. Local Development (localhost with HTTPS)
+docker-compose up -d
+# → https://localhost:3000 (self-signed cert)
+
+# 2. Production (Linux Server with SSL)
+./scripts/start.sh
+# → https://your-domain.com
+
+# 3. Windows Container (Windows Server/10/11 Pro)
+.\scripts\start-windows.ps1
+# → http://localhost:3000
+```
+
+**See [SETUP.md](./SETUP.md) for complete setup instructions** (all 3 modes in < 100 lines)
+
+**Or use legacy methods:**
+
+```bash
+# Testing (Zero Configuration)
 docker compose up -d
+
+# Production Deployment
+docker-compose up -d
 ```
 
-**Production Deployment:**
-```bash
-# Configure secure credentials first
-cp .env.docker.example .env
-# Edit .env with production values
+**Full Documentation:**
 
-# Deploy
-docker-compose -f docker-compose.prod.yml up -d --build
-```
-
-See **[QUICK-START.md](./QUICK-START.md)** for testing guide or **[DOCKER.md](./DOCKER.md)** for production setup.
+- **[SETUP.md](./SETUP.md)** - Quick setup guide (all modes)
+- **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Complete production deployment guide
+- **[QUICK-START.md](./QUICK-START.md)** - Testing guide with credentials
+- **[DOCKER.md](./DOCKER.md)** - Docker configuration details
 
 ---
 

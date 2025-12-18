@@ -101,14 +101,16 @@ const AccessibilityMenu = () => {
 
   return (
     <Fragment>
-      <SmallIconButton
-        icon={<AccessibilityRoundedIcon />}
-        onAction={handleToggleMenu}
-        hugeIcon
-        title={t("general.Accessibility")}
-        placement="bottom"
-        aria-label={t("general.Accessibility")}
-      />
+      {!openMenu && (
+        <SmallIconButton
+          icon={<AccessibilityRoundedIcon />}
+          onAction={handleToggleMenu}
+          hugeIcon
+          title={t("general.Accessibility")}
+          placement="bottom"
+          aria-label={t("general.Accessibility")}
+        />
+      )}
 
       <StyledDrawer anchor="right" open={openMenu} onClose={handleToggleMenu}>
         <Box display="flex" justifyContent="space-between" alignItems="center">

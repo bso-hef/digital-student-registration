@@ -62,11 +62,13 @@ export const authEdgeConfig = {
         httpOnly: true,
         sameSite: "lax",
         path: "/",
-        // Always use secure cookies since app uses HTTPS in both dev and production
-        secure: true,
+        // Use secure cookies only when app URL uses HTTPS
+        // This allows HTTP in Docker deployment while keeping HTTPS secure
+        secure: process.env.NEXT_PUBLIC_APP_URL?.startsWith("https://") ?? false,
       },
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
   debug: process.env.NODE_ENV === "development",
+  trustHost: true,
 } satisfies NextAuthConfig;

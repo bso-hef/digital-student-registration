@@ -8,6 +8,7 @@ export const manageTableHeaders = (t: TFunction) => [
     numeric: false,
     disablePadding: false,
     sortable: true,
+    clickable: true,
     label: t("settings.manageStudent.firstName"),
   },
   {
@@ -16,6 +17,7 @@ export const manageTableHeaders = (t: TFunction) => [
     numeric: false,
     sortable: true,
     disablePadding: false,
+    clickable: true,
     label: t("settings.manageStudent.lastName"),
   },
   {

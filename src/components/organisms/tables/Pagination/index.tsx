@@ -127,6 +127,9 @@ const EnhancedTablePagination: React.FC<EnhancedTablePaginationProps> = ({
       count={count}
       rowsPerPage={rowsPerPage}
       labelRowsPerPage={t("general.Rows per page")}
+      labelDisplayedRows={({ to, count }) =>
+        `${to} ${t("general.of")} ${count}`
+      }
       page={page}
       onPageChange={onPageChange}
       onRowsPerPageChange={onRowsPerPageChange}

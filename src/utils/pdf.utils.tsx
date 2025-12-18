@@ -1,4 +1,5 @@
-import { tServer } from "@/lib/server-i18n";
+import { Student as FullStudent } from "@/types/db";
+import i18next from "i18next";
 import { jsPDF } from "jspdf";
 
 import { makeQrDataUrl } from "./qr.utils";
@@ -19,12 +20,133 @@ export type PdfSettings = {
   includeClass: boolean;
   shortenId: boolean;
   wizardUrlTemplate: string; // z.B. WIZZARD_URL mit {short-id}
+  locale?: string;
+  hidePageLabel?: boolean; // Hide the page size label in actual PDF exports (keep in preview)
 };
+
+/**
+ * Extracts the base URL from a wizard URL template.
+ * E.g., "https://school.example.com/student/{short-id}" -> "https://school.example.com"
+ */
+function extractBaseUrl(wizardUrlTemplate: string): string {
+  try {
+    const url = new URL(wizardUrlTemplate.replace("{short-id}", "temp"));
+    return `${url.protocol}//${url.host}`;
+  } catch {
+    // Fallback: just return the template without the path
+    return wizardUrlTemplate.split("/student")[0] || wizardUrlTemplate;
+  }
+}
+
+/**
+ * Renders an instruction box on the PDF explaining how students can complete their registration.
+ */
+function renderInstructionBox(
+  doc: jsPDF,
+  startY: number,
+  pageW: number,
+  pageH: number,
+  pad: number,
+  verificationCode: string,
+  baseUrl: string,
+  t: (key: string) => string,
+): void {
+  const boxPad = 4;
+  const boxX = pad;
+  const boxY = startY + 4;
+  const boxW = pageW - pad * 2;
+  const lineHeight = 5;
+
+  // Calculate box height based on content
+  const boxH = lineHeight * 8 + boxPad * 2;
+
+  // Don't render if it would go past the page
+  if (boxY + boxH > pageH - pad - 10) {
+    return;
+  }
+
+  // Draw light gray background box
+  doc.setFillColor(245, 245, 245);
+  doc.setDrawColor(220, 220, 220);
+  doc.roundedRect(boxX, boxY, boxW, boxH, 2, 2, "FD");
+
+  let y = boxY + boxPad + 4;
+
+  // Title
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(9);
+  doc.setTextColor(0);
+  doc.text(t("modals.generateQrModal.pdfInstructions.title"), boxX + boxPad, y);
+  y += lineHeight + 1;
+
+  // Option 1
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(8);
+  doc.text(
+    t("modals.generateQrModal.pdfInstructions.option1Title"),
+    boxX + boxPad,
+    y,
+  );
+  y += lineHeight;
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8);
+  const option1Lines = doc.splitTextToSize(
+    t("modals.generateQrModal.pdfInstructions.option1Text"),
+    boxW - boxPad * 2 - 4,
+  );
+  doc.text(option1Lines, boxX + boxPad + 4, y);
+  y += lineHeight * Math.max(option1Lines.length, 1) + 1;
+
+  // Option 2
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(8);
+  doc.text(
+    t("modals.generateQrModal.pdfInstructions.option2Title"),
+    boxX + boxPad,
+    y,
+  );
+  y += lineHeight;
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8);
+  // Step 1: Visit URL
+  doc.text(
+    `1. ${t("modals.generateQrModal.pdfInstructions.option2Step1")} ${baseUrl}/student`,
+    boxX + boxPad + 4,
+    y,
+  );
+  y += lineHeight;
+
+  // Step 2: Enter name
+  doc.text(
+    `2. ${t("modals.generateQrModal.pdfInstructions.option2Step2")}`,
+    boxX + boxPad + 4,
+    y,
+  );
+  y += lineHeight;
+
+  // Step 3: Enter verification code
+  doc.setFont("helvetica", "normal");
+  doc.text(
+    `3. ${t("modals.generateQrModal.pdfInstructions.option2Step3")} `,
+    boxX + boxPad + 4,
+    y,
+  );
+  // Add the code in bold
+  const step3Text = `3. ${t("modals.generateQrModal.pdfInstructions.option2Step3")} `;
+  const step3Width = doc.getTextWidth(step3Text);
+  doc.setFont("helvetica", "bold");
+  doc.text(verificationCode, boxX + boxPad + 4 + step3Width, y);
+}
 
 export async function buildPdfForStudent(
   s: Student,
   settings: PdfSettings,
 ): Promise<Blob> {
+  const { locale = "en" } = settings;
+  const t = (key: string) => i18next.t(key, { lng: locale });
+
   const isPortrait = settings.orientation === "portrait";
   const doc = new jsPDF({
     orientation: isPortrait ? "portrait" : "landscape",
@@ -36,20 +158,16 @@ export async function buildPdfForStudent(
   const pageH = doc.internal.pageSize.getHeight();
 
   const pad = 12;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const _innerW = pageW - pad * 2; // Reserved for future use
   const innerH = pageH - pad * 2;
   const headerH = 10;
   const footerH = 8;
   const contentY = pad + headerH + 4;
   const contentH = innerH - headerH - footerH - 6;
 
-  // Header
   doc.setFontSize(11);
   doc.setFont("helvetica");
-  doc.text(tServer("pdf.onboardingWizard"), pad, pad + 7);
+  doc.text(t("modals.generateQrModal.onboardingWizard"), pad, pad + 7);
 
-  // URL + QR
   const sid = s._id || "";
   const wizUrl = settings.wizardUrlTemplate.replace(
     "{short-id}",
@@ -61,7 +179,6 @@ export async function buildPdfForStudent(
   const qrData = await makeQrDataUrl(wizUrl);
   doc.addImage(qrData, "PNG", qrX, qrY, qrSize, qrSize);
 
-  // Text rechts
   const textX = qrX + qrSize + 8;
   const textMaxW = pageW - pad - textX;
 
@@ -86,9 +203,14 @@ export async function buildPdfForStudent(
     classNameToDisplay &&
     classNameToDisplay.trim()
   ) {
-    doc.text(`${tServer("pdf.class")} ${classNameToDisplay}`, textX, ty, {
-      maxWidth: textMaxW,
-    });
+    doc.text(
+      `${t("modals.generateQrModal.class")} ${classNameToDisplay}`,
+      textX,
+      ty,
+      {
+        maxWidth: textMaxW,
+      },
+    );
     ty += 7;
   }
 
@@ -97,7 +219,7 @@ export async function buildPdfForStudent(
     doc.setTextColor(0);
     doc.setFontSize(14);
     doc.text(
-      `${tServer("pdf.verificationCode")} ${s.verificationCode}`,
+      `${t("modals.generateQrModal.verificationCode")} ${s.verificationCode}`,
       textX,
       ty,
     );
@@ -108,7 +230,7 @@ export async function buildPdfForStudent(
   doc.setFont("helvetica", "normal");
   doc.setTextColor(120);
   doc.setFontSize(8);
-  doc.text(`${tServer("pdf.id")} ${shownId}`, textX, ty);
+  doc.text(`${t("modals.generateQrModal.id")} ${shownId}`, textX, ty);
   ty += 6;
 
   doc.setTextColor(0);
@@ -116,14 +238,30 @@ export async function buildPdfForStudent(
   const urlLines = doc.splitTextToSize(wizUrl, textMaxW);
   doc.text(urlLines, textX, ty);
 
-  // Footer
-  doc.setFontSize(9);
-  doc.setTextColor(100);
-  doc.text(
-    `${settings.pageSize} • ${isPortrait ? tServer("pdf.portrait") : tServer("pdf.landscape")}`,
+  // Render instruction box below the QR code section
+  const instructionStartY = qrY + qrSize + 2;
+  const baseUrl = extractBaseUrl(settings.wizardUrlTemplate);
+  renderInstructionBox(
+    doc,
+    instructionStartY,
+    pageW,
+    pageH,
     pad,
-    pageH - pad,
+    s.verificationCode || "",
+    baseUrl,
+    t,
   );
+
+  // Only show page label if not hidden (for preview purposes)
+  if (!settings.hidePageLabel) {
+    doc.setFontSize(9);
+    doc.setTextColor(100);
+    doc.text(
+      `${settings.pageSize} • ${isPortrait ? t("modals.generateQrModal.portrait") : t("modals.generateQrModal.landscape")}`,
+      pad,
+      pageH - pad,
+    );
+  }
   const classNameForFilename =
     s.currentClassName ||
     (s.currentClass && typeof s.currentClass === "object"
@@ -140,6 +278,947 @@ export async function buildPdfForStudent(
     pageH - pad,
     { align: "right" },
   );
+
+  return doc.output("blob");
+}
+
+/**
+ * Renders a single student's QR content onto the current page of a jsPDF document.
+ * This is an internal helper used by buildCombinedQrPdf to avoid code duplication.
+ */
+async function renderStudentQrContent(
+  doc: jsPDF,
+  s: Student,
+  settings: PdfSettings,
+): Promise<void> {
+  const { locale = "en" } = settings;
+  const t = (key: string) => i18next.t(key, { lng: locale });
+
+  const isPortrait = settings.orientation === "portrait";
+  const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
+
+  const pad = 12;
+  const innerH = pageH - pad * 2;
+  const headerH = 10;
+  const footerH = 8;
+  const contentY = pad + headerH + 4;
+  const contentH = innerH - headerH - footerH - 6;
+
+  doc.setFontSize(11);
+  doc.setFont("helvetica");
+  doc.text(t("modals.generateQrModal.onboardingWizard"), pad, pad + 7);
+
+  const sid = s._id || "";
+  const wizUrl = settings.wizardUrlTemplate.replace(
+    "{short-id}",
+    settings.shortenId ? sid.slice(0, 8) : sid,
+  );
+  const qrSize = Math.min(isPortrait ? 45 : 35, contentH);
+  const qrX = pad;
+  const qrY = contentY;
+  const qrData = await makeQrDataUrl(wizUrl);
+  doc.addImage(qrData, "PNG", qrX, qrY, qrSize, qrSize);
+
+  const textX = qrX + qrSize + 8;
+  const textMaxW = pageW - pad - textX;
+
+  doc.setFont("helvetica");
+  doc.setFontSize(18);
+  doc.text(`${s.firstName} ${s.lastName}`, textX, qrY + 6, {
+    maxWidth: textMaxW,
+  });
+
+  doc.setFont("helvetica");
+  doc.setFontSize(12);
+  let ty = qrY + 14;
+
+  const classNameToDisplay =
+    s.currentClassName ||
+    (s.currentClass && typeof s.currentClass === "object"
+      ? s.currentClass.name
+      : s.currentClass) ||
+    s.className;
+  if (
+    settings.includeClass &&
+    classNameToDisplay &&
+    classNameToDisplay.trim()
+  ) {
+    doc.text(
+      `${t("modals.generateQrModal.class")} ${classNameToDisplay}`,
+      textX,
+      ty,
+      {
+        maxWidth: textMaxW,
+      },
+    );
+    ty += 7;
+  }
+
+  if (s.verificationCode) {
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(0);
+    doc.setFontSize(14);
+    doc.text(
+      `${t("modals.generateQrModal.verificationCode")} ${s.verificationCode}`,
+      textX,
+      ty,
+    );
+    ty += 8;
+  }
+
+  const shownId = settings.shortenId ? sid.slice(0, 8) : sid;
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(120);
+  doc.setFontSize(8);
+  doc.text(`${t("modals.generateQrModal.id")} ${shownId}`, textX, ty);
+  ty += 6;
+
+  doc.setTextColor(0);
+  doc.setFontSize(9);
+  const urlLines = doc.splitTextToSize(wizUrl, textMaxW);
+  doc.text(urlLines, textX, ty);
+
+  // Render instruction box below the QR code section
+  const instructionStartY = qrY + qrSize + 2;
+  const baseUrl = extractBaseUrl(settings.wizardUrlTemplate);
+  renderInstructionBox(
+    doc,
+    instructionStartY,
+    pageW,
+    pageH,
+    pad,
+    s.verificationCode || "",
+    baseUrl,
+    t,
+  );
+
+  // Filename in bottom right
+  const classNameForFilename =
+    s.currentClassName ||
+    (s.currentClass && typeof s.currentClass === "object"
+      ? s.currentClass.name
+      : s.currentClass) ||
+    s.className;
+  const filenameClass =
+    settings.includeClass && classNameForFilename && classNameForFilename.trim()
+      ? `_${classNameForFilename}`
+      : "";
+  doc.text(
+    `${s.lastName}_${s.firstName}${filenameClass}.pdf`,
+    pageW - pad,
+    pageH - pad,
+    { align: "right" },
+  );
+}
+
+/**
+ * Builds a single combined PDF with multiple students, one per page.
+ * Used when exporting multiple students as a single printable document.
+ */
+export async function buildCombinedQrPdf(
+  students: Student[],
+  settings: PdfSettings,
+  onProgress?: (percent: number) => void,
+): Promise<Blob> {
+  const isPortrait = settings.orientation === "portrait";
+  const doc = new jsPDF({
+    orientation: isPortrait ? "portrait" : "landscape",
+    unit: "mm",
+    format: settings.pageSize.toLowerCase(),
+  });
+
+  for (let i = 0; i < students.length; i++) {
+    if (i > 0) {
+      doc.addPage();
+    }
+
+    await renderStudentQrContent(doc, students[i], settings);
+
+    if (onProgress) {
+      onProgress(Math.round(((i + 1) / students.length) * 100));
+    }
+  }
+
+  return doc.output("blob");
+}
+
+export type StudentDataPdfSettings = {
+  pageSize: "A4" | "A5";
+  orientation: "portrait" | "landscape";
+  locale?: string;
+  includeEmptyFields?: boolean;
+  translations?: {
+    title: string;
+    generatedOn: string;
+    pageOf: string;
+  };
+};
+
+type LayoutConfig = {
+  pageWidth: number;
+  pageHeight: number;
+  leftMargin: number;
+  rightMargin: number;
+  topMargin: number;
+  bottomMargin: number;
+  contentStart: number;
+  sectionGap: number;
+  fieldRowHeight: number;
+};
+
+type TranslateFunc = (key: string) => string;
+
+function formatDate(
+  date: Date | string | null | undefined,
+  locale: string,
+): string {
+  if (!date) return "";
+  const d = typeof date === "string" ? new Date(date) : date;
+  if (isNaN(d.getTime())) return "";
+  return d.toLocaleDateString(locale === "de" ? "de-DE" : "en-US", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+}
+
+function renderField(
+  doc: jsPDF,
+  label: string,
+  value: string | undefined | null,
+  y: number,
+  layout: LayoutConfig,
+  includeEmptyFields: boolean = false,
+): number {
+  if (!includeEmptyFields && (!value || value.toString().trim() === "")) {
+    return y;
+  }
+
+  const displayValue =
+    value && value.toString().trim() !== "" ? value.toString() : "—";
+
+  // Calculate 50/50 split
+  const availableWidth =
+    layout.pageWidth - layout.leftMargin - layout.rightMargin;
+  const splitPoint = layout.leftMargin + availableWidth / 2;
+  const labelMaxWidth = availableWidth / 2 - 5; // 5mm padding
+  const valueMaxWidth = availableWidth / 2 - 5; // 5mm padding
+
+  // Render label (left 50%)
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(10);
+  const labelLines = doc.splitTextToSize(`${label}:`, labelMaxWidth);
+  doc.text(labelLines, layout.leftMargin, y);
+
+  // Render value (right 50%)
+  doc.setFont("helvetica", "normal");
+  const valueLines = doc.splitTextToSize(displayValue, valueMaxWidth);
+  doc.text(valueLines, splitPoint, y);
+
+  // Calculate height based on whichever is taller
+  const maxLines = Math.max(labelLines.length, valueLines.length);
+  return y + layout.fieldRowHeight * maxLines;
+}
+
+function checkPageBreak(
+  doc: jsPDF,
+  currentY: number,
+  layout: LayoutConfig,
+  requiredSpace: number = 30,
+): number {
+  if (currentY + requiredSpace > layout.pageHeight - layout.bottomMargin) {
+    doc.addPage();
+    return layout.contentStart;
+  }
+  return currentY;
+}
+
+function renderGeneralSection(
+  doc: jsPDF,
+  student: FullStudent,
+  t: TranslateFunc,
+  startY: number,
+  layout: LayoutConfig,
+  includeEmptyFields: boolean,
+): number {
+  let y = checkPageBreak(doc, startY, layout);
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(14);
+  doc.text(t("onboarding.summary.generalInfo"), layout.leftMargin, y);
+  y += 8;
+
+  y = renderField(
+    doc,
+    t("onboarding.general.firstName"),
+    student.firstName,
+    y,
+    layout,
+    includeEmptyFields,
+  );
+  y = renderField(
+    doc,
+    t("onboarding.general.lastName"),
+    student.lastName,
+    y,
+    layout,
+    includeEmptyFields,
+  );
+  y = renderField(
+    doc,
+    t("onboarding.general.birthName"),
+    student.birthName,
+    y,
+    layout,
+    includeEmptyFields,
+  );
+  y = renderField(
+    doc,
+    t("onboarding.general.gender"),
+    student.gender,
+    y,
+    layout,
+    includeEmptyFields,
+  );
+  y = renderField(
+    doc,
+    t("onboarding.general.birthDate"),
+    formatDate(
+      student.dateOfBirth,
+      t("general.Language") === "English" ? "en" : "de",
+    ),
+    y,
+    layout,
+    includeEmptyFields,
+  );
+  y = renderField(
+    doc,
+    t("onboarding.general.birthPlace"),
+    student.birthplace,
+    y,
+    layout,
+    includeEmptyFields,
+  );
+  y = renderField(
+    doc,
+    t("onboarding.general.birthCountry"),
+    student.birthCountry,
+    y,
+    layout,
+    includeEmptyFields,
+  );
+  y = renderField(
+    doc,
+    t("onboarding.general.religion"),
+    student.religion,
+    y,
+    layout,
+    includeEmptyFields,
+  );
+  y = renderField(
+    doc,
+    t("onboarding.general.nationality1"),
+    student.nationality,
+    y,
+    layout,
+    includeEmptyFields,
+  );
+  y = renderField(
+    doc,
+    t("onboarding.general.nationality2"),
+    student.secondNationality,
+    y,
+    layout,
+    includeEmptyFields,
+  );
+  y = renderField(
+    doc,
+    t("onboarding.general.schoolEntryDate"),
+    formatDate(
+      student.schoolEntryDate,
+      t("general.Language") === "English" ? "en" : "de",
+    ),
+    y,
+    layout,
+    includeEmptyFields,
+  );
+
+  return y + layout.sectionGap;
+}
+
+function renderOriginSection(
+  doc: jsPDF,
+  student: FullStudent,
+  t: TranslateFunc,
+  startY: number,
+  layout: LayoutConfig,
+  includeEmptyFields: boolean,
+): number {
+  if (
+    !includeEmptyFields &&
+    !student.familyLanguage &&
+    !student.immigrationYear
+  ) {
+    return startY;
+  }
+
+  let y = checkPageBreak(doc, startY, layout);
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(14);
+  doc.text(t("onboarding.summary.origin"), layout.leftMargin, y);
+  y += 8;
+
+  y = renderField(
+    doc,
+    t("onboarding.origin.familyLanguage"),
+    student.familyLanguage,
+    y,
+    layout,
+    includeEmptyFields,
+  );
+  y = renderField(
+    doc,
+    t("onboarding.origin.yearOfImmigration"),
+    student.immigrationYear?.toString(),
+    y,
+    layout,
+    includeEmptyFields,
+  );
+
+  return y + layout.sectionGap;
+}
+
+function renderAddressSection(
+  doc: jsPDF,
+  student: FullStudent,
+  t: TranslateFunc,
+  startY: number,
+  layout: LayoutConfig,
+  includeEmptyFields: boolean,
+): number {
+  let y = checkPageBreak(doc, startY, layout);
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(14);
+  doc.text(t("onboarding.summary.address"), layout.leftMargin, y);
+  y += 8;
+
+  const streetValue = student.address?.street;
+  const cityValue =
+    student.address?.zip && student.address?.city
+      ? `${student.address.zip} ${student.address.city}`
+      : student.address?.city;
+
+  y = renderField(
+    doc,
+    t("onboarding.address.street"),
+    streetValue,
+    y,
+    layout,
+    includeEmptyFields,
+  );
+  y = renderField(
+    doc,
+    t("onboarding.address.city"),
+    cityValue,
+    y,
+    layout,
+    includeEmptyFields,
+  );
+  y = renderField(
+    doc,
+    t("onboarding.address.phone"),
+    student.phone,
+    y,
+    layout,
+    includeEmptyFields,
+  );
+  y = renderField(
+    doc,
+    t("onboarding.address.email"),
+    student.email,
+    y,
+    layout,
+    includeEmptyFields,
+  );
+
+  return y + layout.sectionGap;
+}
+
+function renderContactPersonsSection(
+  doc: jsPDF,
+  student: FullStudent,
+  t: TranslateFunc,
+  startY: number,
+  layout: LayoutConfig,
+  includeEmptyFields: boolean,
+): number {
+  if (!student.contactPersons || student.contactPersons.length === 0) {
+    return startY;
+  }
+
+  let y = checkPageBreak(doc, startY, layout);
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(14);
+  doc.text(t("onboarding.summary.contactPerson"), layout.leftMargin, y);
+  y += 8;
+
+  student.contactPersons.forEach((person, index) => {
+    y = checkPageBreak(doc, y, layout);
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    doc.text(
+      t(`onboarding.legalGuardian.contactPerson${index + 1}`),
+      layout.leftMargin + 2,
+      y,
+    );
+    y += 6;
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+
+    y = renderField(
+      doc,
+      t("onboarding.legalGuardian.type"),
+      person.type,
+      y,
+      layout,
+      includeEmptyFields,
+    );
+    const fullName = `${person.firstName} ${person.lastName}`;
+    y = renderField(
+      doc,
+      t("onboarding.legalGuardian.name"),
+      fullName,
+      y,
+      layout,
+      includeEmptyFields,
+    );
+    y = renderField(
+      doc,
+      t("onboarding.legalGuardian.mobile"),
+      person.mobile,
+      y,
+      layout,
+      includeEmptyFields,
+    );
+    y = renderField(
+      doc,
+      t("onboarding.legalGuardian.phone"),
+      person.phone,
+      y,
+      layout,
+      includeEmptyFields,
+    );
+
+    if (person.address) {
+      const fullAddress = [
+        person.address.street,
+        person.address.zip && person.address.city
+          ? `${person.address.zip} ${person.address.city}`
+          : person.address.city,
+      ]
+        .filter(Boolean)
+        .join(", ");
+      y = renderField(
+        doc,
+        t("onboarding.legalGuardian.address"),
+        fullAddress,
+        y,
+        layout,
+        includeEmptyFields,
+      );
+    }
+
+    y += 3;
+  });
+
+  return y + layout.sectionGap;
+}
+
+function renderEducationSection(
+  doc: jsPDF,
+  student: FullStudent,
+  t: TranslateFunc,
+  startY: number,
+  layout: LayoutConfig,
+  includeEmptyFields: boolean,
+): number {
+  if (!includeEmptyFields && !student.previousSchool) {
+    return startY;
+  }
+
+  let y = checkPageBreak(doc, startY, layout);
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(14);
+  doc.text(t("onboarding.summary.education"), layout.leftMargin, y);
+  y += 8;
+
+  y = renderField(
+    doc,
+    t("onboarding.preEducation.previousSchool"),
+    student.previousSchool,
+    y,
+    layout,
+    includeEmptyFields,
+  );
+  y = renderField(
+    doc,
+    t("onboarding.preEducation.schoolType"),
+    student.previousSchoolType,
+    y,
+    layout,
+    includeEmptyFields,
+  );
+  y = renderField(
+    doc,
+    t("onboarding.preEducation.level"),
+    student.previousSchoolLevel,
+    y,
+    layout,
+    includeEmptyFields,
+  );
+  y = renderField(
+    doc,
+    t("onboarding.preEducation.degrees"),
+    student.degrees,
+    y,
+    layout,
+    includeEmptyFields,
+  );
+
+  return y + layout.sectionGap;
+}
+
+function renderVocationalSection(
+  doc: jsPDF,
+  student: FullStudent,
+  t: TranslateFunc,
+  startY: number,
+  layout: LayoutConfig,
+  includeEmptyFields: boolean,
+): number {
+  if (!includeEmptyFields && !student.profession && !student.employer) {
+    return startY;
+  }
+
+  let y = checkPageBreak(doc, startY, layout);
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(14);
+  doc.text(t("onboarding.summary.training"), layout.leftMargin, y);
+  y += 8;
+
+  y = renderField(
+    doc,
+    t("onboarding.training.profession"),
+    student.profession,
+    y,
+    layout,
+    includeEmptyFields,
+  );
+  y = renderField(
+    doc,
+    t("onboarding.training.startDate"),
+    formatDate(
+      student.trainingStartDate,
+      t("general.Language") === "English" ? "en" : "de",
+    ),
+    y,
+    layout,
+    includeEmptyFields,
+  );
+
+  if (student.employer) {
+    y = checkPageBreak(doc, y, layout);
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    doc.text(t("onboarding.training.company"), layout.leftMargin + 2, y);
+    y += 6;
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+
+    y = renderField(
+      doc,
+      t("onboarding.training.companyName"),
+      student.employer.companyName,
+      y,
+      layout,
+      includeEmptyFields,
+    );
+    y = renderField(
+      doc,
+      t("onboarding.address.street"),
+      student.employer.address,
+      y,
+      layout,
+      includeEmptyFields,
+    );
+    y = renderField(
+      doc,
+      t("onboarding.training.phone"),
+      student.employer.contactPhone,
+      y,
+      layout,
+      includeEmptyFields,
+    );
+    y = renderField(
+      doc,
+      t("onboarding.training.email"),
+      student.employer.contactEmail,
+      y,
+      layout,
+      includeEmptyFields,
+    );
+
+    if (student.employer.contactName) {
+      y += 3;
+      y = checkPageBreak(doc, y, layout);
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(11);
+      doc.text(
+        t("onboarding.summary.companyContact"),
+        layout.leftMargin + 2,
+        y,
+      );
+      y += 6;
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+
+      y = renderField(
+        doc,
+        t("onboarding.companyContact.salutation"),
+        student.employer.contactSalutation,
+        y,
+        layout,
+        includeEmptyFields,
+      );
+      y = renderField(
+        doc,
+        t("onboarding.general.name"),
+        student.employer.contactName,
+        y,
+        layout,
+        includeEmptyFields,
+      );
+      y = renderField(
+        doc,
+        t("onboarding.companyContact.phone"),
+        student.employer.contactPhone,
+        y,
+        layout,
+        includeEmptyFields,
+      );
+    }
+  }
+
+  return y + layout.sectionGap;
+}
+
+function renderAgreementsSection(
+  doc: jsPDF,
+  student: FullStudent,
+  t: TranslateFunc,
+  startY: number,
+  layout: LayoutConfig,
+): number {
+  if (!student.agreements) {
+    return startY;
+  }
+
+  let y = checkPageBreak(doc, startY, layout);
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(14);
+  doc.text(t("onboarding.summary.agreements"), layout.leftMargin, y);
+  y += 8;
+
+  // Map database keys to translation keys
+  const agreementKeyMap: Record<string, string> = {
+    dataProtection: "datenschutz",
+    classParticipation: "teilnahmeunterricht",
+    schoolRules: "schulordnung",
+    imageRights: "personenabbildung",
+    teamsUsage: "teamsnutzung",
+  };
+
+  const agreementsList = [
+    { key: "dataProtection", value: student.agreements.dataProtection },
+    { key: "classParticipation", value: student.agreements.classParticipation },
+    { key: "schoolRules", value: student.agreements.schoolRules },
+    { key: "imageRights", value: student.agreements.imageRights },
+    { key: "teamsUsage", value: student.agreements.teamsUsage },
+  ];
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+
+  // Calculate 50/50 split for consistent layout
+  const availableWidth =
+    layout.pageWidth - layout.leftMargin - layout.rightMargin;
+  const splitPoint = layout.leftMargin + availableWidth / 2;
+
+  agreementsList.forEach(({ key, value }) => {
+    y = checkPageBreak(doc, y, layout);
+
+    const translationKey = agreementKeyMap[key] || key;
+    const label = t(`onboarding.agreements.${translationKey}`);
+
+    // Explicit boolean check to ensure correct status
+    const isAccepted = value === true;
+    const statusText = isAccepted
+      ? t("general.Accepted")
+      : t("general.NotAccepted");
+
+    // Render label (left 50%) without Unicode character
+    doc.setFont("helvetica", "bold");
+    doc.text(`${label}:`, layout.leftMargin + 4, y);
+
+    // Render status (right 50%) with visual distinction
+    doc.setFont("helvetica", isAccepted ? "bold" : "normal");
+    doc.text(statusText, splitPoint, y);
+
+    doc.setFont("helvetica", "normal");
+    y += layout.fieldRowHeight;
+  });
+
+  return y + layout.sectionGap;
+}
+
+export async function buildStudentDataPdf(
+  student: FullStudent,
+  settings: StudentDataPdfSettings,
+): Promise<Blob> {
+  const { locale = "en", translations } = settings;
+  const t = (key: string) => i18next.t(key, { lng: locale });
+
+  const pdfTitle =
+    translations?.title && !translations.title.includes("pdf.")
+      ? translations.title
+      : locale === "de"
+        ? "Schüler-Anmeldedokument"
+        : "Student Onboarding Document";
+
+  const generatedOnLabel =
+    translations?.generatedOn && !translations.generatedOn.includes("pdf.")
+      ? translations.generatedOn
+      : locale === "de"
+        ? "Erstellt am"
+        : "Generated on";
+
+  const isPortrait = settings.orientation === "portrait";
+  const doc = new jsPDF({
+    orientation: isPortrait ? "portrait" : "landscape",
+    unit: "mm",
+    format: settings.pageSize.toLowerCase(),
+  });
+
+  const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
+
+  const layout: LayoutConfig = {
+    pageWidth: pageW,
+    pageHeight: pageH,
+    leftMargin: 15,
+    rightMargin: 15,
+    topMargin: 15,
+    bottomMargin: 25,
+    contentStart: 38,
+    sectionGap: 10,
+    fieldRowHeight: 7,
+  };
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(16);
+  doc.text(pdfTitle, layout.leftMargin, layout.topMargin + 5);
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+  doc.text(
+    `${student.firstName} ${student.lastName}`,
+    layout.leftMargin,
+    layout.topMargin + 12,
+  );
+
+  const includeEmpty = settings.includeEmptyFields ?? false;
+
+  let currentY = layout.contentStart;
+
+  currentY = renderGeneralSection(
+    doc,
+    student,
+    t,
+    currentY,
+    layout,
+    includeEmpty,
+  );
+  currentY = renderOriginSection(
+    doc,
+    student,
+    t,
+    currentY,
+    layout,
+    includeEmpty,
+  );
+  currentY = renderAddressSection(
+    doc,
+    student,
+    t,
+    currentY,
+    layout,
+    includeEmpty,
+  );
+  currentY = renderContactPersonsSection(
+    doc,
+    student,
+    t,
+    currentY,
+    layout,
+    includeEmpty,
+  );
+  currentY = renderEducationSection(
+    doc,
+    student,
+    t,
+    currentY,
+    layout,
+    includeEmpty,
+  );
+  currentY = renderVocationalSection(
+    doc,
+    student,
+    t,
+    currentY,
+    layout,
+    includeEmpty,
+  );
+  renderAgreementsSection(doc, student, t, currentY, layout);
+
+  const totalPages = doc.internal.pages.length - 1;
+
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i);
+
+    doc.setFontSize(8);
+    doc.setTextColor(120);
+
+    const dateText = `${generatedOnLabel}: ${formatDate(new Date(), locale)}`;
+    doc.text(dateText, layout.leftMargin, pageH - 10, { align: "left" });
+
+    const pageText = `${i} / ${totalPages}`;
+    doc.text(pageText, pageW - layout.rightMargin, pageH - 10, {
+      align: "right",
+    });
+  }
 
   return doc.output("blob");
 }

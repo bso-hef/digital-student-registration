@@ -164,6 +164,7 @@ const StudentClassSettingsTab = () => {
         open={openStudentAddModal}
         onClose={handleAddStudentModalClose}
         onAddStudents={handleAddStudents}
+        classId={classId as string}
       />
       <ConfirmationModal
         open={openStudentRemoveModal}

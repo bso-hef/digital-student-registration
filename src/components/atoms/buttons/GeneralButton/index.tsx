@@ -61,17 +61,24 @@ const GeneralButtonContainer = styled(Button, {
     height: fullHeight ? "44px" : undefined,
     maxHeight: maxHeight || "44px",
     maxWidth: maxWidth || "100%",
-    "&:hover": {
-      transition: "background-color 0.3s ease-in-out",
-      cursor: disabled ? "not-allowed" : "pointer",
-      backgroundColor: disabled
-        ? theme.palette.surface.button.disabled
-        : isPrimary
-          ? theme.palette.surface.button.hover
-          : theme.palette.surface.button.hoverLight,
-      color: isPrimary
-        ? theme.palette.text.contrast
-        : theme.palette.text.default,
+    cursor: disabled ? "not-allowed" : "pointer",
+    // Mobile touch optimizations
+    touchAction: "manipulation", // Removes 300ms click delay
+    WebkitTapHighlightColor: "transparent", // Removes iOS tap flash
+    userSelect: "none", // Prevents text selection on long press
+    "@media (hover: hover) and (pointer: fine)": {
+      "&:hover": {
+        transition: "background-color 0.3s ease-in-out",
+        cursor: disabled ? "not-allowed" : "pointer",
+        backgroundColor: disabled
+          ? theme.palette.surface.button.disabled
+          : isPrimary
+            ? theme.palette.surface.button.hover
+            : theme.palette.surface.button.hoverLight,
+        color: isPrimary
+          ? theme.palette.text.contrast
+          : theme.palette.text.default,
+      },
     },
   }),
 );
@@ -151,14 +158,25 @@ const GeneralButton: React.FC<GeneralButtonProps> = ({
 }) => {
   const { isMobile, isMobileHorizontal, isTablet } = useDeviceTypeDetection();
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
+    if ((e.key === "Enter" || e.key === " ") && !disabled) {
+      e.preventDefault();
+      onAction?.(e as unknown as React.MouseEvent<HTMLElement>);
+    }
+  };
+
   const eventProps =
     isMobile || isTablet
       ? {
-          onTouchEnd: (e: React.TouchEvent<HTMLElement>) => onAction?.(e),
-          onClick: (e: React.MouseEvent<HTMLElement>) => onAction?.(e),
+          onTouchEnd: (e: React.TouchEvent<HTMLElement>) => {
+            e.preventDefault(); // Prevent synthetic click event
+            onAction?.(e);
+          },
+          onKeyDown: handleKeyDown,
         }
       : {
           onClick: (e: React.MouseEvent<HTMLElement>) => onAction?.(e),
+          onKeyDown: handleKeyDown,
         };
 
   const muiButtonProps = { ...otherProps, ...eventProps };
@@ -171,6 +189,7 @@ const GeneralButton: React.FC<GeneralButtonProps> = ({
       color={color}
       disabled={disabled}
       disableElevation={disableElevation}
+      disableTouchRipple={true}
       fullWidth={fullWidth}
       isMobile={isMobile}
       isMobileHorizontal={isMobileHorizontal}

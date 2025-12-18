@@ -18,19 +18,13 @@ export interface AuditLogData {
   userEmail?: string;
 }
 
-/**
- * Creates an audit log entry in the database
- * This function is designed to never throw errors to avoid breaking main operations
- */
 export async function createAuditLog(
   data: AuditLogData,
   request?: NextRequest,
 ): Promise<void> {
   try {
-    // Ensure database connection
     await dbConnect();
 
-    // Check if audit logging is enabled
     type AppSettingsType = {
       audit?: {
         logStudentChanges?: boolean;
@@ -41,8 +35,6 @@ export async function createAuditLog(
 
     let settings: AppSettingsType | null = null;
     try {
-      // fetch settings and cast to the expected shape to avoid ambiguous overloads
-      // Use a typed assertion with a findOne signature instead of `any` to satisfy lint rules
       const result = await (
         AppSettings as { findOne: () => Promise<AppSettingsType | null> }
       ).findOne();
@@ -53,12 +45,10 @@ export async function createAuditLog(
 
     const auditSettings = settings?.audit;
 
-    // Default to enabled if settings don't exist
     const logStudentChanges = auditSettings?.logStudentChanges ?? true;
     const logClassChanges = auditSettings?.logClassChanges ?? true;
     const logSettingsChanges = auditSettings?.logSettingsChanges ?? true;
 
-    // Check if audit logging is enabled for this category
     if (data.category === "student" && !logStudentChanges) {
       logger.info("Student audit logging is disabled, skipping log creation");
       return;
@@ -72,7 +62,6 @@ export async function createAuditLog(
       return;
     }
 
-    // Extract request information
     let ipAddress = "unknown";
     let userAgent = "unknown";
 
@@ -84,7 +73,6 @@ export async function createAuditLog(
       userAgent = request.headers.get("user-agent") || "unknown";
     }
 
-    // Create log entry
     const logEntry = {
       action: data.action,
       category: data.category,
@@ -107,7 +95,6 @@ export async function createAuditLog(
       status: data.status,
     });
   } catch (error) {
-    // Log the error but don't throw - audit logging should not break main operations
     logger.error("Failed to create audit log", {
       error: error instanceof Error ? error.message : String(error),
       action: data.action,

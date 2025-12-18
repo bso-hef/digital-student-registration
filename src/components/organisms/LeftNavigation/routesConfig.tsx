@@ -2,12 +2,13 @@ import React from "react";
 
 import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
 import ManageAccountsRoundedIcon from "@mui/icons-material/ManageAccountsRounded";
+import MonitorHeartRoundedIcon from "@mui/icons-material/MonitorHeartRounded";
+import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import RoomPreferencesRoundedIcon from "@mui/icons-material/RoomPreferencesRounded";
 import SchoolRoundedIcon from "@mui/icons-material/SchoolRounded";
 import SecurityRoundedIcon from "@mui/icons-material/SecurityRounded";
 import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
 import SyncAltRoundedIcon from "@mui/icons-material/SyncAltRounded";
-import VpnKeyRoundedIcon from "@mui/icons-material/VpnKeyRounded";
 import { TFunction } from "i18next";
 
 export const listOfRoutes = (t: TFunction) => {
@@ -40,6 +41,11 @@ export const listOfRoutes = (t: TFunction) => {
       icon: <SettingsRoundedIcon />,
       children: [
         {
+          path: "/admin/settings/profile",
+          displayValue: t("navigation.profileSettings"),
+          icon: <PersonRoundedIcon />,
+        },
+        {
           path: "/admin/settings/onboarding",
           displayValue: t("navigation.onboardingSettings"),
           icon: <RoomPreferencesRoundedIcon />,
@@ -50,9 +56,9 @@ export const listOfRoutes = (t: TFunction) => {
           icon: <SecurityRoundedIcon />,
         },
         {
-          path: "/admin/settings/integrations",
-          displayValue: t("navigation.integrationSettings"),
-          icon: <VpnKeyRoundedIcon />,
+          path: "/admin/settings/system",
+          displayValue: t("navigation.systemSettings"),
+          icon: <MonitorHeartRoundedIcon />,
         },
         {
           path: "/admin/settings/audit",

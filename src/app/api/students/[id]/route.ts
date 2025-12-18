@@ -1,7 +1,9 @@
 import { auth } from "@/lib/auth/auth";
 import { dbConnect } from "@/lib/config/mongo";
 import Logger from "@/lib/server-logger";
+import Class from "@/models/Class";
 import Student from "@/models/Student";
+import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
@@ -91,11 +93,113 @@ export async function PATCH(
       return NextResponse.json({ error: "Student not found" }, { status: 404 });
     }
 
-    // Update fields
+    // Check if currentClass is changing
+    const isClassChanging = body.hasOwnProperty("currentClass");
+    const oldClassId = isClassChanging
+      ? student.currentClass?.toString() || null
+      : null;
+    const newClassId = isClassChanging
+      ? body.currentClass?.toString() || null
+      : null;
+
+    // Only process if class is actually changing
+    const shouldUpdateCounts = isClassChanging && oldClassId !== newClassId;
+
+    // Fetch new class data if we're assigning a class (for schoolYear calculation)
+    let newClassData: { schoolYearFrom: Date; schoolYearTo: Date } | null =
+      null;
+    if (shouldUpdateCounts && newClassId) {
+      newClassData = (await Class.findById(newClassId).lean()) as {
+        schoolYearFrom: Date;
+        schoolYearTo: Date;
+      } | null;
+      if (!newClassData) {
+        return NextResponse.json(
+          { error: "New class not found" },
+          { status: 404 },
+        );
+      }
+    }
+
+    // Update student fields
     Object.assign(student, body);
 
-    // Save to trigger pre-save hooks (including verification code generation)
+    // Update classHistory if class changed
+    if (shouldUpdateCounts) {
+      const now = new Date();
+
+      // Close old class history entry
+      if (oldClassId && student.classHistory) {
+        const oldEntry = student.classHistory.find(
+          (entry: {
+            classId?: mongoose.Types.ObjectId | string;
+            endDate?: Date | null;
+          }) => entry.classId?.toString() === oldClassId && !entry.endDate,
+        );
+        if (oldEntry) {
+          oldEntry.endDate = now;
+        }
+      }
+
+      // Add new class history entry
+      if (newClassId && newClassData) {
+        // Calculate schoolYear string from class dates
+        const schoolYearFrom = new Date(
+          newClassData.schoolYearFrom,
+        ).getFullYear();
+        const schoolYearTo = new Date(newClassData.schoolYearTo).getFullYear();
+        const schoolYear = `${schoolYearFrom}/${schoolYearTo}`;
+
+        if (!student.classHistory) {
+          student.classHistory = [];
+        }
+        student.classHistory.push({
+          classId: new mongoose.Types.ObjectId(newClassId),
+          schoolYear,
+          startDate: now,
+          endDate: null,
+          note: "",
+        });
+      }
+    }
+
+    // Save student to trigger pre-save hooks (including verification code generation)
     await student.save();
+
+    // Update class counts atomically using bulkWrite
+    if (shouldUpdateCounts) {
+      const bulkOps: Array<{
+        updateOne: {
+          filter: { _id: mongoose.Types.ObjectId };
+          update: { $inc: { studentCount: number } };
+        };
+      }> = [];
+
+      // Decrement old class count
+      if (oldClassId) {
+        bulkOps.push({
+          updateOne: {
+            filter: { _id: new mongoose.Types.ObjectId(oldClassId) },
+            update: { $inc: { studentCount: -1 } },
+          },
+        });
+      }
+
+      // Increment new class count
+      if (newClassId) {
+        bulkOps.push({
+          updateOne: {
+            filter: { _id: new mongoose.Types.ObjectId(newClassId) },
+            update: { $inc: { studentCount: 1 } },
+          },
+        });
+      }
+
+      // Execute all count updates atomically
+      if (bulkOps.length > 0) {
+        await Class.bulkWrite(bulkOps);
+      }
+    }
 
     // Populate after save
     await student.populate("currentClass");
