@@ -45,8 +45,8 @@ WORKDIR C:\app
 
 COPY package.json yarn.lock .\
 
-# Install Yarn
-RUN npm install -g yarn
+# Install Yarn with version pinning for consistency
+RUN npm install -g yarn@1.22.22
 
 # Install all dependencies (including dev)
 RUN yarn install --frozen-lockfile --production=false
@@ -58,8 +58,7 @@ FROM base AS builder
 
 WORKDIR C:\app
 
-# Install Yarn
-RUN npm install -g yarn
+# Yarn already installed in builder-deps stage, no need to reinstall
 
 # Copy dependencies from builder-deps stage
 COPY --from=builder-deps C:\app\node_modules .\node_modules

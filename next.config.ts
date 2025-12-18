@@ -1,6 +1,37 @@
 import type { NextConfig } from "next";
 
 /**
+ * Parse URL from environment variable to extract components
+ */
+function parseAppUrl(urlString: string | undefined): {
+  protocol: "http" | "https";
+  hostname: string;
+  port: string;
+} {
+  const defaultUrl = "http://localhost:3000";
+  const url = urlString || defaultUrl;
+
+  try {
+    const parsed = new URL(url);
+    return {
+      protocol: parsed.protocol.replace(":", "") as "http" | "https",
+      hostname: parsed.hostname,
+      port: parsed.port || (parsed.protocol === "https:" ? "443" : "80"),
+    };
+  } catch (error) {
+    console.warn(`Failed to parse NEXT_PUBLIC_APP_URL: ${url}. Using defaults.`);
+    return {
+      protocol: "http",
+      hostname: "localhost",
+      port: "3000",
+    };
+  }
+}
+
+// Get URL components from environment variable
+const appUrl = parseAppUrl(process.env.NEXT_PUBLIC_APP_URL);
+
+/**
  * @type {import('next').NextConfig}
  */
 const nextConfig: NextConfig = {
@@ -60,16 +91,18 @@ const nextConfig: NextConfig = {
 
   images: {
     remotePatterns: [
+      // Dynamic configuration based on NEXT_PUBLIC_APP_URL
       {
-        protocol: "http",
-        hostname: "localhost",
-        port: "3000",
+        protocol: appUrl.protocol,
+        hostname: appUrl.hostname,
+        port: appUrl.port,
         pathname: "/images/**",
       },
+      // Also allow the opposite protocol for flexibility (e.g., local dev with https, prod with http proxy)
       {
-        protocol: "https",
-        hostname: "localhost",
-        port: "3000",
+        protocol: appUrl.protocol === "https" ? "http" : "https",
+        hostname: appUrl.hostname,
+        port: appUrl.port,
         pathname: "/images/**",
       },
     ],

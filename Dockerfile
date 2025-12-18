@@ -4,8 +4,8 @@
 # Stage 1: Base image with Node.js and Yarn
 FROM node:22.20.0-alpine AS base
 
-RUN apk add --no-cache libc6-compat && \
-    npm install -g yarn@1.22.22
+# Yarn 1.22.22 is already pre-installed in node:22.20.0-alpine
+# No need to install libc6-compat or yarn again
 
 WORKDIR /app
 
@@ -49,6 +49,10 @@ COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/package.json ./
+
+# Create logs directory with proper ownership
+RUN mkdir -p ./logs/server-logs && \
+    chown -R nextjs:nodejs ./logs
 
 USER nextjs
 

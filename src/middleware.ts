@@ -12,20 +12,24 @@ export default auth((req) => {
   const isSetupComplete = getSetupCookieValue(req.cookies);
   const { pathname } = req.nextUrl;
 
+  // Get the base URL from environment or construct from request
+  // Use NEXT_PUBLIC_APP_URL to ensure consistent redirects with configured port
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || req.nextUrl.origin;
+
   // If setup is NOT complete
   if (!isSetupComplete) {
     // Allow access to setup page
     if (pathname === "/setup") {
       return NextResponse.next();
     }
-    // Redirect all other routes to setup
-    return NextResponse.redirect(new URL("/setup", req.url));
+    // Redirect all other routes to setup using configured app URL
+    return NextResponse.redirect(new URL("/setup", baseUrl));
   }
 
   // If setup IS complete and user tries to access setup page
   if (isSetupComplete && pathname === "/setup") {
-    // Redirect to login page
-    return NextResponse.redirect(new URL("/login", req.url));
+    // Redirect to login page using configured app URL
+    return NextResponse.redirect(new URL("/login", baseUrl));
   }
 
   // For all other routes, NextAuth middleware handles authentication checks
