@@ -4,12 +4,12 @@ import {
   calculatePasswordStrength,
   validatePasswordStrength,
 } from "@/utils/validation.utils";
-import CasinoIcon from "@mui/icons-material/Casino";
-import CheckIcon from "@mui/icons-material/Check";
-import CloseIcon from "@mui/icons-material/Close";
-import HttpsIcon from "@mui/icons-material/Https";
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import CasinoRoundedIcon from "@mui/icons-material/CasinoRounded";
+import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import HttpsRoundedIcon from "@mui/icons-material/HttpsRounded";
+import VisibilityOffRounded from "@mui/icons-material/VisibilityOffRounded";
+import VisibilityRounded from "@mui/icons-material/VisibilityRounded";
 import {
   Box,
   IconButton,
@@ -223,7 +223,7 @@ const PasswordInput: React.FC<PasswordInputProps> = memo(
           InputProps={{
             startAdornment: showPasswordStartIcon ? (
               <InputAdornment position="start">
-                <HttpsIcon
+                <HttpsRoundedIcon
                   sx={{ color: (theme) => theme.palette.text.secondary }}
                 />
               </InputAdornment>
@@ -237,7 +237,7 @@ const PasswordInput: React.FC<PasswordInputProps> = memo(
                     sx={{ color: (theme) => theme.palette.text.secondary }}
                     aria-label={t("general.generatePassword")}
                   >
-                    <CasinoIcon />
+                    <CasinoRoundedIcon />
                   </IconButton>
                 )}
                 {showEyeIcon && (
@@ -248,7 +248,11 @@ const PasswordInput: React.FC<PasswordInputProps> = memo(
                     edge="end"
                     sx={{ color: (theme) => theme.palette.text.secondary }}
                   >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                    {showPassword ? (
+                      <VisibilityOffRounded />
+                    ) : (
+                      <VisibilityRounded />
+                    )}
                   </IconButton>
                 )}
               </InputAdornment>
@@ -317,11 +321,11 @@ const PasswordInput: React.FC<PasswordInputProps> = memo(
                   }}
                 >
                   {passwordValidation[key] ? (
-                    <CheckIcon
+                    <CheckRoundedIcon
                       sx={{ color: "success.main", mr: 1, fontSize: 20 }}
                     />
                   ) : (
-                    <CloseIcon
+                    <CloseRoundedIcon
                       sx={{ color: "error.main", mr: 1, fontSize: 20 }}
                     />
                   )}

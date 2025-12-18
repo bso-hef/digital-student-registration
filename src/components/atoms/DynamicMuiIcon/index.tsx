@@ -1,12 +1,12 @@
 import React, { useMemo } from "react";
 
-import CameraAltIcon from "@mui/icons-material/CameraAlt";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import GavelIcon from "@mui/icons-material/Gavel";
-import GroupsIcon from "@mui/icons-material/Groups";
-import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-import PrivacyTipIcon from "@mui/icons-material/PrivacyTip";
-import SchoolIcon from "@mui/icons-material/School";
+import CameraAltRoundedIcon from "@mui/icons-material/CameraAltRounded";
+import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
+import GavelRoundedIcon from "@mui/icons-material/GavelRounded";
+import GroupsRoundedIcon from "@mui/icons-material/GroupsRounded";
+import HelpOutlineRoundedIcon from "@mui/icons-material/HelpOutlineRounded";
+import PrivacyTipRoundedIcon from "@mui/icons-material/PrivacyTipRounded";
+import SchoolRoundedIcon from "@mui/icons-material/SchoolRounded";
 import { SvgIconProps } from "@mui/material";
 
 /**
@@ -14,14 +14,14 @@ import { SvgIconProps } from "@mui/material";
  * Add more icons here as needed for agreements
  */
 const ICON_MAP: Record<string, React.ComponentType<SvgIconProps>> = {
-  PrivacyTip: PrivacyTipIcon,
-  School: SchoolIcon,
-  Gavel: GavelIcon,
-  CameraAlt: CameraAltIcon,
-  Groups: GroupsIcon,
-  CheckCircle: CheckCircleIcon,
+  PrivacyTip: PrivacyTipRoundedIcon,
+  School: SchoolRoundedIcon,
+  Gavel: GavelRoundedIcon,
+  CameraAlt: CameraAltRoundedIcon,
+  Groups: GroupsRoundedIcon,
+  CheckCircle: CheckCircleRoundedIcon,
   // Fallback icon
-  HelpOutline: HelpOutlineIcon,
+  HelpOutline: HelpOutlineRoundedIcon,
 };
 
 interface DynamicMuiIconProps extends SvgIconProps {

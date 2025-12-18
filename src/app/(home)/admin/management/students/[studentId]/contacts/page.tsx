@@ -9,8 +9,8 @@ import { updateStudent } from "@/store/actions/studentActions";
 import { AppDispatch } from "@/store/store";
 import { ContactPerson } from "@/types/db";
 import { applicationScrollbar } from "@/utils/styling.utils";
-import AddIcon from "@mui/icons-material/Add";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import {
   Box,
   Button,
@@ -217,7 +217,7 @@ const ContactsStudentSettingsTab = () => {
                                 size="small"
                                 color="error"
                               >
-                                <DeleteOutlineIcon />
+                                <DeleteOutlineRoundedIcon />
                               </IconButton>
                             )}
                           </ContactPersonHeader>
@@ -331,7 +331,7 @@ const ContactsStudentSettingsTab = () => {
                       {values.contactPersons.length < maxContactPersons && (
                         <Button
                           variant="outlined"
-                          startIcon={<AddIcon />}
+                          startIcon={<AddRoundedIcon />}
                           onClick={() => push({ ...emptyContactPerson })}
                           sx={{ alignSelf: "flex-start" }}
                         >

@@ -17,8 +17,8 @@ import {
 import { AppDispatch, RootState } from "@/store/store";
 import { DashboardLayout } from "@/types/dashboard";
 import { applicationScrollbar } from "@/utils/styling.utils";
-import RefreshIcon from "@mui/icons-material/Refresh";
-import RestartAltIcon from "@mui/icons-material/RestartAlt";
+import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
+import RestartAltRoundedIcon from "@mui/icons-material/RestartAltRounded";
 import { Box, CircularProgress, styled } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
@@ -135,14 +135,14 @@ const DashboardPage = () => {
     <Wrapper>
       <AdminSettingsHeader title={t("dashboard.title")} onLoad={loading}>
         <SmallIconButton
-          icon={<RestartAltIcon />}
+          icon={<RestartAltRoundedIcon />}
           onAction={handleResetLayout}
           hugeIcon
           title={t("dashboard.resetLayout")}
           placement="bottom"
         />
         <SmallIconButton
-          icon={<RefreshIcon />}
+          icon={<RefreshRoundedIcon />}
           onAction={handleRefresh}
           disabled={loading}
           hugeIcon

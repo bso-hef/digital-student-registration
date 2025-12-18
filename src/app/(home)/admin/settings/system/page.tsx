@@ -9,7 +9,7 @@ import AdminSettingsHeader from "@/components/molecules/AdminSettingsHeader";
 import { getDashboardHealth } from "@/store/actions/dashboardActions";
 import { getSettings, updateSettings } from "@/store/actions/settingsActions";
 import { useAppDispatch, useAppSelector } from "@/store/store";
-import RefreshIcon from "@mui/icons-material/Refresh";
+import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
 import {
   Box,
   Card,
@@ -125,7 +125,9 @@ const AdminSystemPage = () => {
     <Wrapper>
       <AdminSettingsHeader title={t("navigation.systemSettings")}>
         <SmallIconButton
-          icon={loading ? <CircularProgress size={20} /> : <RefreshIcon />}
+          icon={
+            loading ? <CircularProgress size={20} /> : <RefreshRoundedIcon />
+          }
           onAction={fetchHealth}
           title={t("dashboard.actions.refresh")}
           placement="bottom"

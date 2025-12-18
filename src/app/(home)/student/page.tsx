@@ -9,8 +9,8 @@ import { validateVerificationForm } from "@/lib/validate/student.validate";
 import { verifyStudent } from "@/store/actions/studentActions";
 import { useAppDispatch } from "@/store/store";
 import BadgeRoundedIcon from "@mui/icons-material/BadgeRounded";
-import LoginIcon from "@mui/icons-material/Login";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import LoginRoundedIcon from "@mui/icons-material/LoginRounded";
+import PersonAddRoundedIcon from "@mui/icons-material/PersonAddRounded";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import { Box, InputAdornment, styled } from "@mui/material";
 import { Field, Form, Formik } from "formik";
@@ -188,7 +188,7 @@ export default function StudentPage() {
                     : t("auth.studentLogin.verifyButton")
                 }
                 disabled={isSubmitting || !isValid || !dirty}
-                startIcon={<LoginIcon />}
+                startIcon={<LoginRoundedIcon />}
                 fullWidth
               />
               <GeneralButton
@@ -196,7 +196,7 @@ export default function StudentPage() {
                 isPrimary={false}
                 label={t("auth.studentLogin.createButton")}
                 disabled={isSubmitting}
-                startIcon={<PersonAddIcon />}
+                startIcon={<PersonAddRoundedIcon />}
                 fullWidth
               />
             </StyledEndContainer>

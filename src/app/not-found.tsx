@@ -1,7 +1,7 @@
 "use client";
 
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
-import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import ErrorOutlineRoundedIcon from "@mui/icons-material/ErrorOutlineRounded";
 import { Box, Container, Stack, Typography, styled } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
@@ -54,7 +54,7 @@ export default function NotFound() {
         alignItems="center"
         textAlign="center"
       >
-        <ErrorOutlineIcon sx={{ fontSize: 80, color: "error.main" }} />
+        <ErrorOutlineRoundedIcon sx={{ fontSize: 80, color: "error.main" }} />
         <StyledTitle>{`404 - ${t("error.Page not found")}`}</StyledTitle>
         <StyledSubtitle>
           {t("error.Sorry we couldn't find that page")}

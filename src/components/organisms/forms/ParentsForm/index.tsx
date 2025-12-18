@@ -9,8 +9,8 @@ import { createValidateStudentContactPersonData } from "@/lib/validate/student.v
 import { updateStudentOnboardingData } from "@/store/actions/studentActions";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { StudentData } from "@/types/student";
-import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import { Alert, Box, styled } from "@mui/material";
 import dayjs from "dayjs";
 import { FormikProps } from "formik";
@@ -342,7 +342,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
               label={t("onboarding.legalGuardian.addContact")}
               onAction={handleAddContact}
               isPrimary={false}
-              startIcon={<AddIcon />}
+              startIcon={<AddRoundedIcon />}
               fullWidth
               withTooltip
               tooltipLabel={t("onboarding.legalGuardian.addContactTooltip")}
@@ -373,7 +373,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
                 headerAction={
                   contactNumber > 1 ? (
                     <SmallIconButton
-                      icon={<DeleteIcon />}
+                      icon={<DeleteRoundedIcon />}
                       customColor="#d32f2f"
                       hoverAllowed
                       noMargin

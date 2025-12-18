@@ -19,10 +19,10 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import ClassIcon from "@mui/icons-material/Class";
-import PersonOffIcon from "@mui/icons-material/PersonOff";
-import SchoolIcon from "@mui/icons-material/School";
+import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
+import ClassRoundedIcon from "@mui/icons-material/ClassRounded";
+import PersonOffRoundedIcon from "@mui/icons-material/PersonOffRounded";
+import SchoolRoundedIcon from "@mui/icons-material/SchoolRounded";
 import { Box } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
@@ -111,25 +111,25 @@ const DraggableStatsGrid: React.FC<DraggableStatsGridProps> = ({
     totalStudents: {
       label: t("dashboard.quickStats.totalStudents"),
       value: stats.totalStudents,
-      icon: <SchoolIcon sx={{ fontSize: 32 }} />,
+      icon: <SchoolRoundedIcon sx={{ fontSize: 32 }} />,
       gradient: DASHBOARD_GRADIENTS.TOTAL_STUDENTS.gradient,
     },
     totalClasses: {
       label: t("dashboard.quickStats.totalClasses"),
       value: stats.totalClasses,
-      icon: <ClassIcon sx={{ fontSize: 32 }} />,
+      icon: <ClassRoundedIcon sx={{ fontSize: 32 }} />,
       gradient: DASHBOARD_GRADIENTS.TOTAL_CLASSES.gradient,
     },
     unassignedStudents: {
       label: t("dashboard.quickStats.unassignedStudents"),
       value: stats.unassignedStudents,
-      icon: <PersonOffIcon sx={{ fontSize: 32 }} />,
+      icon: <PersonOffRoundedIcon sx={{ fontSize: 32 }} />,
       gradient: DASHBOARD_GRADIENTS.UNASSIGNED.gradient,
     },
     activeClasses: {
       label: t("dashboard.quickStats.activeClasses"),
       value: stats.activeClasses,
-      icon: <CheckCircleIcon sx={{ fontSize: 32 }} />,
+      icon: <CheckCircleRoundedIcon sx={{ fontSize: 32 }} />,
       gradient: DASHBOARD_GRADIENTS.ACTIVE_CLASSES.gradient,
     },
   };

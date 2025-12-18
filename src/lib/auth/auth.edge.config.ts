@@ -64,7 +64,8 @@ export const authEdgeConfig = {
         path: "/",
         // Use secure cookies only when app URL uses HTTPS
         // This allows HTTP in Docker deployment while keeping HTTPS secure
-        secure: process.env.NEXT_PUBLIC_APP_URL?.startsWith("https://") ?? false,
+        secure:
+          process.env.NEXT_PUBLIC_APP_URL?.startsWith("https://") ?? false,
       },
     },
   },

@@ -4,7 +4,7 @@ import React from "react";
 
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
 import GeneralModal from "@/components/organisms/modals/GeneralModal";
-import { Warning } from "@mui/icons-material";
+import { WarningRounded } from "@mui/icons-material";
 import { Box, Typography, styled } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
@@ -28,7 +28,7 @@ const WarningBox = styled(Box)(({ theme }) => ({
   border: `1px solid ${theme.palette.warning.main}`,
 }));
 
-const WarningIcon = styled(Warning)(({ theme }) => ({
+const WarningIcon = styled(WarningRounded)(({ theme }) => ({
   color: theme.palette.warning.dark,
   fontSize: 28,
   flexShrink: 0,

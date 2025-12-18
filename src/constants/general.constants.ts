@@ -1,5 +1,5 @@
-import { PaletteMode } from "@mui/material";
 import { appConfig, configHelpers } from "@/lib/config/app-config";
+import { PaletteMode } from "@mui/material";
 
 export type ThemeMode = PaletteMode | "auto";
 
@@ -65,7 +65,8 @@ export const STUDENT_STATUS = {
 export const WIZZARD_URL = `${appConfig.app.url}/student/{short-id}`;
 
 // Helper function to get the actual wizard URL with a student short ID
-export const getWizardUrl = (shortId: string): string => configHelpers.getWizardUrl(shortId);
+export const getWizardUrl = (shortId: string): string =>
+  configHelpers.getWizardUrl(shortId);
 
 export const SCREEN_BLOCKER_TYPES = {
   PORTRAIT: "portrait",

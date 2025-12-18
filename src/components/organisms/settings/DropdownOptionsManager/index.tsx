@@ -9,9 +9,9 @@ import {
   DropResult,
   Droppable,
 } from "@hello-pangea/dnd";
-import DeleteIcon from "@mui/icons-material/Delete";
-import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
-import EditIcon from "@mui/icons-material/Edit";
+import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
+import DragIndicatorRoundedIcon from "@mui/icons-material/DragIndicatorRounded";
+import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import {
   Box,
   Checkbox,
@@ -165,7 +165,7 @@ const DropdownOptionsManager: React.FC<DropdownOptionsManagerProps> = ({
                       isDragging={snapshot.isDragging}
                     >
                       <Box {...provided.dragHandleProps}>
-                        <DragIndicatorIcon color="action" />
+                        <DragIndicatorRoundedIcon color="action" />
                       </Box>
 
                       <Checkbox
@@ -237,12 +237,12 @@ const DropdownOptionsManager: React.FC<DropdownOptionsManagerProps> = ({
                           </Box>
                           <SmallIconButton
                             onAction={() => handleEdit(index)}
-                            icon={<EditIcon />}
+                            icon={<EditRoundedIcon />}
                             bigIcon
                           />
                           <SmallIconButton
                             onAction={() => handleDelete(index)}
-                            icon={<DeleteIcon />}
+                            icon={<DeleteRoundedIcon />}
                             bigIcon
                           />
                         </>

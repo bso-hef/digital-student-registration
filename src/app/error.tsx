@@ -4,7 +4,7 @@ import { useEffect } from "react";
 
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
 import Logger from "@/lib/client-logger";
-import ReportProblemIcon from "@mui/icons-material/ReportProblem";
+import ReportProblemRoundedIcon from "@mui/icons-material/ReportProblemRounded";
 import { Box, Stack, Typography, styled } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
@@ -60,7 +60,7 @@ export default function GlobalError({ error, reset }: ErrorProps) {
         alignItems="center"
         textAlign="center"
       >
-        <ReportProblemIcon
+        <ReportProblemRoundedIcon
           sx={{ fontSize: 80, color: "warning.main", mb: 2 }}
         />
         <StyledTitle>{t("error.An unexpected error occurred")}</StyledTitle>
