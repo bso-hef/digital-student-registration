@@ -22,6 +22,7 @@ interface FormikDropdownProps {
   size?: "small" | "medium";
   variant?: "outlined" | "filled" | "standard";
   flagIcon?: boolean;
+  required?: boolean;
 }
 
 /**
@@ -38,6 +39,7 @@ const FormikDropdown: React.FC<FormikDropdownProps> = ({
   size = "medium",
   variant = "outlined",
   flagIcon = false,
+  required = false,
 }) => {
   const [field, meta, helpers] = useField(name);
 
@@ -58,6 +60,7 @@ const FormikDropdown: React.FC<FormikDropdownProps> = ({
       size={size}
       variant={variant}
       flagIcon={flagIcon}
+      required={required}
       error={meta.touched && Boolean(meta.error)}
       helperText={meta.touched && meta.error ? meta.error : undefined}
     />

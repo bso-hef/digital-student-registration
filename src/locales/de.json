@@ -93,7 +93,7 @@
       "Origin": "Herkunft",
       "Address": "Adresse",
       "Legal Guardian": "Ansprechpartner",
-      "Pre Education": "Vorbildung",
+      "Pre Education": "Letzter Bildungsstand",
       "Training": "Ausbildung",
       "Company Contact": "Unternehmenskontakt",
       "Agreements": "Vereinbarungen",
@@ -171,7 +171,7 @@
       "schoolEntryDate": "Schuleintritt",
       "previousSchool": "Vorherige Schule",
       "previousSchoolType": "Schulform",
-      "degrees": "Abschlüsse",
+      "degrees": "Höchster bisheriger Abschluss",
       "companyName": "Firmenname",
       "companyAddress": "Firmenadresse",
       "contactName": "Ansprechpartner",
@@ -482,11 +482,11 @@
       "previousSchool": "Vorherige Schule",
       "schoolType": "Schulform",
       "level": "Stufe",
-      "degrees": "Abschlüsse",
+      "degrees": "Höchster bisheriger Abschluss",
       "previousSchoolName": "Vorhergehende Schule",
       "previousLevel": "Vorhergehende Stufe",
       "previousSchoolType": "Vorhergehende Schulform",
-      "qualifications": "Abschlüsse"
+      "qualifications": "Höchster bisheriger Abschluss"
     },
     "training": {
       "profession": "Beruf",
@@ -529,7 +529,8 @@
       "subtitle": "Schließe deine Anmeldung in {{count}} Schritten ab.",
       "paragraph1": "Wir führen dich Schritt für Schritt durch die Anmeldung.",
       "paragraph2": "Überprüfe deine Daten und korrigiere, was nicht stimmt.",
-      "paragraph3": "Du kannst jederzeit zurückgehen und Änderungen vornehmen."
+      "paragraph3": "Du kannst jederzeit zurückgehen und Änderungen vornehmen.",
+      "requiredFieldsHint": "* Pflichtfelder"
     },
     "summary": {
       "title": "Zusammenfassung",
@@ -538,7 +539,7 @@
       "origin": "Herkunft und Einwanderung",
       "address": "Adresse und Kontakt",
       "contactPerson": "Ansprechpartner",
-      "education": "Vorbildung",
+      "education": "Letzter Bildungsstand",
       "training": "Ausbildung",
       "companyContact": "Ansprechpartner im Betrieb",
       "agreements": "Vereinbarungen",
@@ -767,9 +768,9 @@
       "previousSchool": "Vorherige Schule",
       "previousSchoolType": "Vorherige Schulform",
       "previousSchoolLevel": "Vorherige Stufe",
-      "degrees": "Abschlüsse",
+      "degrees": "Höchster bisheriger Abschluss",
       "currentEducation": "Aktuelle Ausbildung",
-      "previousEducation": "Vorbildung",
+      "previousEducation": "Letzter Bildungsstand",
       "vocationalTraining": "Berufliche Ausbildung",
       "profession": "Beruf",
       "trainingStartDate": "Ausbildungsbeginn",

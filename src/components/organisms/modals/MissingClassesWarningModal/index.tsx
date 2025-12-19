@@ -4,7 +4,6 @@ import React from "react";
 
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
 import GeneralModal from "@/components/organisms/modals/GeneralModal";
-import { WarningRounded } from "@mui/icons-material";
 import { Box, Chip, Typography, styled } from "@mui/material";
 import { useTranslation } from "react-i18next";
 

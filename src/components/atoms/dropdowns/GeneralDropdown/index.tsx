@@ -36,6 +36,7 @@ interface GeneralDropdownProps {
   placeholder?: string;
   disabled?: boolean;
   fullWidth?: boolean;
+  required?: boolean;
 }
 
 const StyledDropdown = styled(FormControl)(({ theme }) => ({
@@ -109,10 +110,14 @@ const GeneralDropdown: React.FC<GeneralDropdownProps> = ({
   invisibleOutline = false,
   helperText,
   flagIcon = false,
+  required = false,
 }) => {
   return (
-    <StyledDropdown fullWidth>
-      <StyledLabel disabled={disabled}>{label}</StyledLabel>
+    <StyledDropdown fullWidth required={required}>
+      <StyledLabel disabled={disabled}>
+        {label}
+        {required && " *"}
+      </StyledLabel>
       <Select
         value={value}
         defaultValue={defaultValue}

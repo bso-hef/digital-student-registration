@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 
+import { ThemedToaster } from "@/components/ThemedToaster";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { SessionProvider } from "next-auth/react";
@@ -12,7 +13,6 @@ import { PersistGate } from "redux-persist/integration/react";
 import * as AppInitializerService from "@/lib/config/AppInitializer";
 
 import ThemeWrapper from "@/theme/ThemeWrapper";
-import { ThemedToaster } from "@/components/ThemedToaster";
 
 import i18n from "../lib/config/i18n";
 import { persistor, store } from "../store/store";

@@ -82,6 +82,7 @@ const CompanyContactForm: React.FC<CompanyContactFormProps> = ({
             name="betriebApAnrede"
             label={t("onboarding.companyContact.salutation")}
             options={getEnabledOptions(salutationOptions)}
+            required
           />
 
           {/* betriebApVorname */}
@@ -92,6 +93,7 @@ const CompanyContactForm: React.FC<CompanyContactFormProps> = ({
             variant="outlined"
             margin="normal"
             fullWidth
+            required
             error={touched.betriebApVorname && Boolean(errors.betriebApVorname)}
             helperText={touched.betriebApVorname && errors.betriebApVorname}
           />
@@ -104,6 +106,7 @@ const CompanyContactForm: React.FC<CompanyContactFormProps> = ({
             variant="outlined"
             margin="normal"
             fullWidth
+            required
             error={
               touched.betriebApNachname && Boolean(errors.betriebApNachname)
             }
@@ -118,6 +121,7 @@ const CompanyContactForm: React.FC<CompanyContactFormProps> = ({
             variant="outlined"
             margin="normal"
             fullWidth
+            required
             error={
               touched.betriebApTelefon1 && Boolean(errors.betriebApTelefon1)
             }

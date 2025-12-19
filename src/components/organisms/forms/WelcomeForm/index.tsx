@@ -56,6 +56,13 @@ const WelcomeForm = () => {
         <Information>{t("onboarding.welcome.paragraph2")}</Information>
 
         <Information>{t("onboarding.welcome.paragraph3")}</Information>
+
+        <Typography
+          variant="body2"
+          sx={{ mt: 2, textAlign: "left", fontStyle: "italic" }}
+        >
+          {t("onboarding.welcome.requiredFieldsHint")}
+        </Typography>
       </CustomTitle>
     </Wrapper>
   );

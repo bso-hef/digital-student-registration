@@ -192,6 +192,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
     contactNumber: number,
     errors: Record<string, string | undefined>,
     touched: Record<string, boolean | undefined>,
+    isRequired: boolean,
   ) => {
     const prefix = `ansprechpartner${contactNumber}`;
     return (
@@ -201,6 +202,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
           name={`${prefix}Art`}
           label={t("onboarding.legalGuardian.contactType")}
           options={getEnabledOptions(contactPersonTypeOptions)}
+          required={isRequired}
         />
 
         {/* First Name */}
@@ -211,6 +213,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
           variant="outlined"
           margin="normal"
           fullWidth
+          required={isRequired}
           error={
             touched[`${prefix}Vorname`] && Boolean(errors[`${prefix}Vorname`])
           }
@@ -225,6 +228,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
           variant="outlined"
           margin="normal"
           fullWidth
+          required={isRequired}
           error={
             touched[`${prefix}Nachname`] && Boolean(errors[`${prefix}Nachname`])
           }
@@ -241,6 +245,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
           variant="outlined"
           margin="normal"
           fullWidth
+          required={isRequired}
           error={touched[`${prefix}Plz`] && Boolean(errors[`${prefix}Plz`])}
           helperText={touched[`${prefix}Plz`] && errors[`${prefix}Plz`]}
         />
@@ -253,6 +258,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
           variant="outlined"
           margin="normal"
           fullWidth
+          required={isRequired}
           error={touched[`${prefix}Ort`] && Boolean(errors[`${prefix}Ort`])}
           helperText={touched[`${prefix}Ort`] && errors[`${prefix}Ort`]}
         />
@@ -265,6 +271,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
           variant="outlined"
           margin="normal"
           fullWidth
+          required={isRequired}
           error={
             touched[`${prefix}Straße`] && Boolean(errors[`${prefix}Straße`])
           }
@@ -279,6 +286,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
           variant="outlined"
           margin="normal"
           fullWidth
+          required={isRequired}
           error={
             touched[`${prefix}HausNr`] && Boolean(errors[`${prefix}HausNr`])
           }
@@ -402,7 +410,12 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
                     : undefined
                 }
               >
-                {renderContactFields(contactNumber, errors, touched)}
+                {renderContactFields(
+                  contactNumber,
+                  errors,
+                  touched,
+                  !isAdult && contactNumber === 1,
+                )}
               </EnhancedCollapse>
             </Box>
           ))}

@@ -529,7 +529,8 @@
       "subtitle": "Complete your registration in {{count}} steps.",
       "paragraph1": "We'll guide you step by step through the registration.",
       "paragraph2": "Check your information and update anything that's incorrect.",
-      "paragraph3": "You can go back anytime to make changes."
+      "paragraph3": "You can go back anytime to make changes.",
+      "requiredFieldsHint": "* Required fields"
     },
     "summary": {
       "title": "Summary",
