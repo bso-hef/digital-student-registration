@@ -25,6 +25,7 @@ import {
 import {
   saveOnboardingProgress,
   setCurrentStudentOnboardingStep,
+  setEditingFromSummary,
   submitOnboarding,
 } from "@/store/actions/studentActions";
 import { AppDispatch } from "@/store/store";
@@ -78,9 +79,8 @@ interface StepFormProps {
 }
 
 const StepForm = ({ studentId }: StepFormProps) => {
-  const { currentStep, data, loading, currentClass } = useSelector(
-    (state: RootState) => state.student,
-  );
+  const { currentStep, data, loading, currentClass, editingFromSummary } =
+    useSelector((state: RootState) => state.student);
   const dispatch: AppDispatch = useDispatch();
   const { t } = useTranslation();
   const [isSaving, setIsSaving] = useState(false);
@@ -378,6 +378,27 @@ const StepForm = ({ studentId }: StepFormProps) => {
     }
   };
 
+  // Handler for "Go back to summary" button when editing from summary
+  const handleGoBackToSummary = async () => {
+    setIsTransitioning(true);
+    try {
+      // Auto-save current form data directly (don't use submitForm which triggers navigation)
+      if (formikRef.current) {
+        await handleAutoSave(formikRef.current.values);
+      } else {
+        await handleAutoSave();
+      }
+      // Navigate to summary step (step 9)
+      dispatch(setCurrentStudentOnboardingStep(9));
+      // Clear the editing flag
+      dispatch(setEditingFromSummary(false));
+      // Save step to database
+      saveStepOnly(9);
+    } finally {
+      setIsTransitioning(false);
+    }
+  };
+
   return (
     <Wrapper>
       {!isFirstStep && (
@@ -406,8 +427,8 @@ const StepForm = ({ studentId }: StepFormProps) => {
         />
       )}
 
-      {/* Form steps (1-7) - Previous and Next buttons */}
-      {isFormStep && (
+      {/* Form steps (1-8) - Previous and Next buttons OR Go back to summary */}
+      {isFormStep && !editingFromSummary && (
         <StyledMenuOptions>
           <GeneralButton
             label={t("general.Previous")}
@@ -429,6 +450,21 @@ const StepForm = ({ studentId }: StepFormProps) => {
             disabled={!isFormValid || isTransitioning || loading}
           />
         </StyledMenuOptions>
+      )}
+
+      {/* Form steps when editing from summary - single "Go back to summary" button */}
+      {isFormStep && editingFromSummary && (
+        <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
+          <GeneralButton
+            label={t("onboarding.summary.goBackToSummary")}
+            isPrimary={true}
+            fullHeight={false}
+            fullWidth={false}
+            startIcon={<KeyboardArrowLeftRoundedIcon />}
+            onAction={handleGoBackToSummary}
+            disabled={!isFormValid || isTransitioning || loading}
+          />
+        </Box>
       )}
 
       {/* Summary step (Step 9) - Previous and Submit buttons */}

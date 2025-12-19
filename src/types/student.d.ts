@@ -25,10 +25,16 @@ export interface StudentData {
   vorhergehendeSchule: string;
   vorhergehendeSchulform: string;
   vorhergehendeStufe: string;
+  // Company Contact 1 (required)
   betriebApAnrede: string;
-  betriebApVorname: string;
-  betriebApNachname: string;
+  betriebApName: string;
   betriebApTelefon1: string;
+  betriebApEmail: string;
+  // Company Contact 2 (optional)
+  betriebAp2Anrede: string;
+  betriebAp2Name: string;
+  betriebAp2Telefon1: string;
+  betriebAp2Email: string;
   betriebEintritt: string;
   betriebName: string;
   betriebStraße: string;

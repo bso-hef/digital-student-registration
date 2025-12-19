@@ -8,6 +8,7 @@ import { AppAction } from "../types";
 interface StudentState {
   currentStep: number;
   previousStep: number | null;
+  editingFromSummary: boolean;
   data: StudentData;
   students: Student[];
   loading: boolean;
@@ -22,6 +23,7 @@ interface StudentState {
 const initialStudentState: StudentState = {
   currentStep: 0,
   previousStep: null,
+  editingFromSummary: false,
   data: {
     klassenname: "",
     vorname: "",
@@ -50,9 +52,13 @@ const initialStudentState: StudentState = {
     vorhergehendeSchulform: "",
     vorhergehendeStufe: "",
     betriebApAnrede: "",
-    betriebApVorname: "",
-    betriebApNachname: "",
+    betriebApName: "",
     betriebApTelefon1: "",
+    betriebApEmail: "",
+    betriebAp2Anrede: "",
+    betriebAp2Name: "",
+    betriebAp2Telefon1: "",
+    betriebAp2Email: "",
     betriebEintritt: "",
     betriebName: "",
     betriebStraße: "",
@@ -113,6 +119,12 @@ const studentReducer = (state = initialStudentState, action: AppAction) => {
         currentStep: action.payload,
       };
 
+    case TYPES.SET_EDITING_FROM_SUMMARY:
+      return {
+        ...state,
+        editingFromSummary: action.payload,
+      };
+
     case TYPES.GET_STUDENTS_REQUEST:
     case TYPES.ADD_STUDENTS_REQUEST:
     case TYPES.DELETE_STUDENTS_REQUEST:
@@ -157,6 +169,7 @@ const studentReducer = (state = initialStudentState, action: AppAction) => {
         data: initialStudentState.data,
         currentStep: 0,
         previousStep: null,
+        editingFromSummary: false,
         currentStudentId: null,
         currentStudent: null,
         currentClass: null,

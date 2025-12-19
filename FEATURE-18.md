@@ -69,11 +69,11 @@
 
 ### Import / Verknüpfung
 
-- [ ] Beim Import prüfen, ob Klasse enthalten ist
-- [ ] Wenn Klasse vorhanden:
-  - [ ] Datensatz erstellen
-  - [ ] Sauber verknüpfen (keine Duplikate)
-- [ ] Keine impliziten Annahmen
+- [x] Beim Import prüfen, ob Klasse enthalten ist
+- [x] Wenn Klasse vorhanden:
+  - [x] Datensatz erstellen
+  - [x] Sauber verknüpfen (keine Duplikate)
+- [x] Keine impliziten Annahmen
 
 ### Ausschlüsse
 
@@ -89,3 +89,4 @@
 - [ ] Classen export via CSV
 - [ ] Localhost inside QR code PDF
 - [ ] Same Date Field like inside wizzard
+- [ ] training form issues

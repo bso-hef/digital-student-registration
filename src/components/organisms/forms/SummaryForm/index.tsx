@@ -10,7 +10,8 @@ import {
   getStepIdByName,
 } from "@/constants/studentSteps.constants";
 import { useAgreementSettings } from "@/hooks/useAgreementSettings";
-import { useAppSelector } from "@/store/store";
+import { setEditingFromSummary } from "@/store/actions/studentActions";
+import { useAppDispatch, useAppSelector } from "@/store/store";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import {
@@ -33,7 +34,7 @@ const SummaryContainer = styled(Box)(({ theme }) => ({
 
 const DataRow = styled(Box)(({ theme }) => ({
   display: "grid",
-  gridTemplateColumns: "200px 1fr",
+  gridTemplateColumns: "1fr 1fr",
   gap: theme.spacing(2),
   padding: theme.spacing(1, 0),
   [theme.breakpoints.down("sm")]: {
@@ -68,6 +69,13 @@ const StyledDataRowValue = styled(Typography)(({ theme }) => ({
   textAlign: "left",
 }));
 
+const StyledTitle = styled(Typography)(({ theme }) => ({
+  fontSize: "16px !important",
+  lineHeight: "24px !important",
+  color: theme.palette.text.information,
+  textAlign: "left",
+}));
+
 interface SummaryFormProps {
   onGoToStep?: (step: number) => void;
   activeSteps: StepDef[];
@@ -80,6 +88,7 @@ const SummaryForm: React.FC<SummaryFormProps> = ({
   onConfirmationChange,
 }) => {
   const { t } = useTranslation();
+  const dispatch = useAppDispatch();
   const studentData = useAppSelector((state) => state.student.data);
   const { enabledAgreements, getAgreementLabel } = useAgreementSettings();
 
@@ -116,12 +125,15 @@ const SummaryForm: React.FC<SummaryFormProps> = ({
   /**
    * Handles edit button clicks by mapping semantic step names to step IDs
    * Only navigates if the step is currently active
+   * Sets editing flag to show "Go back to summary" button
    */
   const handleEditStep = (stepName: StepName) => {
     if (!onGoToStep) return;
 
     const stepId = getStepIdByName(stepName, activeSteps);
     if (stepId !== null) {
+      // Set flag to indicate we're editing from summary
+      dispatch(setEditingFromSummary(true));
       onGoToStep(stepId);
     } else {
       console.warn(
@@ -158,6 +170,17 @@ const SummaryForm: React.FC<SummaryFormProps> = ({
         </Box>
       </DataRow>
     );
+  };
+
+  // Helper to combine address parts
+  const combineAddress = (
+    street?: string,
+    houseNr?: string,
+    plz?: string,
+    city?: string,
+  ) => {
+    if (!street || !houseNr || !plz || !city) return undefined;
+    return `${street} ${houseNr}, ${plz} ${city}`;
   };
 
   return (
@@ -275,7 +298,7 @@ const SummaryForm: React.FC<SummaryFormProps> = ({
         {renderDataRow(t("onboarding.address.email"), studentData.email)}
       </EnhancedCollapse>
 
-      {/* Contact Person */}
+      {/* Contact Person(s) */}
       {studentData.ansprechpartner1Vorname && (
         <EnhancedCollapse
           title={t("onboarding.summary.contactPerson")}
@@ -294,6 +317,10 @@ const SummaryForm: React.FC<SummaryFormProps> = ({
             />
           }
         >
+          {/* Contact Person 1 */}
+          <StyledTitle>
+            {t("onboarding.legalGuardian.contact1Title")}
+          </StyledTitle>
           {renderDataRow(
             t("onboarding.legalGuardian.type"),
             studentData.ansprechpartner1Art,
@@ -307,12 +334,12 @@ const SummaryForm: React.FC<SummaryFormProps> = ({
           )}
           {renderDataRow(
             t("onboarding.legalGuardian.address"),
-            studentData.ansprechpartner1Straße &&
-              studentData.ansprechpartner1HausNr &&
-              studentData.ansprechpartner1Plz &&
-              studentData.ansprechpartner1Ort
-              ? `${studentData.ansprechpartner1Straße} ${studentData.ansprechpartner1HausNr}, ${studentData.ansprechpartner1Plz} ${studentData.ansprechpartner1Ort}`
-              : undefined,
+            combineAddress(
+              studentData.ansprechpartner1Straße,
+              studentData.ansprechpartner1HausNr,
+              studentData.ansprechpartner1Plz,
+              studentData.ansprechpartner1Ort,
+            ),
           )}
           {renderDataRow(
             t("onboarding.legalGuardian.mobile"),
@@ -321,6 +348,80 @@ const SummaryForm: React.FC<SummaryFormProps> = ({
           {renderDataRow(
             t("onboarding.legalGuardian.phone"),
             studentData.ansprechpartner1Telefon1,
+          )}
+
+          {/* Contact Person 2 (if exists) */}
+          {studentData.ansprechpartner2Vorname && (
+            <>
+              <StyledTitle>
+                {t("onboarding.legalGuardian.contact2Title")}
+              </StyledTitle>
+              {renderDataRow(
+                t("onboarding.legalGuardian.type"),
+                studentData.ansprechpartner2Art,
+              )}
+              {renderDataRow(
+                t("onboarding.legalGuardian.name"),
+                studentData.ansprechpartner2Vorname &&
+                  studentData.ansprechpartner2Nachname
+                  ? `${studentData.ansprechpartner2Vorname} ${studentData.ansprechpartner2Nachname}`
+                  : undefined,
+              )}
+              {renderDataRow(
+                t("onboarding.legalGuardian.address"),
+                combineAddress(
+                  studentData.ansprechpartner2Straße,
+                  studentData.ansprechpartner2HausNr,
+                  studentData.ansprechpartner2Plz,
+                  studentData.ansprechpartner2Ort,
+                ),
+              )}
+              {renderDataRow(
+                t("onboarding.legalGuardian.mobile"),
+                studentData.ansprechpartner2Mobil,
+              )}
+              {renderDataRow(
+                t("onboarding.legalGuardian.phone"),
+                studentData.ansprechpartner2Telefon1,
+              )}
+            </>
+          )}
+
+          {/* Contact Person 3 (if exists) */}
+          {studentData.ansprechpartner3Vorname && (
+            <>
+              <StyledTitle>
+                {t("onboarding.legalGuardian.contact3Title")}
+              </StyledTitle>
+              {renderDataRow(
+                t("onboarding.legalGuardian.type"),
+                studentData.ansprechpartner3Art,
+              )}
+              {renderDataRow(
+                t("onboarding.legalGuardian.name"),
+                studentData.ansprechpartner3Vorname &&
+                  studentData.ansprechpartner3Nachname
+                  ? `${studentData.ansprechpartner3Vorname} ${studentData.ansprechpartner3Nachname}`
+                  : undefined,
+              )}
+              {renderDataRow(
+                t("onboarding.legalGuardian.address"),
+                combineAddress(
+                  studentData.ansprechpartner3Straße,
+                  studentData.ansprechpartner3HausNr,
+                  studentData.ansprechpartner3Plz,
+                  studentData.ansprechpartner3Ort,
+                ),
+              )}
+              {renderDataRow(
+                t("onboarding.legalGuardian.mobile"),
+                studentData.ansprechpartner3Mobil,
+              )}
+              {renderDataRow(
+                t("onboarding.legalGuardian.phone"),
+                studentData.ansprechpartner3Telefon1,
+              )}
+            </>
           )}
         </EnhancedCollapse>
       )}
@@ -395,12 +496,36 @@ const SummaryForm: React.FC<SummaryFormProps> = ({
               t("onboarding.training.company"),
               studentData.betriebName,
             )}
+            {renderDataRow(
+              t("onboarding.training.street"),
+              studentData.betriebStraße,
+            )}
+            {renderDataRow(
+              t("onboarding.training.houseNumber"),
+              studentData.betriebHausNr,
+            )}
+            {renderDataRow(
+              t("onboarding.training.postalCode"),
+              studentData.betriebPlz,
+            )}
+            {renderDataRow(
+              t("onboarding.training.city"),
+              studentData.betriebOrt,
+            )}
+            {renderDataRow(
+              t("onboarding.training.companyPhone"),
+              studentData.betriebTelefon1,
+            )}
+            {renderDataRow(
+              t("onboarding.training.companyEmail"),
+              studentData.betriebEmail,
+            )}
           </EnhancedCollapse>
         )}
 
       {/* Company Contact (Conditional - only if step is active) */}
       {getStepIdByName(StepName.COMPANY_CONTACT, activeSteps) !== null &&
-        studentData.betriebApVorname && (
+        studentData.betriebApName && (
           <EnhancedCollapse
             title={t("onboarding.summary.companyContact")}
             expanded={expandedSections.companyContact}
@@ -418,21 +543,50 @@ const SummaryForm: React.FC<SummaryFormProps> = ({
               />
             }
           >
+            {/* Contact Person 1 */}
+            <StyledTitle>
+              {t("onboarding.companyContact.contact1Title")}
+            </StyledTitle>
             {renderDataRow(
               t("onboarding.companyContact.salutation"),
               studentData.betriebApAnrede,
             )}
             {renderDataRow(
-              t("onboarding.companyContact.firstName"),
-              studentData.betriebApVorname,
-            )}
-            {renderDataRow(
-              t("onboarding.companyContact.lastName"),
-              studentData.betriebApNachname,
+              t("onboarding.companyContact.name"),
+              studentData.betriebApName,
             )}
             {renderDataRow(
               t("onboarding.companyContact.phone"),
               studentData.betriebApTelefon1,
+            )}
+            {renderDataRow(
+              t("onboarding.companyContact.email"),
+              studentData.betriebApEmail,
+            )}
+
+            {/* Contact Person 2 (if exists) */}
+            {studentData.betriebAp2Name && (
+              <>
+                <StyledTitle>
+                  {t("onboarding.companyContact.contact2Title")}
+                </StyledTitle>
+                {renderDataRow(
+                  t("onboarding.companyContact.salutation"),
+                  studentData.betriebAp2Anrede,
+                )}
+                {renderDataRow(
+                  t("onboarding.companyContact.name"),
+                  studentData.betriebAp2Name,
+                )}
+                {renderDataRow(
+                  t("onboarding.companyContact.phone"),
+                  studentData.betriebAp2Telefon1,
+                )}
+                {renderDataRow(
+                  t("onboarding.companyContact.email"),
+                  studentData.betriebAp2Email,
+                )}
+              </>
             )}
           </EnhancedCollapse>
         )}

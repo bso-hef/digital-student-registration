@@ -34,6 +34,7 @@
     "of": "of",
     "none": "None",
     "loadingSettings": "Loading settings...",
+    "loading": "Loading...",
     "Submit": "Submit",
     "Submitting": "Submitting...",
     "Accepted": "Accepted",
@@ -472,6 +473,9 @@
       "contactPerson1": "Contact Person 1",
       "contactPerson2": "Contact Person 2",
       "contactPerson3": "Contact Person 3",
+      "contact1Title": "Contact Person 1",
+      "contact2Title": "Contact Person 2",
+      "contact3Title": "Contact Person 3",
       "addContact": "Add Contact Person",
       "addContactTooltip": "Add another contact person",
       "removeContact": "Remove Contact Person",
@@ -499,19 +503,31 @@
       "postalCode": "Postal Code",
       "city": "City",
       "phone": "Phone",
-      "email": "Email"
+      "email": "Email",
+      "companyAddress": "Company Address",
+      "companyPhone": "Company Phone",
+      "companyEmail": "Company Email"
     },
     "companyContact": {
       "salutation": "Salutation",
       "firstName": "First Name",
       "lastName": "Last Name",
       "phone": "Phone",
-      "contactPerson": "Company Contact Person"
+      "email": "Email",
+      "contactPerson": "Company Contact Person",
+      "contact1": "Contact Person 1",
+      "contact2": "Contact Person 2",
+      "contact1Title": "Contact Person 1",
+      "contact2Title": "Contact Person 2",
+      "addContact": "Add Contact Person",
+      "removeContact": "Remove Contact Person",
+      "name": "Name"
     },
     "agreements": {
       "title": "Agreements",
       "description": "Please read and accept the following agreements to continue with your registration.",
       "required": "This agreement is required",
+      "requiredBadge": "Required",
       "datenschutz": "Data Protection Agreement",
       "datenschutzDesc": "I consent to the processing of my personal data in accordance with the data protection policy.",
       "teilnahmeunterricht": "Class Participation Consent",
@@ -543,7 +559,8 @@
       "training": "Vocational Training",
       "companyContact": "Company Contact Person",
       "agreements": "Agreements",
-      "confirmationText": "I have read the summary and accept that the data is accurate"
+      "confirmationText": "I have read the summary and accept that the data is accurate",
+      "goBackToSummary": "Go back to summary"
     },
     "completion": {
       "title": "Enrollment Complete!",

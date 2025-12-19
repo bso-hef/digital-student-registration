@@ -535,6 +535,80 @@ export const createValidateStudentCompanyData = (
   });
 };
 
+// Step 7: Company Contact Person(s) - separate validation for CompanyContactForm
+// Contact 1 is always required, Contact 2 is conditional (all-or-nothing)
+export const createValidateStudentCompanyContactData = (
+  salutationOptions: string[],
+) => {
+  // Helper to check if any Contact 2 field has value
+  const hasAnyContact2Value = (parent: Record<string, unknown>) => {
+    return !!(
+      parent.betriebAp2Anrede ||
+      parent.betriebAp2Name ||
+      parent.betriebAp2Telefon1 ||
+      parent.betriebAp2Email
+    );
+  };
+
+  return Yup.object({
+    // Contact 1 - always required
+    betriebApAnrede: Yup.string()
+      .oneOf(salutationOptions, "Ungültige Anrede")
+      .required("Anrede ist erforderlich"),
+    betriebApName: Yup.string().required("Name ist erforderlich"),
+    betriebApTelefon1: Yup.string()
+      .matches(/^\+?[0-9 ]{6,20}$/, "Ungültige Telefonnummer")
+      .required("Telefonnummer ist erforderlich"),
+    betriebApEmail: Yup.string()
+      .email("Ungültige E-Mail-Adresse")
+      .required("E-Mail ist erforderlich"),
+
+    // Contact 2 - conditional (all required if any field filled)
+    betriebAp2Anrede: Yup.string().test(
+      "conditional-required",
+      "Anrede ist erforderlich",
+      function (value) {
+        if (hasAnyContact2Value(this.parent)) {
+          return !!value && value.trim() !== "";
+        }
+        return true;
+      },
+    ),
+    betriebAp2Name: Yup.string().test(
+      "conditional-required",
+      "Name ist erforderlich",
+      function (value) {
+        if (hasAnyContact2Value(this.parent)) {
+          return !!value && value.trim() !== "";
+        }
+        return true;
+      },
+    ),
+    betriebAp2Telefon1: Yup.string().test(
+      "conditional-required",
+      "Telefonnummer ist erforderlich",
+      function (value) {
+        if (hasAnyContact2Value(this.parent)) {
+          return !!value && /^\+?[0-9 ]{6,20}$/.test(value || "");
+        }
+        return true;
+      },
+    ),
+    betriebAp2Email: Yup.string().test(
+      "conditional-required",
+      "E-Mail ist erforderlich",
+      function (value) {
+        if (hasAnyContact2Value(this.parent)) {
+          // Check if value exists and is a valid email
+          if (!value || value.trim() === "") return false;
+          return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+        }
+        return true;
+      },
+    ),
+  });
+};
+
 // Step 8: Datenschutzbestimmungen
 export const validateStudentMetaData = Yup.object({
   changedData: Yup.mixed().nullable(),

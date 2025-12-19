@@ -33,10 +33,9 @@ const Container = styled(Paper)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing(2),
-  padding: theme.spacing(3),
-  backgroundColor: theme.palette.background.paper,
+  background: "transparent",
   borderRadius: theme.spacing(1),
-  border: `1px solid ${theme.palette.divider}`,
+  boxShadow: "none",
 }));
 
 const OptionItem = styled(ListItem, {

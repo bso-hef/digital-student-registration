@@ -34,6 +34,7 @@
     "of": "von",
     "none": "Keine Angabe",
     "loadingSettings": "Lade Einstellungen...",
+    "loading": "Laden...",
     "Submit": "Absenden",
     "Submitting": "Wird übermittelt...",
     "Accepted": "Akzeptiert",
@@ -472,6 +473,9 @@
       "contactPerson1": "Ansprechpartner 1",
       "contactPerson2": "Ansprechpartner 2",
       "contactPerson3": "Ansprechpartner 3",
+      "contact1Title": "Ansprechpartner 1",
+      "contact2Title": "Ansprechpartner 2",
+      "contact3Title": "Ansprechpartner 3",
       "addContact": "Ansprechpartner hinzufügen",
       "addContactTooltip": "Einen weiteren Ansprechpartner hinzufügen",
       "removeContact": "Ansprechpartner entfernen",
@@ -499,19 +503,31 @@
       "postalCode": "PLZ",
       "city": "Ort",
       "phone": "Telefon",
-      "email": "E-Mail"
+      "email": "E-Mail",
+      "companyAddress": "Betriebsadresse",
+      "companyPhone": "Betriebstelefon",
+      "companyEmail": "Betriebs-E-Mail"
     },
     "companyContact": {
       "salutation": "Anrede",
       "firstName": "Vorname",
       "lastName": "Nachname",
       "phone": "Telefon",
-      "contactPerson": "Ansprechpartner im Betrieb"
+      "email": "E-Mail",
+      "contactPerson": "Ansprechpartner im Betrieb",
+      "contact1": "Ansprechpartner 1",
+      "contact2": "Ansprechpartner 2",
+      "contact1Title": "Ansprechpartner 1",
+      "contact2Title": "Ansprechpartner 2",
+      "addContact": "Ansprechpartner hinzufügen",
+      "removeContact": "Ansprechpartner entfernen",
+      "name": "Name"
     },
     "agreements": {
       "title": "Vereinbarungen",
       "description": "Bitte lesen und akzeptieren Sie die folgenden Vereinbarungen, um mit der Anmeldung fortzufahren.",
       "required": "Diese Vereinbarung ist erforderlich",
+      "requiredBadge": "Erforderlich",
       "datenschutz": "Datenschutzvereinbarung",
       "datenschutzDesc": "Ich willige in die Verarbeitung meiner personenbezogenen Daten gemäß der Datenschutzrichtlinie ein.",
       "teilnahmeunterricht": "Einwilligung zur Teilnahme am Unterricht",
@@ -543,7 +559,8 @@
       "training": "Ausbildung",
       "companyContact": "Ansprechpartner im Betrieb",
       "agreements": "Vereinbarungen",
-      "confirmationText": "Ich habe die Zusammenfassung gelesen und bestätige, dass die Angaben korrekt sind"
+      "confirmationText": "Ich habe die Zusammenfassung gelesen und bestätige, dass die Angaben korrekt sind",
+      "goBackToSummary": "Zurück zur Übersicht"
     },
     "completion": {
       "title": "Einschreibung abgeschlossen!",

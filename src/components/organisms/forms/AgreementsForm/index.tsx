@@ -6,7 +6,7 @@ import DynamicMuiIcon from "@/components/atoms/DynamicMuiIcon";
 import { useAgreementSettings } from "@/hooks/useAgreementSettings";
 import { updateStudentOnboardingData } from "@/store/actions/studentActions";
 import { useAppDispatch, useAppSelector } from "@/store/store";
-import { Box, Checkbox, Typography, styled } from "@mui/material";
+import { Box, Checkbox, Chip, Typography, styled } from "@mui/material";
 import { Form, Formik, FormikProps } from "formik";
 import { useTranslation } from "react-i18next";
 import * as Yup from "yup";
@@ -139,7 +139,7 @@ const AgreementsForm: React.FC<AgreementsFormProps> = ({
     return (
       <Box display="flex" justifyContent="center" padding={4}>
         <Typography variant="body2" color="text.secondary">
-          {t("general.loading")}...
+          {t("general.loading")}
         </Typography>
       </Box>
     );
@@ -222,12 +222,22 @@ const AgreementsForm: React.FC<AgreementsFormProps> = ({
 
                   {/* Title and Description on Right */}
                   <ContentContainer>
-                    <Typography
-                      variant="h6"
-                      sx={{ fontWeight: 600, lineHeight: 1.4 }}
-                    >
-                      {label}
-                    </Typography>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <Typography
+                        variant="h6"
+                        sx={{ fontWeight: 600, lineHeight: 1.4 }}
+                      >
+                        {label}
+                      </Typography>
+                      {agreement.required && (
+                        <Chip
+                          label={t("onboarding.agreements.requiredBadge")}
+                          size="small"
+                          color="error"
+                          sx={{ height: 20, fontSize: "0.7rem" }}
+                        />
+                      )}
+                    </Box>
                     {description && (
                       <Typography
                         variant="body2"

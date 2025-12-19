@@ -113,7 +113,7 @@ const GeneralDropdown: React.FC<GeneralDropdownProps> = ({
   required = false,
 }) => {
   return (
-    <StyledDropdown fullWidth required={required}>
+    <StyledDropdown fullWidth>
       <StyledLabel disabled={disabled}>
         {label}
         {required && " *"}
