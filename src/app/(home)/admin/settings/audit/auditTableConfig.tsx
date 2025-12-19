@@ -60,7 +60,7 @@ export const auditTableHeaders = (t: TFunction) => [
 export const formatAuditTableData = (logs: AuditLogEntry[]) => {
   return logs.map((log) => ({
     id: log._id,
-    timestamp: dayjs(log.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+    timestamp: dayjs(log.timestamp).format("DD.MM.YYYY HH:mm:ss"),
     category: (
       <Chip
         label={log.category}

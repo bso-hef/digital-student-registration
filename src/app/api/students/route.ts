@@ -6,6 +6,7 @@ import Logger from "@/lib/server-logger";
 import Class from "@/models/Class";
 import Student from "@/models/Student";
 import { createAuditLog } from "@/server/middleware/audit.middleware";
+import { parseDate } from "@/utils/date.utils";
 import { generateUniqueVerificationCode } from "@/utils/verification.utils";
 import { Types } from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
@@ -13,23 +14,6 @@ import { NextRequest, NextResponse } from "next/server";
 export const runtime = "nodejs";
 
 const logger = new Logger("API <<==>> Students");
-
-const parseDob = (value: unknown): Date | null => {
-  if (!value) return null;
-  if (value instanceof Date) return isNaN(value.getTime()) ? null : value;
-  if (typeof value !== "string") return null;
-
-  const iso = new Date(value);
-  if (!isNaN(iso.getTime())) return iso;
-
-  const m = value.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
-  if (m) {
-    const [, dd, mm, yyyy] = m;
-    const d = new Date(Number(yyyy), Number(mm) - 1, Number(dd));
-    return isNaN(d.getTime()) ? null : d;
-  }
-  return null;
-};
 
 interface AddressInput {
   street?: string;
@@ -192,7 +176,7 @@ const shapeStudent = (row: StudentInput): ShapedStudent => {
   const firstName =
     typeof row?.firstName === "string" ? row.firstName.trim() : "";
   const lastName = typeof row?.lastName === "string" ? row.lastName.trim() : "";
-  const dob = parseDob(row?.dateOfBirth);
+  const dob = parseDate(row?.dateOfBirth);
 
   if (!firstName || !lastName || !dob) {
     return {
@@ -258,7 +242,7 @@ const shapeStudent = (row: StudentInput): ShapedStudent => {
   }
 
   // School info
-  const schoolEntryDate = parseDob(row.schoolEntryDate);
+  const schoolEntryDate = parseDate(row.schoolEntryDate);
   if (schoolEntryDate) doc.schoolEntryDate = schoolEntryDate;
 
   const className = getString(row.className);
@@ -281,7 +265,7 @@ const shapeStudent = (row: StudentInput): ShapedStudent => {
   const profession = getString(row.profession);
   if (profession) doc.profession = profession;
 
-  const trainingStartDate = parseDob(row.trainingStartDate);
+  const trainingStartDate = parseDate(row.trainingStartDate);
   if (trainingStartDate) doc.trainingStartDate = trainingStartDate;
 
   // Employer

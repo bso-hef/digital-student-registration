@@ -3,32 +3,12 @@ import { dbConnect } from "@/lib/config/mongo";
 import { norm } from "@/lib/config/norm";
 import Logger from "@/lib/server-logger";
 import Student from "@/models/Student";
+import { parseDate } from "@/utils/date.utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
 const logger = new Logger("API <<==>> Students Check Duplicate");
-
-/**
- * Parse date from various formats
- */
-const parseDob = (value: string | null): Date | null => {
-  if (!value) return null;
-
-  // Try ISO format
-  const iso = new Date(value);
-  if (!isNaN(iso.getTime())) return iso;
-
-  // Try DD.MM.YYYY format
-  const m = value.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
-  if (m) {
-    const [, dd, mm, yyyy] = m;
-    const d = new Date(Number(yyyy), Number(mm) - 1, Number(dd));
-    return isNaN(d.getTime()) ? null : d;
-  }
-
-  return null;
-};
 
 /**
  * Calculate days between two dates
@@ -70,7 +50,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Parse and validate date of birth
-    const dob = parseDob(dateOfBirth);
+    const dob = parseDate(dateOfBirth);
     if (!dob) {
       return NextResponse.json(
         { message: "Invalid dateOfBirth format" },

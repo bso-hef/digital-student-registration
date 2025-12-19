@@ -57,6 +57,11 @@ interface Employer {
   contactEmail: string;
   contactPhone?: string;
   contactSalutation?: string;
+  // Second contact (optional)
+  contact2Name?: string;
+  contact2Email?: string;
+  contact2Phone?: string;
+  contact2Salutation?: string;
   verified: boolean;
 }
 
@@ -68,6 +73,11 @@ const EmployerSchema = new Schema(
     contactEmail: { type: String, default: "" },
     contactPhone: { type: String, default: "" },
     contactSalutation: { type: String, default: "" },
+    // Second contact (optional)
+    contact2Name: { type: String, default: "" },
+    contact2Email: { type: String, default: "" },
+    contact2Phone: { type: String, default: "" },
+    contact2Salutation: { type: String, default: "" },
     verified: { type: Boolean, default: false },
   },
   { _id: false },

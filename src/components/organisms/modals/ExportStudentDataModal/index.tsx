@@ -26,6 +26,7 @@ import {
   styled,
   useTheme,
 } from "@mui/material";
+import dayjs from "dayjs";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 
@@ -123,7 +124,7 @@ const ExportStudentDataModal: React.FC<ExportStudentDataModalProps> = ({
 
   const resolveFilename = (s: StudentType, format: "pdf" | "json" | "csv") => {
     const sid = String(s._id || "");
-    const dateStr = new Date().toISOString().split("T")[0];
+    const dateStr = dayjs().format("DD-MM-YYYY");
     const classNameStr = getClassName(s) || "ohne_klasse";
 
     const extension =
@@ -170,7 +171,7 @@ const ExportStudentDataModal: React.FC<ExportStudentDataModalProps> = ({
         );
         setProgress(95);
 
-        const dateStr = new Date().toISOString().split("T")[0];
+        const dateStr = dayjs().format("DD-MM-YYYY");
         const filename = `student_data_export_${dateStr}.csv`;
         downloadBlob(filename, blob);
         setProgress(100);
@@ -247,7 +248,7 @@ const ExportStudentDataModal: React.FC<ExportStudentDataModalProps> = ({
           setProgress(Math.round((done / students.length) * 95));
         }
 
-        const dateStr = new Date().toISOString().split("T")[0];
+        const dateStr = dayjs().format("DD-MM-YYYY");
         const zipBlob = await buildZip(files, (p) =>
           setProgress(95 + Math.round((p || 0) * 0.05)),
         );

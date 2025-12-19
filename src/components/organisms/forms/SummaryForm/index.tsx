@@ -12,6 +12,7 @@ import {
 import { useAgreementSettings } from "@/hooks/useAgreementSettings";
 import { setEditingFromSummary } from "@/store/actions/studentActions";
 import { useAppDispatch, useAppSelector } from "@/store/store";
+import { formatGermanDate } from "@/utils/date.utils";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import {
@@ -212,7 +213,7 @@ const SummaryForm: React.FC<SummaryFormProps> = ({
         {renderDataRow(t("onboarding.general.gender"), studentData.geschlecht)}
         {renderDataRow(
           t("onboarding.general.birthDate"),
-          studentData.geburtsdatum,
+          formatGermanDate(studentData.geburtsdatum),
         )}
         {renderDataRow(
           t("onboarding.general.birthPlace"),
@@ -490,7 +491,7 @@ const SummaryForm: React.FC<SummaryFormProps> = ({
             )}
             {renderDataRow(
               t("onboarding.training.startDate"),
-              studentData.betriebEintritt,
+              formatGermanDate(studentData.betriebEintritt),
             )}
             {renderDataRow(
               t("onboarding.training.company"),

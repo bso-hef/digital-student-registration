@@ -152,6 +152,7 @@ const GeneralClassSettingsTab = () => {
                             onChange={(newValue) =>
                               setFieldValue("schoolYearFrom", newValue)
                             }
+                            format="DD.MM.YYYY"
                             slotProps={{ textField: { fullWidth: true } }}
                           />
                           <DatePicker
@@ -160,6 +161,7 @@ const GeneralClassSettingsTab = () => {
                             onChange={(newValue) =>
                               setFieldValue("schoolYearTo", newValue)
                             }
+                            format="DD.MM.YYYY"
                             slotProps={{ textField: { fullWidth: true } }}
                           />
                         </Box>

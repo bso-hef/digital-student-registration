@@ -4,6 +4,7 @@ import React from "react";
 
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
 import GeneralModal from "@/components/organisms/modals/GeneralModal";
+import { formatGermanDate } from "@/utils/date.utils";
 import { WarningRounded } from "@mui/icons-material";
 import { Box, Typography, styled } from "@mui/material";
 import { useTranslation } from "react-i18next";
@@ -93,15 +94,6 @@ const DuplicateWarningModal: React.FC<DuplicateWarningModalProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("de-DE", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
-  };
-
   const getDaysText = (days: number) => {
     if (days === 0) return t("modals.duplicateWarning.today");
     if (days === 1) return t("modals.duplicateWarning.yesterday");
@@ -137,7 +129,7 @@ const DuplicateWarningModal: React.FC<DuplicateWarningModalProps> = ({
             </InfoRow>
             <InfoRow>
               <InfoLabel>{t("modals.duplicateWarning.dateOfBirth")}:</InfoLabel>
-              <InfoValue>{formatDate(studentData.dateOfBirth)}</InfoValue>
+              <InfoValue>{formatGermanDate(studentData.dateOfBirth)}</InfoValue>
             </InfoRow>
             {studentData.status && (
               <InfoRow>

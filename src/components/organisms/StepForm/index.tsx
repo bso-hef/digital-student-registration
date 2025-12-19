@@ -27,6 +27,7 @@ import {
   setCurrentStudentOnboardingStep,
   setEditingFromSummary,
   submitOnboarding,
+  updateStudentOnboardingData,
 } from "@/store/actions/studentActions";
 import { AppDispatch } from "@/store/store";
 import { applicationScrollbar } from "@/utils/styling.utils";
@@ -384,6 +385,8 @@ const StepForm = ({ studentId }: StepFormProps) => {
     try {
       // Auto-save current form data directly (don't use submitForm which triggers navigation)
       if (formikRef.current) {
+        // Update Redux state with the form values FIRST so summary displays updated data
+        dispatch(updateStudentOnboardingData(formikRef.current.values));
         await handleAutoSave(formikRef.current.values);
       } else {
         await handleAutoSave();

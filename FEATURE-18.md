@@ -88,5 +88,5 @@
 - [ ] Classen import via CSV (neu import muss die daten aktualisieren)
 - [ ] Classen export via CSV
 - [ ] Localhost inside QR code PDF
-- [ ] Same Date Field like inside wizzard
-- [ ] training form issues
+- [x] Same Date Field like inside wizzard
+- [x] training form issues

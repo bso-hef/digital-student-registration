@@ -215,6 +215,7 @@ const GeneralStudentSettingsTab = () => {
                           onChange={(newValue) =>
                             setFieldValue("dateOfBirth", newValue)
                           }
+                          format="DD.MM.YYYY"
                           slotProps={{ textField: { fullWidth: true } }}
                         />
                       </LocalizationProvider>

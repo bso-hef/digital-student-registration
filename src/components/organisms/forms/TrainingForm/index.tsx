@@ -151,6 +151,7 @@ const TrainingForm: React.FC<TrainingFormProps> = ({
             value={values.betriebEintritt}
             onChange={(newValue) => setFieldValue("betriebEintritt", newValue)}
             label={t("onboarding.training.companyStartDate")}
+            format="DD.MM.YYYY"
             slotProps={{
               textField: {
                 variant: "outlined",
