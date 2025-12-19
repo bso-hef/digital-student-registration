@@ -61,7 +61,7 @@ export async function GET() {
 
 ## Student Model
 
-### Location
+### Locations
 
 `src/models/Student.ts`
 
@@ -373,6 +373,7 @@ Not yet fully implemented. Schema definition exists but is minimal.
    - Purpose: Grouping students with identical names
 
 4. **Ordinal Index**
+
    ```typescript
    {
      ordinal: 1;
@@ -384,6 +385,7 @@ Not yet fully implemented. Schema definition exists but is minimal.
 ### Class Indexes
 
 1. **Unique School Year + Name**
+
    ```typescript
    { schoolYearFrom: 1, schoolYearTo: 1, name: 1 }
    { unique: true }

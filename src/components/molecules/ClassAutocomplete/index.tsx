@@ -5,6 +5,7 @@ import React, { useCallback, useState } from "react";
 import { updateStudentClass } from "@/store/actions/studentActions";
 import { AppDispatch } from "@/store/store";
 import { ClassInterface } from "@/types/class";
+import BusinessRoundedIcon from "@mui/icons-material/BusinessRounded";
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 import ExpandMoreRoundedIcon from "@mui/icons-material/ExpandMoreRounded";
 import {
@@ -12,9 +13,11 @@ import {
   Box,
   CircularProgress,
   TextField,
+  Tooltip,
   styled,
 } from "@mui/material";
 import { useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 const StyledAutocomplete = styled(Autocomplete)(({ theme }) => ({
   minWidth: 200,
@@ -57,6 +60,21 @@ const StyledExpandIcon = styled(Box)(({ theme }) => ({
   },
 }));
 
+const StyledEmployerIcon = styled(Box)(({ theme }) => ({
+  fontSize: "16px",
+  height: 20,
+  color: theme.palette.warning.main,
+  marginLeft: theme.spacing(0.5),
+  marginRight: theme.spacing(0.5),
+  display: "flex",
+  alignItems: "center",
+  "& svg": {
+    height: 16,
+    width: 16,
+    fontSize: "16px",
+  },
+}));
+
 type ClassOption = ClassInterface | null;
 
 type Props = {
@@ -73,6 +91,7 @@ const ClassAutocomplete: React.FC<Props> = ({
   compact = true,
 }) => {
   const dispatch: AppDispatch = useDispatch();
+  const { t } = useTranslation();
 
   const getCurrentClassId = (): string | null => {
     if (!currentClass) return null;
@@ -162,8 +181,24 @@ const ClassAutocomplete: React.FC<Props> = ({
                 py: 1,
               }}
             >
-              <Box component="span" sx={{ flexGrow: 1 }}>
-                {opt ? formatClassOption(opt) : "-"}
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  flexGrow: 1,
+                }}
+              >
+                <Box component="span">{opt ? formatClassOption(opt) : "-"}</Box>
+                {opt?.requiresEmployerInfo && (
+                  <Tooltip
+                    title={t("classAutocomplete.requiresEmployerInfo")}
+                    placement="right"
+                  >
+                    <StyledEmployerIcon>
+                      <BusinessRoundedIcon />
+                    </StyledEmployerIcon>
+                  </Tooltip>
+                )}
               </Box>
               {isSelected && (
                 <StyledCheckIcon>

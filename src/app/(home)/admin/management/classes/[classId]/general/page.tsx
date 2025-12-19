@@ -48,7 +48,7 @@ const validationSchema = yup.object({
     .number()
     .nullable()
     .min(0)
-    .max(12, "Grade must be between 0 and 12"),
+    .max(14, "Grade must be between 0 and 14"),
   schoolYearFrom: yup.date().nullable().required("Start date is required"),
   schoolYearTo: yup.date().nullable().required("End date is required"),
   isVocational: yup.boolean().required(),

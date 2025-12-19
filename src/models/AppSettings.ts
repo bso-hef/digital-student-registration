@@ -146,6 +146,7 @@ const AppSettingsSchema = new Schema(
           { value: "Klasse 11", label: "Klasse 11", enabled: true, order: 6 },
           { value: "Klasse 12", label: "Klasse 12", enabled: true, order: 7 },
           { value: "Klasse 13", label: "Klasse 13", enabled: true, order: 8 },
+          { value: "Klasse 14", label: "Klasse 14", enabled: true, order: 9 },
         ],
       },
       schoolTypeOptions: {

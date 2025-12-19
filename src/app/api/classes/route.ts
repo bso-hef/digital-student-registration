@@ -54,7 +54,7 @@ const shapeClass = (row: ClassInput): ShapedClass => {
   const schoolYearTo = toDateOrNull(row?.schoolYearTo);
   const name = typeof row?.name === "string" ? row.name.trim() : "";
 
-  // grade: number|null erlaubt; wenn number -> ganzzahlig 1..13
+  // grade: number|null erlaubt; wenn number -> ganzzahlig 1..14
   let grade: number | null;
   if (row?.grade === null || row?.grade === undefined || row?.grade === "") {
     grade = null;
@@ -62,13 +62,13 @@ const shapeClass = (row: ClassInput): ShapedClass => {
     typeof row?.grade === "number" &&
     Number.isInteger(row.grade) &&
     row.grade >= 1 &&
-    row.grade <= 13
+    row.grade <= 14
   ) {
     grade = row.grade;
   } else {
     return {
       ok: false,
-      reason: "Invalid grade (must be integer 1..13 or null)",
+      reason: "Invalid grade (must be integer 1..14 or null)",
     };
   }
 

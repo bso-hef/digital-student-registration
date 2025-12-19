@@ -47,6 +47,9 @@
     "female": "Weiblich",
     "diverse": "Divers"
   },
+  "classAutocomplete": {
+    "requiresEmployerInfo": "Erfordert Arbeitgeberinformationen"
+  },
   "error": {
     "Page not found": "Seite nicht gefunden",
     "An unexpected error occurred": "Ein unerwarteter Fehler ist aufgetreten",

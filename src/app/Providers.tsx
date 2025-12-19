@@ -12,6 +12,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import * as AppInitializerService from "@/lib/config/AppInitializer";
 
 import ThemeWrapper from "@/theme/ThemeWrapper";
+import { ThemedToaster } from "@/components/ThemedToaster";
 
 import i18n from "../lib/config/i18n";
 import { persistor, store } from "../store/store";
@@ -27,7 +28,10 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         <PersistGate loading={null} persistor={persistor}>
           <I18nextProvider i18n={i18n}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <ThemeWrapper>{children}</ThemeWrapper>
+              <ThemeWrapper>
+                <ThemedToaster />
+                {children}
+              </ThemeWrapper>
             </LocalizationProvider>
           </I18nextProvider>
         </PersistGate>
