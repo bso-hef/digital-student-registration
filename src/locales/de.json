@@ -218,6 +218,20 @@
         "option2Step1": "Besuchen Sie:",
         "option2Step2": "Geben Sie Ihren Vor- und Nachnamen ein",
         "option2Step3": "Geben Sie Ihren Verifizierungscode ein:"
+      },
+      "newRegistration": {
+        "title": "QR-Code für Neuanmeldung erstellen",
+        "description": "Erstellen Sie einen QR-Code, mit dem sich neue Schüler anmelden können.",
+        "pdfTitle": "Neuanmeldung Schüler",
+        "filename": "neuanmeldung_schueler",
+        "pdfInstructions": {
+          "title": "So melden Sie sich als neuer Schüler an:",
+          "option1Title": "Option 1: QR-Code scannen",
+          "option1Text": "Scannen Sie den QR-Code oben mit Ihrer Smartphone-Kamera, um das Anmeldeformular direkt zu öffnen.",
+          "option2Title": "Option 2: Manuelle Eingabe",
+          "option2Step1": "Besuchen Sie:",
+          "option2Step2": "Klicken Sie auf 'Neuen Schüler anlegen', um den Anmeldeprozess zu starten"
+        }
       }
     },
     "exportStudentData": {

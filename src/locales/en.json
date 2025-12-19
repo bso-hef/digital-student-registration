@@ -218,6 +218,20 @@
         "option2Step1": "Visit:",
         "option2Step2": "Enter your first name and last name",
         "option2Step3": "Enter your verification code:"
+      },
+      "newRegistration": {
+        "title": "Generate New Student Registration QR Code",
+        "description": "Create a QR code that allows anyone to start a new student registration.",
+        "pdfTitle": "New Student Registration",
+        "filename": "new_student_registration",
+        "pdfInstructions": {
+          "title": "How to register as a new student:",
+          "option1Title": "Option 1: Scan the QR code",
+          "option1Text": "Please scan the QR code above with your smartphone camera to open the registration form directly.",
+          "option2Title": "Option 2: Manual entry",
+          "option2Step1": "Visit:",
+          "option2Step2": "Click on 'Create New Student' to start the registration process"
+        }
       }
     },
     "exportStudentData": {

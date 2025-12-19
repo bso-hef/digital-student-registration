@@ -3,7 +3,11 @@ import React, { Fragment, useState } from "react";
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
 import { WIZZARD_URL } from "@/constants/general.constants";
 import { downloadBlob } from "@/utils/general.utils";
-import { buildCombinedQrPdf, buildPdfForStudent } from "@/utils/pdf.utils";
+import {
+  buildCombinedQrPdf,
+  buildNewRegistrationPdf,
+  buildPdfForStudent,
+} from "@/utils/pdf.utils";
 import { sanitizeFilename } from "@/utils/string.utils";
 import { buildZip } from "@/utils/zip.utils";
 import CropLandscapeRoundedIcon from "@mui/icons-material/CropLandscapeRounded";
@@ -148,9 +152,9 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
     return name;
   };
 
-  const generateExport = async () => {
-    if (!students?.length) return;
+  const isNewRegistrationMode = !students?.length;
 
+  const generateExport = async () => {
     setBusy(true);
     setProgress(0);
 
@@ -165,7 +169,18 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
     };
 
     try {
-      if (students.length === 1) {
+      if (isNewRegistrationMode) {
+        // New registration mode: generate a PDF with QR code linking to /student
+        const pdf = await buildNewRegistrationPdf({
+          pageSize,
+          orientation,
+          wizardUrlTemplate: WIZZARD_URL,
+          locale,
+        });
+        const filename = `${t("modals.generateQrModal.newRegistration.filename")}.pdf`;
+        downloadBlob(filename, pdf);
+        setProgress(100);
+      } else if (students.length === 1) {
         // Single student: download individual PDF
         const s = students[0];
         const pdf = await buildPdfForStudent(s, pdfSettings);
@@ -218,7 +233,7 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === "Enter" && !event.shiftKey && count && !busy) {
+    if (event.key === "Enter" && !event.shiftKey && !busy) {
       event.preventDefault();
       handleGenerate();
     }
@@ -235,11 +250,7 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
           />
           <Typography variant="caption" sx={{ opacity: 0.7 }}>
             {progress == null
-              ? t(
-                  exportMode === "combined"
-                    ? "modals.generateQrModal.creatingPdf"
-                    : "modals.generateQrModal.creatingZip",
-                )
+              ? t("modals.generateQrModal.creatingPdf")
               : t("modals.generateQrModal.progress", {
                   progress: Math.round(progress),
                 })}
@@ -247,259 +258,435 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
         </Box>
       )}
 
-      <StyledContentStack
-        direction={{ xs: "column", md: "row" }}
-        spacing={3}
-        divider={<Divider flexItem orientation="vertical" />}
-        onKeyDown={handleKeyDown}
-      >
-        <Stack
-          sx={{
-            width: "50%",
-            display: "flex",
-            flexDirection: "column",
-            gap: 2,
-          }}
-          spacing={2}
+      {isNewRegistrationMode ? (
+        // New Registration Mode UI
+        <StyledContentStack
+          direction={{ xs: "column", md: "row" }}
+          spacing={3}
+          divider={<Divider flexItem orientation="vertical" />}
+          onKeyDown={handleKeyDown}
         >
-          <Stack spacing={1}>
-            <StyledOptionLabel>
-              {t("modals.generateQrModal.pageSize")}
-            </StyledOptionLabel>
-            <ToggleButtonGroup
-              value={pageSize}
-              exclusive
-              onChange={(_, v) => v && setPageSize(v)}
-              size="small"
-            >
-              <ToggleButton value="A4">A4</ToggleButton>
-              <ToggleButton value="A5">A5</ToggleButton>
-            </ToggleButtonGroup>
-          </Stack>
-          <Stack spacing={1}>
-            <StyledOptionLabel>
-              {t("modals.generateQrModal.orientation")}
-            </StyledOptionLabel>
-            <ToggleButtonGroup
-              value={orientation}
-              exclusive
-              onChange={(_, v) => v && setOrientation(v)}
-              size="small"
-            >
-              <ToggleButton value="portrait">
-                <CropPortraitRoundedIcon sx={{ mr: 1 }} />
-                {t("modals.generateQrModal.portrait")}
-              </ToggleButton>
-              <ToggleButton value="landscape">
-                <CropLandscapeRoundedIcon sx={{ mr: 1 }} />
-                {t("modals.generateQrModal.landscape")}
-              </ToggleButton>
-            </ToggleButtonGroup>
-          </Stack>
+          <Stack
+            sx={{
+              width: "50%",
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+            }}
+            spacing={2}
+          >
+            <Typography variant="body2" sx={{ color: "text.secondary", mb: 1 }}>
+              {t("modals.generateQrModal.newRegistration.description")}
+            </Typography>
 
-          {count >= 2 && (
             <Stack spacing={1}>
               <StyledOptionLabel>
-                {t("modals.generateQrModal.exportMode")}
+                {t("modals.generateQrModal.pageSize")}
               </StyledOptionLabel>
               <ToggleButtonGroup
-                value={exportMode}
+                value={pageSize}
                 exclusive
-                onChange={(_, v) => v && setExportMode(v)}
+                onChange={(_, v) => v && setPageSize(v)}
                 size="small"
               >
-                <ToggleButton value="zip">
-                  <FolderZipRoundedIcon sx={{ mr: 1 }} />
-                  {t("modals.generateQrModal.separateFiles")}
+                <ToggleButton value="A4">A4</ToggleButton>
+                <ToggleButton value="A5">A5</ToggleButton>
+              </ToggleButtonGroup>
+            </Stack>
+            <Stack spacing={1}>
+              <StyledOptionLabel>
+                {t("modals.generateQrModal.orientation")}
+              </StyledOptionLabel>
+              <ToggleButtonGroup
+                value={orientation}
+                exclusive
+                onChange={(_, v) => v && setOrientation(v)}
+                size="small"
+              >
+                <ToggleButton value="portrait">
+                  <CropPortraitRoundedIcon sx={{ mr: 1 }} />
+                  {t("modals.generateQrModal.portrait")}
                 </ToggleButton>
-                <ToggleButton value="combined">
-                  <PictureAsPdfRoundedIcon sx={{ mr: 1 }} />
-                  {t("modals.generateQrModal.combinedPdf")}
+                <ToggleButton value="landscape">
+                  <CropLandscapeRoundedIcon sx={{ mr: 1 }} />
+                  {t("modals.generateQrModal.landscape")}
                 </ToggleButton>
               </ToggleButtonGroup>
             </Stack>
-          )}
-
-          <Stack>
-            <StyledOptionLabel
-              sx={{
-                mb: 1,
-              }}
-            >
-              {t("modals.generateQrModal.filenameSchema")}
-            </StyledOptionLabel>
-
-            <TextField
-              value={filenamePattern}
-              onChange={(e) => setFilenamePattern(e.target.value)}
-              size="small"
-              helperText={t("modals.generateQrModal.filenameSchemaExample")}
-            />
           </Stack>
 
-          <Stack>
-            <StyledOptionLabel
+          <Box sx={{ flex: 1, width: "50%" }}>
+            <StyledHeadline>
+              {t("modals.generateQrModal.previewMock")}
+            </StyledHeadline>
+            <Paper
               sx={{
-                mb: 1,
-              }}
-            >
-              {t("modals.generateQrModal.options")}
-            </StyledOptionLabel>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={includeClass}
-                  onChange={(e) => setIncludeClass(e.target.checked)}
-                />
-              }
-              label={t("modals.generateQrModal.showClassOnPdf")}
-            />
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={shortenId}
-                  onChange={(e) => setShortenId(e.target.checked)}
-                />
-              }
-              label={t("modals.generateQrModal.shortenIdInLink")}
-            />
-          </Stack>
-        </Stack>
-
-        <Box sx={{ flex: 1, width: "50%" }}>
-          <StyledHeadline>
-            {t("modals.generateQrModal.previewMock")}
-          </StyledHeadline>
-          <Paper
-            sx={{
-              mt: 1,
-              borderRadius: 3,
-            }}
-          >
-            <Box
-              sx={{
-                aspectRatio:
-                  orientation === "portrait" ? "1/1.4142" : "1.4142/1",
-                borderRadius: 2,
-                border: `1px dashed ${theme.palette.border.seperator}`,
-                p: 3,
-                gap: 2,
-                bgcolor: theme.palette.surface.interface.background,
+                mt: 1,
+                borderRadius: 3,
               }}
             >
               <Box
                 sx={{
-                  display: "grid",
-                  gridTemplateRows: "auto 1fr auto",
+                  aspectRatio:
+                    orientation === "portrait" ? "1/1.4142" : "1.4142/1",
+                  borderRadius: 2,
+                  border: `1px dashed ${theme.palette.border.seperator}`,
+                  p: 3,
                   gap: 2,
-                  height: "100%",
-                  width: "100%",
-                  boxSizing: "border-box",
+                  bgcolor: theme.palette.surface.interface.background,
                 }}
               >
-                <Stack direction="row" alignItems="center" spacing={1}>
-                  <QrCode2RoundedIcon />
-                  <Typography variant="subtitle2">
-                    {t("modals.generateQrModal.onboardingWizard")}
-                  </Typography>
-                </Stack>
-
                 <Box
                   sx={{
                     display: "grid",
-                    gridTemplateColumns: {
-                      xs: "1fr",
-                      sm: "minmax(140px, 220px) 1fr",
-                    },
-                    alignItems: "start",
+                    gridTemplateRows: "auto 1fr auto",
                     gap: 2,
-                    minHeight: 0,
+                    height: "100%",
+                    width: "100%",
+                    boxSizing: "border-box",
                   }}
                 >
-                  <Stack
-                    direction={{ xs: "column", sm: "row" }}
-                    spacing={2}
-                    alignItems="stretch"
-                    sx={{ minHeight: 0 }}
-                  >
-                    <StyledQRPreviewBox isPortrait={isPortrait}>
-                      QR
-                    </StyledQRPreviewBox>
+                  <Stack direction="row" alignItems="center" spacing={1}>
+                    <QrCode2RoundedIcon />
+                    <Typography variant="subtitle2">
+                      {t("modals.generateQrModal.newRegistration.pdfTitle")}
+                    </Typography>
+                  </Stack>
 
-                    <Stack spacing={0.75} sx={{ minWidth: 0 }}>
-                      <Typography
-                        variant="h5"
-                        sx={{ fontWeight: 800, textTransform: "capitalize" }}
-                      >
-                        {sample.firstName} {sample.lastName}
-                      </Typography>
-                      {includeClass && getClassName(sample) && (
+                  <Box
+                    sx={{
+                      display: "grid",
+                      gridTemplateColumns: {
+                        xs: "1fr",
+                        sm: "minmax(140px, 220px) 1fr",
+                      },
+                      alignItems: "start",
+                      gap: 2,
+                      minHeight: 0,
+                    }}
+                  >
+                    <Stack
+                      direction={{ xs: "column", sm: "row" }}
+                      spacing={2}
+                      alignItems="stretch"
+                      sx={{ minHeight: 0 }}
+                    >
+                      <StyledQRPreviewBox isPortrait={isPortrait}>
+                        QR
+                      </StyledQRPreviewBox>
+
+                      <Stack spacing={0.75} sx={{ minWidth: 0 }}>
+                        <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                          {t("modals.generateQrModal.newRegistration.pdfTitle")}
+                        </Typography>
                         <Typography
                           variant="body2"
                           sx={{ color: "text.secondary" }}
                         >
-                          {t("modals.generateQrModal.class")}{" "}
-                          <b>{getClassName(sample)}</b>
+                          {t(
+                            "modals.generateQrModal.newRegistration.description",
+                          )}
                         </Typography>
-                      )}
-                      {sample.verificationCode && (
                         <Typography
-                          variant="body1"
-                          sx={{ color: "text.primary", fontWeight: 700 }}
+                          variant="caption"
+                          sx={{
+                            color: "text.disabled",
+                            fontSize: "0.7rem",
+                            mt: 1,
+                          }}
                         >
-                          {t("modals.generateQrModal.verificationCode")}{" "}
-                          <b>{sample.verificationCode}</b>
+                          URL: /student
                         </Typography>
-                      )}
-                      <Typography
-                        variant="caption"
-                        sx={{ color: "text.disabled", fontSize: "0.7rem" }}
-                      >
-                        {t("modals.generateQrModal.id")}{" "}
-                        {shortenId
-                          ? (sample._id || "").slice(0, 8)
-                          : sample._id}
-                      </Typography>
+                      </Stack>
                     </Stack>
+                  </Box>
+
+                  <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    sx={{ pt: 1 }}
+                  >
+                    <Typography
+                      variant="caption"
+                      sx={{ color: "text.secondary" }}
+                    >
+                      {pageSize?.toUpperCase()} •{" "}
+                      {isPortrait
+                        ? t("modals.generateQrModal.portrait")
+                        : t("modals.generateQrModal.landscape")}
+                    </Typography>
+                    <Typography
+                      variant="caption"
+                      sx={{ color: "text.secondary" }}
+                    >
+                      {t("modals.generateQrModal.newRegistration.filename")}.pdf
+                    </Typography>
                   </Stack>
                 </Box>
-
-                <Stack
-                  direction="row"
-                  justifyContent="space-between"
-                  alignItems="center"
-                  sx={{ pt: 1 }}
-                >
-                  <Typography
-                    variant="caption"
-                    sx={{ color: "text.secondary" }}
-                  >
-                    {pageSize?.toUpperCase()} •{" "}
-                    {isPortrait
-                      ? t("modals.generateQrModal.portrait")
-                      : t("modals.generateQrModal.landscape")}
-                  </Typography>
-                  <Typography
-                    variant="caption"
-                    sx={{ color: "text.secondary" }}
-                  >
-                    {sample?.lastName}_{sample.firstName}
-                    {includeClass && getClassName(sample)
-                      ? `_${getClassName(sample)}`
-                      : ""}
-                    .pdf
-                  </Typography>
-                </Stack>
               </Box>
-            </Box>
-          </Paper>
-        </Box>
-      </StyledContentStack>
+            </Paper>
+          </Box>
+        </StyledContentStack>
+      ) : (
+        // Existing Student QR Code Mode UI
+        <StyledContentStack
+          direction={{ xs: "column", md: "row" }}
+          spacing={3}
+          divider={<Divider flexItem orientation="vertical" />}
+          onKeyDown={handleKeyDown}
+        >
+          <Stack
+            sx={{
+              width: "50%",
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+            }}
+            spacing={2}
+          >
+            <Stack spacing={1}>
+              <StyledOptionLabel>
+                {t("modals.generateQrModal.pageSize")}
+              </StyledOptionLabel>
+              <ToggleButtonGroup
+                value={pageSize}
+                exclusive
+                onChange={(_, v) => v && setPageSize(v)}
+                size="small"
+              >
+                <ToggleButton value="A4">A4</ToggleButton>
+                <ToggleButton value="A5">A5</ToggleButton>
+              </ToggleButtonGroup>
+            </Stack>
+            <Stack spacing={1}>
+              <StyledOptionLabel>
+                {t("modals.generateQrModal.orientation")}
+              </StyledOptionLabel>
+              <ToggleButtonGroup
+                value={orientation}
+                exclusive
+                onChange={(_, v) => v && setOrientation(v)}
+                size="small"
+              >
+                <ToggleButton value="portrait">
+                  <CropPortraitRoundedIcon sx={{ mr: 1 }} />
+                  {t("modals.generateQrModal.portrait")}
+                </ToggleButton>
+                <ToggleButton value="landscape">
+                  <CropLandscapeRoundedIcon sx={{ mr: 1 }} />
+                  {t("modals.generateQrModal.landscape")}
+                </ToggleButton>
+              </ToggleButtonGroup>
+            </Stack>
+
+            {count >= 2 && (
+              <Stack spacing={1}>
+                <StyledOptionLabel>
+                  {t("modals.generateQrModal.exportMode")}
+                </StyledOptionLabel>
+                <ToggleButtonGroup
+                  value={exportMode}
+                  exclusive
+                  onChange={(_, v) => v && setExportMode(v)}
+                  size="small"
+                >
+                  <ToggleButton value="zip">
+                    <FolderZipRoundedIcon sx={{ mr: 1 }} />
+                    {t("modals.generateQrModal.separateFiles")}
+                  </ToggleButton>
+                  <ToggleButton value="combined">
+                    <PictureAsPdfRoundedIcon sx={{ mr: 1 }} />
+                    {t("modals.generateQrModal.combinedPdf")}
+                  </ToggleButton>
+                </ToggleButtonGroup>
+              </Stack>
+            )}
+
+            <Stack>
+              <StyledOptionLabel
+                sx={{
+                  mb: 1,
+                }}
+              >
+                {t("modals.generateQrModal.filenameSchema")}
+              </StyledOptionLabel>
+
+              <TextField
+                value={filenamePattern}
+                onChange={(e) => setFilenamePattern(e.target.value)}
+                size="small"
+                helperText={t("modals.generateQrModal.filenameSchemaExample")}
+              />
+            </Stack>
+
+            <Stack>
+              <StyledOptionLabel
+                sx={{
+                  mb: 1,
+                }}
+              >
+                {t("modals.generateQrModal.options")}
+              </StyledOptionLabel>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={includeClass}
+                    onChange={(e) => setIncludeClass(e.target.checked)}
+                  />
+                }
+                label={t("modals.generateQrModal.showClassOnPdf")}
+              />
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={shortenId}
+                    onChange={(e) => setShortenId(e.target.checked)}
+                  />
+                }
+                label={t("modals.generateQrModal.shortenIdInLink")}
+              />
+            </Stack>
+          </Stack>
+
+          <Box sx={{ flex: 1, width: "50%" }}>
+            <StyledHeadline>
+              {t("modals.generateQrModal.previewMock")}
+            </StyledHeadline>
+            <Paper
+              sx={{
+                mt: 1,
+                borderRadius: 3,
+              }}
+            >
+              <Box
+                sx={{
+                  aspectRatio:
+                    orientation === "portrait" ? "1/1.4142" : "1.4142/1",
+                  borderRadius: 2,
+                  border: `1px dashed ${theme.palette.border.seperator}`,
+                  p: 3,
+                  gap: 2,
+                  bgcolor: theme.palette.surface.interface.background,
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateRows: "auto 1fr auto",
+                    gap: 2,
+                    height: "100%",
+                    width: "100%",
+                    boxSizing: "border-box",
+                  }}
+                >
+                  <Stack direction="row" alignItems="center" spacing={1}>
+                    <QrCode2RoundedIcon />
+                    <Typography variant="subtitle2">
+                      {t("modals.generateQrModal.onboardingWizard")}
+                    </Typography>
+                  </Stack>
+
+                  <Box
+                    sx={{
+                      display: "grid",
+                      gridTemplateColumns: {
+                        xs: "1fr",
+                        sm: "minmax(140px, 220px) 1fr",
+                      },
+                      alignItems: "start",
+                      gap: 2,
+                      minHeight: 0,
+                    }}
+                  >
+                    <Stack
+                      direction={{ xs: "column", sm: "row" }}
+                      spacing={2}
+                      alignItems="stretch"
+                      sx={{ minHeight: 0 }}
+                    >
+                      <StyledQRPreviewBox isPortrait={isPortrait}>
+                        QR
+                      </StyledQRPreviewBox>
+
+                      <Stack spacing={0.75} sx={{ minWidth: 0 }}>
+                        <Typography
+                          variant="h5"
+                          sx={{ fontWeight: 800, textTransform: "capitalize" }}
+                        >
+                          {sample.firstName} {sample.lastName}
+                        </Typography>
+                        {includeClass && getClassName(sample) && (
+                          <Typography
+                            variant="body2"
+                            sx={{ color: "text.secondary" }}
+                          >
+                            {t("modals.generateQrModal.class")}{" "}
+                            <b>{getClassName(sample)}</b>
+                          </Typography>
+                        )}
+                        {sample.verificationCode && (
+                          <Typography
+                            variant="body1"
+                            sx={{ color: "text.primary", fontWeight: 700 }}
+                          >
+                            {t("modals.generateQrModal.verificationCode")}{" "}
+                            <b>{sample.verificationCode}</b>
+                          </Typography>
+                        )}
+                        <Typography
+                          variant="caption"
+                          sx={{ color: "text.disabled", fontSize: "0.7rem" }}
+                        >
+                          {t("modals.generateQrModal.id")}{" "}
+                          {shortenId
+                            ? (sample._id || "").slice(0, 8)
+                            : sample._id}
+                        </Typography>
+                      </Stack>
+                    </Stack>
+                  </Box>
+
+                  <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    sx={{ pt: 1 }}
+                  >
+                    <Typography
+                      variant="caption"
+                      sx={{ color: "text.secondary" }}
+                    >
+                      {pageSize?.toUpperCase()} •{" "}
+                      {isPortrait
+                        ? t("modals.generateQrModal.portrait")
+                        : t("modals.generateQrModal.landscape")}
+                    </Typography>
+                    <Typography
+                      variant="caption"
+                      sx={{ color: "text.secondary" }}
+                    >
+                      {sample?.lastName}_{sample.firstName}
+                      {includeClass && getClassName(sample)
+                        ? `_${getClassName(sample)}`
+                        : ""}
+                      .pdf
+                    </Typography>
+                  </Stack>
+                </Box>
+              </Box>
+            </Paper>
+          </Box>
+        </StyledContentStack>
+      )}
     </Fragment>
   );
 
   // Determine button label and icon based on count and export mode
   const getButtonLabel = () => {
+    if (isNewRegistrationMode) {
+      return t("modals.generateQrModal.downloadPdf");
+    }
     if (count === 1) {
       return t("modals.generateQrModal.downloadPdf");
     }
@@ -510,13 +697,20 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
   };
 
   const getButtonIcon = () => {
-    if (count === 1) {
+    if (isNewRegistrationMode || count === 1) {
       return <DownloadRoundedIcon />;
     }
     if (exportMode === "combined") {
       return <PictureAsPdfRoundedIcon />;
     }
     return <FolderZipRoundedIcon />;
+  };
+
+  const getModalTitle = () => {
+    if (isNewRegistrationMode) {
+      return t("modals.generateQrModal.newRegistration.title");
+    }
+    return t("modals.generateQrModal.title");
   };
 
   const actionsChildren = (
@@ -530,7 +724,7 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
       <GeneralButton
         label={getButtonLabel()}
         onAction={handleGenerate}
-        disabled={!count || busy}
+        disabled={busy}
         startIcon={getButtonIcon()}
       />
     </Fragment>
@@ -541,7 +735,7 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
       open={open}
       onCloseModal={onClose}
       modalWidth={960}
-      customTitle={t("modals.generateQrModal.title")}
+      customTitle={getModalTitle()}
       contentChildren={contentChildren}
       actionsChildren={actionsChildren}
     />

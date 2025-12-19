@@ -356,15 +356,6 @@ const StudentManagementPage = () => {
           startIcon={<DeleteOutlineRoundedIcon />}
         />
         <GeneralButton
-          label={t("settings.manageStudent.generateQRCode")}
-          onAction={handleQRStudentModalOpen}
-          fullHeight={false}
-          fullWidth={false}
-          isPrimary={false}
-          disabled={selectedItems.length === 0}
-          startIcon={<QrCode2RoundedIcon />}
-        />
-        <GeneralButton
           label={t("settings.manageStudent.exportStudentData")}
           onAction={handleExportStudentModalOpen}
           fullHeight={false}
@@ -372,6 +363,14 @@ const StudentManagementPage = () => {
           isPrimary={false}
           disabled={selectedItems.length === 0}
           startIcon={<FileDownloadRoundedIcon />}
+        />
+        <GeneralButton
+          label={t("settings.manageStudent.generateQRCode")}
+          onAction={handleQRStudentModalOpen}
+          fullHeight={false}
+          fullWidth={false}
+          isPrimary={false}
+          startIcon={<QrCode2RoundedIcon />}
         />
         <GeneralButton
           label={t("settings.manageStudent.importStudents")}

@@ -443,6 +443,200 @@ export async function buildCombinedQrPdf(
   return doc.output("blob");
 }
 
+export type NewRegistrationPdfSettings = {
+  pageSize: "A4" | "A5";
+  orientation: "portrait" | "landscape";
+  wizardUrlTemplate: string;
+  locale?: string;
+};
+
+/**
+ * Renders an instruction box for new student registration PDF.
+ * Similar to renderInstructionBox but without verification code steps.
+ */
+function renderNewRegistrationInstructionBox(
+  doc: jsPDF,
+  startY: number,
+  pageW: number,
+  pageH: number,
+  pad: number,
+  baseUrl: string,
+  t: (key: string) => string,
+): void {
+  const boxPad = 4;
+  const boxX = pad;
+  const boxY = startY + 4;
+  const boxW = pageW - pad * 2;
+  const lineHeight = 5;
+
+  // Calculate box height based on content (fewer lines than student version)
+  const boxH = lineHeight * 6 + boxPad * 2;
+
+  // Don't render if it would go past the page
+  if (boxY + boxH > pageH - pad - 10) {
+    return;
+  }
+
+  // Draw light gray background box
+  doc.setFillColor(245, 245, 245);
+  doc.setDrawColor(220, 220, 220);
+  doc.roundedRect(boxX, boxY, boxW, boxH, 2, 2, "FD");
+
+  let y = boxY + boxPad + 4;
+
+  // Title
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(9);
+  doc.setTextColor(0);
+  doc.text(
+    t("modals.generateQrModal.newRegistration.pdfInstructions.title"),
+    boxX + boxPad,
+    y,
+  );
+  y += lineHeight + 1;
+
+  // Option 1
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(8);
+  doc.text(
+    t("modals.generateQrModal.newRegistration.pdfInstructions.option1Title"),
+    boxX + boxPad,
+    y,
+  );
+  y += lineHeight;
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8);
+  const option1Lines = doc.splitTextToSize(
+    t("modals.generateQrModal.newRegistration.pdfInstructions.option1Text"),
+    boxW - boxPad * 2 - 4,
+  );
+  doc.text(option1Lines, boxX + boxPad + 4, y);
+  y += lineHeight * Math.max(option1Lines.length, 1) + 1;
+
+  // Option 2
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(8);
+  doc.text(
+    t("modals.generateQrModal.newRegistration.pdfInstructions.option2Title"),
+    boxX + boxPad,
+    y,
+  );
+  y += lineHeight;
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8);
+  // Step 1: Visit URL
+  doc.text(
+    `1. ${t("modals.generateQrModal.newRegistration.pdfInstructions.option2Step1")} ${baseUrl}/student`,
+    boxX + boxPad + 4,
+    y,
+  );
+  y += lineHeight;
+
+  // Step 2: Click to create
+  doc.text(
+    `2. ${t("modals.generateQrModal.newRegistration.pdfInstructions.option2Step2")}`,
+    boxX + boxPad + 4,
+    y,
+  );
+}
+
+/**
+ * Builds a PDF with a QR code for new student registration.
+ * This PDF links to the base /student page where users can create a new student.
+ */
+export async function buildNewRegistrationPdf(
+  settings: NewRegistrationPdfSettings,
+): Promise<Blob> {
+  const { locale = "en" } = settings;
+  const t = (key: string) => i18next.t(key, { lng: locale });
+
+  const isPortrait = settings.orientation === "portrait";
+  const doc = new jsPDF({
+    orientation: isPortrait ? "portrait" : "landscape",
+    unit: "mm",
+    format: settings.pageSize.toLowerCase(),
+  });
+
+  const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
+
+  const pad = 12;
+  const innerH = pageH - pad * 2;
+  const headerH = 10;
+  const footerH = 8;
+  const contentY = pad + headerH + 4;
+  const contentH = innerH - headerH - footerH - 6;
+
+  // Header
+  doc.setFontSize(11);
+  doc.setFont("helvetica");
+  doc.text(t("modals.generateQrModal.newRegistration.pdfTitle"), pad, pad + 7);
+
+  // QR code URL points to the base /student page
+  const baseUrl = extractBaseUrl(settings.wizardUrlTemplate);
+  const wizUrl = `${baseUrl}/student`;
+
+  const qrSize = Math.min(isPortrait ? 45 : 35, contentH);
+  const qrX = pad;
+  const qrY = contentY;
+  const qrData = await makeQrDataUrl(wizUrl);
+  doc.addImage(qrData, "PNG", qrX, qrY, qrSize, qrSize);
+
+  const textX = qrX + qrSize + 8;
+  const textMaxW = pageW - pad - textX;
+
+  // Title text
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(16);
+  doc.text(
+    t("modals.generateQrModal.newRegistration.pdfTitle"),
+    textX,
+    qrY + 6,
+    {
+      maxWidth: textMaxW,
+    },
+  );
+
+  // Description
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(11);
+  let ty = qrY + 16;
+  const descLines = doc.splitTextToSize(
+    t("modals.generateQrModal.newRegistration.description"),
+    textMaxW,
+  );
+  doc.text(descLines, textX, ty);
+  ty += 6 * descLines.length + 4;
+
+  // URL
+  doc.setTextColor(0);
+  doc.setFontSize(9);
+  const urlLines = doc.splitTextToSize(wizUrl, textMaxW);
+  doc.text(urlLines, textX, ty);
+
+  // Render instruction box below the QR code section
+  const instructionStartY = qrY + qrSize + 2;
+  renderNewRegistrationInstructionBox(
+    doc,
+    instructionStartY,
+    pageW,
+    pageH,
+    pad,
+    baseUrl,
+    t,
+  );
+
+  // Filename in bottom right
+  const filename = t("modals.generateQrModal.newRegistration.filename");
+  doc.setFontSize(9);
+  doc.setTextColor(100);
+  doc.text(`${filename}.pdf`, pageW - pad, pageH - pad, { align: "right" });
+
+  return doc.output("blob");
+}
+
 export type StudentDataPdfSettings = {
   pageSize: "A4" | "A5";
   orientation: "portrait" | "landscape";
