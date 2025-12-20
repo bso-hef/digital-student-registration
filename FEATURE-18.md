@@ -90,5 +90,5 @@
 - [x] Localhost inside QR code PDF
 - [x] Same Date Field like inside wizzard
 - [x] training form issues
-- [ ] Next.js 15.4.2 has a critical vulnerability (CVE-2025-66478) that could allow attackers to execute arbitrary code on your
+- [x] Next.js 15.4.2 has a critical vulnerability (CVE-2025-66478) that could allow attackers to execute arbitrary code on your
       server. Run `yarn upgrade next` to update.

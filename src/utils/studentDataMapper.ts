@@ -97,12 +97,8 @@ export function mapFormDataToModel(
       ]
         .filter(Boolean)
         .join(" "),
-      // Support both betriebApName (CompanyContactForm) and vorname/nachname (TrainingForm)
-      contactName:
-        formData.betriebApName ||
-        [formData.betriebApVorname, formData.betriebApNachname]
-          .filter(Boolean)
-          .join(" "),
+      // Use betriebApName from CompanyContactForm
+      contactName: formData.betriebApName || "",
       contactEmail:
         formData.betriebEmail ||
         formData.betriebApEmail ||
@@ -311,11 +307,7 @@ export function mapModelToFormData(
       }
     }
 
-    // Contact name - set both formats for form compatibility
-    const nameParts = student.employer.contactName?.split(" ") || [];
-    mapped.betriebApVorname = nameParts[0] || "";
-    mapped.betriebApNachname = nameParts.slice(1).join(" ") || "";
-    // Also set betriebApName for CompanyContactForm compatibility
+    // Set betriebApName for CompanyContactForm
     mapped.betriebApName = student.employer.contactName || "";
 
     mapped.betriebEmail = student.employer.contactEmail || "";

@@ -430,18 +430,6 @@ function escapeCSVField(value: unknown): string {
 }
 
 /**
- * Format a date as YYYY-MM-DD or just YYYY for school years
- */
-function formatDateForCSV(date: Date | string | null | undefined): string {
-  if (!date) return "";
-
-  const d = date instanceof Date ? date : new Date(date);
-  if (isNaN(d.getTime())) return "";
-
-  return d.toISOString().split("T")[0];
-}
-
-/**
  * Get CSV headers for class export (name only)
  */
 function getClassCSVHeaders(): string[] {
