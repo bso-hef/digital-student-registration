@@ -1,8 +1,13 @@
 import { Student as FullStudent } from "@/types/db";
+import { WlanSettings } from "@/types/settings";
 import i18next from "i18next";
 import { jsPDF } from "jspdf";
 
-import { makeQrDataUrl } from "./qr.utils";
+import {
+  makeQrDataUrl,
+  makeStudentQrDataUrl,
+  makeWlanQrDataUrl,
+} from "./qr.utils";
 
 export type Student = {
   _id: string;
@@ -22,6 +27,8 @@ export type PdfSettings = {
   wizardUrlTemplate: string; // z.B. WIZZARD_URL mit {short-id}
   locale?: string;
   hidePageLabel?: boolean; // Hide the page size label in actual PDF exports (keep in preview)
+  includeWlan?: boolean; // Include WLAN QR code on PDF
+  wlanSettings?: WlanSettings; // WLAN configuration
 };
 
 /**
@@ -40,6 +47,7 @@ function extractBaseUrl(wizardUrlTemplate: string): string {
 
 /**
  * Renders an instruction box on the PDF explaining how students can complete their registration.
+ * Optionally includes a WLAN QR code inside the instruction box on the left side.
  */
 function renderInstructionBox(
   doc: jsPDF,
@@ -50,12 +58,19 @@ function renderInstructionBox(
   verificationCode: string,
   baseUrl: string,
   t: (key: string) => string,
+  wlanQrDataUrl?: string,
 ): void {
   const boxPad = 4;
+  const lineHeight = 5;
+
+  // WLAN QR code dimensions (inside the box)
+  const wlanQrSize = wlanQrDataUrl ? 26 : 0;
+  const wlanInternalPad = wlanQrDataUrl ? wlanQrSize + 6 : 0;
+
+  // Calculate positions - box spans full width
   const boxX = pad;
   const boxY = startY + 4;
   const boxW = pageW - pad * 2;
-  const lineHeight = 5;
 
   // Calculate box height based on content
   const boxH = lineHeight * 8 + boxPad * 2;
@@ -65,10 +80,29 @@ function renderInstructionBox(
     return;
   }
 
-  // Draw light gray background box
+  // Draw light gray background box for instructions
   doc.setFillColor(245, 245, 245);
   doc.setDrawColor(220, 220, 220);
   doc.roundedRect(boxX, boxY, boxW, boxH, 2, 2, "FD");
+
+  // Render WLAN QR code inside the box on the left
+  if (wlanQrDataUrl) {
+    const wlanQrX = boxX + boxPad;
+    const wlanQrY = boxY + (boxH - wlanQrSize) / 2; // Center vertically
+
+    doc.addImage(
+      wlanQrDataUrl,
+      "PNG",
+      wlanQrX,
+      wlanQrY,
+      wlanQrSize,
+      wlanQrSize,
+    );
+  }
+
+  // Text content starts after WLAN QR (if present)
+  const textStartX = boxX + boxPad + wlanInternalPad;
+  const textMaxW = boxW - boxPad * 2 - wlanInternalPad - 4;
 
   let y = boxY + boxPad + 4;
 
@@ -76,7 +110,7 @@ function renderInstructionBox(
   doc.setFont("helvetica", "bold");
   doc.setFontSize(9);
   doc.setTextColor(0);
-  doc.text(t("modals.generateQrModal.pdfInstructions.title"), boxX + boxPad, y);
+  doc.text(t("modals.generateQrModal.pdfInstructions.title"), textStartX, y);
   y += lineHeight + 1;
 
   // Option 1
@@ -84,7 +118,7 @@ function renderInstructionBox(
   doc.setFontSize(8);
   doc.text(
     t("modals.generateQrModal.pdfInstructions.option1Title"),
-    boxX + boxPad,
+    textStartX,
     y,
   );
   y += lineHeight;
@@ -93,9 +127,9 @@ function renderInstructionBox(
   doc.setFontSize(8);
   const option1Lines = doc.splitTextToSize(
     t("modals.generateQrModal.pdfInstructions.option1Text"),
-    boxW - boxPad * 2 - 4,
+    textMaxW,
   );
-  doc.text(option1Lines, boxX + boxPad + 4, y);
+  doc.text(option1Lines, textStartX + 4, y);
   y += lineHeight * Math.max(option1Lines.length, 1) + 1;
 
   // Option 2
@@ -103,7 +137,7 @@ function renderInstructionBox(
   doc.setFontSize(8);
   doc.text(
     t("modals.generateQrModal.pdfInstructions.option2Title"),
-    boxX + boxPad,
+    textStartX,
     y,
   );
   y += lineHeight;
@@ -113,7 +147,7 @@ function renderInstructionBox(
   // Step 1: Visit URL
   doc.text(
     `1. ${t("modals.generateQrModal.pdfInstructions.option2Step1")} ${baseUrl}/student`,
-    boxX + boxPad + 4,
+    textStartX + 4,
     y,
   );
   y += lineHeight;
@@ -121,7 +155,7 @@ function renderInstructionBox(
   // Step 2: Enter name
   doc.text(
     `2. ${t("modals.generateQrModal.pdfInstructions.option2Step2")}`,
-    boxX + boxPad + 4,
+    textStartX + 4,
     y,
   );
   y += lineHeight;
@@ -130,14 +164,14 @@ function renderInstructionBox(
   doc.setFont("helvetica", "normal");
   doc.text(
     `3. ${t("modals.generateQrModal.pdfInstructions.option2Step3")} `,
-    boxX + boxPad + 4,
+    textStartX + 4,
     y,
   );
   // Add the code in bold
   const step3Text = `3. ${t("modals.generateQrModal.pdfInstructions.option2Step3")} `;
   const step3Width = doc.getTextWidth(step3Text);
   doc.setFont("helvetica", "bold");
-  doc.text(verificationCode, boxX + boxPad + 4 + step3Width, y);
+  doc.text(verificationCode, textStartX + 4 + step3Width, y);
 }
 
 export async function buildPdfForStudent(
@@ -176,7 +210,17 @@ export async function buildPdfForStudent(
   const qrSize = Math.min(isPortrait ? 45 : 35, contentH);
   const qrX = pad;
   const qrY = contentY;
-  const qrData = await makeQrDataUrl(wizUrl);
+
+  // Check if WLAN is enabled
+  const hasWlan =
+    settings.includeWlan &&
+    settings.wlanSettings?.enabled &&
+    settings.wlanSettings?.ssid;
+
+  // Use student icon QR when WLAN is present to differentiate
+  const qrData = hasWlan
+    ? await makeStudentQrDataUrl(wizUrl)
+    : await makeQrDataUrl(wizUrl);
   doc.addImage(qrData, "PNG", qrX, qrY, qrSize, qrSize);
 
   const textX = qrX + qrSize + 8;
@@ -238,6 +282,17 @@ export async function buildPdfForStudent(
   const urlLines = doc.splitTextToSize(wizUrl, textMaxW);
   doc.text(urlLines, textX, ty);
 
+  // Generate WLAN QR code if settings are provided
+  let wlanQrDataUrl: string | undefined;
+  if (hasWlan) {
+    wlanQrDataUrl = await makeWlanQrDataUrl(
+      settings.wlanSettings!.ssid,
+      settings.wlanSettings!.password,
+      settings.wlanSettings!.securityType,
+      settings.wlanSettings!.hidden,
+    );
+  }
+
   // Render instruction box below the QR code section
   const instructionStartY = qrY + qrSize + 2;
   const baseUrl = extractBaseUrl(settings.wizardUrlTemplate);
@@ -250,6 +305,7 @@ export async function buildPdfForStudent(
     s.verificationCode || "",
     baseUrl,
     t,
+    wlanQrDataUrl,
   );
 
   // Only show page label if not hidden (for preview purposes)
@@ -317,7 +373,17 @@ async function renderStudentQrContent(
   const qrSize = Math.min(isPortrait ? 45 : 35, contentH);
   const qrX = pad;
   const qrY = contentY;
-  const qrData = await makeQrDataUrl(wizUrl);
+
+  // Check if WLAN is enabled
+  const hasWlan =
+    settings.includeWlan &&
+    settings.wlanSettings?.enabled &&
+    settings.wlanSettings?.ssid;
+
+  // Use student icon QR when WLAN is present to differentiate
+  const qrData = hasWlan
+    ? await makeStudentQrDataUrl(wizUrl)
+    : await makeQrDataUrl(wizUrl);
   doc.addImage(qrData, "PNG", qrX, qrY, qrSize, qrSize);
 
   const textX = qrX + qrSize + 8;
@@ -379,6 +445,17 @@ async function renderStudentQrContent(
   const urlLines = doc.splitTextToSize(wizUrl, textMaxW);
   doc.text(urlLines, textX, ty);
 
+  // Generate WLAN QR code if settings are provided
+  let wlanQrDataUrl: string | undefined;
+  if (hasWlan) {
+    wlanQrDataUrl = await makeWlanQrDataUrl(
+      settings.wlanSettings!.ssid,
+      settings.wlanSettings!.password,
+      settings.wlanSettings!.securityType,
+      settings.wlanSettings!.hidden,
+    );
+  }
+
   // Render instruction box below the QR code section
   const instructionStartY = qrY + qrSize + 2;
   const baseUrl = extractBaseUrl(settings.wizardUrlTemplate);
@@ -391,6 +468,7 @@ async function renderStudentQrContent(
     s.verificationCode || "",
     baseUrl,
     t,
+    wlanQrDataUrl,
   );
 
   // Filename in bottom right
@@ -448,11 +526,14 @@ export type NewRegistrationPdfSettings = {
   orientation: "portrait" | "landscape";
   wizardUrlTemplate: string;
   locale?: string;
+  includeWlan?: boolean;
+  wlanSettings?: WlanSettings;
 };
 
 /**
  * Renders an instruction box for new student registration PDF.
  * Similar to renderInstructionBox but without verification code steps.
+ * Optionally includes a WLAN QR code inside the instruction box on the left side.
  */
 function renderNewRegistrationInstructionBox(
   doc: jsPDF,
@@ -462,12 +543,19 @@ function renderNewRegistrationInstructionBox(
   pad: number,
   baseUrl: string,
   t: (key: string) => string,
+  wlanQrDataUrl?: string,
 ): void {
   const boxPad = 4;
+  const lineHeight = 5;
+
+  // WLAN QR code dimensions (inside the box)
+  const wlanQrSize = wlanQrDataUrl ? 26 : 0;
+  const wlanInternalPad = wlanQrDataUrl ? wlanQrSize + 6 : 0;
+
+  // Calculate positions - box spans full width
   const boxX = pad;
   const boxY = startY + 4;
   const boxW = pageW - pad * 2;
-  const lineHeight = 5;
 
   // Calculate box height based on content (fewer lines than student version)
   const boxH = lineHeight * 6 + boxPad * 2;
@@ -482,6 +570,25 @@ function renderNewRegistrationInstructionBox(
   doc.setDrawColor(220, 220, 220);
   doc.roundedRect(boxX, boxY, boxW, boxH, 2, 2, "FD");
 
+  // Render WLAN QR code inside the box on the left
+  if (wlanQrDataUrl) {
+    const wlanQrX = boxX + boxPad;
+    const wlanQrY = boxY + (boxH - wlanQrSize) / 2; // Center vertically
+
+    doc.addImage(
+      wlanQrDataUrl,
+      "PNG",
+      wlanQrX,
+      wlanQrY,
+      wlanQrSize,
+      wlanQrSize,
+    );
+  }
+
+  // Text content starts after WLAN QR (if present)
+  const textStartX = boxX + boxPad + wlanInternalPad;
+  const textMaxW = boxW - boxPad * 2 - wlanInternalPad - 4;
+
   let y = boxY + boxPad + 4;
 
   // Title
@@ -490,7 +597,7 @@ function renderNewRegistrationInstructionBox(
   doc.setTextColor(0);
   doc.text(
     t("modals.generateQrModal.newRegistration.pdfInstructions.title"),
-    boxX + boxPad,
+    textStartX,
     y,
   );
   y += lineHeight + 1;
@@ -500,7 +607,7 @@ function renderNewRegistrationInstructionBox(
   doc.setFontSize(8);
   doc.text(
     t("modals.generateQrModal.newRegistration.pdfInstructions.option1Title"),
-    boxX + boxPad,
+    textStartX,
     y,
   );
   y += lineHeight;
@@ -509,9 +616,9 @@ function renderNewRegistrationInstructionBox(
   doc.setFontSize(8);
   const option1Lines = doc.splitTextToSize(
     t("modals.generateQrModal.newRegistration.pdfInstructions.option1Text"),
-    boxW - boxPad * 2 - 4,
+    textMaxW,
   );
-  doc.text(option1Lines, boxX + boxPad + 4, y);
+  doc.text(option1Lines, textStartX + 4, y);
   y += lineHeight * Math.max(option1Lines.length, 1) + 1;
 
   // Option 2
@@ -519,7 +626,7 @@ function renderNewRegistrationInstructionBox(
   doc.setFontSize(8);
   doc.text(
     t("modals.generateQrModal.newRegistration.pdfInstructions.option2Title"),
-    boxX + boxPad,
+    textStartX,
     y,
   );
   y += lineHeight;
@@ -529,7 +636,7 @@ function renderNewRegistrationInstructionBox(
   // Step 1: Visit URL
   doc.text(
     `1. ${t("modals.generateQrModal.newRegistration.pdfInstructions.option2Step1")} ${baseUrl}/student`,
-    boxX + boxPad + 4,
+    textStartX + 4,
     y,
   );
   y += lineHeight;
@@ -537,7 +644,7 @@ function renderNewRegistrationInstructionBox(
   // Step 2: Click to create
   doc.text(
     `2. ${t("modals.generateQrModal.newRegistration.pdfInstructions.option2Step2")}`,
-    boxX + boxPad + 4,
+    textStartX + 4,
     y,
   );
 }
@@ -616,6 +723,21 @@ export async function buildNewRegistrationPdf(
   const urlLines = doc.splitTextToSize(wizUrl, textMaxW);
   doc.text(urlLines, textX, ty);
 
+  // Generate WLAN QR code if settings are provided
+  let wlanQrDataUrl: string | undefined;
+  if (
+    settings.includeWlan &&
+    settings.wlanSettings?.enabled &&
+    settings.wlanSettings?.ssid
+  ) {
+    wlanQrDataUrl = await makeWlanQrDataUrl(
+      settings.wlanSettings.ssid,
+      settings.wlanSettings.password,
+      settings.wlanSettings.securityType,
+      settings.wlanSettings.hidden,
+    );
+  }
+
   // Render instruction box below the QR code section
   const instructionStartY = qrY + qrSize + 2;
   renderNewRegistrationInstructionBox(
@@ -626,6 +748,7 @@ export async function buildNewRegistrationPdf(
     pad,
     baseUrl,
     t,
+    wlanQrDataUrl,
   );
 
   // Filename in bottom right

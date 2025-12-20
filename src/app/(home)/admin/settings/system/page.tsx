@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
+import GeneralButton from "@/components/atoms/buttons/GeneralButton";
 import SmallIconButton from "@/components/atoms/buttons/SmallIconButton";
 import HealthIndicator from "@/components/atoms/dashboard/HealthIndicator";
 import MetricLabel from "@/components/atoms/dashboard/MetricLabel";
@@ -9,15 +10,32 @@ import AdminSettingsHeader from "@/components/molecules/AdminSettingsHeader";
 import { getDashboardHealth } from "@/store/actions/dashboardActions";
 import { getSettings, updateSettings } from "@/store/actions/settingsActions";
 import { useAppDispatch, useAppSelector } from "@/store/store";
+import { WlanSettings } from "@/types/settings";
+import { applicationScrollbar } from "@/utils/styling.utils";
+import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
+import DnsRoundedIcon from "@mui/icons-material/DnsRounded";
+import PhoneAndroidRoundedIcon from "@mui/icons-material/PhoneAndroidRounded";
 import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
+import SpeedRoundedIcon from "@mui/icons-material/SpeedRounded";
+import StorageRoundedIcon from "@mui/icons-material/StorageRounded";
+import VisibilityOffRoundedIcon from "@mui/icons-material/VisibilityOffRounded";
+import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
+import WifiRoundedIcon from "@mui/icons-material/WifiRounded";
 import {
   Box,
   Card,
   CardContent,
   CircularProgress,
   Divider,
+  FormControl,
   FormControlLabel,
+  IconButton,
+  InputAdornment,
+  InputLabel,
+  MenuItem,
+  Select,
   Switch,
+  TextField,
   Typography,
   styled,
 } from "@mui/material";
@@ -30,12 +48,16 @@ const Wrapper = styled(Box)(({ theme }) => ({
   justifyContent: "flex-start",
   width: "100%",
   height: "100%",
+  overflow: "hidden",
   color: theme.palette.text.default,
 }));
 
 const ContentWrapper = styled(Box)(({ theme }) => ({
   width: "100%",
+  margin: "0 auto",
   padding: theme.spacing(3),
+  overflowY: "auto",
+  ...applicationScrollbar(theme),
 }));
 
 const StatusCard = styled(Card)(({ theme }) => ({
@@ -53,11 +75,30 @@ const StatusCardContent = styled(CardContent)(({ theme }) => ({
   },
 }));
 
+const SectionTitleContainer = styled(Box)(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "flex-start",
+  flexDirection: "row",
+  textAlign: "left",
+  width: "100%",
+  gap: theme.spacing(1),
+}));
+
 const SectionTitle = styled(Typography)(({ theme }) => ({
-  fontSize: "1.25rem",
-  fontWeight: 700,
+  fontSize: "20px !important",
+  lineHeight: "26px !important",
+  fontWeight: 500,
   color: theme.palette.text.default,
-  marginBottom: theme.spacing(2),
+  textAlign: "left",
+}));
+
+const SectionSubTitle = styled(Typography)(({ theme }) => ({
+  fontSize: "16px !important",
+  lineHeight: "22px !important",
+  fontWeight: 400,
+  color: theme.palette.text.information,
+  textAlign: "left",
 }));
 
 const MetricsGrid = styled(Box)(({ theme }) => ({
@@ -89,11 +130,53 @@ const formatUptime = (seconds: number): string => {
   return `${minutes}m`;
 };
 
+const defaultWlanSettings: WlanSettings = {
+  enabled: false,
+  ssid: "",
+  password: "",
+  securityType: "WPA2",
+  hidden: false,
+};
+
 const AdminSystemPage = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { health, loading } = useAppSelector((state) => state.dashboard);
   const appSettings = useAppSelector((state) => state.appSettings.data);
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [localWlanSettings, setLocalWlanSettings] =
+    useState<WlanSettings>(defaultWlanSettings);
+
+  const savedWlanSettings = appSettings?.system?.wlan;
+
+  // Sync local state when settings are loaded from server
+  useEffect(() => {
+    if (savedWlanSettings) {
+      setLocalWlanSettings(savedWlanSettings);
+    }
+  }, [savedWlanSettings]);
+
+  // Check if WLAN settings have been modified
+  const isWlanDirty = useMemo(() => {
+    if (!savedWlanSettings) {
+      // If no saved settings, check if local differs from defaults
+      return (
+        localWlanSettings.enabled !== defaultWlanSettings.enabled ||
+        localWlanSettings.ssid !== defaultWlanSettings.ssid ||
+        localWlanSettings.password !== defaultWlanSettings.password ||
+        localWlanSettings.securityType !== defaultWlanSettings.securityType ||
+        localWlanSettings.hidden !== defaultWlanSettings.hidden
+      );
+    }
+    return (
+      localWlanSettings.enabled !== savedWlanSettings.enabled ||
+      localWlanSettings.ssid !== savedWlanSettings.ssid ||
+      localWlanSettings.password !== savedWlanSettings.password ||
+      localWlanSettings.securityType !== savedWlanSettings.securityType ||
+      localWlanSettings.hidden !== savedWlanSettings.hidden
+    );
+  }, [localWlanSettings, savedWlanSettings]);
 
   const fetchHealth = useCallback(() => {
     dispatch(getDashboardHealth());
@@ -116,6 +199,26 @@ const AdminSystemPage = () => {
       updateSettings({
         system: {
           mobileBlockerEnabled: newValue,
+          wlan: savedWlanSettings,
+        },
+      }),
+    );
+  };
+
+  const handleWlanChange = (field: keyof WlanSettings, value: unknown) => {
+    setLocalWlanSettings((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleSaveWlan = () => {
+    dispatch(
+      updateSettings({
+        system: {
+          mobileBlockerEnabled:
+            appSettings?.system?.mobileBlockerEnabled ?? true,
+          wlan: localWlanSettings,
         },
       }),
     );
@@ -141,64 +244,198 @@ const AdminSystemPage = () => {
         {/* Mobile Blocker Settings */}
         <StatusCard>
           <StatusCardContent>
-            <SectionTitle>{t("settings.system.mobileBlocker")}</SectionTitle>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            <SectionTitleContainer>
+              <PhoneAndroidRoundedIcon color="secondary" />
+              <SectionTitle>{t("settings.system.mobileBlocker")}</SectionTitle>
+            </SectionTitleContainer>
+            <Divider sx={{ my: 2 }} />
+            <SectionSubTitle sx={{ mb: 2 }}>
               {t("settings.system.mobileBlockerDescription")}
-            </Typography>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={appSettings?.system?.mobileBlockerEnabled ?? true}
-                  onChange={handleMobileBlockerToggle}
-                  color="primary"
+            </SectionSubTitle>
+            <Box display="flex" justifyContent="flex-start">
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={appSettings?.system?.mobileBlockerEnabled ?? true}
+                    onChange={handleMobileBlockerToggle}
+                    color="primary"
+                  />
+                }
+                label={
+                  appSettings?.system?.mobileBlockerEnabled
+                    ? t("settings.system.mobileBlockerEnabled")
+                    : t("settings.system.mobileBlockerDisabled")
+                }
+                sx={{ ml: 0 }}
+              />
+            </Box>
+          </StatusCardContent>
+        </StatusCard>
+
+        {/* WLAN Configuration */}
+        <StatusCard>
+          <StatusCardContent>
+            <SectionTitleContainer>
+              <WifiRoundedIcon color="secondary" />
+              <SectionTitle>{t("settings.system.wlan.title")}</SectionTitle>
+              <Box sx={{ flex: 1 }} />
+              <GeneralButton
+                label={t("general.Save")}
+                isPrimary={false}
+                disabled={!isWlanDirty}
+                onAction={handleSaveWlan}
+              />
+            </SectionTitleContainer>
+            <Divider sx={{ my: 2 }} />
+            <SectionSubTitle sx={{ mb: 2 }}>
+              {t("settings.system.wlan.description")}
+            </SectionSubTitle>
+
+            <Box display="flex" justifyContent="flex-start" sx={{ mb: 2 }}>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={localWlanSettings.enabled}
+                    onChange={(e) =>
+                      handleWlanChange("enabled", e.target.checked)
+                    }
+                    color="primary"
+                  />
+                }
+                label={t("settings.system.wlan.enabled")}
+                sx={{ ml: 0 }}
+              />
+            </Box>
+
+            {localWlanSettings.enabled && (
+              <Box display="flex" flexDirection="column" gap={2.5} mt={1}>
+                <TextField
+                  label={t("settings.system.wlan.ssid")}
+                  value={localWlanSettings.ssid}
+                  onChange={(e) => handleWlanChange("ssid", e.target.value)}
+                  fullWidth
+                  size="small"
+                  placeholder={t("settings.system.wlan.ssidPlaceholder")}
                 />
-              }
-              label={
-                appSettings?.system?.mobileBlockerEnabled
-                  ? t("settings.system.mobileBlockerEnabled")
-                  : t("settings.system.mobileBlockerDisabled")
-              }
-            />
+
+                <TextField
+                  label={t("settings.system.wlan.password")}
+                  type={showPassword ? "text" : "password"}
+                  value={localWlanSettings.password}
+                  onChange={(e) => handleWlanChange("password", e.target.value)}
+                  fullWidth
+                  size="small"
+                  slotProps={{
+                    input: {
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            onClick={() => setShowPassword(!showPassword)}
+                            edge="end"
+                            size="small"
+                          >
+                            {showPassword ? (
+                              <VisibilityOffRoundedIcon />
+                            ) : (
+                              <VisibilityRoundedIcon />
+                            )}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    },
+                  }}
+                />
+
+                <FormControl fullWidth size="small">
+                  <InputLabel>
+                    {t("settings.system.wlan.securityType")}
+                  </InputLabel>
+                  <Select
+                    value={localWlanSettings.securityType}
+                    label={t("settings.system.wlan.securityType")}
+                    onChange={(e) =>
+                      handleWlanChange("securityType", e.target.value)
+                    }
+                  >
+                    <MenuItem value="WPA">WPA</MenuItem>
+                    <MenuItem value="WPA2">WPA2</MenuItem>
+                    <MenuItem value="WPA3">WPA3</MenuItem>
+                    <MenuItem value="WEP">WEP</MenuItem>
+                    <MenuItem value="nopass">
+                      {t("settings.system.wlan.noPassword")}
+                    </MenuItem>
+                  </Select>
+                </FormControl>
+
+                <Box display="flex" justifyContent="flex-start">
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={localWlanSettings.hidden}
+                        onChange={(e) =>
+                          handleWlanChange("hidden", e.target.checked)
+                        }
+                        color="primary"
+                        size="small"
+                      />
+                    }
+                    label={t("settings.system.wlan.hidden")}
+                    sx={{ ml: 0 }}
+                  />
+                </Box>
+
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{
+                    mt: 1,
+                    p: 1.5,
+                    bgcolor: "action.hover",
+                    borderRadius: 1,
+                  }}
+                >
+                  {t("settings.system.wlan.securityWarning")}
+                </Typography>
+              </Box>
+            )}
           </StatusCardContent>
         </StatusCard>
 
         {/* Overall Status */}
         <StatusCard>
           <StatusCardContent>
-            <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="space-between"
-              mb={2}
-            >
-              <SectionTitle sx={{ mb: 0 }}>
-                {t("dashboard.health.overallStatus")}
-              </SectionTitle>
+            <SectionTitleContainer>
+              <CheckCircleRoundedIcon color="secondary" />
+              <SectionTitle>{t("dashboard.health.overallStatus")}</SectionTitle>
               {health && (
                 <HealthIndicator
                   status={health.status}
                   label={t(`dashboard.health.${health.status}`)}
                 />
               )}
-            </Box>
-            <Typography variant="body2" color="text.secondary">
+            </SectionTitleContainer>
+            <Divider sx={{ my: 2 }} />
+            <SectionSubTitle sx={{ mb: 2 }}>
               {health?.status === "up"
                 ? t("dashboard.health.systemOperational")
                 : t("dashboard.health.systemDown")}
-            </Typography>
-          </StatusCardContent>
-        </StatusCard>
+            </SectionSubTitle>
 
-        {/* Database Status */}
-        <StatusCard>
-          <StatusCardContent>
-            <SectionTitle>{t("dashboard.health.databaseStatus")}</SectionTitle>
+            {/* Database Status */}
             <Box
               display="flex"
               alignItems="center"
               justifyContent="space-between"
+              sx={{
+                p: 1.5,
+                bgcolor: "action.hover",
+                borderRadius: 1,
+              }}
             >
-              <Typography variant="body1">MongoDB</Typography>
+              <Box display="flex" alignItems="center" gap={1}>
+                <StorageRoundedIcon fontSize="small" color="action" />
+                <Typography variant="body2">MongoDB</Typography>
+              </Box>
               {health && (
                 <HealthIndicator status={health.checks.mongo.status} />
               )}
@@ -218,7 +455,11 @@ const AdminSystemPage = () => {
         {/* System Metrics */}
         <StatusCard>
           <StatusCardContent>
-            <SectionTitle>{t("dashboard.health.systemMetrics")}</SectionTitle>
+            <SectionTitleContainer>
+              <SpeedRoundedIcon color="secondary" />
+              <SectionTitle>{t("dashboard.health.systemMetrics")}</SectionTitle>
+            </SectionTitleContainer>
+            <Divider sx={{ my: 2 }} />
             <MetricsGrid>
               <MetricCard>
                 <MetricLabel
@@ -263,8 +504,11 @@ const AdminSystemPage = () => {
         {/* Server Info */}
         <StatusCard>
           <StatusCardContent>
-            <SectionTitle>{t("dashboard.health.serverInfo")}</SectionTitle>
-            <Divider sx={{ mb: 2 }} />
+            <SectionTitleContainer>
+              <DnsRoundedIcon color="secondary" />
+              <SectionTitle>{t("dashboard.health.serverInfo")}</SectionTitle>
+            </SectionTitleContainer>
+            <Divider sx={{ my: 2 }} />
             <Box display="flex" flexDirection="column" gap={1.5}>
               <Box
                 display="flex"

@@ -58,14 +58,7 @@
 
 - [ ] Entweder: **1 PDF pro Klasse**
 - [ ] Oder: **1 PDF mit Trennblättern je Klasse**
-- [ ] Klassenname weit oben im PDF sichtbar
-- [ ] Keine leeren Seiten
-
-### Klassenlogik
-
-- [ ] Pro Klasse **genau EIN Datensatz**
-- [ ] Klasse wird beim PDF-Export nicht überschrieben
-- [ ] Alte Klasseninfos nicht unkontrolliert weiterverwenden
+- [ ] Repair student export preview and pdf
 
 ### Import / Verknüpfung
 
@@ -75,16 +68,10 @@
   - [x] Sauber verknüpfen (keine Duplikate)
 - [x] Keine impliziten Annahmen
 
-### Ausschlüsse
-
-- [ ] Kein Schüler → **keine Seite**
-- [ ] Keine leeren oder halbfertigen PDFs
-- [ ] Keine mehrfachen Datensätze für dieselbe Klasse
-
 ### Andere
 
 - [x] Wenn kein Schüler ausgewählt ist, qr code erstellen für /student und neue Schüler
-- [ ] QR code für WLAN & für login mit icons
+- [x] QR code für WLAN & für login mit icons
 - [x] Classen import via CSV (neu import muss die daten aktualisieren)
 - [x] Classen export via CSV
 - [x] Localhost inside QR code PDF

@@ -199,9 +199,14 @@
       "landscape": "Querformat",
       "filenameSchema": "Dateinamensschema",
       "filenameSchemaExample": "Beispiel: {nachname}_{vorname}_{klasse}.pdf",
+      "availableOptions": "Verfügbar",
+      "filename": "Dateiname",
       "options": "Optionen",
       "showClassOnPdf": "Klasse auf PDF anzeigen",
       "shortenIdInLink": "ID im Link kürzen (erste 8 Zeichen)",
+      "includeWlan": "WLAN-QR-Code einschließen",
+      "includeWlanTooltip": "QR-Code für das Schul-WLAN hinzufügen ({{ssid}})",
+      "wlanLabel": "Schul-WLAN",
       "previewMock": "Vorschau (Mock):",
       "onboardingWizard": "Onboarding-Assistent",
       "class": "Klasse:",
@@ -229,6 +234,7 @@
         "description": "Erstellen Sie einen QR-Code, mit dem sich neue Schüler anmelden können.",
         "pdfTitle": "Neuanmeldung Schüler",
         "filename": "neuanmeldung_schueler",
+        "filenameHelper": "Name für die generierte PDF-Datei",
         "pdfInstructions": {
           "title": "So melden Sie sich als neuer Schüler an:",
           "option1Title": "Option 1: QR-Code scannen",
@@ -965,7 +971,19 @@
       "mobileBlocker": "Mobile Gerätesperre",
       "mobileBlockerDescription": "Mobile Geräte und Tablets vom Zugriff auf den Admin-Bereich blockieren",
       "mobileBlockerEnabled": "Aktiviert",
-      "mobileBlockerDisabled": "Deaktiviert"
+      "mobileBlockerDisabled": "Deaktiviert",
+      "wlan": {
+        "title": "WLAN-Konfiguration",
+        "description": "Konfigurieren Sie das Schul-WLAN für die QR-Code-PDFs. Schüler können den WLAN-QR-Code scannen, um sich mit dem Netzwerk zu verbinden.",
+        "enabled": "WLAN-QR-Code aktivieren",
+        "ssid": "Netzwerkname (SSID)",
+        "ssidPlaceholder": "Netzwerkname eingeben",
+        "password": "Passwort",
+        "securityType": "Sicherheitstyp",
+        "noPassword": "Offen (Kein Passwort)",
+        "hidden": "Verstecktes Netzwerk",
+        "securityWarning": "Hinweis: Das WLAN-Passwort ist in den generierten PDFs sichtbar. Teilen Sie diese Dokumente nur mit vertrauenswürdigen Empfängern."
+      }
     }
   },
   "audit": {

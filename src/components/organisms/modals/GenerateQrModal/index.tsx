@@ -16,6 +16,7 @@ import DownloadRoundedIcon from "@mui/icons-material/DownloadRounded";
 import FolderZipRoundedIcon from "@mui/icons-material/FolderZipRounded";
 import PictureAsPdfRoundedIcon from "@mui/icons-material/PictureAsPdfRounded";
 import QrCode2RoundedIcon from "@mui/icons-material/QrCode2Rounded";
+import WifiRoundedIcon from "@mui/icons-material/WifiRounded";
 import {
   Box,
   Divider,
@@ -27,6 +28,7 @@ import {
   TextField,
   ToggleButton,
   ToggleButtonGroup,
+  Tooltip,
   Typography,
   styled,
   useTheme,
@@ -98,6 +100,13 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
   const theme = useTheme();
   const { t } = useTranslation();
   const locale = useSelector((state: RootState) => state.ui.locale) || "en";
+  const wlanSettings = useSelector(
+    (state: RootState) => state.appSettings.data?.system?.wlan,
+  );
+
+  // Check if WLAN is configured and available
+  const isWlanConfigured =
+    wlanSettings?.enabled && wlanSettings?.ssid && wlanSettings.ssid.length > 0;
 
   const [pageSize, setPageSize] = useState<"A4" | "A5">("A4");
   const [orientation, setOrientation] = useState<"portrait" | "landscape">(
@@ -109,6 +118,10 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
   const [includeClass, setIncludeClass] = useState(true);
   const [shortenId, setShortenId] = useState(true);
   const [exportMode, setExportMode] = useState<"zip" | "combined">("zip");
+  const [includeWlan, setIncludeWlan] = useState(true);
+  const [newRegistrationFilename, setNewRegistrationFilename] = useState(
+    "neue_schueler_registrierung",
+  );
 
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState<number | null>(null);
@@ -166,6 +179,8 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
       wizardUrlTemplate: WIZZARD_URL,
       locale,
       hidePageLabel: true, // Hide the A4/Portrait label in actual exports
+      includeWlan: includeWlan && isWlanConfigured,
+      wlanSettings: isWlanConfigured ? wlanSettings : undefined,
     };
 
     try {
@@ -176,8 +191,10 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
           orientation,
           wizardUrlTemplate: WIZZARD_URL,
           locale,
+          includeWlan: includeWlan && isWlanConfigured,
+          wlanSettings: isWlanConfigured ? wlanSettings : undefined,
         });
-        const filename = `${t("modals.generateQrModal.newRegistration.filename")}.pdf`;
+        const filename = `${sanitizeFilename(newRegistrationFilename)}.pdf`;
         downloadBlob(filename, pdf);
         setProgress(100);
       } else if (students.length === 1) {
@@ -268,7 +285,8 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
         >
           <Stack
             sx={{
-              width: "50%",
+              flex: 1,
+              minWidth: 0,
               display: "flex",
               flexDirection: "column",
               gap: 2,
@@ -313,9 +331,56 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                 </ToggleButton>
               </ToggleButtonGroup>
             </Stack>
+            {isWlanConfigured && (
+              <Stack spacing={1}>
+                <StyledOptionLabel>
+                  {t("modals.generateQrModal.options")}
+                </StyledOptionLabel>
+                <Tooltip
+                  title={t("modals.generateQrModal.includeWlanTooltip", {
+                    ssid: wlanSettings?.ssid,
+                  })}
+                  placement="right"
+                >
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={includeWlan}
+                        onChange={(e) => setIncludeWlan(e.target.checked)}
+                      />
+                    }
+                    label={
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 0.5,
+                        }}
+                      >
+                        <WifiRoundedIcon fontSize="small" color="primary" />
+                        {t("modals.generateQrModal.includeWlan")}
+                      </Box>
+                    }
+                  />
+                </Tooltip>
+              </Stack>
+            )}
+            <Stack spacing={1}>
+              <StyledOptionLabel>
+                {t("modals.generateQrModal.filename")}
+              </StyledOptionLabel>
+              <TextField
+                value={newRegistrationFilename}
+                onChange={(e) => setNewRegistrationFilename(e.target.value)}
+                size="small"
+                helperText={t(
+                  "modals.generateQrModal.newRegistration.filenameHelper",
+                )}
+              />
+            </Stack>
           </Stack>
 
-          <Box sx={{ flex: 1, width: "50%" }}>
+          <Box sx={{ flex: 1, minWidth: 0 }}>
             <StyledHeadline>
               {t("modals.generateQrModal.previewMock")}
             </StyledHeadline>
@@ -331,57 +396,55 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                     orientation === "portrait" ? "1/1.4142" : "1.4142/1",
                   borderRadius: 2,
                   border: `1px dashed ${theme.palette.border.seperator}`,
-                  p: 3,
-                  gap: 2,
+                  p: 2,
+                  gap: 1,
                   bgcolor: theme.palette.surface.interface.background,
+                  overflow: "hidden",
                 }}
               >
                 <Box
                   sx={{
                     display: "grid",
                     gridTemplateRows: "auto 1fr auto",
-                    gap: 2,
+                    gap: 1,
                     height: "100%",
                     width: "100%",
                     boxSizing: "border-box",
+                    overflow: "hidden",
                   }}
                 >
                   <Stack direction="row" alignItems="center" spacing={1}>
-                    <QrCode2RoundedIcon />
-                    <Typography variant="subtitle2">
+                    <QrCode2RoundedIcon sx={{ fontSize: 18 }} />
+                    <Typography variant="caption" fontWeight={600}>
                       {t("modals.generateQrModal.newRegistration.pdfTitle")}
                     </Typography>
                   </Stack>
 
                   <Box
                     sx={{
-                      display: "grid",
-                      gridTemplateColumns: {
-                        xs: "1fr",
-                        sm: "minmax(140px, 220px) 1fr",
-                      },
-                      alignItems: "start",
-                      gap: 2,
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 1,
                       minHeight: 0,
+                      overflow: "hidden",
                     }}
                   >
                     <Stack
-                      direction={{ xs: "column", sm: "row" }}
-                      spacing={2}
-                      alignItems="stretch"
-                      sx={{ minHeight: 0 }}
+                      direction="row"
+                      spacing={1.5}
+                      alignItems="flex-start"
                     >
                       <StyledQRPreviewBox isPortrait={isPortrait}>
                         QR
                       </StyledQRPreviewBox>
 
-                      <Stack spacing={0.75} sx={{ minWidth: 0 }}>
-                        <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                      <Stack spacing={0.5} sx={{ minWidth: 0, flex: 1 }}>
+                        <Typography variant="body2" sx={{ fontWeight: 700 }}>
                           {t("modals.generateQrModal.newRegistration.pdfTitle")}
                         </Typography>
                         <Typography
-                          variant="body2"
-                          sx={{ color: "text.secondary" }}
+                          variant="caption"
+                          sx={{ color: "text.secondary", fontSize: "0.65rem" }}
                         >
                           {t(
                             "modals.generateQrModal.newRegistration.description",
@@ -391,25 +454,90 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                           variant="caption"
                           sx={{
                             color: "text.disabled",
-                            fontSize: "0.7rem",
-                            mt: 1,
+                            fontSize: "0.6rem",
                           }}
                         >
                           URL: /student
                         </Typography>
                       </Stack>
                     </Stack>
+
+                    {/* Instruction Box Preview */}
+                    <Box
+                      sx={{
+                        p: 1,
+                        backgroundColor: (t) =>
+                          t.palette.mode === "dark" ? "grey.800" : "grey.100",
+                        borderRadius: 1,
+                        border: "1px solid",
+                        borderColor: "divider",
+                        flexShrink: 0,
+                      }}
+                    >
+                      <Box sx={{ display: "flex", gap: 1 }}>
+                        {includeWlan && isWlanConfigured && (
+                          <Box
+                            sx={{
+                              width: 36,
+                              height: 36,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              border: "1px dashed",
+                              borderColor: "grey.400",
+                              borderRadius: 0.5,
+                              flexShrink: 0,
+                            }}
+                          >
+                            <WifiRoundedIcon
+                              sx={{ color: "grey.500", fontSize: 16 }}
+                            />
+                          </Box>
+                        )}
+                        <Box sx={{ flex: 1, minWidth: 0 }}>
+                          <Typography
+                            variant="caption"
+                            fontWeight="bold"
+                            display="block"
+                            sx={{ fontSize: "0.65rem" }}
+                          >
+                            {t(
+                              "modals.generateQrModal.newRegistration.pdfInstructions.title",
+                            )}
+                          </Typography>
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            display="block"
+                            sx={{ fontSize: "0.6rem" }}
+                          >
+                            {t(
+                              "modals.generateQrModal.newRegistration.pdfInstructions.option1Title",
+                            )}
+                          </Typography>
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            display="block"
+                            sx={{ fontSize: "0.6rem" }}
+                          >
+                            {t(
+                              "modals.generateQrModal.newRegistration.pdfInstructions.option2Title",
+                            )}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </Box>
                   </Box>
 
                   <Stack
                     direction="row"
                     justifyContent="space-between"
                     alignItems="center"
-                    sx={{ pt: 1 }}
                   >
                     <Typography
                       variant="caption"
-                      sx={{ color: "text.secondary" }}
+                      sx={{ color: "text.secondary", fontSize: "0.65rem" }}
                     >
                       {pageSize?.toUpperCase()} •{" "}
                       {isPortrait
@@ -418,9 +546,9 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                     </Typography>
                     <Typography
                       variant="caption"
-                      sx={{ color: "text.secondary" }}
+                      sx={{ color: "text.secondary", fontSize: "0.65rem" }}
                     >
-                      {t("modals.generateQrModal.newRegistration.filename")}.pdf
+                      {newRegistrationFilename}.pdf
                     </Typography>
                   </Stack>
                 </Box>
@@ -438,7 +566,8 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
         >
           <Stack
             sx={{
-              width: "50%",
+              flex: 1,
+              minWidth: 0,
               display: "flex",
               flexDirection: "column",
               gap: 2,
@@ -516,7 +645,7 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                 value={filenamePattern}
                 onChange={(e) => setFilenamePattern(e.target.value)}
                 size="small"
-                helperText={t("modals.generateQrModal.filenameSchemaExample")}
+                helperText={`${t("modals.generateQrModal.availableOptions")}: {vorname}, {nachname}, {klasse}, {id}, {shortId}`}
               />
             </Stack>
 
@@ -546,10 +675,39 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                 }
                 label={t("modals.generateQrModal.shortenIdInLink")}
               />
+              {isWlanConfigured && (
+                <Tooltip
+                  title={t("modals.generateQrModal.includeWlanTooltip", {
+                    ssid: wlanSettings?.ssid,
+                  })}
+                  placement="right"
+                >
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={includeWlan}
+                        onChange={(e) => setIncludeWlan(e.target.checked)}
+                      />
+                    }
+                    label={
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 0.5,
+                        }}
+                      >
+                        <WifiRoundedIcon fontSize="small" color="primary" />
+                        {t("modals.generateQrModal.includeWlan")}
+                      </Box>
+                    }
+                  />
+                </Tooltip>
+              )}
             </Stack>
           </Stack>
 
-          <Box sx={{ flex: 1, width: "50%" }}>
+          <Box sx={{ flex: 1, minWidth: 0 }}>
             <StyledHeadline>
               {t("modals.generateQrModal.previewMock")}
             </StyledHeadline>
@@ -565,60 +723,58 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                     orientation === "portrait" ? "1/1.4142" : "1.4142/1",
                   borderRadius: 2,
                   border: `1px dashed ${theme.palette.border.seperator}`,
-                  p: 3,
-                  gap: 2,
+                  p: 2,
+                  gap: 1,
                   bgcolor: theme.palette.surface.interface.background,
+                  overflow: "hidden",
                 }}
               >
                 <Box
                   sx={{
                     display: "grid",
                     gridTemplateRows: "auto 1fr auto",
-                    gap: 2,
+                    gap: 1,
                     height: "100%",
                     width: "100%",
                     boxSizing: "border-box",
+                    overflow: "hidden",
                   }}
                 >
                   <Stack direction="row" alignItems="center" spacing={1}>
-                    <QrCode2RoundedIcon />
-                    <Typography variant="subtitle2">
+                    <QrCode2RoundedIcon sx={{ fontSize: 18 }} />
+                    <Typography variant="caption" fontWeight={600}>
                       {t("modals.generateQrModal.onboardingWizard")}
                     </Typography>
                   </Stack>
 
                   <Box
                     sx={{
-                      display: "grid",
-                      gridTemplateColumns: {
-                        xs: "1fr",
-                        sm: "minmax(140px, 220px) 1fr",
-                      },
-                      alignItems: "start",
-                      gap: 2,
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 1,
                       minHeight: 0,
+                      overflow: "hidden",
                     }}
                   >
                     <Stack
-                      direction={{ xs: "column", sm: "row" }}
-                      spacing={2}
-                      alignItems="stretch"
-                      sx={{ minHeight: 0 }}
+                      direction="row"
+                      spacing={1.5}
+                      alignItems="flex-start"
                     >
                       <StyledQRPreviewBox isPortrait={isPortrait}>
                         QR
                       </StyledQRPreviewBox>
 
-                      <Stack spacing={0.75} sx={{ minWidth: 0 }}>
+                      <Stack spacing={0.5} sx={{ minWidth: 0, flex: 1 }}>
                         <Typography
-                          variant="h5"
+                          variant="body2"
                           sx={{ fontWeight: 800, textTransform: "capitalize" }}
                         >
                           {sample.firstName} {sample.lastName}
                         </Typography>
                         {includeClass && getClassName(sample) && (
                           <Typography
-                            variant="body2"
+                            variant="caption"
                             sx={{ color: "text.secondary" }}
                           >
                             {t("modals.generateQrModal.class")}{" "}
@@ -627,8 +783,12 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                         )}
                         {sample.verificationCode && (
                           <Typography
-                            variant="body1"
-                            sx={{ color: "text.primary", fontWeight: 700 }}
+                            variant="caption"
+                            sx={{
+                              color: "text.primary",
+                              fontWeight: 600,
+                              fontSize: "0.7rem",
+                            }}
                           >
                             {t("modals.generateQrModal.verificationCode")}{" "}
                             <b>{sample.verificationCode}</b>
@@ -636,7 +796,7 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                         )}
                         <Typography
                           variant="caption"
-                          sx={{ color: "text.disabled", fontSize: "0.7rem" }}
+                          sx={{ color: "text.disabled", fontSize: "0.65rem" }}
                         >
                           {t("modals.generateQrModal.id")}{" "}
                           {shortenId
@@ -645,17 +805,81 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                         </Typography>
                       </Stack>
                     </Stack>
+
+                    {/* Instruction Box Preview */}
+                    <Box
+                      sx={{
+                        p: 1,
+                        backgroundColor: (t) =>
+                          t.palette.mode === "dark" ? "grey.800" : "grey.100",
+                        borderRadius: 1,
+                        border: "1px solid",
+                        borderColor: "divider",
+                        flexShrink: 0,
+                      }}
+                    >
+                      <Box sx={{ display: "flex", gap: 1 }}>
+                        {includeWlan && isWlanConfigured && (
+                          <Box
+                            sx={{
+                              width: 36,
+                              height: 36,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              border: "1px dashed",
+                              borderColor: "grey.400",
+                              borderRadius: 0.5,
+                              flexShrink: 0,
+                            }}
+                          >
+                            <WifiRoundedIcon
+                              sx={{ color: "grey.500", fontSize: 16 }}
+                            />
+                          </Box>
+                        )}
+                        <Box sx={{ flex: 1, minWidth: 0 }}>
+                          <Typography
+                            variant="caption"
+                            fontWeight="bold"
+                            display="block"
+                            sx={{ fontSize: "0.65rem" }}
+                          >
+                            {t("modals.generateQrModal.pdfInstructions.title")}
+                          </Typography>
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            display="block"
+                            sx={{ fontSize: "0.6rem" }}
+                          >
+                            {t(
+                              "modals.generateQrModal.pdfInstructions.option1Title",
+                            )}
+                          </Typography>
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            display="block"
+                            sx={{ fontSize: "0.6rem" }}
+                          >
+                            {t(
+                              "modals.generateQrModal.pdfInstructions.option2Title",
+                            )}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </Box>
                   </Box>
 
                   <Stack
                     direction="row"
                     justifyContent="space-between"
                     alignItems="center"
-                    sx={{ pt: 1 }}
                   >
                     <Typography
                       variant="caption"
-                      sx={{ color: "text.secondary" }}
+                      sx={{ color: "text.secondary", fontSize: "0.65rem" }}
                     >
                       {pageSize?.toUpperCase()} •{" "}
                       {isPortrait
@@ -664,7 +888,7 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                     </Typography>
                     <Typography
                       variant="caption"
-                      sx={{ color: "text.secondary" }}
+                      sx={{ color: "text.secondary", fontSize: "0.65rem" }}
                     >
                       {sample?.lastName}_{sample.firstName}
                       {includeClass && getClassName(sample)
@@ -734,7 +958,8 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
     <GeneralModal
       open={open}
       onCloseModal={onClose}
-      modalWidth={960}
+      modalWidth={1000}
+      maxWidth="xl"
       customTitle={getModalTitle()}
       contentChildren={contentChildren}
       actionsChildren={actionsChildren}

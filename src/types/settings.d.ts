@@ -94,8 +94,17 @@ export interface AuditSettings {
   exportEnabled: boolean;
 }
 
+export interface WlanSettings {
+  enabled: boolean;
+  ssid: string;
+  password: string;
+  securityType: "WPA" | "WPA2" | "WPA3" | "WEP" | "nopass";
+  hidden: boolean;
+}
+
 export interface SystemSettings {
   mobileBlockerEnabled: boolean;
+  wlan?: WlanSettings;
 }
 
 export interface AppSettings {

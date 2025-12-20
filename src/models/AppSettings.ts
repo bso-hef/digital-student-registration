@@ -77,9 +77,34 @@ const AuditSettingsSchema = new Schema(
   { _id: false },
 );
 
+const WlanSettingsSchema = new Schema(
+  {
+    enabled: { type: Boolean, default: false },
+    ssid: { type: String, default: "" },
+    password: { type: String, default: "" },
+    securityType: {
+      type: String,
+      enum: ["WPA", "WPA2", "WPA3", "WEP", "nopass"],
+      default: "WPA2",
+    },
+    hidden: { type: Boolean, default: false },
+  },
+  { _id: false },
+);
+
 const SystemSettingsSchema = new Schema(
   {
     mobileBlockerEnabled: { type: Boolean, default: true },
+    wlan: {
+      type: WlanSettingsSchema,
+      default: {
+        enabled: false,
+        ssid: "",
+        password: "",
+        securityType: "WPA2",
+        hidden: false,
+      },
+    },
   },
   { _id: false },
 );
@@ -463,6 +488,13 @@ const AppSettingsSchema = new Schema(
       type: SystemSettingsSchema,
       default: {
         mobileBlockerEnabled: true,
+        wlan: {
+          enabled: false,
+          ssid: "",
+          password: "",
+          securityType: "WPA2",
+          hidden: false,
+        },
       },
     },
     createdAt: { type: Date, default: Date.now },

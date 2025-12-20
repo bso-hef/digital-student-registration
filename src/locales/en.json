@@ -199,9 +199,14 @@
       "landscape": "Landscape",
       "filenameSchema": "Filename Schema",
       "filenameSchemaExample": "Example: {lastName}_{firstName}_{class}.pdf",
+      "availableOptions": "Available",
+      "filename": "Filename",
       "options": "Options",
       "showClassOnPdf": "Show class on PDF",
       "shortenIdInLink": "Shorten ID in link (first 8 characters)",
+      "includeWlan": "Include WiFi QR Code",
+      "includeWlanTooltip": "Add a QR code for the school WiFi network ({{ssid}})",
+      "wlanLabel": "School WiFi",
       "previewMock": "Preview (Mock):",
       "onboardingWizard": "Onboarding Wizard",
       "class": "Class:",
@@ -229,6 +234,7 @@
         "description": "Create a QR code that allows anyone to start a new student registration.",
         "pdfTitle": "New Student Registration",
         "filename": "new_student_registration",
+        "filenameHelper": "Name for the generated PDF file",
         "pdfInstructions": {
           "title": "How to register as a new student:",
           "option1Title": "Option 1: Scan the QR code",
@@ -965,7 +971,19 @@
       "mobileBlocker": "Mobile Device Blocking",
       "mobileBlockerDescription": "Block mobile and tablet devices from accessing the admin area",
       "mobileBlockerEnabled": "Enabled",
-      "mobileBlockerDisabled": "Disabled"
+      "mobileBlockerDisabled": "Disabled",
+      "wlan": {
+        "title": "WLAN Configuration",
+        "description": "Configure the school WiFi network to include on QR code PDFs. Students can scan the WiFi QR code to connect to the network.",
+        "enabled": "Enable WLAN QR Code",
+        "ssid": "Network Name (SSID)",
+        "ssidPlaceholder": "Enter network name",
+        "password": "Password",
+        "securityType": "Security Type",
+        "noPassword": "Open (No Password)",
+        "hidden": "Hidden Network",
+        "securityWarning": "Note: The WiFi password will be visible in the generated PDFs. Only share these documents with trusted recipients."
+      }
     }
   },
   "audit": {
