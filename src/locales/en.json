@@ -183,7 +183,12 @@
       "parsingCSV": "Parsing CSV file...",
       "importingStudents": "Importing students...",
       "pleaseWait": "This may take a moment for large datasets",
-      "importing": "Importing..."
+      "importing": "Importing...",
+      "firstNameRequired": "First name is required",
+      "lastNameRequired": "Last name is required",
+      "dateOfBirthRequired": "Date of birth is required",
+      "classNameMissing": "Class is not assigned",
+      "employerMissing": "Employer information is missing"
     },
     "generateQrModal": {
       "creatingZip": "Creating ZIP...",
@@ -265,8 +270,10 @@
       "agreements": "Agreements"
     },
     "addClass": {
-      "title": "Add Class",
+      "title": "Import Classes",
+      "subtitle": "Add one or more classes",
       "subtitleSingle": "Create a single class",
+      "csvPreviewSubtitle": "Review and edit imported classes",
       "className": "Class Name",
       "classNamePlaceholder": "e.g. 11A, 12B, ...",
       "companyClass": "Company Class",
@@ -280,7 +287,22 @@
       "createClasses": "Create Class",
       "schoolYearFrom": "School Year From",
       "schoolYearTo": "School Year To",
-      "yearOrderError": "Must be after 'from'"
+      "yearOrderError": "Must be after 'from'",
+      "newClass": "New Class",
+      "deleteRow": "Delete",
+      "parsingCSV": "Parsing CSV...",
+      "importingClasses": "Importing classes...",
+      "pleaseWait": "Please wait...",
+      "validClasses": "valid",
+      "withWarnings": "with warnings",
+      "invalidClasses": "invalid",
+      "totalClasses": "{{count}} total",
+      "addAnotherClass": "Add Another Class",
+      "uploadDifferentCsv": "Upload Different CSV",
+      "uploadCsv": "Upload CSV",
+      "importing": "Importing...",
+      "importClasses": "Import {{count}} Classes",
+      "gradeMissing": "Grade is not set"
     },
     "addStudentsToClass": {
       "title": "Add Students to Class",
@@ -874,10 +896,12 @@
       "companyClass": "Company Class",
       "isClassActive": "Active",
       "addClass": "Add Class",
+      "importClasses": "Import Classes",
       "deleteClasses": "Delete Classes",
       "deleteClassRequest": "Are you sure you want to delete the selected class(es)? This action cannot be undone.",
       "importCSV": "Import CSV",
       "exportCSV": "Export CSV",
+      "exportSuccess": "Classes exported successfully",
       "quickManage": "Quick Manage",
       "checkInActive": "Check-in active",
       "schoolYear": "School Year",

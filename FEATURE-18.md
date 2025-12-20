@@ -85,10 +85,11 @@
 
 - [x] Wenn kein Schüler ausgewählt ist, qr code erstellen für /student und neue Schüler
 - [ ] QR code für WLAN & für login mit icons
-- [ ] Classen import via CSV (neu import muss die daten aktualisieren)
-- [ ] Classen export via CSV
+- [x] Classen import via CSV (neu import muss die daten aktualisieren)
+- [x] Classen export via CSV
 - [x] Localhost inside QR code PDF
 - [x] Same Date Field like inside wizzard
 - [x] training form issues
 - [x] Next.js 15.4.2 has a critical vulnerability (CVE-2025-66478) that could allow attackers to execute arbitrary code on your
       server. Run `yarn upgrade next` to update.
+- [ ] Fix all issues from Excel

@@ -7,8 +7,6 @@ import ClassStatus from "@/components/atoms/status/ClassStatus";
 import AdminSettingsHeader from "@/components/molecules/AdminSettingsHeader";
 import AddClassModal from "@/components/organisms/modals/AddClassModal";
 import ConfirmationModal from "@/components/organisms/modals/ConfirmationModal";
-import ExportClassDataModal from "@/components/organisms/modals/ExportClassDataModal";
-import ImportClassCSVModal from "@/components/organisms/modals/ImportClassCSVModal";
 import TeacherQuickManageModal from "@/components/organisms/modals/TeacherQuickManageModal";
 import DataTable from "@/components/organisms/tables/DataTable";
 import {
@@ -20,8 +18,14 @@ import {
 } from "@/store/actions/classActions";
 import { AppDispatch } from "@/store/store";
 import { ClassCreateInput, ClassInterface } from "@/types/class";
-import { ParsedClass, parseClassCSVFile } from "@/utils/classCSV.utils";
+import {
+  ParsedClass,
+  buildClassDataCsv,
+  downloadBlob,
+  parseClassCSVFile,
+} from "@/utils/classCSV.utils";
 import { filterClasses } from "@/utils/filter.utils";
+import { successNotification } from "@/utils/notification.utils";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import FileDownloadRoundedIcon from "@mui/icons-material/FileDownloadRounded";
 import TuneRoundedIcon from "@mui/icons-material/TuneRounded";
@@ -71,13 +75,9 @@ const ClassManagementPage = () => {
   const [clearSelected, setClearSelected] = useState(false);
 
   // CSV Import state
-  const [openImportModal, setOpenImportModal] = useState(false);
   const [csvData, setCsvData] = useState<ParsedClass[]>([]);
   const [isParsingCSV, setIsParsingCSV] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
-
-  // Export modal state
-  const [openExportModal, setOpenExportModal] = useState(false);
 
   // Quick manage modal state
   const [openQuickManageModal, setOpenQuickManageModal] = useState(false);
@@ -97,6 +97,9 @@ const ClassManagementPage = () => {
 
   const handleAddClassModalClose = useCallback(() => {
     setOpenClassAddModal(false);
+    setCsvData([]);
+    setIsParsingCSV(false);
+    setIsImporting(false);
   }, []);
 
   const handleDeleteClassModalOpen = useCallback(() => {
@@ -109,8 +112,11 @@ const ClassManagementPage = () => {
 
   const handleAddClass = useCallback(
     (classData: ClassCreateInput[]) => {
+      setIsImporting(true);
       dispatch(addClass(classData));
-      handleAddClassModalClose();
+      setTimeout(() => {
+        handleAddClassModalClose();
+      }, 500);
     },
     [dispatch, handleAddClassModalClose],
   );
@@ -207,7 +213,7 @@ const ClassManagementPage = () => {
     handleDeleteClassModalClose();
   }, [dispatch, handleDeleteClassModalClose, selectedItems, classes]);
 
-  // CSV Import handlers
+  // CSV Import handler - opens file picker
   const handleUploadCSV = useCallback(() => {
     const input = document.createElement("input");
     input.type = "file";
@@ -216,7 +222,10 @@ const ClassManagementPage = () => {
       const file = (event.target as HTMLInputElement).files?.[0];
       if (file) {
         setIsParsingCSV(true);
-        setOpenImportModal(true);
+        // Open modal if not already open
+        if (!openClassAddModal) {
+          setOpenClassAddModal(true);
+        }
         try {
           const rows = await parseClassCSVFile(file);
           if (rows && rows.length > 0) {
@@ -228,34 +237,23 @@ const ClassManagementPage = () => {
       }
     };
     input.click();
-  }, []);
+  }, [openClassAddModal]);
 
-  const handleImportModalClose = useCallback(() => {
-    setOpenImportModal(false);
-    setCsvData([]);
-    setIsParsingCSV(false);
-    setIsImporting(false);
-  }, []);
+  // Direct export - no modal
+  const handleExport = useCallback(() => {
+    const classesToExport =
+      selectedItems.length > 0
+        ? classes.filter((c: ClassInterface) =>
+            selectedItems.includes(c._id as string | number),
+          )
+        : classes;
 
-  const handleImportClasses = useCallback(
-    (classesToImport: ClassCreateInput[]) => {
-      setIsImporting(true);
-      dispatch(addClass(classesToImport));
-      setTimeout(() => {
-        handleImportModalClose();
-      }, 500);
-    },
-    [dispatch, handleImportModalClose],
-  );
+    const csvBlob = buildClassDataCsv(classesToExport);
+    const filename = `classes_export_${new Date().toISOString().slice(0, 10)}.csv`;
+    downloadBlob(csvBlob, filename);
 
-  // Export handlers
-  const handleExportModalOpen = useCallback(() => {
-    setOpenExportModal(true);
-  }, []);
-
-  const handleExportModalClose = useCallback(() => {
-    setOpenExportModal(false);
-  }, []);
+    successNotification(t("settings.manageClass.exportSuccess"));
+  }, [classes, selectedItems, t]);
 
   // Quick manage handlers
   const handleQuickManageModalOpen = useCallback(() => {
@@ -286,6 +284,10 @@ const ClassManagementPage = () => {
         open={openClassAddModal}
         onClose={handleAddClassModalClose}
         onAddClass={handleAddClass}
+        onUploadCSV={handleUploadCSV}
+        csvData={csvData}
+        isParsingCSV={isParsingCSV}
+        isImporting={isImporting}
       />
       <ConfirmationModal
         open={openClassDeleteModal}
@@ -293,21 +295,6 @@ const ClassManagementPage = () => {
         onConfirmation={handleDeleteClasses}
         title={`${t("settings.manageClass.deleteClasses")}?`}
         message={t("settings.manageClass.deleteClassRequest")}
-      />
-      <ImportClassCSVModal
-        open={openImportModal}
-        onClose={handleImportModalClose}
-        onImportClasses={handleImportClasses}
-        onUploadCSV={handleUploadCSV}
-        csvData={csvData}
-        isParsingCSV={isParsingCSV}
-        isImporting={isImporting}
-      />
-      <ExportClassDataModal
-        open={openExportModal}
-        onClose={handleExportModalClose}
-        classes={classes}
-        selectedIds={selectedItems}
       />
       <TeacherQuickManageModal
         open={openQuickManageModal}
@@ -323,16 +310,8 @@ const ClassManagementPage = () => {
         }}
       >
         <GeneralButton
-          label={t("settings.manageClass.importCSV")}
-          onAction={handleUploadCSV}
-          fullHeight={false}
-          fullWidth={false}
-          isPrimary={false}
-          startIcon={<UploadFileRoundedIcon />}
-        />
-        <GeneralButton
           label={t("settings.manageClass.exportCSV")}
-          onAction={handleExportModalOpen}
+          onAction={handleExport}
           fullHeight={false}
           fullWidth={false}
           isPrimary={false}
@@ -356,10 +335,11 @@ const ClassManagementPage = () => {
           startIcon={<DeleteOutlineRoundedIcon />}
         />
         <GeneralButton
-          label={t("settings.manageClass.addClass")}
+          label={t("settings.manageClass.importClasses")}
           onAction={handleAddClassModalOpen}
           fullHeight={false}
           fullWidth={false}
+          startIcon={<UploadFileRoundedIcon />}
         />
       </AdminSettingsHeader>
       <StyledTableBox>

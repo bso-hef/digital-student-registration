@@ -84,12 +84,17 @@ const StyledLoadingOverlay = styled(Box)(({ theme }) => ({
   minHeight: 200,
 }));
 
-const StyledProgressBar = styled(LinearProgress)({
+const StyledProgressBar = styled(LinearProgress)(({ theme }) => ({
   width: "100%",
   maxWidth: 400,
   height: 8,
   borderRadius: 4,
-});
+  backgroundColor: theme.palette.grey[200],
+  "& .MuiLinearProgress-bar": {
+    borderRadius: 4,
+    backgroundColor: theme.palette.primary.main,
+  },
+}));
 
 type AddStudentModalProps = {
   open: boolean;

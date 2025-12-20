@@ -7,6 +7,7 @@ import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import ErrorOutlineRoundedIcon from "@mui/icons-material/ErrorOutlineRounded";
 import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownRounded";
 import KeyboardArrowUpRoundedIcon from "@mui/icons-material/KeyboardArrowUpRounded";
+import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
 import {
   Box,
   Collapse,
@@ -22,19 +23,28 @@ import { useTranslation } from "react-i18next";
 import AppleSwitch from "@/components/atoms/AppleSwitch";
 
 const StyledRowHeader = styled(Box, {
-  shouldForwardProp: (prop) => prop !== "expanded" && prop !== "hasError",
-})<{ expanded?: boolean; hasError?: boolean }>(
-  ({ theme, expanded, hasError }) => ({
+  shouldForwardProp: (prop) =>
+    prop !== "expanded" && prop !== "hasError" && prop !== "hasWarning",
+})<{ expanded?: boolean; hasError?: boolean; hasWarning?: boolean }>(
+  ({ theme, expanded, hasError, hasWarning }) => ({
     display: "flex",
     alignItems: "center",
     gap: theme.spacing(2),
     padding: theme.spacing(1.5, 2),
     backgroundColor: hasError
       ? theme.palette.error.light + "20"
-      : expanded
-        ? theme.palette.surface.button.focused
-        : theme.palette.surface.interface.base,
-    border: `1px solid ${hasError ? theme.palette.error.main : theme.palette.border.seperator}`,
+      : hasWarning
+        ? theme.palette.warning.light + "20"
+        : expanded
+          ? theme.palette.surface.button.focused
+          : theme.palette.surface.interface.base,
+    border: `1px solid ${
+      hasError
+        ? theme.palette.error.main
+        : hasWarning
+          ? theme.palette.warning.main
+          : theme.palette.border.seperator
+    }`,
     borderRadius: expanded ? theme.spacing(1, 1, 0, 0) : theme.spacing(1),
     cursor: "pointer",
     transition: "all 0.2s ease-in-out",
@@ -84,6 +94,7 @@ interface CSVClassRowProps {
   index: number;
   onChange: (index: number, updatedClass: ParsedClass) => void;
   onDelete: (index: number) => void;
+  defaultExpanded?: boolean;
 }
 
 const CSVClassRow: React.FC<CSVClassRowProps> = ({
@@ -91,11 +102,19 @@ const CSVClassRow: React.FC<CSVClassRowProps> = ({
   index,
   onChange,
   onDelete,
+  defaultExpanded = false,
 }) => {
   const { t } = useTranslation();
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(defaultExpanded);
 
   const hasError = !classData.isValid;
+
+  // Compute warnings (optional but recommended fields)
+  const warningMessages: string[] = [];
+  if (classData.grade === null) {
+    warningMessages.push(t("modals.addClass.gradeMissing"));
+  }
+  const hasWarning = !hasError && warningMessages.length > 0;
 
   const handleFieldChange = (field: keyof ParsedClass, value: unknown) => {
     const updatedClass = { ...classData, [field]: value };
@@ -147,6 +166,7 @@ const CSVClassRow: React.FC<CSVClassRowProps> = ({
       <StyledRowHeader
         expanded={expanded}
         hasError={hasError}
+        hasWarning={hasWarning}
         onClick={() => setExpanded(!expanded)}
       >
         <Box display="flex" alignItems="center">
@@ -163,7 +183,7 @@ const CSVClassRow: React.FC<CSVClassRowProps> = ({
             fontWeight={500}
             sx={{ minWidth: 120 }}
           >
-            {classData.name || "-"}
+            {classData.name || t("modals.addClass.newClass")}
           </StyledHeaderText>
           <StyledHeaderText
             variant="body2"
@@ -187,6 +207,11 @@ const CSVClassRow: React.FC<CSVClassRowProps> = ({
               <ErrorOutlineRoundedIcon color="error" fontSize="small" />
             </Tooltip>
           )}
+          {hasWarning && (
+            <Tooltip title={warningMessages.join(", ")}>
+              <WarningAmberRoundedIcon color="warning" fontSize="small" />
+            </Tooltip>
+          )}
         </StyledHeaderInfo>
 
         <SmallIconButton
@@ -195,7 +220,7 @@ const CSVClassRow: React.FC<CSVClassRowProps> = ({
             e?.stopPropagation();
             onDelete(index);
           }}
-          title={t("modals.importClassCSV.deleteRow")}
+          title={t("modals.addClass.deleteRow")}
         />
       </StyledRowHeader>
 
