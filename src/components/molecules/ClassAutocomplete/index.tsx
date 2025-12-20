@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 
 import { updateStudentClass } from "@/store/actions/studentActions";
 import { AppDispatch } from "@/store/store";
@@ -106,27 +106,34 @@ const ClassAutocomplete: React.FC<Props> = ({
   const [selectedClass, setSelectedClass] = useState<ClassOption>(initialValue);
   const [loading, setLoading] = useState(false);
 
+  // Ref to track previous value for rollback without causing re-renders
+  const previousClassRef = useRef<ClassOption>(initialValue);
+
   const formatClassOption = (classItem: ClassInterface): string => {
     return classItem.name;
   };
 
   const handleChange = useCallback(
     async (newValue: ClassOption) => {
-      const previousClass = selectedClass;
+      const previousClass = previousClassRef.current;
       const newClassId = newValue?._id || null;
 
-      setSelectedClass(newValue); // Optimistic update
+      // Update ref and state for optimistic update
+      previousClassRef.current = newValue;
+      setSelectedClass(newValue);
       setLoading(true);
 
       try {
         await dispatch(updateStudentClass(studentId, newClassId));
       } catch {
-        setSelectedClass(previousClass); // Rollback on error
+        // Rollback on error
+        previousClassRef.current = previousClass;
+        setSelectedClass(previousClass);
       } finally {
         setLoading(false);
       }
     },
-    [dispatch, studentId, selectedClass],
+    [dispatch, studentId],
   );
 
   const options: ClassOption[] = [null, ...availableClasses];
@@ -237,4 +244,20 @@ const ClassAutocomplete: React.FC<Props> = ({
   );
 };
 
-export default ClassAutocomplete;
+// Memoize to prevent re-renders when parent re-renders with same props
+export default React.memo(ClassAutocomplete, (prevProps, nextProps) => {
+  return (
+    prevProps.studentId === nextProps.studentId &&
+    prevProps.compact === nextProps.compact &&
+    // Compare class IDs instead of object references
+    (prevProps.currentClass === nextProps.currentClass ||
+      (typeof prevProps.currentClass === "object" &&
+        typeof nextProps.currentClass === "object" &&
+        prevProps.currentClass?._id === nextProps.currentClass?._id)) &&
+    // Compare availableClasses by length and IDs for stability
+    prevProps.availableClasses.length === nextProps.availableClasses.length &&
+    prevProps.availableClasses.every(
+      (c, i) => c._id === nextProps.availableClasses[i]?._id,
+    )
+  );
+});

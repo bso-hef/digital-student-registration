@@ -109,6 +109,9 @@ const StudentManagementPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Memoize table headers to prevent DataTable re-renders
+  const tableHeaders = useMemo(() => manageTableHeaders(t), [t]);
+
   const handleUploadCSV = useCallback(() => {
     const input = document.createElement("input");
     input.type = "file";
@@ -207,7 +210,7 @@ const StudentManagementPage = () => {
     [],
   );
 
-  const getTableData = useCallback(() => {
+  const tableData = useMemo(() => {
     // Apply search filter first
     let filteredStudents = filterStudents(searchString, students);
 
@@ -289,7 +292,8 @@ const StudentManagementPage = () => {
         ),
       };
     });
-  }, [students, searchString, classes, classFilter, statusFilter, t]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [students, searchString, classes, classFilter, statusFilter]);
 
   const handleDeleteStudents = useCallback(() => {
     const ids = selectedItems.filter(
@@ -430,8 +434,8 @@ const StudentManagementPage = () => {
         )}
 
         <DataTable
-          headers={manageTableHeaders(t)}
-          data={getTableData()}
+          headers={tableHeaders}
+          data={tableData}
           loading={loading}
           setSelectedItems={setSelectedItems}
           clearSelected={clearSelected}

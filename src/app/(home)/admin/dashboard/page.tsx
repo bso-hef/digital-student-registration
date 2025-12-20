@@ -7,7 +7,7 @@ import AdminSettingsHeader from "@/components/molecules/AdminSettingsHeader";
 import DraggableChartGrid from "@/components/molecules/dashboard/DraggableChartGrid";
 import DraggableStatsGrid from "@/components/molecules/dashboard/DraggableStatsGrid";
 import {
-  getDashboardHealth,
+  getDashboardActivity,
   getDashboardStats,
   loadDashboardLayout,
   refreshDashboard,
@@ -58,27 +58,21 @@ const DashboardPage = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
 
-  const { stats, health, loading, error, layout } = useSelector(
-    (state: RootState) => state.dashboard,
-  );
+  const { stats, loading, error, layout, recentActivity, activityLoading } =
+    useSelector((state: RootState) => state.dashboard);
 
   useEffect(() => {
     dispatch(loadDashboardLayout());
     dispatch(getDashboardStats());
-    dispatch(getDashboardHealth());
-
-    // Auto-refresh health data every 30 seconds
-    const healthInterval = setInterval(() => {
-      dispatch(getDashboardHealth(true)); // silent refresh
-    }, 30000);
+    dispatch(getDashboardActivity());
 
     // Auto-refresh stats every 5 minutes
     const statsInterval = setInterval(() => {
       dispatch(getDashboardStats());
+      dispatch(getDashboardActivity(true));
     }, 300000);
 
     return () => {
-      clearInterval(healthInterval);
       clearInterval(statsInterval);
     };
   }, [dispatch]);
@@ -167,8 +161,9 @@ const DashboardPage = () => {
           {layout?.charts && (
             <DraggableChartGrid
               stats={stats}
-              health={health}
               loading={loading}
+              recentActivity={recentActivity}
+              activityLoading={activityLoading}
               order={layout.charts}
               onReorder={handleChartsReorder}
             />

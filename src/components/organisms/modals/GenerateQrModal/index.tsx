@@ -49,6 +49,11 @@ import { RootState } from "@/store/reducers";
 
 import GeneralModal from "../GeneralModal";
 
+// Stable empty array references to prevent infinite re-renders
+// when these props are not provided by parent
+const EMPTY_CLASS_IDS: string[] = [];
+const EMPTY_CLASSES: ClassInterface[] = [];
+
 const StyledContentStack = styled(Stack)(({}) => ({
   width: "100%",
 }));
@@ -110,8 +115,8 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
   onClose,
   students,
   classMode = false,
-  selectedClassIds = [],
-  classes = [],
+  selectedClassIds = EMPTY_CLASS_IDS,
+  classes = EMPTY_CLASSES,
 }) => {
   const theme = useTheme();
   const { t } = useTranslation();
@@ -154,8 +159,8 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
     if (open && classMode && selectedClassIds.length > 0) {
       loadStudentsForClasses();
     } else if (!open) {
-      // Reset state when modal closes
-      setClassesWithStudents([]);
+      // Reset state when modal closes (only if not already empty to prevent re-renders)
+      setClassesWithStudents((prev) => (prev.length > 0 ? [] : prev));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, classMode, selectedClassIds]);

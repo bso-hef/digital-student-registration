@@ -23,25 +23,25 @@ const StudentStatusChart: React.FC<StudentStatusChartProps> = ({
       id: 0,
       value: data.imported,
       label: t("dashboard.status.imported"),
-      color: DASHBOARD_GRADIENTS.CHART_SECONDARY,
+      color: DASHBOARD_GRADIENTS.STATUS_IMPORTED,
     },
     {
       id: 1,
       value: data.invited,
       label: t("dashboard.status.invited"),
-      color: DASHBOARD_GRADIENTS.UNASSIGNED.solid,
+      color: DASHBOARD_GRADIENTS.STATUS_INVITED,
     },
     {
       id: 2,
       value: data.onboarded,
       label: t("dashboard.status.onboarded"),
-      color: DASHBOARD_GRADIENTS.ACTIVE_CLASSES.solid,
+      color: DASHBOARD_GRADIENTS.STATUS_ONBOARDED,
     },
     {
       id: 3,
       value: data.other,
       label: t("dashboard.status.other"),
-      color: DASHBOARD_GRADIENTS.TOTAL_STUDENTS.dark,
+      color: DASHBOARD_GRADIENTS.STATUS_OTHER,
     },
   ].filter((item) => item.value > 0);
 

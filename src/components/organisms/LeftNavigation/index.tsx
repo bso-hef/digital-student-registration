@@ -63,7 +63,9 @@ const StyledNavigation = styled(Box)(() => ({
   overflowY: "auto",
 }));
 
-const StyledListItem = styled(ListItem)<{
+const StyledListItem = styled(ListItem, {
+  shouldForwardProp: (prop) => prop !== "sub" && prop !== "selected",
+})<{
   button?: string;
   selected?: boolean;
   sub?: boolean;
@@ -91,20 +93,20 @@ const StyledListItem = styled(ListItem)<{
   },
 }));
 
-const StyledListItemIcon = styled(ListItemIcon)<{ selected?: boolean }>(
-  ({ theme, selected }) => ({
-    color: selected ? theme.palette.icon.primary : theme.palette.icon.secondary,
-    minWidth: "32px",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "32px",
-    height: "32px",
-  }),
-);
+const StyledListItemIcon = styled(ListItemIcon, {
+  shouldForwardProp: (prop) => prop !== "selected",
+})<{ selected?: boolean }>(({ theme, selected }) => ({
+  color: selected ? theme.palette.icon.primary : theme.palette.icon.secondary,
+  minWidth: "32px",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  width: "32px",
+  height: "32px",
+}));
 
 const StyledListItemText = styled(ListItemText, {
-  shouldForwardProp: (prop) => prop !== "isSelected",
+  shouldForwardProp: (prop) => prop !== "selected",
 })<{ selected?: boolean }>(({ theme, selected }) => ({
   color: selected ? theme.palette.text.primary : theme.palette.text.default,
   fontSize: "16px",

@@ -1,8 +1,10 @@
 import { auth } from "@/lib/auth/auth";
 import { dbConnect } from "@/lib/config/mongo";
+import { tServer } from "@/lib/server-i18n";
 import Logger from "@/lib/server-logger";
 import Class from "@/models/Class";
 import Student from "@/models/Student";
+import { createAuditLog } from "@/server/middleware/audit.middleware";
 import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -66,6 +68,9 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: { id: string } },
 ) {
+  // Extract id at function scope for access in catch block
+  const { id } = await params;
+
   try {
     // Check authentication
     const session = await auth();
@@ -74,15 +79,6 @@ export async function PATCH(
     }
 
     await dbConnect();
-
-    const { id } = await params;
-
-    if (!id) {
-      return NextResponse.json(
-        { error: "Student ID is required" },
-        { status: 400 },
-      );
-    }
 
     const body = await request.json();
 
@@ -206,6 +202,24 @@ export async function PATCH(
 
     logger.info(`Updated student: ${id}`);
 
+    // Create audit log for successful update
+    await createAuditLog(
+      {
+        action: "student.update",
+        category: "student",
+        description: tServer("audit.descriptions.updatedStudent", {
+          name: `${student.firstName} ${student.lastName}`,
+        }),
+        status: "success",
+        metadata: {
+          studentId: id,
+          studentName: `${student.firstName} ${student.lastName}`,
+          updatedFields: Object.keys(body),
+        },
+      },
+      request,
+    );
+
     return NextResponse.json(
       {
         data: student,
@@ -215,6 +229,21 @@ export async function PATCH(
     );
   } catch (error) {
     logger.error("Error updating student:", error);
+
+    // Create audit log for failed update
+    await createAuditLog(
+      {
+        action: "student.update",
+        category: "student",
+        description: tServer("audit.descriptions.failedUpdateStudent"),
+        status: "failure",
+        metadata: {
+          studentId: id,
+          error: error instanceof Error ? error.message : String(error),
+        },
+      },
+      request,
+    );
 
     // Check if it's a validation error
     if (error instanceof Error && error.name === "ValidationError") {
@@ -245,6 +274,9 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } },
 ) {
+  // Extract id at function scope for access in catch block
+  const { id } = await params;
+
   try {
     // Check authentication
     const session = await auth();
@@ -254,23 +286,37 @@ export async function DELETE(
 
     await dbConnect();
 
-    const { id } = await params;
-
-    if (!id) {
-      return NextResponse.json(
-        { error: "Student ID is required" },
-        { status: 400 },
-      );
-    }
-
-    // Find and delete student
-    const student = await Student.findByIdAndDelete(id);
+    // Find student first to get info for audit log
+    const student = await Student.findById(id);
 
     if (!student) {
       return NextResponse.json({ error: "Student not found" }, { status: 404 });
     }
 
+    // Store student info before deletion
+    const studentName = `${student.firstName} ${student.lastName}`;
+
+    // Delete the student
+    await Student.findByIdAndDelete(id);
+
     logger.info(`Deleted student: ${id}`);
+
+    // Create audit log for successful deletion
+    await createAuditLog(
+      {
+        action: "student.delete",
+        category: "student",
+        description: tServer("audit.descriptions.deletedStudent", {
+          name: studentName,
+        }),
+        status: "success",
+        metadata: {
+          studentId: id,
+          studentName,
+        },
+      },
+      request,
+    );
 
     return NextResponse.json(
       {
@@ -280,6 +326,22 @@ export async function DELETE(
     );
   } catch (error) {
     logger.error("Error deleting student:", error);
+
+    // Create audit log for failed deletion
+    await createAuditLog(
+      {
+        action: "student.delete",
+        category: "student",
+        description: tServer("audit.descriptions.failedDeleteStudent"),
+        status: "failure",
+        metadata: {
+          studentId: id,
+          error: error instanceof Error ? error.message : String(error),
+        },
+      },
+      request,
+    );
+
     return NextResponse.json(
       {
         error: "Failed to delete student",

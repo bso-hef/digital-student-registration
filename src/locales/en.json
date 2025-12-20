@@ -494,13 +494,16 @@
       "totalStudents": "Total Students",
       "totalClasses": "Total Classes",
       "unassignedStudents": "Unassigned Students",
-      "activeClasses": "Active Classes"
+      "activeClasses": "Active Classes",
+      "onboardingProgress": "Onboarding Progress"
     },
     "charts": {
       "registrationTrend": "Registration Trend (Last 7 Days)",
       "studentStatus": "Students by Status",
       "classDistribution": "Classes by Grade",
-      "systemMetrics": "System Metrics"
+      "systemMetrics": "System Metrics",
+      "gradeLabel": "Grade {{grade}}",
+      "noGrade": "No Grade"
     },
     "status": {
       "imported": "Created",
@@ -534,6 +537,18 @@
       "service": "Service",
       "version": "Version",
       "architecture": "Architecture"
+    },
+    "recentActivity": {
+      "title": "Recent Activity",
+      "onboardingComplete": "{{name}} completed onboarding",
+      "studentAdded": "{{name}} was added",
+      "studentImported": "{{count}} students imported",
+      "classChanged": "{{name}} moved to {{class}}",
+      "noActivity": "No recent activity",
+      "justNow": "Just now",
+      "minutesAgo": "{{count}}m ago",
+      "hoursAgo": "{{count}}h ago",
+      "daysAgo": "{{count}}d ago"
     },
     "errors": {
       "loadFailed": "Failed to load dashboard data",
@@ -1061,12 +1076,46 @@
       "partial": "Partial"
     },
     "descriptions": {
+      "createdStudents": "Created {{count}} student(s)",
+      "failedCreateStudents": "Failed to create students",
+      "updatedStudent": "Updated student: {{name}}",
+      "failedUpdateStudent": "Failed to update student",
+      "deletedStudents": "Deleted {{count}} student(s)",
+      "deletedStudent": "Deleted student: {{name}}",
+      "failedDeleteStudents": "Failed to delete students",
+      "failedDeleteStudent": "Failed to delete student",
+      "createdClasses": "Created {{count}} class(es)",
+      "failedCreateClasses": "Failed to create classes",
+      "updatedClass": "Updated class: {{name}}",
+      "failedUpdateClass": "Failed to update class",
+      "deletedClasses": "Deleted {{count}} class(es)",
+      "failedDeleteClasses": "Failed to delete classes",
+      "updatedGeneralSettings": "Updated general settings",
+      "failedUpdateGeneralSettings": "Failed to update general settings",
       "updatedAgreementSettings": "Updated agreement settings",
       "failedUpdateAgreementSettings": "Failed to update agreement settings",
+      "updatedOnboardingSettings": "Updated onboarding settings",
+      "failedUpdateOnboardingSettings": "Failed to update onboarding settings",
       "updatedProfile": "Updated user profile",
       "failedUpdateProfile": "Failed to update user profile",
       "changedPassword": "Changed account password",
-      "failedPasswordChange": "Failed to change password"
+      "failedPasswordChange": "Failed to change password",
+      "clearedAuditLogs": "Cleared {{count}} audit log(s)",
+      "failedClearAuditLogs": "Failed to clear audit logs"
+    },
+    "actions": {
+      "student.create": "Student Created",
+      "student.update": "Student Updated",
+      "student.delete": "Student Deleted",
+      "class.create": "Class Created",
+      "class.update": "Class Updated",
+      "class.delete": "Class Deleted",
+      "settings.update_general": "Settings Updated",
+      "settings.update_agreements": "Agreements Updated",
+      "settings.update_onboarding": "Onboarding Updated",
+      "auth.profile_update": "Profile Updated",
+      "auth.password_change": "Password Changed",
+      "system.clear_audit_logs": "Audit Logs Cleared"
     }
   },
   "auth": {

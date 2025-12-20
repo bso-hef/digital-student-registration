@@ -9,8 +9,12 @@ const resources = {
           // Student descriptions
           createdStudents: "Created {{count}} student(s)",
           failedCreateStudents: "Failed to create students",
+          updatedStudent: "Updated student: {{name}}",
+          failedUpdateStudent: "Failed to update student",
           deletedStudents: "Deleted {{count}} student(s)",
+          deletedStudent: "Deleted student: {{name}}",
           failedDeleteStudents: "Failed to delete students",
+          failedDeleteStudent: "Failed to delete student",
 
           // Class descriptions
           createdClasses: "Created {{count}} class(es)",
@@ -21,11 +25,19 @@ const resources = {
           failedUpdateClass: "Failed to update class",
 
           // Settings descriptions
-          updatedGeneralSettings: "Updated general application settings",
+          updatedGeneralSettings: "Updated general settings",
           failedUpdateGeneralSettings: "Failed to update general settings",
+          updatedAgreementSettings: "Updated agreement settings",
+          failedUpdateAgreementSettings: "Failed to update agreement settings",
           updatedOnboardingSettings: "Updated onboarding settings",
           failedUpdateOnboardingSettings:
             "Failed to update onboarding settings",
+
+          // Auth descriptions
+          updatedProfile: "Updated user profile",
+          failedUpdateProfile: "Failed to update user profile",
+          changedPassword: "Changed account password",
+          failedPasswordChange: "Failed to change password",
 
           // Audit log descriptions
           clearedAuditLogs: "Cleared {{count}} audit log entries",
@@ -40,26 +52,38 @@ const resources = {
         descriptions: {
           // Student descriptions
           createdStudents: "{{count}} Schüler erstellt",
-          failedCreateStudents: "Fehler beim Erstellen von Schülern",
+          failedCreateStudents: "Fehler beim Erstellen der Schüler",
+          updatedStudent: "Schüler aktualisiert: {{name}}",
+          failedUpdateStudent: "Fehler beim Aktualisieren des Schülers",
           deletedStudents: "{{count}} Schüler gelöscht",
-          failedDeleteStudents: "Fehler beim Löschen von Schülern",
+          deletedStudent: "Schüler gelöscht: {{name}}",
+          failedDeleteStudents: "Fehler beim Löschen der Schüler",
+          failedDeleteStudent: "Fehler beim Löschen des Schülers",
 
           // Class descriptions
           createdClasses: "{{count}} Klasse(n) erstellt",
-          failedCreateClasses: "Fehler beim Erstellen von Klassen",
+          failedCreateClasses: "Fehler beim Erstellen der Klassen",
           deletedClasses: "{{count}} Klasse(n) gelöscht",
-          failedDeleteClasses: "Fehler beim Löschen von Klassen",
+          failedDeleteClasses: "Fehler beim Löschen der Klassen",
           updatedClass: "Klasse aktualisiert: {{name}}",
           failedUpdateClass: "Fehler beim Aktualisieren der Klasse",
 
           // Settings descriptions
-          updatedGeneralSettings:
-            "Allgemeine Anwendungseinstellungen aktualisiert",
+          updatedGeneralSettings: "Allgemeine Einstellungen aktualisiert",
           failedUpdateGeneralSettings:
             "Fehler beim Aktualisieren der allgemeinen Einstellungen",
+          updatedAgreementSettings: "Vereinbarungseinstellungen aktualisiert",
+          failedUpdateAgreementSettings:
+            "Fehler beim Aktualisieren der Vereinbarungseinstellungen",
           updatedOnboardingSettings: "Onboarding-Einstellungen aktualisiert",
           failedUpdateOnboardingSettings:
             "Fehler beim Aktualisieren der Onboarding-Einstellungen",
+
+          // Auth descriptions
+          updatedProfile: "Benutzerprofil aktualisiert",
+          failedUpdateProfile: "Fehler beim Aktualisieren des Benutzerprofils",
+          changedPassword: "Kontopasswort geändert",
+          failedPasswordChange: "Fehler beim Ändern des Passworts",
 
           // Audit log descriptions
           clearedAuditLogs: "{{count}} Audit-Protokolleinträge gelöscht",

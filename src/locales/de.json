@@ -494,13 +494,16 @@
       "totalStudents": "Schüler gesamt",
       "totalClasses": "Klassen gesamt",
       "unassignedStudents": "Nicht zugeordnete Schüler",
-      "activeClasses": "Aktive Klassen"
+      "activeClasses": "Aktive Klassen",
+      "onboardingProgress": "Onboarding-Fortschritt"
     },
     "charts": {
       "registrationTrend": "Anmeldungstrend (letzte 7 Tage)",
       "studentStatus": "Schüler nach Status",
       "classDistribution": "Klassen nach Jahrgang",
-      "systemMetrics": "Systemmetriken"
+      "systemMetrics": "Systemmetriken",
+      "gradeLabel": "Klasse {{grade}}",
+      "noGrade": "Keine Klasse"
     },
     "status": {
       "imported": "Angelegt",
@@ -534,6 +537,18 @@
       "service": "Dienst",
       "version": "Version",
       "architecture": "Architektur"
+    },
+    "recentActivity": {
+      "title": "Letzte Aktivitäten",
+      "onboardingComplete": "{{name}} hat Onboarding abgeschlossen",
+      "studentAdded": "{{name}} wurde hinzugefügt",
+      "studentImported": "{{count}} Schüler importiert",
+      "classChanged": "{{name}} wurde zu {{class}} verschoben",
+      "noActivity": "Keine Aktivitäten",
+      "justNow": "Gerade eben",
+      "minutesAgo": "vor {{count}} Min.",
+      "hoursAgo": "vor {{count}} Std.",
+      "daysAgo": "vor {{count}} Tagen"
     },
     "errors": {
       "loadFailed": "Laden der Dashboard-Daten fehlgeschlagen",
@@ -1061,12 +1076,46 @@
       "partial": "Teilweise"
     },
     "descriptions": {
+      "createdStudents": "{{count}} Schüler erstellt",
+      "failedCreateStudents": "Fehler beim Erstellen der Schüler",
+      "updatedStudent": "Schüler aktualisiert: {{name}}",
+      "failedUpdateStudent": "Fehler beim Aktualisieren des Schülers",
+      "deletedStudents": "{{count}} Schüler gelöscht",
+      "deletedStudent": "Schüler gelöscht: {{name}}",
+      "failedDeleteStudents": "Fehler beim Löschen der Schüler",
+      "failedDeleteStudent": "Fehler beim Löschen des Schülers",
+      "createdClasses": "{{count}} Klasse(n) erstellt",
+      "failedCreateClasses": "Fehler beim Erstellen der Klassen",
+      "updatedClass": "Klasse aktualisiert: {{name}}",
+      "failedUpdateClass": "Fehler beim Aktualisieren der Klasse",
+      "deletedClasses": "{{count}} Klasse(n) gelöscht",
+      "failedDeleteClasses": "Fehler beim Löschen der Klassen",
+      "updatedGeneralSettings": "Allgemeine Einstellungen aktualisiert",
+      "failedUpdateGeneralSettings": "Fehler beim Aktualisieren der allgemeinen Einstellungen",
       "updatedAgreementSettings": "Vereinbarungseinstellungen aktualisiert",
       "failedUpdateAgreementSettings": "Aktualisierung der Vereinbarungseinstellungen fehlgeschlagen",
+      "updatedOnboardingSettings": "Onboarding-Einstellungen aktualisiert",
+      "failedUpdateOnboardingSettings": "Fehler beim Aktualisieren der Onboarding-Einstellungen",
       "updatedProfile": "Benutzerprofil aktualisiert",
       "failedUpdateProfile": "Fehler beim Aktualisieren des Benutzerprofils",
       "changedPassword": "Kontopasswort geändert",
-      "failedPasswordChange": "Fehler beim Ändern des Passworts"
+      "failedPasswordChange": "Fehler beim Ändern des Passworts",
+      "clearedAuditLogs": "{{count}} Audit-Protokoll(e) gelöscht",
+      "failedClearAuditLogs": "Fehler beim Löschen der Audit-Protokolle"
+    },
+    "actions": {
+      "student.create": "Schüler erstellt",
+      "student.update": "Schüler aktualisiert",
+      "student.delete": "Schüler gelöscht",
+      "class.create": "Klasse erstellt",
+      "class.update": "Klasse aktualisiert",
+      "class.delete": "Klasse gelöscht",
+      "settings.update_general": "Einstellungen aktualisiert",
+      "settings.update_agreements": "Vereinbarungen aktualisiert",
+      "settings.update_onboarding": "Onboarding aktualisiert",
+      "auth.profile_update": "Profil aktualisiert",
+      "auth.password_change": "Passwort geändert",
+      "system.clear_audit_logs": "Audit-Protokolle gelöscht"
     }
   },
   "auth": {

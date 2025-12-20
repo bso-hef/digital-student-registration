@@ -3,6 +3,7 @@ import {
   DashboardState,
   DashboardStats,
   HealthReport,
+  RecentActivityItem,
 } from "@/types/dashboard";
 
 import * as TYPES from "../types";
@@ -13,19 +14,21 @@ const DEFAULT_LAYOUT: DashboardLayout = {
     "totalStudents",
     "totalClasses",
     "unassignedStudents",
-    "activeClasses",
+    "onboardingProgress",
   ],
   charts: [
     "registrationTrend",
     "studentStatus",
     "classDistribution",
-    "systemHealth",
+    "recentActivity",
   ],
 };
 
 const initialState: DashboardState = {
   stats: null,
   health: null,
+  recentActivity: [],
+  activityLoading: false,
   loading: false,
   error: null,
   lastUpdated: null,
@@ -83,6 +86,22 @@ const dashboardReducer = (
       return {
         ...state,
         layout: DEFAULT_LAYOUT,
+      };
+
+    case TYPES.GET_DASHBOARD_ACTIVITY_REQUEST:
+      return { ...state, activityLoading: true };
+
+    case TYPES.GET_DASHBOARD_ACTIVITY_SUCCESS:
+      return {
+        ...state,
+        activityLoading: false,
+        recentActivity: action.payload as RecentActivityItem[],
+      };
+
+    case TYPES.GET_DASHBOARD_ACTIVITY_FAILURE:
+      return {
+        ...state,
+        activityLoading: false,
       };
 
     default:

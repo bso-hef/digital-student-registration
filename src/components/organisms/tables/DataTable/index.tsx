@@ -1,10 +1,16 @@
 "use client";
 
-import React, { Fragment, memo, useCallback, useEffect, useState } from "react";
+import React, {
+  Fragment,
+  memo,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 import { CHECKBOX_COL_WIDTH } from "@/constants/ui.constants";
 import { getComparator, stableSort } from "@/utils/table.utils";
-import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import ReportGmailerrorredRoundedIcon from "@mui/icons-material/ReportGmailerrorredRounded";
 import {
   Box,
@@ -79,12 +85,12 @@ const StyledTable = styled(Table)(({ theme }) => ({
 }));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  "&:nth-child(even)": {
+  "&:nth-of-type(even)": {
     backgroundColor: `${theme.palette.surface.button.hoverLight} !important`,
   },
   "&:hover": {
-    backgroundColor: theme.palette.surface.button.hover,
-    color: theme.palette.text.default,
+    backgroundColor: "transparent",
+    color: theme.palette.text.link,
   },
 }));
 
@@ -174,23 +180,28 @@ const DataTable: React.FC<DataTableProps> = ({
   const [order, setOrder] = React.useState<"asc" | "desc">("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
 
-  useEffect(() => {
-    if (setSelectedItems) {
-      setSelectedItems(selected);
-    }
-  }, [setSelectedItems, selected]);
+  // Track if this is the initial render to avoid syncing empty state on mount
+  const isInitialMount = useRef(true);
 
+  // Sync selected items to parent when selection changes (skip initial mount)
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+    setSelectedItems?.(selected);
+  }, [selected, setSelectedItems]);
+
+  // Handle clearing selection - only depends on clearSelected flag
   useEffect(() => {
     if (clearSelected) {
-      if (typeof setSelectedItems === "function") {
-        setSelectedItems([]);
-      }
       setSelected([]);
-      if (typeof setClearSelected === "function") {
-        setClearSelected(false);
-      }
+      // Reset the flag after clearing
+      setClearSelected?.(false);
     }
-  }, [clearSelected, setClearSelected, setSelectedItems]);
+    // Only react to clearSelected changes to prevent cascading updates
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clearSelected]);
 
   const handleRequestSort = (
     _event: React.MouseEvent<unknown>,
@@ -360,26 +371,19 @@ const DataTable: React.FC<DataTableProps> = ({
                               sx={header.clickable ? { cursor: "pointer" } : {}}
                             >
                               <StyledBox
-                                sx={
-                                  header.clickable
-                                    ? {
-                                        display: "flex",
-                                        alignItems: "center",
-                                        gap: 0.5,
-                                      }
-                                    : {}
-                                }
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent:
+                                    header.align === "right"
+                                      ? "flex-end"
+                                      : header.align === "center"
+                                        ? "center"
+                                        : "flex-start",
+                                  ...(header.clickable ? { gap: 0.5 } : {}),
+                                }}
                               >
                                 {row[header.id] as React.ReactNode}
-                                {header.clickable && (
-                                  <ChevronRightRoundedIcon
-                                    sx={{
-                                      color: "text.secondary",
-                                      fontSize: 18,
-                                      flexShrink: 0,
-                                    }}
-                                  />
-                                )}
                               </StyledBox>
                             </StyledTableCell>
                           );

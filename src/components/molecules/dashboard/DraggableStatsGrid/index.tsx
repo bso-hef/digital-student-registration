@@ -19,10 +19,10 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import ClassRoundedIcon from "@mui/icons-material/ClassRounded";
 import PersonOffRoundedIcon from "@mui/icons-material/PersonOffRounded";
 import SchoolRoundedIcon from "@mui/icons-material/SchoolRounded";
+import TrendingUpRoundedIcon from "@mui/icons-material/TrendingUpRounded";
 import { Box } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
@@ -37,7 +37,7 @@ interface DraggableStatsGridProps {
 interface SortableStatCardProps {
   id: string;
   label: string;
-  value: number;
+  value: number | string;
   icon: React.ReactNode;
   gradient: string;
 }
@@ -103,7 +103,7 @@ const DraggableStatsGrid: React.FC<DraggableStatsGridProps> = ({
     string,
     {
       label: string;
-      value: number;
+      value: number | string;
       icon: React.ReactNode;
       gradient: string;
     }
@@ -126,11 +126,11 @@ const DraggableStatsGrid: React.FC<DraggableStatsGridProps> = ({
       icon: <PersonOffRoundedIcon sx={{ fontSize: 32 }} />,
       gradient: DASHBOARD_GRADIENTS.UNASSIGNED.gradient,
     },
-    activeClasses: {
-      label: t("dashboard.quickStats.activeClasses"),
-      value: stats.activeClasses,
-      icon: <CheckCircleRoundedIcon sx={{ fontSize: 32 }} />,
-      gradient: DASHBOARD_GRADIENTS.ACTIVE_CLASSES.gradient,
+    onboardingProgress: {
+      label: t("dashboard.quickStats.onboardingProgress"),
+      value: `${stats.onboardingProgress?.percentage ?? 0}%`,
+      icon: <TrendingUpRoundedIcon sx={{ fontSize: 32 }} />,
+      gradient: DASHBOARD_GRADIENTS.ONBOARDING_PROGRESS.gradient,
     },
   };
 
