@@ -800,6 +800,29 @@ function formatDate(
   });
 }
 
+/**
+ * Converts a string to Title Case (each word capitalized).
+ * Excludes email addresses, phone numbers, and other non-name values.
+ */
+function toTitleCase(value: string | undefined | null): string | undefined {
+  if (!value) return undefined;
+  // Don't capitalize if it looks like an email, phone, or URL
+  if (
+    value.includes("@") ||
+    value.includes("://") ||
+    /^\+?\d[\d\s\-()]+$/.test(value)
+  ) {
+    return value;
+  }
+  return value
+    .split(" ")
+    .map((word) => {
+      if (word.length === 0) return word;
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    })
+    .join(" ");
+}
+
 function renderField(
   doc: jsPDF,
   label: string,
@@ -812,8 +835,10 @@ function renderField(
     return y;
   }
 
+  // Apply Title Case to the value for proper capitalization
+  const capitalizedValue = toTitleCase(value?.toString());
   const displayValue =
-    value && value.toString().trim() !== "" ? value.toString() : "—";
+    capitalizedValue && capitalizedValue.trim() !== "" ? capitalizedValue : "—";
 
   // Calculate 50/50 split
   const availableWidth =
@@ -842,11 +867,12 @@ function checkPageBreak(
   doc: jsPDF,
   currentY: number,
   layout: LayoutConfig,
-  requiredSpace: number = 30,
+  requiredSpace: number = 20,
 ): number {
   if (currentY + requiredSpace > layout.pageHeight - layout.bottomMargin) {
     doc.addPage();
-    return layout.contentStart;
+    // Use topMargin for subsequent pages (no header needed)
+    return layout.topMargin + 5;
   }
   return currentY;
 }
@@ -893,7 +919,7 @@ function renderGeneralSection(
   y = renderField(
     doc,
     t("onboarding.general.gender"),
-    student.gender,
+    student.gender ? t(`gender.${student.gender}`) : undefined,
     y,
     layout,
     includeEmptyFields,
@@ -1252,12 +1278,13 @@ function renderVocationalSection(
   );
 
   if (student.employer) {
+    y += layout.sectionGap;
     y = checkPageBreak(doc, y, layout);
 
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(11);
-    doc.text(t("onboarding.training.company"), layout.leftMargin + 2, y);
-    y += 6;
+    doc.setFontSize(14);
+    doc.text(t("onboarding.training.company"), layout.leftMargin, y);
+    y += 8;
 
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
@@ -1296,17 +1323,13 @@ function renderVocationalSection(
     );
 
     if (student.employer.contactName) {
-      y += 3;
+      y += layout.sectionGap;
       y = checkPageBreak(doc, y, layout);
 
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(11);
-      doc.text(
-        t("onboarding.summary.companyContact"),
-        layout.leftMargin + 2,
-        y,
-      );
-      y += 6;
+      doc.setFontSize(14);
+      doc.text(t("onboarding.summary.companyContact"), layout.leftMargin, y);
+      y += 8;
 
       doc.setFont("helvetica", "normal");
       doc.setFontSize(10);
@@ -1331,6 +1354,14 @@ function renderVocationalSection(
         doc,
         t("onboarding.companyContact.phone"),
         student.employer.contactPhone,
+        y,
+        layout,
+        includeEmptyFields,
+      );
+      y = renderField(
+        doc,
+        t("onboarding.companyContact.email"),
+        student.employer.contactEmail,
         y,
         layout,
         includeEmptyFields,
@@ -1398,7 +1429,7 @@ function renderAgreementsSection(
 
     // Render label (left 50%) without Unicode character
     doc.setFont("helvetica", "bold");
-    doc.text(`${label}:`, layout.leftMargin + 4, y);
+    doc.text(`${label}:`, layout.leftMargin, y);
 
     // Render status (right 50%) with visual distinction
     doc.setFont("helvetica", isAccepted ? "bold" : "normal");
@@ -1448,9 +1479,9 @@ export async function buildStudentDataPdf(
     leftMargin: 15,
     rightMargin: 15,
     topMargin: 15,
-    bottomMargin: 25,
+    bottomMargin: 15,
     contentStart: 38,
-    sectionGap: 10,
+    sectionGap: 8,
     fieldRowHeight: 7,
   };
 

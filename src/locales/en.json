@@ -510,11 +510,13 @@
     "general": {
       "title": "General Information",
       "schoolEntry": "School Entry Date",
+      "schoolEntryDate": "School Entry Date",
       "className": "Class Name",
       "personalInfo": "Personal Information",
       "firstName": "First Name",
       "lastName": "Last Name",
       "birthName": "Birth Name",
+      "name": "Name",
       "gender": "Gender",
       "birthInfo": "Birth Information",
       "birthDate": "Date of Birth",

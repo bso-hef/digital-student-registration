@@ -58,15 +58,18 @@ const StyledPreviewBox = styled(Box, {
 })<{ isPortrait?: boolean }>(({ theme, isPortrait }) => ({
   width: "100%",
   height: "100%",
-  minHeight: isPortrait ? 200 : 140,
+  minHeight: isPortrait ? 200 : 180,
+  maxHeight: isPortrait ? undefined : 220,
   aspectRatio: isPortrait ? "210/297" : "297/210",
   borderRadius: theme.spacing(1),
   border: `1px dashed ${theme.palette.border.seperator}`,
   display: "flex",
   flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "center",
-  padding: theme.spacing(3),
+  alignItems: isPortrait ? "center" : "flex-start",
+  justifyContent: "flex-start",
+  padding: theme.spacing(2),
+  paddingTop: theme.spacing(2),
+  overflow: "auto",
   bgcolor: theme.palette.surface.interface.background,
 }));
 
