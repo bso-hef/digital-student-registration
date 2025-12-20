@@ -7,6 +7,9 @@ import ClassStatus from "@/components/atoms/status/ClassStatus";
 import AdminSettingsHeader from "@/components/molecules/AdminSettingsHeader";
 import AddClassModal from "@/components/organisms/modals/AddClassModal";
 import ConfirmationModal from "@/components/organisms/modals/ConfirmationModal";
+import ExportClassDataModal from "@/components/organisms/modals/ExportClassDataModal";
+import ImportClassCSVModal from "@/components/organisms/modals/ImportClassCSVModal";
+import TeacherQuickManageModal from "@/components/organisms/modals/TeacherQuickManageModal";
 import DataTable from "@/components/organisms/tables/DataTable";
 import {
   addClass,
@@ -17,8 +20,12 @@ import {
 } from "@/store/actions/classActions";
 import { AppDispatch } from "@/store/store";
 import { ClassCreateInput, ClassInterface } from "@/types/class";
+import { ParsedClass, parseClassCSVFile } from "@/utils/classCSV.utils";
 import { filterClasses } from "@/utils/filter.utils";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
+import FileDownloadRoundedIcon from "@mui/icons-material/FileDownloadRounded";
+import TuneRoundedIcon from "@mui/icons-material/TuneRounded";
+import UploadFileRoundedIcon from "@mui/icons-material/UploadFileRounded";
 import { Box, styled } from "@mui/material";
 import { debounce, isString } from "lodash";
 import Link from "next/link";
@@ -62,6 +69,18 @@ const ClassManagementPage = () => {
   const [searchString, setSearchString] = useState("");
   const [selectedItems, setSelectedItems] = useState<(string | number)[]>([]);
   const [clearSelected, setClearSelected] = useState(false);
+
+  // CSV Import state
+  const [openImportModal, setOpenImportModal] = useState(false);
+  const [csvData, setCsvData] = useState<ParsedClass[]>([]);
+  const [isParsingCSV, setIsParsingCSV] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
+
+  // Export modal state
+  const [openExportModal, setOpenExportModal] = useState(false);
+
+  // Quick manage modal state
+  const [openQuickManageModal, setOpenQuickManageModal] = useState(false);
 
   useEffect(() => {
     dispatch(getClasses());
@@ -188,6 +207,79 @@ const ClassManagementPage = () => {
     handleDeleteClassModalClose();
   }, [dispatch, handleDeleteClassModalClose, selectedItems, classes]);
 
+  // CSV Import handlers
+  const handleUploadCSV = useCallback(() => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".csv,text/csv";
+    input.onchange = async (event: Event) => {
+      const file = (event.target as HTMLInputElement).files?.[0];
+      if (file) {
+        setIsParsingCSV(true);
+        setOpenImportModal(true);
+        try {
+          const rows = await parseClassCSVFile(file);
+          if (rows && rows.length > 0) {
+            setCsvData(rows);
+          }
+        } finally {
+          setIsParsingCSV(false);
+        }
+      }
+    };
+    input.click();
+  }, []);
+
+  const handleImportModalClose = useCallback(() => {
+    setOpenImportModal(false);
+    setCsvData([]);
+    setIsParsingCSV(false);
+    setIsImporting(false);
+  }, []);
+
+  const handleImportClasses = useCallback(
+    (classesToImport: ClassCreateInput[]) => {
+      setIsImporting(true);
+      dispatch(addClass(classesToImport));
+      setTimeout(() => {
+        handleImportModalClose();
+      }, 500);
+    },
+    [dispatch, handleImportModalClose],
+  );
+
+  // Export handlers
+  const handleExportModalOpen = useCallback(() => {
+    setOpenExportModal(true);
+  }, []);
+
+  const handleExportModalClose = useCallback(() => {
+    setOpenExportModal(false);
+  }, []);
+
+  // Quick manage handlers
+  const handleQuickManageModalOpen = useCallback(() => {
+    setOpenQuickManageModal(true);
+  }, []);
+
+  const handleQuickManageModalClose = useCallback(() => {
+    setOpenQuickManageModal(false);
+  }, []);
+
+  const handleQuickManageAddClass = useCallback(
+    (classData: ClassCreateInput[]) => {
+      dispatch(addClass(classData));
+    },
+    [dispatch],
+  );
+
+  const handleQuickManageDeleteClass = useCallback(
+    (ids: string[]) => {
+      dispatch(deleteClasses(ids));
+    },
+    [dispatch],
+  );
+
   return (
     <Wrapper>
       <AddClassModal
@@ -202,12 +294,58 @@ const ClassManagementPage = () => {
         title={`${t("settings.manageClass.deleteClasses")}?`}
         message={t("settings.manageClass.deleteClassRequest")}
       />
+      <ImportClassCSVModal
+        open={openImportModal}
+        onClose={handleImportModalClose}
+        onImportClasses={handleImportClasses}
+        onUploadCSV={handleUploadCSV}
+        csvData={csvData}
+        isParsingCSV={isParsingCSV}
+        isImporting={isImporting}
+      />
+      <ExportClassDataModal
+        open={openExportModal}
+        onClose={handleExportModalClose}
+        classes={classes}
+        selectedIds={selectedItems}
+      />
+      <TeacherQuickManageModal
+        open={openQuickManageModal}
+        onClose={handleQuickManageModalClose}
+        classes={classes}
+        onAddClass={handleQuickManageAddClass}
+        onDeleteClass={handleQuickManageDeleteClass}
+      />
       <AdminSettingsHeader
         title={t("navigation.classManagement")}
         onSearch={(value: string) => {
           handleSearchString(value);
         }}
       >
+        <GeneralButton
+          label={t("settings.manageClass.importCSV")}
+          onAction={handleUploadCSV}
+          fullHeight={false}
+          fullWidth={false}
+          isPrimary={false}
+          startIcon={<UploadFileRoundedIcon />}
+        />
+        <GeneralButton
+          label={t("settings.manageClass.exportCSV")}
+          onAction={handleExportModalOpen}
+          fullHeight={false}
+          fullWidth={false}
+          isPrimary={false}
+          startIcon={<FileDownloadRoundedIcon />}
+        />
+        <GeneralButton
+          label={t("settings.manageClass.quickManage")}
+          onAction={handleQuickManageModalOpen}
+          fullHeight={false}
+          fullWidth={false}
+          isPrimary={false}
+          startIcon={<TuneRoundedIcon />}
+        />
         <GeneralButton
           label={t("settings.manageClass.deleteClasses")}
           onAction={handleDeleteClassModalOpen}
