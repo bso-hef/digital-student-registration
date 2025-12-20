@@ -7,6 +7,7 @@ import ClassStatus from "@/components/atoms/status/ClassStatus";
 import AdminSettingsHeader from "@/components/molecules/AdminSettingsHeader";
 import AddClassModal from "@/components/organisms/modals/AddClassModal";
 import ConfirmationModal from "@/components/organisms/modals/ConfirmationModal";
+import GenerateQrModal from "@/components/organisms/modals/GenerateQrModal";
 import TeacherQuickManageModal from "@/components/organisms/modals/TeacherQuickManageModal";
 import DataTable from "@/components/organisms/tables/DataTable";
 import {
@@ -28,6 +29,7 @@ import { filterClasses } from "@/utils/filter.utils";
 import { successNotification } from "@/utils/notification.utils";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import FileDownloadRoundedIcon from "@mui/icons-material/FileDownloadRounded";
+import QrCode2RoundedIcon from "@mui/icons-material/QrCode2Rounded";
 import TuneRoundedIcon from "@mui/icons-material/TuneRounded";
 import UploadFileRoundedIcon from "@mui/icons-material/UploadFileRounded";
 import { Box, styled } from "@mui/material";
@@ -81,6 +83,9 @@ const ClassManagementPage = () => {
 
   // Quick manage modal state
   const [openQuickManageModal, setOpenQuickManageModal] = useState(false);
+
+  // Generate QR modal state
+  const [openGenerateQrModal, setOpenGenerateQrModal] = useState(false);
 
   useEffect(() => {
     dispatch(getClasses());
@@ -278,6 +283,15 @@ const ClassManagementPage = () => {
     [dispatch],
   );
 
+  // Generate QR modal handlers
+  const handleGenerateQrModalOpen = useCallback(() => {
+    setOpenGenerateQrModal(true);
+  }, []);
+
+  const handleGenerateQrModalClose = useCallback(() => {
+    setOpenGenerateQrModal(false);
+  }, []);
+
   return (
     <Wrapper>
       <AddClassModal
@@ -303,6 +317,14 @@ const ClassManagementPage = () => {
         onAddClass={handleQuickManageAddClass}
         onDeleteClass={handleQuickManageDeleteClass}
       />
+      <GenerateQrModal
+        open={openGenerateQrModal}
+        onClose={handleGenerateQrModalClose}
+        students={[]}
+        classMode={true}
+        selectedClassIds={selectedItems as string[]}
+        classes={classes}
+      />
       <AdminSettingsHeader
         title={t("navigation.classManagement")}
         onSearch={(value: string) => {
@@ -316,6 +338,15 @@ const ClassManagementPage = () => {
           fullWidth={false}
           isPrimary={false}
           startIcon={<FileDownloadRoundedIcon />}
+        />
+        <GeneralButton
+          label={t("settings.manageClass.generateQr")}
+          onAction={handleGenerateQrModalOpen}
+          fullHeight={false}
+          fullWidth={false}
+          isPrimary={false}
+          disabled={selectedItems.length === 0}
+          startIcon={<QrCode2RoundedIcon />}
         />
         <GeneralButton
           label={t("settings.manageClass.quickManage")}

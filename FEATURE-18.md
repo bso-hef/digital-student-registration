@@ -56,8 +56,8 @@
 
 ### PDF-Struktur
 
-- [ ] Entweder: **1 PDF pro Klasse**
-- [ ] Oder: **1 PDF mit Trennblättern je Klasse**
+- [x] Entweder: **1 PDF pro Klasse**
+- [x] Oder: **1 PDF mit Trennblättern je Klasse**
 - [x] Repair student export preview and pdf
 
 ### Import / Verknüpfung

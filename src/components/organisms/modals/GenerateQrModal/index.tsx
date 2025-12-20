@@ -1,7 +1,15 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
 import { WIZZARD_URL } from "@/constants/general.constants";
+import classService from "@/lib/services/classService";
+import { ClassInterface } from "@/types/class";
+import {
+  ClassWithStudents,
+  buildClassZipExport,
+  buildMultiClassQrPdf,
+  generateClassExportFilename,
+} from "@/utils/classPdf.utils";
 import { downloadBlob } from "@/utils/general.utils";
 import {
   buildCombinedQrPdf,
@@ -19,6 +27,7 @@ import QrCode2RoundedIcon from "@mui/icons-material/QrCode2Rounded";
 import WifiRoundedIcon from "@mui/icons-material/WifiRounded";
 import {
   Box,
+  CircularProgress,
   Divider,
   FormControlLabel,
   LinearProgress,
@@ -90,12 +99,19 @@ type GenerateQrModalProps = {
   open: boolean;
   onClose: () => void;
   students: Student[];
+  // Class mode props - for generating QR codes from the class management page
+  classMode?: boolean;
+  selectedClassIds?: string[];
+  classes?: ClassInterface[];
 };
 
 const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
   open,
   onClose,
   students,
+  classMode = false,
+  selectedClassIds = [],
+  classes = [],
 }) => {
   const theme = useTheme();
   const { t } = useTranslation();
@@ -117,7 +133,7 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
   );
   const [includeClass, setIncludeClass] = useState(true);
   const [shortenId, setShortenId] = useState(true);
-  const [exportMode, setExportMode] = useState<"zip" | "combined">("zip");
+  const [exportMode, setExportMode] = useState<"zip" | "combined">("combined");
   const [includeWlan, setIncludeWlan] = useState(true);
   const [newRegistrationFilename, setNewRegistrationFilename] = useState(
     "neue_schueler_registrierung",
@@ -125,6 +141,54 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
 
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState<number | null>(null);
+
+  // Class mode state
+  const [includeCoverPages, setIncludeCoverPages] = useState(true);
+  const [classesWithStudents, setClassesWithStudents] = useState<
+    ClassWithStudents[]
+  >([]);
+  const [loadingStudents, setLoadingStudents] = useState(false);
+
+  // Load students when in class mode
+  useEffect(() => {
+    if (open && classMode && selectedClassIds.length > 0) {
+      loadStudentsForClasses();
+    } else if (!open) {
+      // Reset state when modal closes
+      setClassesWithStudents([]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, classMode, selectedClassIds]);
+
+  const loadStudentsForClasses = async () => {
+    setLoadingStudents(true);
+    try {
+      const results: ClassWithStudents[] = [];
+
+      for (const classId of selectedClassIds) {
+        const classInfo = classes.find((c) => c._id === classId);
+        if (classInfo) {
+          const response = await classService.getStudentsInClass(classId);
+          results.push({
+            classInfo,
+            students: response.data?.students || [],
+          });
+        }
+      }
+
+      setClassesWithStudents(results);
+    } catch (error) {
+      console.error("Failed to load students for classes:", error);
+    } finally {
+      setLoadingStudents(false);
+    }
+  };
+
+  // Calculate total students in class mode
+  const totalClassStudents = classesWithStudents.reduce(
+    (sum, c) => sum + c.students.length,
+    0,
+  );
 
   const count = students?.length || 0;
   const sample = count
@@ -165,7 +229,7 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
     return name;
   };
 
-  const isNewRegistrationMode = !students?.length;
+  const isNewRegistrationMode = !students?.length && !classMode;
 
   const generateExport = async () => {
     setBusy(true);
@@ -184,7 +248,32 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
     };
 
     try {
-      if (isNewRegistrationMode) {
+      // Class mode: generate PDFs for all students in selected classes
+      if (classMode && classesWithStudents.length > 0) {
+        const classPdfSettings = {
+          ...pdfSettings,
+          includeCoverPages,
+          includeNumbering: true, // Always enabled in class mode
+        };
+
+        if (exportMode === "zip") {
+          // ZIP mode: separate PDF per class
+          const zipBlob = await buildClassZipExport(
+            classesWithStudents,
+            classPdfSettings,
+            (p) => setProgress(p),
+          );
+          downloadBlob(generateClassExportFilename("zip", locale), zipBlob);
+        } else {
+          // Combined mode: all classes in one PDF
+          const pdf = await buildMultiClassQrPdf(
+            classesWithStudents,
+            classPdfSettings,
+            (p) => setProgress(p),
+          );
+          downloadBlob(generateClassExportFilename("combined", locale), pdf);
+        }
+      } else if (isNewRegistrationMode) {
         // New registration mode: generate a PDF with QR code linking to /student
         const pdf = await buildNewRegistrationPdf({
           pageSize,
@@ -271,6 +360,29 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
               : t("modals.generateQrModal.progress", {
                   progress: Math.round(progress),
                 })}
+          </Typography>
+        </Box>
+      )}
+
+      {classMode && loadingStudents && (
+        <Box sx={{ pb: 2, display: "flex", alignItems: "center", gap: 2 }}>
+          <CircularProgress size={20} />
+          <Typography variant="body2">
+            {t("modals.generateQrModal.loadingStudents")}
+          </Typography>
+        </Box>
+      )}
+
+      {classMode && !loadingStudents && classesWithStudents.length > 0 && (
+        <Box sx={{ pb: 2 }}>
+          <Typography variant="body2" color="text.secondary">
+            {t("modals.generateQrModal.totalStudents", {
+              count: totalClassStudents,
+            })}
+            {" • "}
+            {t("modals.generateQrModal.classCount", {
+              count: classesWithStudents.length,
+            })}
           </Typography>
         </Box>
       )}
@@ -609,7 +721,7 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
               </ToggleButtonGroup>
             </Stack>
 
-            {count >= 2 && (
+            {(count >= 2 || classMode) && (
               <Stack spacing={1}>
                 <StyledOptionLabel>
                   {t("modals.generateQrModal.exportMode")}
@@ -701,6 +813,22 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                         {t("modals.generateQrModal.includeWlan")}
                       </Box>
                     }
+                  />
+                </Tooltip>
+              )}
+              {classMode && (
+                <Tooltip
+                  title={t("modals.generateQrModal.includeCoverPagesTooltip")}
+                  placement="right"
+                >
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={includeCoverPages}
+                        onChange={(e) => setIncludeCoverPages(e.target.checked)}
+                      />
+                    }
+                    label={t("modals.generateQrModal.includeCoverPages")}
                   />
                 </Tooltip>
               )}
@@ -906,8 +1034,20 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
     </Fragment>
   );
 
-  // Determine button label and icon based on count and export mode
+  // Determine button label and icon based on count, export mode, and class mode
   const getButtonLabel = () => {
+    if (classMode) {
+      if (loadingStudents) {
+        return t("modals.generateQrModal.loadingStudents");
+      }
+      if (totalClassStudents === 0) {
+        return t("modals.generateQrModal.noStudents");
+      }
+      if (exportMode === "combined") {
+        return t("modals.generateQrModal.downloadCombinedPdf");
+      }
+      return t("modals.generateQrModal.createZip");
+    }
     if (isNewRegistrationMode) {
       return t("modals.generateQrModal.downloadPdf");
     }
@@ -921,6 +1061,15 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
   };
 
   const getButtonIcon = () => {
+    if (classMode) {
+      if (loadingStudents) {
+        return <CircularProgress size={20} />;
+      }
+      if (exportMode === "combined") {
+        return <PictureAsPdfRoundedIcon />;
+      }
+      return <FolderZipRoundedIcon />;
+    }
     if (isNewRegistrationMode || count === 1) {
       return <DownloadRoundedIcon />;
     }
@@ -931,6 +1080,11 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
   };
 
   const getModalTitle = () => {
+    if (classMode) {
+      return t("modals.generateQrModal.classTitle", {
+        count: selectedClassIds.length,
+      });
+    }
     if (isNewRegistrationMode) {
       return t("modals.generateQrModal.newRegistration.title");
     }
@@ -948,7 +1102,9 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
       <GeneralButton
         label={getButtonLabel()}
         onAction={handleGenerate}
-        disabled={busy}
+        disabled={
+          busy || loadingStudents || (classMode && totalClassStudents === 0)
+        }
         startIcon={getButtonIcon()}
       />
     </Fragment>
