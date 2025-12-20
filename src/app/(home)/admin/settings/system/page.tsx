@@ -7,26 +7,19 @@ import SmallIconButton from "@/components/atoms/buttons/SmallIconButton";
 import HealthIndicator from "@/components/atoms/dashboard/HealthIndicator";
 import MetricLabel from "@/components/atoms/dashboard/MetricLabel";
 import AdminSettingsHeader from "@/components/molecules/AdminSettingsHeader";
+import EnhancedCollapse from "@/components/molecules/EnhancedCollapse";
 import { getDashboardHealth } from "@/store/actions/dashboardActions";
 import { getSettings, updateSettings } from "@/store/actions/settingsActions";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { WlanSettings } from "@/types/settings";
 import { applicationScrollbar } from "@/utils/styling.utils";
-import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
-import DnsRoundedIcon from "@mui/icons-material/DnsRounded";
-import PhoneAndroidRoundedIcon from "@mui/icons-material/PhoneAndroidRounded";
 import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
-import SpeedRoundedIcon from "@mui/icons-material/SpeedRounded";
 import StorageRoundedIcon from "@mui/icons-material/StorageRounded";
 import VisibilityOffRoundedIcon from "@mui/icons-material/VisibilityOffRounded";
 import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
-import WifiRoundedIcon from "@mui/icons-material/WifiRounded";
 import {
   Box,
-  Card,
-  CardContent,
   CircularProgress,
-  Divider,
   FormControl,
   FormControlLabel,
   IconButton,
@@ -58,47 +51,6 @@ const ContentWrapper = styled(Box)(({ theme }) => ({
   padding: theme.spacing(3),
   overflowY: "auto",
   ...applicationScrollbar(theme),
-}));
-
-const StatusCard = styled(Card)(({ theme }) => ({
-  background: theme.palette.surface.interface.base,
-  border: `1px solid ${theme.palette.border.seperator}`,
-  borderRadius: theme.spacing(2),
-  boxShadow: "rgba(0, 0, 0, 0.05) 0px 4px 12px",
-  marginBottom: theme.spacing(3),
-}));
-
-const StatusCardContent = styled(CardContent)(({ theme }) => ({
-  padding: theme.spacing(3),
-  "&:last-child": {
-    paddingBottom: theme.spacing(3),
-  },
-}));
-
-const SectionTitleContainer = styled(Box)(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "flex-start",
-  flexDirection: "row",
-  textAlign: "left",
-  width: "100%",
-  gap: theme.spacing(1),
-}));
-
-const SectionTitle = styled(Typography)(({ theme }) => ({
-  fontSize: "20px !important",
-  lineHeight: "26px !important",
-  fontWeight: 500,
-  color: theme.palette.text.default,
-  textAlign: "left",
-}));
-
-const SectionSubTitle = styled(Typography)(({ theme }) => ({
-  fontSize: "16px !important",
-  lineHeight: "22px !important",
-  fontWeight: 400,
-  color: theme.palette.text.information,
-  textAlign: "left",
 }));
 
 const MetricsGrid = styled(Box)(({ theme }) => ({
@@ -147,6 +99,20 @@ const AdminSystemPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [localWlanSettings, setLocalWlanSettings] =
     useState<WlanSettings>(defaultWlanSettings);
+  const [expandedSections, setExpandedSections] = useState({
+    mobileBlocker: true,
+    wlan: true,
+    overallStatus: true,
+    systemMetrics: true,
+    serverInfo: true,
+  });
+
+  const toggleSection = (section: keyof typeof expandedSections) => {
+    setExpandedSections((prev) => ({
+      ...prev,
+      [section]: !prev[section],
+    }));
+  };
 
   const savedWlanSettings = appSettings?.system?.wlan;
 
@@ -241,17 +207,14 @@ const AdminSystemPage = () => {
       </AdminSettingsHeader>
 
       <ContentWrapper>
-        {/* Mobile Blocker Settings */}
-        <StatusCard>
-          <StatusCardContent>
-            <SectionTitleContainer>
-              <PhoneAndroidRoundedIcon color="secondary" />
-              <SectionTitle>{t("settings.system.mobileBlocker")}</SectionTitle>
-            </SectionTitleContainer>
-            <Divider sx={{ my: 2 }} />
-            <SectionSubTitle sx={{ mb: 2 }}>
-              {t("settings.system.mobileBlockerDescription")}
-            </SectionSubTitle>
+        <Box display="flex" flexDirection="column" gap={2}>
+          {/* Mobile Blocker Settings */}
+          <EnhancedCollapse
+            title={t("settings.system.mobileBlocker")}
+            subtitle={t("settings.system.mobileBlockerDescription")}
+            expanded={expandedSections.mobileBlocker}
+            onAction={() => toggleSection("mobileBlocker")}
+          >
             <Box display="flex" justifyContent="flex-start">
               <FormControlLabel
                 control={
@@ -269,28 +232,23 @@ const AdminSystemPage = () => {
                 sx={{ ml: 0 }}
               />
             </Box>
-          </StatusCardContent>
-        </StatusCard>
+          </EnhancedCollapse>
 
-        {/* WLAN Configuration */}
-        <StatusCard>
-          <StatusCardContent>
-            <SectionTitleContainer>
-              <WifiRoundedIcon color="secondary" />
-              <SectionTitle>{t("settings.system.wlan.title")}</SectionTitle>
-              <Box sx={{ flex: 1 }} />
+          {/* WLAN Configuration */}
+          <EnhancedCollapse
+            title={t("settings.system.wlan.title")}
+            subtitle={t("settings.system.wlan.description")}
+            expanded={expandedSections.wlan}
+            onAction={() => toggleSection("wlan")}
+            headerAction={
               <GeneralButton
                 label={t("general.Save")}
                 isPrimary={false}
                 disabled={!isWlanDirty}
                 onAction={handleSaveWlan}
               />
-            </SectionTitleContainer>
-            <Divider sx={{ my: 2 }} />
-            <SectionSubTitle sx={{ mb: 2 }}>
-              {t("settings.system.wlan.description")}
-            </SectionSubTitle>
-
+            }
+          >
             <Box display="flex" justifyContent="flex-start" sx={{ mb: 2 }}>
               <FormControlLabel
                 control={
@@ -398,29 +356,27 @@ const AdminSystemPage = () => {
                 </Typography>
               </Box>
             )}
-          </StatusCardContent>
-        </StatusCard>
+          </EnhancedCollapse>
 
-        {/* Overall Status */}
-        <StatusCard>
-          <StatusCardContent>
-            <SectionTitleContainer>
-              <CheckCircleRoundedIcon color="secondary" />
-              <SectionTitle>{t("dashboard.health.overallStatus")}</SectionTitle>
-              {health && (
+          {/* Overall Status */}
+          <EnhancedCollapse
+            title={t("dashboard.health.overallStatus")}
+            subtitle={
+              health?.status === "up"
+                ? t("dashboard.health.systemOperational")
+                : t("dashboard.health.systemDown")
+            }
+            expanded={expandedSections.overallStatus}
+            onAction={() => toggleSection("overallStatus")}
+            headerAction={
+              health && (
                 <HealthIndicator
                   status={health.status}
                   label={t(`dashboard.health.${health.status}`)}
                 />
-              )}
-            </SectionTitleContainer>
-            <Divider sx={{ my: 2 }} />
-            <SectionSubTitle sx={{ mb: 2 }}>
-              {health?.status === "up"
-                ? t("dashboard.health.systemOperational")
-                : t("dashboard.health.systemDown")}
-            </SectionSubTitle>
-
+              )
+            }
+          >
             {/* Database Status */}
             <Box
               display="flex"
@@ -449,17 +405,14 @@ const AdminSystemPage = () => {
                 {health.checks.mongo.error}
               </Typography>
             )}
-          </StatusCardContent>
-        </StatusCard>
+          </EnhancedCollapse>
 
-        {/* System Metrics */}
-        <StatusCard>
-          <StatusCardContent>
-            <SectionTitleContainer>
-              <SpeedRoundedIcon color="secondary" />
-              <SectionTitle>{t("dashboard.health.systemMetrics")}</SectionTitle>
-            </SectionTitleContainer>
-            <Divider sx={{ my: 2 }} />
+          {/* System Metrics */}
+          <EnhancedCollapse
+            title={t("dashboard.health.systemMetrics")}
+            expanded={expandedSections.systemMetrics}
+            onAction={() => toggleSection("systemMetrics")}
+          >
             <MetricsGrid>
               <MetricCard>
                 <MetricLabel
@@ -498,17 +451,14 @@ const AdminSystemPage = () => {
                 />
               </MetricCard>
             </MetricsGrid>
-          </StatusCardContent>
-        </StatusCard>
+          </EnhancedCollapse>
 
-        {/* Server Info */}
-        <StatusCard>
-          <StatusCardContent>
-            <SectionTitleContainer>
-              <DnsRoundedIcon color="secondary" />
-              <SectionTitle>{t("dashboard.health.serverInfo")}</SectionTitle>
-            </SectionTitleContainer>
-            <Divider sx={{ my: 2 }} />
+          {/* Server Info */}
+          <EnhancedCollapse
+            title={t("dashboard.health.serverInfo")}
+            expanded={expandedSections.serverInfo}
+            onAction={() => toggleSection("serverInfo")}
+          >
             <Box display="flex" flexDirection="column" gap={1.5}>
               <Box
                 display="flex"
@@ -559,8 +509,8 @@ const AdminSystemPage = () => {
                 </Typography>
               </Box>
             </Box>
-          </StatusCardContent>
-        </StatusCard>
+          </EnhancedCollapse>
+        </Box>
       </ContentWrapper>
     </Wrapper>
   );

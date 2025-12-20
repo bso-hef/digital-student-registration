@@ -29,6 +29,20 @@ const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
   borderRadius: theme.spacing(1),
 }));
 
+const HeaderText = styled(Typography)(({ theme }) => ({
+  fontWeight: 700,
+  color: theme.palette.text.default,
+}));
+
+const FieldLabel = styled(Typography)(({ theme }) => ({
+  fontWeight: 500,
+  color: theme.palette.text.default,
+}));
+
+const FieldDescription = styled(Typography)(({ theme }) => ({
+  color: theme.palette.text.information,
+}));
+
 interface FieldConfigItem {
   name: string;
   label: string;
@@ -65,23 +79,31 @@ const FieldConfigurationPanel: React.FC<FieldConfigurationPanelProps> = ({
           <TableHead>
             <TableRow>
               <TableCell>
-                <strong>{t("settings.onboarding.table.field")}</strong>
+                <HeaderText component="span">
+                  {t("settings.onboarding.table.field")}
+                </HeaderText>
               </TableCell>
               <TableCell align="center">
                 <Tooltip title={t("settings.onboarding.table.requiredTooltip")}>
-                  <strong>{t("settings.onboarding.table.required")}</strong>
+                  <HeaderText component="span">
+                    {t("settings.onboarding.table.required")}
+                  </HeaderText>
                 </Tooltip>
               </TableCell>
               <TableCell align="center">
                 <Tooltip title={t("settings.onboarding.table.visibleTooltip")}>
-                  <strong>{t("settings.onboarding.table.visible")}</strong>
+                  <HeaderText component="span">
+                    {t("settings.onboarding.table.visible")}
+                  </HeaderText>
                 </Tooltip>
               </TableCell>
               <TableCell align="center">
                 <Tooltip
                   title={t("settings.onboarding.table.allowCustomTooltip")}
                 >
-                  <strong>{t("settings.onboarding.table.allowCustom")}</strong>
+                  <HeaderText component="span">
+                    {t("settings.onboarding.table.allowCustom")}
+                  </HeaderText>
                 </Tooltip>
               </TableCell>
             </TableRow>
@@ -91,13 +113,11 @@ const FieldConfigurationPanel: React.FC<FieldConfigurationPanelProps> = ({
               <TableRow key={field.name} hover>
                 <TableCell>
                   <Box>
-                    <Typography variant="body2" fontWeight="medium">
-                      {field.label}
-                    </Typography>
+                    <FieldLabel variant="body2">{field.label}</FieldLabel>
                     {field.description && (
-                      <Typography variant="caption" color="text.secondary">
+                      <FieldDescription variant="caption">
                         {field.description}
-                      </Typography>
+                      </FieldDescription>
                     )}
                   </Box>
                 </TableCell>
