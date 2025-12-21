@@ -221,13 +221,6 @@ StudentSchema.pre(
     // Get all modified paths to understand what's being updated
     const modifiedPaths = this.modifiedPaths();
 
-    // TEMPORARY DEBUG LOGGING - Remove after confirming fix
-    console.log("=== STUDENT SAVE DEBUG ===");
-    console.log("Modified paths:", modifiedPaths);
-    console.log("Current status:", this.status);
-    console.log("Student ID:", this._id);
-    console.log("=========================");
-
     // Filter out automatic timestamp fields and auto-generated fields to focus on substantive changes
     const substantiveChanges = modifiedPaths.filter(
       (path) =>
