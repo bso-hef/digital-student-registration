@@ -2,7 +2,6 @@ import { SCHEMA } from "@/constants/db.constants";
 import mongoose, { Schema } from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
 
-// Dropdown option schema with enabled/disabled state
 const DropdownOptionSchema = new Schema(
   {
     value: { type: String, required: true },
@@ -13,7 +12,6 @@ const DropdownOptionSchema = new Schema(
   { _id: false },
 );
 
-// Field configuration schema
 const FieldConfigSchema = new Schema(
   {
     required: { type: Boolean, default: false },
@@ -23,7 +21,6 @@ const FieldConfigSchema = new Schema(
   { _id: false },
 );
 
-// Agreement item schema (for configurable agreements)
 const AgreementItemSchema = new Schema(
   {
     id: { type: String, required: true },
@@ -44,14 +41,12 @@ const AgreementItemSchema = new Schema(
   { _id: false },
 );
 
-// Agreements settings schema
 const AgreementSettingsSchema = new Schema(
   {
     agreements: {
       type: [AgreementItemSchema],
       default: [],
     },
-    // Old fields kept temporarily for migration
     privacyPolicyEnabled: { type: Boolean, default: false },
     termsOfServiceEnabled: { type: Boolean, default: false },
     parentalConsentEnabled: { type: Boolean, default: true },
@@ -60,7 +55,6 @@ const AgreementSettingsSchema = new Schema(
   { _id: false },
 );
 
-// Integration settings schema
 const IntegrationSettingsSchema = new Schema(
   {
     emailServiceEnabled: { type: Boolean, default: false },
@@ -72,7 +66,6 @@ const IntegrationSettingsSchema = new Schema(
   { _id: false },
 );
 
-// Audit settings schema
 const AuditSettingsSchema = new Schema(
   {
     logStudentChanges: { type: Boolean, default: true },
@@ -84,11 +77,42 @@ const AuditSettingsSchema = new Schema(
   { _id: false },
 );
 
+const WlanSettingsSchema = new Schema(
+  {
+    enabled: { type: Boolean, default: false },
+    ssid: { type: String, default: "" },
+    password: { type: String, default: "" },
+    securityType: {
+      type: String,
+      enum: ["WPA", "WPA2", "WPA3", "WEP", "nopass"],
+      default: "WPA2",
+    },
+    hidden: { type: Boolean, default: false },
+  },
+  { _id: false },
+);
+
+const SystemSettingsSchema = new Schema(
+  {
+    mobileBlockerEnabled: { type: Boolean, default: true },
+    wlan: {
+      type: WlanSettingsSchema,
+      default: {
+        enabled: false,
+        ssid: "",
+        password: "",
+        securityType: "WPA2",
+        hidden: false,
+      },
+    },
+  },
+  { _id: false },
+);
+
 const AppSettingsSchema = new Schema(
   {
     isSystemSetup: { type: Boolean, default: false, required: true },
     onboarding: {
-      // Dropdown Options
       genderOptions: {
         type: [DropdownOptionSchema],
         default: [
@@ -147,6 +171,7 @@ const AppSettingsSchema = new Schema(
           { value: "Klasse 11", label: "Klasse 11", enabled: true, order: 6 },
           { value: "Klasse 12", label: "Klasse 12", enabled: true, order: 7 },
           { value: "Klasse 13", label: "Klasse 13", enabled: true, order: 8 },
+          { value: "Klasse 14", label: "Klasse 14", enabled: true, order: 9 },
         ],
       },
       schoolTypeOptions: {
@@ -368,7 +393,12 @@ const AppSettingsSchema = new Schema(
         ],
       },
 
-      // Field Configurations
+      maxContactPersons: {
+        type: Number,
+        default: 3,
+        min: 1,
+      },
+
       fieldConfigs: {
         geschlecht: {
           type: FieldConfigSchema,
@@ -412,7 +442,6 @@ const AppSettingsSchema = new Schema(
         },
       },
 
-      // Form Step Visibility
       formSteps: {
         welcomeStep: { type: Boolean, default: true },
         generalStep: { type: Boolean, default: true },
@@ -453,6 +482,19 @@ const AppSettingsSchema = new Schema(
         logSettingsChanges: true,
         retentionPeriodDays: 90,
         exportEnabled: false,
+      },
+    },
+    system: {
+      type: SystemSettingsSchema,
+      default: {
+        mobileBlockerEnabled: true,
+        wlan: {
+          enabled: false,
+          ssid: "",
+          password: "",
+          securityType: "WPA2",
+          hidden: false,
+        },
       },
     },
     createdAt: { type: Date, default: Date.now },

@@ -552,7 +552,7 @@ sudo systemctl restart nginx
 
 ### "Module not found"
 
-```
+```text
 Error: Cannot find module '@/components/...'
 ```
 
@@ -560,7 +560,7 @@ Error: Cannot find module '@/components/...'
 
 ### "EADDRINUSE"
 
-```
+```text
 Error: listen EADDRINUSE: address already in use :::3000
 ```
 
@@ -568,7 +568,7 @@ Error: listen EADDRINUSE: address already in use :::3000
 
 ### "Cannot read property 'x' of undefined"
 
-```
+```text
 TypeError: Cannot read property 'x' of undefined
 ```
 
@@ -584,7 +584,7 @@ const name = user.profile.name;
 
 ### "Hydration failed"
 
-```
+```text
 Error: Hydration failed because the initial UI does not match
 ```
 

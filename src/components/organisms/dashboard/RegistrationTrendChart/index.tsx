@@ -46,7 +46,7 @@ const RegistrationTrendChart: React.FC<RegistrationTrendChartProps> = ({
           {
             data: yValues,
             label: t("dashboard.quickStats.totalStudents"),
-            color: DASHBOARD_GRADIENTS.CHART_PRIMARY,
+            color: DASHBOARD_GRADIENTS.CHART_LINE,
             curve: "linear",
             showMark: true,
           },

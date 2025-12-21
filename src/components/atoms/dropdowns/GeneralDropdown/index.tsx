@@ -36,6 +36,7 @@ interface GeneralDropdownProps {
   placeholder?: string;
   disabled?: boolean;
   fullWidth?: boolean;
+  required?: boolean;
 }
 
 const StyledDropdown = styled(FormControl)(({ theme }) => ({
@@ -109,10 +110,14 @@ const GeneralDropdown: React.FC<GeneralDropdownProps> = ({
   invisibleOutline = false,
   helperText,
   flagIcon = false,
+  required = false,
 }) => {
   return (
     <StyledDropdown fullWidth>
-      <StyledLabel disabled={disabled}>{label}</StyledLabel>
+      <StyledLabel disabled={disabled}>
+        {label}
+        {required && " *"}
+      </StyledLabel>
       <Select
         value={value}
         defaultValue={defaultValue}
@@ -127,6 +132,26 @@ const GeneralDropdown: React.FC<GeneralDropdownProps> = ({
         IconComponent={ExpandMoreRoundedIcon}
         style={{ maxHeight: 24, height: 24 }}
         renderValue={(selected) => {
+          const match = options.find((o) => o.value === selected);
+          // If there's a matching option, render it (including empty string values like "All")
+          if (match) {
+            return (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                  height: 24,
+                }}
+              >
+                {match.leftIcon && (
+                  <StyledLeftIcon>{match.leftIcon}</StyledLeftIcon>
+                )}
+                <StyledMenuItemText>{match.label}</StyledMenuItemText>
+              </Box>
+            );
+          }
+          // Fall back to placeholder for empty/null values without a matching option
           if (selected === "" || selected == null) {
             return (
               placeholder && (
@@ -136,18 +161,7 @@ const GeneralDropdown: React.FC<GeneralDropdownProps> = ({
               )
             );
           }
-          const match = options.find((o) => o.value === selected);
-          if (!match) return "";
-          return (
-            <Box
-              sx={{ display: "flex", alignItems: "center", gap: 1, height: 24 }}
-            >
-              {match.leftIcon && (
-                <StyledLeftIcon>{match.leftIcon}</StyledLeftIcon>
-              )}
-              <StyledMenuItemText>{match.label}</StyledMenuItemText>
-            </Box>
-          );
+          return "";
         }}
         sx={
           invisibleOutline

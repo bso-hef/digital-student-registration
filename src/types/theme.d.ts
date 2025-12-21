@@ -1,12 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 
 import {
   Palette as MuiPalette,
   PaletteOptions as MuiPaletteOptions,
   TypeText as MuiTypeText,
-  PaletteColor,
-  PaletteColorOptions,
 } from "@mui/material/styles";
 
 declare module "@mui/material/styles" {

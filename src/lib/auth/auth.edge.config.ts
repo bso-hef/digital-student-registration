@@ -22,7 +22,9 @@ export const authEdgeConfig = {
       // Redirect logged-in users away from login page to dashboard
       // (They're already authenticated, no need to log in again)
       if (pathname === "/login" && isLoggedIn) {
-        return Response.redirect(new URL("/admin/dashboard", nextUrl));
+        // Use NEXTAUTH_URL (runtime variable) for correct redirect in Docker deployments
+        const baseUrl = process.env.NEXTAUTH_URL || nextUrl.origin;
+        return Response.redirect(new URL("/admin/dashboard", baseUrl));
       }
 
       // Allow public access to all other routes:
@@ -62,11 +64,13 @@ export const authEdgeConfig = {
         httpOnly: true,
         sameSite: "lax",
         path: "/",
-        // Always use secure cookies since app uses HTTPS in both dev and production
-        secure: true,
+        // Use secure cookies only when app URL uses HTTPS
+        // This allows HTTP in Docker deployment while keeping HTTPS secure
+        secure: process.env.NEXTAUTH_URL?.startsWith("https://") ?? false,
       },
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
   debug: process.env.NODE_ENV === "development",
+  trustHost: true,
 } satisfies NextAuthConfig;

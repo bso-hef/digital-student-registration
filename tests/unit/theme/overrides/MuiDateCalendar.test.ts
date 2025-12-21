@@ -20,7 +20,11 @@ describe("MuiDateCalendarOverride", () => {
       text: {
         default: "#000000",
       },
+      border: {
+        seperator: "#e0e0e0",
+      },
     },
+    spacing: (value: number) => `${value * 8}px`,
   } as Theme;
 
   describe("root styles", () => {
@@ -42,7 +46,11 @@ describe("MuiDateCalendarOverride", () => {
           text: {
             default: "#000000",
           },
+          border: {
+            seperator: "#e0e0e0",
+          },
         },
+        spacing: (value: number) => `${value * 8}px`,
       } as Theme;
 
       const styles = MuiDateCalendarOverride.root({ theme: customTheme });
@@ -60,7 +68,11 @@ describe("MuiDateCalendarOverride", () => {
           text: {
             default: "#333333",
           },
+          border: {
+            seperator: "#e0e0e0",
+          },
         },
+        spacing: (value: number) => `${value * 8}px`,
       } as Theme;
 
       const styles = MuiDateCalendarOverride.root({ theme: customTheme });
@@ -78,7 +90,11 @@ describe("MuiDateCalendarOverride", () => {
           text: {
             default: "#ffffff",
           },
+          border: {
+            seperator: "#424242",
+          },
         },
+        spacing: (value: number) => `${value * 8}px`,
       } as Theme;
 
       const styles = MuiDateCalendarOverride.root({ theme: darkTheme });

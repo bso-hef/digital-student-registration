@@ -20,7 +20,7 @@ The application uses **Next.js API Routes** located in `src/app/api/` as the bac
 
 ### Base URL
 
-```
+```text
 http://localhost:3000/api
 ```
 

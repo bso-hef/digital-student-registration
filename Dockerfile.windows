@@ -1,0 +1,199 @@
+# Digital Student Registration - Windows Container Dockerfile
+# Multi-stage build for Windows Server 2022 containers
+#
+# Prerequisites:
+#   - Windows Server 2022 or Windows 10/11 Pro
+#   - Docker Desktop for Windows (switched to Windows containers)
+#   - Hyper-V enabled
+#
+# Build:
+#   docker build -f Dockerfile.windows -t digital-student-registration:windows .
+#
+# Note: Windows container images are significantly larger than Linux (~1.5GB+ base)
+
+# escape=`
+
+# ============================================
+# Stage 1: Base image with Node.js
+# ============================================
+FROM mcr.microsoft.com/windows/servercore:ltsc2022 AS base
+
+# Set working directory
+WORKDIR C:\app
+
+# Install Node.js using Chocolatey
+SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
+
+# Install Chocolatey package manager
+RUN Set-ExecutionPolicy Bypass -Scope Process -Force; `
+    [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; `
+    iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+
+# Install Node.js 22.x via Chocolatey
+RUN choco install nodejs --version=22.20.0 -y
+
+# Verify Node.js installation
+RUN node --version; `
+    npm --version
+
+# ============================================
+# Stage 2: Install dependencies for build
+# ============================================
+FROM base AS builder-deps
+
+WORKDIR C:\app
+
+COPY package.json yarn.lock .\
+
+# Install Yarn with version pinning for consistency
+RUN npm install -g yarn@1.22.22
+
+# Install all dependencies (including dev)
+RUN yarn install --frozen-lockfile --production=false
+
+# ============================================
+# Stage 3: Build the application
+# ============================================
+FROM base AS builder
+
+WORKDIR C:\app
+
+# Yarn already installed in builder-deps stage, no need to reinstall
+
+# Copy dependencies from builder-deps stage
+COPY --from=builder-deps C:\app\node_modules .\node_modules
+
+# Copy application source code
+COPY . .
+
+# Build-time arguments for NEXT_PUBLIC variables
+ARG NEXT_PUBLIC_APP_URL
+ARG NEXT_PUBLIC_API_URL
+
+# Set build-time environment variables
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+
+# Validate and display build configuration
+# This helps debug port configuration issues in Docker deployments
+RUN Write-Host "========================================"; `
+    Write-Host "Build Configuration:"; `
+    Write-Host "  NEXT_PUBLIC_APP_URL=$env:NEXT_PUBLIC_APP_URL"; `
+    Write-Host "  NEXT_PUBLIC_API_URL=$env:NEXT_PUBLIC_API_URL"; `
+    Write-Host "========================================"; `
+    if ([string]::IsNullOrEmpty($env:NEXT_PUBLIC_APP_URL)) { `
+      Write-Host "WARNING: NEXT_PUBLIC_APP_URL is not set. Using relative URLs for API calls."; `
+      Write-Host "This is acceptable since the app uses relative URLs for same-origin API calls."; `
+    }; `
+    if ([string]::IsNullOrEmpty($env:NEXT_PUBLIC_API_URL)) { `
+      Write-Host "WARNING: NEXT_PUBLIC_API_URL is not set. Using relative URLs for API calls."; `
+      Write-Host "This is acceptable since the app uses relative URLs for same-origin API calls."; `
+    }
+
+# Build Next.js application with increased memory
+RUN $env:NODE_OPTIONS='--max-old-space-size=4096'; `
+    yarn build
+
+# Remove source maps in production
+RUN Get-ChildItem -Path .\.next -Filter *.map -Recurse | Remove-Item -Force
+
+# ============================================
+# Stage 4: Production runtime
+# ============================================
+FROM base AS runner
+
+WORKDIR C:\app
+
+# Accept port as build argument
+ARG APP_PORT=3000
+
+# Set production environment variables
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=${APP_PORT}
+ENV HOSTNAME=0.0.0.0
+
+# Copy built application from builder
+# Note: Standalone output includes all required dependencies
+COPY --from=builder C:\app\public .\public
+COPY --from=builder C:\app\.next\standalone .\
+COPY --from=builder C:\app\.next\static .\.next\static
+
+# Copy package.json for version info
+COPY --from=builder C:\app\package.json .\
+
+# Expose application port
+EXPOSE ${APP_PORT}
+
+# Health check using PowerShell
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 `
+  CMD powershell -Command "try { `
+    $response = Invoke-WebRequest -Uri http://localhost:$env:PORT/api/health/live -UseBasicParsing; `
+    if ($response.StatusCode -eq 200) { exit 0 } else { exit 1 } `
+  } catch { exit 1 }"
+
+# Start the Next.js standalone server
+CMD ["node", "server.js"]
+
+# Metadata
+LABEL maintainer="Digital Student Registration Team"
+LABEL description="Windows Container for Digital Student Registration system"
+LABEL version="1.0.0"
+LABEL platform="windows/amd64"
+
+# ============================================
+# Build Instructions
+# ============================================
+#
+# 1. Switch Docker to Windows containers:
+#    Right-click Docker Desktop icon → "Switch to Windows containers"
+#
+# 2. Build the image:
+#    docker build -f Dockerfile.windows -t digital-student-registration:windows .
+#
+# 3. Run the container:
+#    docker run -d -p 3000:3000 --name dsr-app digital-student-registration:windows
+#
+# 4. Check logs:
+#    docker logs dsr-app
+#
+# 5. Stop and remove:
+#    docker stop dsr-app && docker rm dsr-app
+#
+# ============================================
+# Image Size Notes
+# ============================================
+#
+# Windows Server Core base: ~1.5GB
+# Node.js: ~50MB
+# Dependencies: ~300MB
+# Application: ~100MB
+# Total estimated size: ~2GB
+#
+# Compare to Linux: ~200MB
+# Windows containers are 10x larger but provide native Windows compatibility
+#
+# ============================================
+# Troubleshooting
+# ============================================
+#
+# 1. "Docker daemon is not running in Windows mode":
+#    → Right-click Docker icon → "Switch to Windows containers"
+#
+# 2. "Base image pull failed":
+#    → Ensure Windows version matches (Windows Server 2022)
+#    → Update Docker Desktop to latest version
+#
+# 3. "Build timeout":
+#    → Windows builds are slower than Linux
+#    → Increase Docker Desktop resources (CPU/Memory)
+#
+# 4. "Container not accessible":
+#    → Check Windows Firewall rules
+#    → Ensure port 3000 is allowed
+#
+# 5. "Node.js not found":
+#    → Chocolatey installation failed
+#    → Check internet connectivity during build

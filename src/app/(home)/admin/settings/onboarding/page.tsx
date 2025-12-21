@@ -17,7 +17,7 @@ import {
   OnboardingSettings,
 } from "@/types/settings";
 import { applicationScrollbar } from "@/utils/styling.utils";
-import { Box, Divider, Typography, styled } from "@mui/material";
+import { Box, Divider, TextField, Typography, styled } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -115,6 +115,16 @@ const AdminSettingsOnboardingPage = () => {
         ...localSettings?.fieldConfigs,
         [fieldName]: config,
       },
+    });
+    setHasChanges(true);
+  };
+
+  const handleMaxContactPersonsChange = (value: number) => {
+    if (!localSettings) return;
+    const validValue = Math.max(1, value);
+    setLocalSettings({
+      ...localSettings,
+      maxContactPersons: validValue,
     });
     setHasChanges(true);
   };
@@ -248,6 +258,32 @@ const AdminSettingsOnboardingPage = () => {
               onChange={handleFieldConfigChange}
             />
           </EnhancedCollapse>
+        </Section>
+
+        <Divider sx={{ my: 4 }} />
+
+        <Section>
+          <SectionTitle>
+            {t("settings.onboarding.maxContactPersons.title")}
+          </SectionTitle>
+          <Typography
+            variant="body2"
+            color="text.information"
+            style={{ textAlign: "left" }}
+          >
+            {t("settings.onboarding.maxContactPersons.subtitle")}
+          </Typography>
+          <TextField
+            type="number"
+            label={t("settings.onboarding.maxContactPersons.label")}
+            value={localSettings?.maxContactPersons ?? 3}
+            onChange={(e) =>
+              handleMaxContactPersonsChange(parseInt(e.target.value, 10) || 1)
+            }
+            inputProps={{ min: 1 }}
+            sx={{ maxWidth: 200 }}
+            size="small"
+          />
         </Section>
       </ContentContainer>
     </Wrapper>

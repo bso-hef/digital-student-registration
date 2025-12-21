@@ -18,7 +18,11 @@ const ClassDistributionChart: React.FC<ClassDistributionChartProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const xLabels = data.map((item) => item.grade);
+  const xLabels = data.map((item) =>
+    item.grade !== null
+      ? t("dashboard.charts.gradeLabel", { grade: item.grade })
+      : t("dashboard.charts.noGrade"),
+  );
   const yValues = data.map((item) => item.count);
 
   return (
@@ -38,7 +42,7 @@ const ClassDistributionChart: React.FC<ClassDistributionChartProps> = ({
           {
             data: yValues,
             label: t("dashboard.quickStats.totalClasses"),
-            color: DASHBOARD_GRADIENTS.TOTAL_CLASSES.solid,
+            color: DASHBOARD_GRADIENTS.CHART_BAR,
           },
         ]}
         margin={{ left: 50, right: 20, top: 20, bottom: 50 }}

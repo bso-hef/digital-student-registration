@@ -27,6 +27,9 @@ const studentService = {
   getUnassigned: () => {
     return http.get("/api/students?unassigned=true");
   },
+  getForAssignment: () => {
+    return http.get("/api/students?forAssignment=true&limit=200");
+  },
   create: (students: CreateStudentInput[]) => {
     return http.post("/api/students", { students });
   },
@@ -41,6 +44,26 @@ const studentService = {
       verificationCode,
     });
   },
+  // Duplicate check method
+  checkDuplicate: (
+    firstName: string,
+    lastName: string,
+    dateOfBirth: string | Date,
+  ) => {
+    // Format date as ISO string if it's a Date object
+    const dobString =
+      dateOfBirth instanceof Date
+        ? dateOfBirth.toISOString()
+        : dateOfBirth.toString();
+
+    return http.get("/api/students/check-duplicate", {
+      params: {
+        firstName,
+        lastName,
+        dateOfBirth: dobString,
+      },
+    });
+  },
   // Onboarding methods
   updateOnboarding: (id: string, data: Record<string, unknown>) => {
     return http.patch(`/api/students/${id}/onboarding`, data);
@@ -50,6 +73,14 @@ const studentService = {
       ...data,
       finalSubmit: true,
     });
+  },
+  // Class assignment method
+  updateClass: (id: string, classId: string | null) => {
+    return http.patch(`/api/students/${id}`, { currentClass: classId });
+  },
+  // Admin update method for student detail page
+  patch: (id: string, data: Record<string, unknown>) => {
+    return http.patch(`/api/students/${id}`, data);
   },
 };
 

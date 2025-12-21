@@ -1,5 +1,5 @@
 export interface ContactPerson {
-  type: string; // parent, guardian, emergency contact, etc.
+  type: string;
   firstName: string;
   lastName: string;
   phone?: string;
@@ -21,6 +21,11 @@ export interface Employer {
   contactEmail: string;
   contactPhone?: string;
   contactSalutation?: string;
+  // Second contact (optional)
+  contact2Name?: string;
+  contact2Email?: string;
+  contact2Phone?: string;
+  contact2Salutation?: string;
   verified: boolean;
 }
 
@@ -35,7 +40,6 @@ export interface Agreements {
 export interface Student {
   _id: string;
 
-  // Basic personal information
   firstName: string;
   lastName: string;
   birthName?: string;
@@ -45,15 +49,12 @@ export interface Student {
   birthCountry?: string;
   religion?: string;
 
-  // Nationality
   nationality?: string;
   secondNationality?: string;
 
-  // Origin/Immigration
   familyLanguage?: string;
   immigrationYear?: number;
 
-  // Contact information
   email?: string;
   phone?: string;
   address?: {
@@ -65,48 +66,38 @@ export interface Student {
     timezone?: string;
   };
 
-  // School information
-  class?: string; // Deprecated: use currentClass
-  currentClass?: string; // Reference to Class _id
-  currentClassName?: string; // Cached class name
+  class?: string;
+  currentClass?: string;
+  currentClassName?: string;
   schoolEntryDate?: Date;
 
-  // Previous education
   previousSchool?: string;
   previousSchoolType?: string;
   previousSchoolLevel?: string;
   degrees?: string;
 
-  // Vocational training
   profession?: string;
   trainingStartDate?: Date;
 
-  // Employer information (for vocational students)
   employer?: Employer;
 
-  // Contact persons (parents, guardians)
   contactPersons?: ContactPerson[];
 
-  // Agreements and consents
   agreements?: Agreements;
 
-  // Onboarding progress
   onboardingStep?: number;
 
-  // System fields
   collisionGroup?: string;
   ordinal?: number;
   status: "imported" | "invited" | "onboarded";
-  verificationCode?: string; // 6-character alphanumeric code (0-9, A-Z)
+  verificationCode?: string;
   active?: boolean;
 
-  // Metadata
   isValid?: boolean;
   touched?: boolean;
   createdAt: Date;
   updatedAt: Date;
 
-  // Normalized fields for search (auto-generated)
   firstNameNorm?: string;
   lastNameNorm?: string;
 }

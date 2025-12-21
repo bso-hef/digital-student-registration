@@ -1,4 +1,4 @@
-import HomeIcon from "@mui/icons-material/Home";
+import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, within } from "@storybook/test";
 
@@ -16,7 +16,7 @@ type Story = StoryObj<typeof SmallIconButton>;
 
 export const Default: Story = {
   args: {
-    icon: <HomeIcon />,
+    icon: <HomeRoundedIcon />,
     title: "Home",
     placement: "top",
   },

@@ -269,6 +269,7 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
                 component={DatePicker}
                 name="geburtsdatum"
                 label={t("onboarding.general.birthDate")}
+                format="DD.MM.YYYY"
                 slotProps={{
                   textField: {
                     variant: "outlined",

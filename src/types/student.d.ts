@@ -25,10 +25,16 @@ export interface StudentData {
   vorhergehendeSchule: string;
   vorhergehendeSchulform: string;
   vorhergehendeStufe: string;
+  // Company Contact 1 (required)
   betriebApAnrede: string;
-  betriebApVorname: string;
-  betriebApNachname: string;
+  betriebApName: string;
   betriebApTelefon1: string;
+  betriebApEmail: string;
+  // Company Contact 2 (optional)
+  betriebAp2Anrede: string;
+  betriebAp2Name: string;
+  betriebAp2Telefon1: string;
+  betriebAp2Email: string;
   betriebEintritt: string;
   betriebName: string;
   betriebStraße: string;
@@ -37,7 +43,6 @@ export interface StudentData {
   betriebOrt: string;
   betriebTelefon1: string;
   betriebEmail: string;
-  // Contact Person 1
   ansprechpartner1Art: string;
   ansprechpartner1Vorname: string;
   ansprechpartner1Nachname: string;
@@ -47,7 +52,6 @@ export interface StudentData {
   ansprechpartner1Ort: string;
   ansprechpartner1Mobil: string;
   ansprechpartner1Telefon1: string;
-  // Contact Person 2
   ansprechpartner2Art: string;
   ansprechpartner2Vorname: string;
   ansprechpartner2Nachname: string;
@@ -57,7 +61,6 @@ export interface StudentData {
   ansprechpartner2Ort: string;
   ansprechpartner2Mobil: string;
   ansprechpartner2Telefon1: string;
-  // Contact Person 3
   ansprechpartner3Art: string;
   ansprechpartner3Vorname: string;
   ansprechpartner3Nachname: string;
@@ -67,7 +70,6 @@ export interface StudentData {
   ansprechpartner3Ort: string;
   ansprechpartner3Mobil: string;
   ansprechpartner3Telefon1: string;
-  // Agreements
   datenschutz: boolean;
   teilnahmeunterricht: boolean;
   schulordnung: boolean;

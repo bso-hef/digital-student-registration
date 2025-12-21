@@ -78,7 +78,7 @@ const PreEducationForm: React.FC<PreEducationFormProps> = ({
   // Determine appropriate school type based on previous grade level
   // Grundschule: grades 1-4
   // Hauptschule/Realschule/Gymnasium/Gesamtschule: grades 5-10
-  // For grades 11-13, typically came from Gymnasium or Gesamtschule
+  // For grades 11-14, typically came from Gymnasium or Gesamtschule
   // For vocational classes, typically came from Berufsschule or one of the secondary schools
   const calculatePreviousSchoolType = (grade: number | null): string => {
     if (!grade || grade <= 1) return "";
@@ -93,7 +93,7 @@ const PreEducationForm: React.FC<PreEducationFormProps> = ({
     else if (previousGrade >= 5 && previousGrade <= 10) {
       return "Gesamtschule";
     }
-    // Grades 11-13: Typically Gymnasium or Gesamtschule
+    // Grades 11-14: Typically Gymnasium or Gesamtschule
     // Default to Gymnasium for upper grades
     else if (previousGrade >= 11) {
       return "Gymnasium";
@@ -139,14 +139,12 @@ const PreEducationForm: React.FC<PreEducationFormProps> = ({
   // Track validation state changes (must be before early return)
   useEffect(() => {
     if (formikRef?.current && onValidationChange) {
-      // Validate form and report status
-      formikRef.current.validateForm().then(() => {
-        if (formikRef.current) {
-          onValidationChange(formikRef.current.isValid);
-        }
-      });
+      const { isValid, isValidating } = formikRef.current;
+      if (!isValidating) {
+        onValidationChange(isValid);
+      }
     }
-  });
+  }, [formikRef, onValidationChange]);
 
   if (loading) {
     return <div>Loading settings...</div>;

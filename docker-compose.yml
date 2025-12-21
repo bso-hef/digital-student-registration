@@ -1,112 +1,203 @@
-# Docker Compose configuration for DEVELOPMENT
-# This setup includes hot-reload, debugging, and development tools
-
-version: '3.9'
+# Minimal Production Docker Compose
+# Digital Student Registration System
+#
+# Simplified deployment for Linux and Windows production environments
+# - No reverse proxy (direct port 3000 exposure)
+# - HTTP only (add external SSL layer if needed)
+# - Single network, minimal configuration
+# - Each deployment has its own database
+#
+# Usage:
+#   Linux:   docker-compose --profile linux up -d
+#   Windows: docker-compose --profile windows up -d
+#
+# Prerequisites:
+#   1. Copy .env.example to .env and configure required values
+#      cp .env.example .env  (then edit .env with your secrets)
+#   2. Install Docker and Docker Compose
+#   3. Ensure configured port is available (default: 3000)
+#
+# External SSL Setup:
+#   Add nginx, Cloudflare, or cloud load balancer in front for HTTPS
 
 services:
-  # MongoDB Database Service
-  mongo:
-    image: mongo:7.0
-    container_name: digital-student-mongo-dev
-    restart: unless-stopped
-    ports:
-      - '27017:27017'
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-admin}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-devpassword123}
-      MONGO_INITDB_DATABASE: digital-student-onboarding
-    volumes:
-      # Persist database data
-      - mongo_data_dev:/data/db
-      # Persist MongoDB configuration
-      - mongo_config_dev:/data/configdb
-    networks:
-      - student_network
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 20s
-
-  # Next.js Application Service (Development Mode)
-  app:
+  # ============================================
+  # Next.js Application Server (Linux)
+  # ============================================
+  app-linux:
+    profiles:
+      - linux
     build:
       context: .
       dockerfile: Dockerfile
-      target: builder
-    container_name: digital-student-app-dev
+      args:
+        NODE_ENV: production
+        # APP_PORT is passed to Docker for the EXPOSE directive and PORT env var
+        APP_PORT: ${APP_PORT:-3000}
+        # NEXT_PUBLIC_* variables are embedded in the JavaScript bundle at build time
+        # These MUST be set correctly before building, or the client will use wrong URLs
+        # Set these in your .env file to override the defaults
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3000}
+    image: digital-student-registration:linux
+    container_name: dsr-app
     restart: unless-stopped
     ports:
-      - '3000:3000'
+      - "${APP_PORT:-3000}:${APP_PORT:-3000}"
     environment:
-      # Node environment
-      NODE_ENV: development
-
-      # MongoDB connection
-      MONGODB_URI: mongodb://${MONGO_USER:-admin}:${MONGO_PASSWORD:-devpassword123}@mongo:27017/digital-student-onboarding?authSource=admin
-
-      # NextAuth configuration
-      NEXTAUTH_URL: https://localhost:3000
-      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-dev-secret-change-in-production-min-64-chars-required-for-jwt}
-
-      # API URL
-      NEXT_PUBLIC_API_URL: https://localhost:3000
-
-      # Application info
-      NEXT_PUBLIC_VERSION: ${npm_package_version:-1.0.0}
-      NEXT_PUBLIC_NAME: ${npm_package_name:-digital-student-registration}
-
-      # Development settings
+      NODE_ENV: production
+      PORT: ${APP_PORT:-3000}
+      HOSTNAME: "0.0.0.0"
       NEXT_TELEMETRY_DISABLED: 1
-    volumes:
-      # Mount source code for hot-reload
-      - .:/app
-      - /app/node_modules
-      - /app/.next
-
-      # Mount SSL certificates for HTTPS development
-      - ./certificates:/app/certificates:ro
-    depends_on:
-      mongo:
-        condition: service_healthy
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3000}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+      MONGODB_URI: mongodb://${MONGO_USER:-admin}:${MONGO_PASSWORD}@mongo:27017/${MONGO_DB:-digital-student-registration}?authSource=admin
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
+      NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      NEXT_PUBLIC_VERSION: ${APP_VERSION:-1.0.0}
+      NEXT_PUBLIC_NAME: ${APP_NAME:-Digital Student Registration}
     networks:
-      - student_network
+      - app-network
+    depends_on:
+      - mongo
+      - redis
     healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/health/live', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"]
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:${APP_PORT:-3000}/api/health/live || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 60s
-    # Development: run in watch mode
-    command: yarn dev
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
-  # MongoDB Express - Web-based MongoDB admin interface (Development only)
-  mongo-express:
-    image: mongo-express:1.0.2
-    container_name: digital-student-mongo-express
+  # ============================================
+  # Next.js Application Server (Windows)
+  # ============================================
+  app-windows:
+    profiles:
+      - windows
+    build:
+      context: .
+      dockerfile: Dockerfile.windows
+      args:
+        NODE_ENV: production
+        # APP_PORT is passed to Docker for the EXPOSE directive and PORT env var
+        APP_PORT: ${APP_PORT:-3000}
+        # NEXT_PUBLIC_* variables are embedded in the JavaScript bundle at build time
+        # These MUST be set correctly before building, or the client will use wrong URLs
+        # Set these in your .env file to override the defaults
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3000}
+    image: digital-student-registration:windows
+    container_name: dsr-app
     restart: unless-stopped
     ports:
-      - '8081:8081'
+      - "${APP_PORT:-3000}:${APP_PORT:-3000}"
     environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_USER:-admin}
-      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_PASSWORD:-devpassword123}
-      ME_CONFIG_MONGODB_URL: mongodb://${MONGO_USER:-admin}:${MONGO_PASSWORD:-devpassword123}@mongo:27017/
-      ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_EXPRESS_USER:-admin}
-      ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_EXPRESS_PASSWORD:-pass}
-    depends_on:
-      mongo:
-        condition: service_healthy
+      NODE_ENV: production
+      PORT: ${APP_PORT:-3000}
+      HOSTNAME: "0.0.0.0"
+      NEXT_TELEMETRY_DISABLED: 1
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3000}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+      MONGODB_URI: mongodb://${MONGO_USER:-admin}:${MONGO_PASSWORD}@mongo:27017/${MONGO_DB:-digital-student-registration}?authSource=admin
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
+      NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      NEXT_PUBLIC_VERSION: ${APP_VERSION:-1.0.0}
+      NEXT_PUBLIC_NAME: ${APP_NAME:-Digital Student Registration}
     networks:
-      - student_network
+      - app-network
+    depends_on:
+      - mongo
+      - redis
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
-volumes:
-  mongo_data_dev:
-    name: digital_student_mongo_data_dev
-  mongo_config_dev:
-    name: digital_student_mongo_config_dev
+  # ============================================
+  # MongoDB Database
+  # ============================================
+  mongo:
+    image: mongo:7.0
+    container_name: dsr-mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DB:-digital-student-registration}
+    volumes:
+      - mongo-data:/data/db
+      - ./mongod.conf:/etc/mongod.conf:ro
+    networks:
+      - app-network
+    command: ["mongod", "--config", "/etc/mongod.conf"]
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --quiet --eval \"db.adminCommand('ping').ok\" --username \"$MONGO_INITDB_ROOT_USERNAME\" --password \"$MONGO_INITDB_ROOT_PASSWORD\" --authenticationDatabase admin || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
+  # ============================================
+  # Redis Cache (for session storage and caching)
+  # ============================================
+  redis:
+    image: redis:7-alpine
+    container_name: dsr-redis
+    restart: unless-stopped
+    command: >
+      redis-server
+      --requirepass ${REDIS_PASSWORD}
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+      --save 60 1000
+      --loglevel warning
+      --appendonly yes
+      --appendfsync everysec
+    volumes:
+      - redis-data:/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$REDIS_PASSWORD\" ping || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+# ============================================
+# Networks
+# ============================================
 networks:
-  student_network:
-    name: digital_student_network_dev
+  app-network:
     driver: bridge
+    name: dsr-network
+
+# ============================================
+# Volumes (persistent data storage)
+# ============================================
+volumes:
+  mongo-data:
+    driver: local
+    name: dsr-mongo-data
+
+  redis-data:
+    driver: local
+    name: dsr-redis-data

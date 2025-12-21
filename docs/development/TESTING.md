@@ -74,7 +74,7 @@ yarn playwright:install
 
 ### Directory Organization
 
-```
+```text
 tests/
 ├── e2e/                          # End-to-end tests (Playwright)
 │   ├── admin/
@@ -671,5 +671,3 @@ You now have a complete testing infrastructure with:
 - ✅ CI/CD integration with GitHub Actions
 - ✅ Coverage reporting
 - ✅ Example tests to follow
-
-**Happy Testing! 🚀**

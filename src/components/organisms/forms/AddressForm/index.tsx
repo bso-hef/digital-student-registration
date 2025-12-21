@@ -31,10 +31,6 @@ const FormSection = styled(Box)(({ theme }) => ({
   },
 }));
 
-const FullWidthField = styled(Box)(() => ({
-  gridColumn: "1 / -1",
-}));
-
 interface FormValues {
   straße: string;
   hausnr: string;
@@ -210,9 +206,7 @@ const AddressForm: React.FC<AddressFormProps> = ({
                 }
               }}
             />
-          </FormSection>
 
-          <FullWidthField>
             {/* E-Mail */}
             <Field
               component={TextField}
@@ -223,7 +217,7 @@ const AddressForm: React.FC<AddressFormProps> = ({
               fullWidth
               required
             />
-          </FullWidthField>
+          </FormSection>
         </StyledForm>
       )}
     </Formik>

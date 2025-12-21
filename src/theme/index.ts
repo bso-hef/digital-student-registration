@@ -58,12 +58,10 @@ export const getTheme = (
   const highContrast = accessibilityOptions?.highContrast || false;
   const dyslexiaFont = accessibilityOptions?.dyslexiaFont || false;
 
-  // Font family based on dyslexia font setting
   const fontFamily = dyslexiaFont
     ? '"OpenDyslexic", Inter, sans-serif'
     : "Inter, sans-serif";
 
-  // Select color palette based on high contrast setting
   const getColor = (normalLight: string, normalDark: string) => {
     if (highContrast) {
       return isDark
@@ -259,21 +257,20 @@ export const getTheme = (
       icon: {
         primary: isDark
           ? BASE_THEME_COLORS.PRIMARY.LIGHT
-          : BASE_THEME_COLORS.PRIMARY.MAIN, // icon/primary
+          : BASE_THEME_COLORS.PRIMARY.MAIN,
         secondary: isDark
           ? LIGHT_THEME_COLORS[600]
-          : BASE_THEME_COLORS.SECONDARY.MAIN, // icon/secondary
+          : BASE_THEME_COLORS.SECONDARY.MAIN,
         contrast: isDark
           ? LIGHT_THEME_COLORS[400]
-          : BASE_THEME_COLORS.SECONDARY.WHITE, // icon/contrast
+          : BASE_THEME_COLORS.SECONDARY.WHITE,
         information: isDark
           ? BASE_THEME_COLORS.SECONDARY.MAIN
-          : BASE_THEME_COLORS.SECONDARY.LIGHT, // icon/information
-        disabled: isDark ? DARK_THEME_COLORS[650] : LIGHT_THEME_COLORS[600], // icon/disabled
-        alert: BASE_THEME_COLORS.ERROR.MAIN, // icon/alert
+          : BASE_THEME_COLORS.SECONDARY.LIGHT,
+        disabled: isDark ? DARK_THEME_COLORS[650] : LIGHT_THEME_COLORS[600],
+        alert: BASE_THEME_COLORS.ERROR.MAIN,
       },
       border: {
-        // before divider
         default: highContrast
           ? isDark
             ? HIGH_CONTRAST_DARK_COLORS.BORDER
@@ -309,39 +306,39 @@ export const getTheme = (
       },
       surface: {
         button: {
-          primary: BASE_THEME_COLORS.PRIMARY.MAIN, // surface/button/primary
-          hover: BASE_THEME_COLORS.PRIMARY.DARK, // surface/button/hover
+          primary: BASE_THEME_COLORS.PRIMARY.MAIN,
+          hover: BASE_THEME_COLORS.PRIMARY.DARK,
           secondary: isDark
             ? DARK_THEME_COLORS[650]
-            : BASE_THEME_COLORS.PRIMARY.TERTIARY, // surface/button/secondary
-          hoverLight: isDark ? DARK_THEME_COLORS[700] : LIGHT_THEME_COLORS[200], // surface/button/hoverLight
-          disabled: isDark ? DARK_THEME_COLORS[700] : LIGHT_THEME_COLORS[300], // surface/button/disabled
-          focused: isDark ? DARK_THEME_COLORS[750] : LIGHT_THEME_COLORS[400], // surface/button/focused
+            : BASE_THEME_COLORS.PRIMARY.TERTIARY,
+          hoverLight: isDark ? DARK_THEME_COLORS[700] : LIGHT_THEME_COLORS[200],
+          disabled: isDark ? DARK_THEME_COLORS[700] : LIGHT_THEME_COLORS[300],
+          focused: isDark ? DARK_THEME_COLORS[750] : LIGHT_THEME_COLORS[400],
         },
         interface: {
           base: isDark
             ? DARK_THEME_COLORS[800]
-            : BASE_THEME_COLORS.SECONDARY.WHITE, // surface/interface/base
-          background: isDark ? DARK_THEME_COLORS[850] : LIGHT_THEME_COLORS[100], // surface/interface/background
+            : BASE_THEME_COLORS.SECONDARY.WHITE,
+          background: isDark ? DARK_THEME_COLORS[850] : LIGHT_THEME_COLORS[100],
           backElevation: isDark
             ? DARK_THEME_COLORS[900]
-            : LIGHT_THEME_COLORS[200], // surface/interface/backElevation
-          active: isDark ? DARK_THEME_COLORS[750] : LIGHT_THEME_COLORS[300], // surface/interface/active
+            : LIGHT_THEME_COLORS[200],
+          active: isDark ? DARK_THEME_COLORS[750] : LIGHT_THEME_COLORS[300],
           dark: isDark
             ? DARK_THEME_COLORS[850]
-            : BASE_THEME_COLORS.SECONDARY.MAIN, // surface/interface/dark
-          navigation: "rgba(83, 104, 134, 0.50)", // surface/interface/navigation
-          overlay: "rgba(29, 29, 43, 0.60)", // surface/interface/overlay
-          disabled: DARK_THEME_COLORS[900], // surface/interface/disabled
+            : BASE_THEME_COLORS.SECONDARY.MAIN,
+          navigation: "rgba(83, 104, 134, 0.50)",
+          overlay: "rgba(29, 29, 43, 0.60)",
+          disabled: DARK_THEME_COLORS[900],
           boxShadow: isDark
             ? "rgba(29, 29, 43, 0.4)"
-            : "rgba(87, 104, 131, 0.2)", // surface/interface/boxShadow
+            : "rgba(87, 104, 131, 0.2)",
         },
         alert: {
-          success: BASE_THEME_COLORS.SUCCESS.MAIN, // surface/alert/success
-          warning: BASE_THEME_COLORS.WARNING.MAIN, // surface/alert/warning
-          error: BASE_THEME_COLORS.ERROR.MAIN, // surface/alert/error
-          info: BASE_THEME_COLORS.INFO.MAIN, // surface/alert/info
+          success: BASE_THEME_COLORS.SUCCESS.MAIN,
+          warning: BASE_THEME_COLORS.WARNING.MAIN,
+          error: BASE_THEME_COLORS.ERROR.MAIN,
+          info: BASE_THEME_COLORS.INFO.MAIN,
         },
       },
     },

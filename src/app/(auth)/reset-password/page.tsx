@@ -17,7 +17,7 @@ import {
   PASSWORD_REGEX,
   RECOVERY_CODE_REGEX,
 } from "@/utils/validation.utils";
-import { ArrowBack } from "@mui/icons-material";
+import { ArrowBackRounded } from "@mui/icons-material";
 import { Alert, Box, TextField, Typography, styled } from "@mui/material";
 import { Field, Form, Formik } from "formik";
 import Link from "next/link";
@@ -170,109 +170,139 @@ export default function ResetPasswordPage() {
         validationSchema={resetSchema}
         onSubmit={handleSubmit}
       >
-        {({ values, errors, touched, setFieldValue, submitForm }) => (
-          <StyledForm>
-            <AuthContent>
-              <BackToLoginContainer>
-                <StyledLink href="/login">
-                  <BackToLoginTypography variant="body2" color="primary">
-                    <ArrowBack fontSize="small" />
-                    {t("auth.resetPassword.backToLogin")}
-                  </BackToLoginTypography>
-                </StyledLink>
-              </BackToLoginContainer>
+        {({
+          values,
+          errors,
+          touched,
+          setFieldValue,
+          submitForm,
+          isValid,
+          dirty,
+        }) => {
+          const handleKeyDown = (event: React.KeyboardEvent) => {
+            if (
+              event.key === "Enter" &&
+              !event.shiftKey &&
+              isValid &&
+              dirty &&
+              !isLoading
+            ) {
+              event.preventDefault();
+              submitForm();
+            }
+          };
 
-              <Alert severity="info">
-                {t("auth.resetPassword.infoMessage")}
-              </Alert>
+          return (
+            <StyledForm>
+              <AuthContent>
+                <BackToLoginContainer>
+                  <StyledLink href="/login">
+                    <BackToLoginTypography variant="body2" color="primary">
+                      <ArrowBackRounded fontSize="small" />
+                      {t("auth.resetPassword.backToLogin")}
+                    </BackToLoginTypography>
+                  </StyledLink>
+                </BackToLoginContainer>
 
-              <FormFieldsContainer>
-                <Field
-                  as={StyledTextField}
-                  fullWidth
-                  name="email"
-                  label={t("auth.resetPassword.emailLabel")}
-                  type="email"
-                  autoComplete="email"
-                  autoFocus
-                  error={touched.email && Boolean(errors.email)}
-                  helperText={touched.email && errors.email}
-                />
+                <Alert severity="info">
+                  {t("auth.resetPassword.infoMessage")}
+                </Alert>
 
-                <Field
-                  as={MonospaceTextField}
-                  fullWidth
-                  name="recoveryCode"
-                  label={t("auth.resetPassword.recoveryCodeLabel")}
-                  placeholder={t("auth.resetPassword.recoveryCodePlaceholder")}
-                  error={touched.recoveryCode && Boolean(errors.recoveryCode)}
-                  helperText={
-                    touched.recoveryCode && errors.recoveryCode
-                      ? errors.recoveryCode
-                      : t("auth.resetPassword.recoveryCodeHelper")
+                <FormFieldsContainer>
+                  <Field
+                    as={StyledTextField}
+                    fullWidth
+                    name="email"
+                    label={t("auth.resetPassword.emailLabel")}
+                    type="email"
+                    autoComplete="email"
+                    autoFocus
+                    error={touched.email && Boolean(errors.email)}
+                    helperText={touched.email && errors.email}
+                  />
+
+                  <Field
+                    as={MonospaceTextField}
+                    fullWidth
+                    name="recoveryCode"
+                    label={t("auth.resetPassword.recoveryCodeLabel")}
+                    placeholder={t(
+                      "auth.resetPassword.recoveryCodePlaceholder",
+                    )}
+                    error={touched.recoveryCode && Boolean(errors.recoveryCode)}
+                    helperText={
+                      touched.recoveryCode && errors.recoveryCode
+                        ? errors.recoveryCode
+                        : t("auth.resetPassword.recoveryCodeHelper")
+                    }
+                  />
+
+                  <PasswordInput
+                    value={values.newPassword}
+                    onChange={(e) =>
+                      setFieldValue("newPassword", e.target.value)
+                    }
+                    onKeyDown={handleKeyDown}
+                    onStrengthChange={(strength) =>
+                      setPasswordStrength(strength)
+                    }
+                    label={t("auth.resetPassword.newPasswordLabel")}
+                    placeholder={t("auth.resetPassword.newPasswordLabel")}
+                    error={touched.newPassword && Boolean(errors.newPassword)}
+                    helperText={
+                      touched.newPassword ? errors.newPassword : undefined
+                    }
+                    showCubeIcon={true}
+                    showEyeIcon={true}
+                    showProgressBar={false}
+                    showGuidelines={false}
+                    autoComplete="new-password"
+                    required
+                  />
+
+                  {values.newPassword && (
+                    <PasswordStrengthContainer>
+                      <PasswordStrengthHeader>
+                        <Typography variant="caption">
+                          {t("auth.setup.password.strengthLabel")}
+                        </Typography>
+                        <Typography variant="caption">
+                          {getPasswordStrengthLabel(passwordStrength)}
+                        </Typography>
+                      </PasswordStrengthHeader>
+                      <PasswordStrengthBarBackground>
+                        <PasswordStrengthBarFill
+                          strength={passwordStrength}
+                          color={getPasswordStrengthColor(passwordStrength)}
+                        />
+                      </PasswordStrengthBarBackground>
+                    </PasswordStrengthContainer>
+                  )}
+                </FormFieldsContainer>
+              </AuthContent>
+
+              <AuthActions>
+                <GeneralButton
+                  label={
+                    isLoading
+                      ? t("auth.resetPassword.resettingButton")
+                      : t("auth.resetPassword.resetButton")
+                  }
+                  onAction={submitForm}
+                  disabled={
+                    isLoading ||
+                    !values.email ||
+                    !values.recoveryCode ||
+                    !values.newPassword ||
+                    Boolean(errors.email) ||
+                    Boolean(errors.recoveryCode) ||
+                    Boolean(errors.newPassword)
                   }
                 />
-
-                <PasswordInput
-                  value={values.newPassword}
-                  onChange={(e) => setFieldValue("newPassword", e.target.value)}
-                  onStrengthChange={(strength) => setPasswordStrength(strength)}
-                  label={t("auth.resetPassword.newPasswordLabel")}
-                  placeholder={t("auth.resetPassword.newPasswordLabel")}
-                  error={touched.newPassword && Boolean(errors.newPassword)}
-                  helperText={
-                    touched.newPassword ? errors.newPassword : undefined
-                  }
-                  showCubeIcon={true}
-                  showEyeIcon={true}
-                  showProgressBar={false}
-                  showGuidelines={false}
-                  autoComplete="new-password"
-                  required
-                />
-
-                {values.newPassword && (
-                  <PasswordStrengthContainer>
-                    <PasswordStrengthHeader>
-                      <Typography variant="caption">
-                        {t("auth.setup.password.strengthLabel")}
-                      </Typography>
-                      <Typography variant="caption">
-                        {getPasswordStrengthLabel(passwordStrength)}
-                      </Typography>
-                    </PasswordStrengthHeader>
-                    <PasswordStrengthBarBackground>
-                      <PasswordStrengthBarFill
-                        strength={passwordStrength}
-                        color={getPasswordStrengthColor(passwordStrength)}
-                      />
-                    </PasswordStrengthBarBackground>
-                  </PasswordStrengthContainer>
-                )}
-              </FormFieldsContainer>
-            </AuthContent>
-
-            <AuthActions>
-              <GeneralButton
-                label={
-                  isLoading
-                    ? t("auth.resetPassword.resettingButton")
-                    : t("auth.resetPassword.resetButton")
-                }
-                onAction={submitForm}
-                disabled={
-                  isLoading ||
-                  !values.email ||
-                  !values.recoveryCode ||
-                  !values.newPassword ||
-                  Boolean(errors.email) ||
-                  Boolean(errors.recoveryCode) ||
-                  Boolean(errors.newPassword)
-                }
-              />
-            </AuthActions>
-          </StyledForm>
-        )}
+              </AuthActions>
+            </StyledForm>
+          );
+        }}
       </Formik>
     </AuthCard>
   );

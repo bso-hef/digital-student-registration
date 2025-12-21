@@ -1,13 +1,15 @@
 "use client";
 
-import { memo, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useMemo, useRef, useState } from "react";
 
 import CustomTitle from "@/components/atoms/CustomTitle";
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
+import StepTransitionWrapper from "@/components/molecules/StepTransitionWrapper";
 import AddressForm from "@/components/organisms/forms/AddressForm";
 import AgreementsForm from "@/components/organisms/forms/AgreementsForm";
 import CompanyContactForm from "@/components/organisms/forms/CompanyContactForm";
 import FormCompletion from "@/components/organisms/forms/FormCompletion";
+import { getFormSkeleton } from "@/components/organisms/forms/FormSkeletons";
 import GeneralForm from "@/components/organisms/forms/GeneralForm";
 import OriginForm from "@/components/organisms/forms/OriginForm";
 import ParentsForm from "@/components/organisms/forms/ParentsForm";
@@ -23,7 +25,9 @@ import {
 import {
   saveOnboardingProgress,
   setCurrentStudentOnboardingStep,
+  setEditingFromSummary,
   submitOnboarding,
+  updateStudentOnboardingData,
 } from "@/store/actions/studentActions";
 import { AppDispatch } from "@/store/store";
 import { applicationScrollbar } from "@/utils/styling.utils";
@@ -76,7 +80,7 @@ interface StepFormProps {
 }
 
 const StepForm = ({ studentId }: StepFormProps) => {
-  const { currentStep, previousStep, data, loading, currentClass } =
+  const { currentStep, data, loading, currentClass, editingFromSummary } =
     useSelector((state: RootState) => state.student);
   const dispatch: AppDispatch = useDispatch();
   const { t } = useTranslation();
@@ -84,6 +88,7 @@ const StepForm = ({ studentId }: StepFormProps) => {
   const [isFormValid, setIsFormValid] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isConfirmationChecked, setIsConfirmationChecked] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   // Ref to access Formik instance of current form
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -207,6 +212,7 @@ const StepForm = ({ studentId }: StepFormProps) => {
   // Form submit handler passed to forms
   const handleFormSubmit = async (formValues?: unknown) => {
     setIsSubmitting(true);
+    setIsTransitioning(true);
     try {
       // Auto-save current data, passing form values to avoid race condition
       await handleAutoSave(formValues);
@@ -216,6 +222,8 @@ const StepForm = ({ studentId }: StepFormProps) => {
       // Validate navigation
       if (!canNavigateToStep(nextStepId)) {
         console.error("Cannot skip to step", nextStepId);
+        setIsSubmitting(false);
+        setIsTransitioning(false);
         return;
       }
 
@@ -223,7 +231,9 @@ const StepForm = ({ studentId }: StepFormProps) => {
       // Save step to database for page reload persistence
       saveStepOnly(nextStepId);
     } finally {
+      // Mark save as complete - transition wrapper will handle the rest
       setIsSubmitting(false);
+      // Note: isTransitioning is reset by handleTransitionComplete callback
     }
   };
 
@@ -244,6 +254,11 @@ const StepForm = ({ studentId }: StepFormProps) => {
   const handleConfirmationChange = (isConfirmed: boolean) => {
     setIsConfirmationChecked(isConfirmed);
   };
+
+  // Callback when step transition animation completes
+  const handleTransitionComplete = useCallback(() => {
+    setIsTransitioning(false);
+  }, []);
 
   function renderFormByStep(step: number) {
     switch (step) {
@@ -342,22 +357,9 @@ const StepForm = ({ studentId }: StepFormProps) => {
   };
 
   const handlePreviousStep = () => {
-    // Browser-like history: Use previousStep from Redux state if available
-    // This ensures we go back to the actual previous step the user was on,
-    // even if conditional steps were hidden/shown
-    let targetStep: number;
-    if (previousStep !== null && previousStep !== undefined) {
-      // Validate that previousStep is an active step
-      if (isStepActive(previousStep, activeSteps)) {
-        targetStep = previousStep;
-      } else {
-        // Fallback: If previousStep is not active, use calculated previous active step
-        targetStep = getPreviousActiveStepId();
-      }
-    } else {
-      // Fallback: No history available, use calculated previous active step
-      targetStep = getPreviousActiveStepId();
-    }
+    // Always navigate to the previous step in the active steps sequence
+    // This ensures consistent backward navigation regardless of how user arrived at current step
+    const targetStep = getPreviousActiveStepId();
     dispatch(setCurrentStudentOnboardingStep(targetStep));
     // Save step to database for page reload persistence
     saveStepOnly(targetStep);
@@ -377,6 +379,29 @@ const StepForm = ({ studentId }: StepFormProps) => {
     }
   };
 
+  // Handler for "Go back to summary" button when editing from summary
+  const handleGoBackToSummary = async () => {
+    setIsTransitioning(true);
+    try {
+      // Auto-save current form data directly (don't use submitForm which triggers navigation)
+      if (formikRef.current) {
+        // Update Redux state with the form values FIRST so summary displays updated data
+        dispatch(updateStudentOnboardingData(formikRef.current.values));
+        await handleAutoSave(formikRef.current.values);
+      } else {
+        await handleAutoSave();
+      }
+      // Navigate to summary step (step 9)
+      dispatch(setCurrentStudentOnboardingStep(9));
+      // Clear the editing flag
+      dispatch(setEditingFromSummary(false));
+      // Save step to database
+      saveStepOnly(9);
+    } finally {
+      setIsTransitioning(false);
+    }
+  };
+
   return (
     <Wrapper>
       {!isFirstStep && (
@@ -385,24 +410,28 @@ const StepForm = ({ studentId }: StepFormProps) => {
           subTitle={`${t("general.Step")} ${activeStepIndex + 1} ${t("general.of")} ${activeSteps.length}`}
         />
       )}
-      <StyledFormBox>{renderFormByStep(currentStep)}</StyledFormBox>
+      <StyledFormBox>
+        <StepTransitionWrapper
+          currentStep={currentStep}
+          isSaving={isSubmitting}
+          onTransitionComplete={handleTransitionComplete}
+          skeleton={getFormSkeleton(currentStep)}
+        >
+          {renderFormByStep(currentStep)}
+        </StepTransitionWrapper>
+      </StyledFormBox>
       {/* Welcome step (Step 0) - Start button only */}
       {isFirstStep && (
-        <StyledMenuOptions>
-          <Box /> {/* Spacer for flexbox layout */}
-          <GeneralButton
-            label={t("general.Start")}
-            isPrimary={true}
-            fullHeight={false}
-            fullWidth={false}
-            endIcon={<KeyboardArrowRightRoundedIcon />}
-            onAction={handleNextStep}
-          />
-        </StyledMenuOptions>
+        <GeneralButton
+          label={t("general.Start")}
+          isPrimary={true}
+          endIcon={<KeyboardArrowRightRoundedIcon />}
+          onAction={handleNextStep}
+        />
       )}
 
-      {/* Form steps (1-7) - Previous and Next buttons */}
-      {isFormStep && (
+      {/* Form steps (1-8) - Previous and Next buttons OR Go back to summary */}
+      {isFormStep && !editingFromSummary && (
         <StyledMenuOptions>
           <GeneralButton
             label={t("general.Previous")}
@@ -411,32 +440,37 @@ const StepForm = ({ studentId }: StepFormProps) => {
             fullWidth={false}
             startIcon={<KeyboardArrowLeftRoundedIcon />}
             onAction={handlePreviousStep}
-            disabled={isSaving || loading || isSubmitting}
+            disabled={isTransitioning || loading}
           />
 
           <GeneralButton
-            label={
-              isSubmitting || isSaving
-                ? t("general.Submitting")
-                : t("general.Next")
-            }
+            label={t("general.Next")}
             isPrimary={true}
             fullHeight={false}
             fullWidth={false}
-            endIcon={
-              isSubmitting || isSaving ? (
-                <CircularProgress size={20} color="inherit" />
-              ) : (
-                <KeyboardArrowRightRoundedIcon />
-              )
-            }
+            endIcon={<KeyboardArrowRightRoundedIcon />}
             onAction={handleNextClick}
-            disabled={!isFormValid || isSaving || loading || isSubmitting}
+            disabled={!isFormValid || isTransitioning || loading}
           />
         </StyledMenuOptions>
       )}
 
-      {/* Summary step (Step 8) - Previous and Submit buttons */}
+      {/* Form steps when editing from summary - single "Go back to summary" button */}
+      {isFormStep && editingFromSummary && (
+        <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
+          <GeneralButton
+            label={t("onboarding.summary.goBackToSummary")}
+            isPrimary={true}
+            fullHeight={false}
+            fullWidth={false}
+            startIcon={<KeyboardArrowLeftRoundedIcon />}
+            onAction={handleGoBackToSummary}
+            disabled={!isFormValid || isTransitioning || loading}
+          />
+        </Box>
+      )}
+
+      {/* Summary step (Step 9) - Previous and Submit buttons */}
       {isSummaryStep && (
         <StyledMenuOptions>
           <GeneralButton
@@ -446,7 +480,7 @@ const StepForm = ({ studentId }: StepFormProps) => {
             fullWidth={false}
             startIcon={<KeyboardArrowLeftRoundedIcon />}
             onAction={handlePreviousStep}
-            disabled={isSaving || loading}
+            disabled={isTransitioning || isSaving || loading}
           />
 
           <GeneralButton

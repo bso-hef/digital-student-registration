@@ -34,7 +34,7 @@ Digital Student Registration is a **monolithic Next.js application** using the A
 
 ### Frontend
 
-```
+```text
 React 19.1.0
 ├── Next.js 15.4.2 (App Router)
 ├── TypeScript 5
@@ -50,7 +50,7 @@ React 19.1.0
 
 ### Backend
 
-```
+```text
 Next.js API Routes
 ├── MongoDB
 │   └── Mongoose 8.18.0
@@ -61,7 +61,7 @@ Next.js API Routes
 
 ### Development & Testing
 
-```
+```text
 Development
 ├── TypeScript 5
 ├── ESLint
@@ -81,7 +81,7 @@ Testing
 
 ### Directory Layout
 
-```
+```text
 digital-student-registration/
 ├── src/
 │   ├── app/                     # Next.js App Router
@@ -151,7 +151,7 @@ The application uses Next.js 15's App Router with **React Server Components** (R
 
 #### Layout Hierarchy
 
-```
+```text
 app/layout.tsx (Root Layout - Server Component)
 └── ClientLayout.tsx (Client Boundary)
     └── Providers.tsx (Redux, Theme, i18n, MUI)
@@ -184,7 +184,7 @@ app/layout.tsx (Root Layout - Server Component)
 
 Uses **Atomic Design Pattern**:
 
-```
+```text
 Atoms (Basic UI)
 ├── Buttons (GeneralButton, SmallIconButton)
 ├── Inputs (GeneralInput, HeaderSearchInput)
@@ -231,7 +231,7 @@ Backend implemented as API Routes in `src/app/api/`.
 
 #### API Structure
 
-```
+```text
 api/
 ├── classes/
 │   ├── route.ts                 # GET, POST, DELETE (list)
@@ -399,7 +399,7 @@ export const getClasses = (): AppThunk => async (dispatch) => {
 
 ### Request Flow
 
-```
+```text
 User Action
   ↓
 UI Component
@@ -419,7 +419,7 @@ Response → Reducer → Component → UI Update
 
 ### Example: Create Class Flow
 
-```
+```text
 1. User clicks "Add Class" button
    → AddClassModal opens
 
@@ -457,7 +457,7 @@ Response → Reducer → Component → UI Update
 
 ### Admin Section
 
-```
+```text
 AdminLayout
 ├── LeftNavigation (sidebar)
 │   ├── Logo
@@ -488,7 +488,7 @@ AdminLayout
 
 ### Student Onboarding Section
 
-```
+```text
 StudentLayout
 └── [studentId]
     ├── BackgroundStudyPattern (decorative)
@@ -515,7 +515,7 @@ StudentLayout
 
 Next.js route groups `()` organize routes without affecting URL:
 
-```
+```text
 app/
 ├── (home)/                    # Route group (not in URL)
 │   ├── layout.tsx            # Shared layout for admin & student
@@ -599,7 +599,7 @@ export function middleware(request: NextRequest) {
 
 ## Performance Optimizations
 
-### Frontend
+### Frontend Architectures
 
 1. **Code Splitting**
    - Next.js automatic code splitting
@@ -613,7 +613,7 @@ export function middleware(request: NextRequest) {
    - Redux Persist for state
    - Browser localStorage
 
-### Backend
+### Backend Architectures
 
 1. **Database**
    - Indexes on frequently queried fields
@@ -634,7 +634,7 @@ export function middleware(request: NextRequest) {
 
 ### Development
 
-```
+```text
 Developer → yarn dev → Next.js Dev Server (Turbopack)
                      → MongoDB (localhost:27017)
                      → HTTPS (localhost:3000)
@@ -642,7 +642,7 @@ Developer → yarn dev → Next.js Dev Server (Turbopack)
 
 ### Production
 
-```
+```text
 Build Process:
   yarn build → Next.js Static Generation
             → Optimized bundles
@@ -734,7 +734,7 @@ NEXT_PUBLIC_API_URL=https://app.example.com
 
 ## Monitoring & Logging
 
-### Current Implementation
+### Current Implementation Architectures
 
 **Winston Logger:**
 

@@ -12,20 +12,24 @@ export default auth((req) => {
   const isSetupComplete = getSetupCookieValue(req.cookies);
   const { pathname } = req.nextUrl;
 
+  // Get the base URL from environment or construct from request
+  // Use NEXTAUTH_URL (runtime variable) instead of NEXT_PUBLIC_APP_URL (build-time)
+  const baseUrl = process.env.NEXTAUTH_URL || req.nextUrl.origin;
+
   // If setup is NOT complete
   if (!isSetupComplete) {
     // Allow access to setup page
     if (pathname === "/setup") {
       return NextResponse.next();
     }
-    // Redirect all other routes to setup
-    return NextResponse.redirect(new URL("/setup", req.url));
+    // Redirect all other routes to setup using configured app URL
+    return NextResponse.redirect(new URL("/setup", baseUrl));
   }
 
   // If setup IS complete and user tries to access setup page
   if (isSetupComplete && pathname === "/setup") {
-    // Redirect to login page
-    return NextResponse.redirect(new URL("/login", req.url));
+    // Redirect to login page using configured app URL
+    return NextResponse.redirect(new URL("/login", baseUrl));
   }
 
   // For all other routes, NextAuth middleware handles authentication checks
@@ -44,7 +48,10 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
+     * - manifest.webmanifest (PWA manifest)
+     * - robots.txt (SEO)
+     * - sitemap.xml (SEO)
      */
-    "/((?!api|_next/static|_next/image|favicon.ico).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|manifest.webmanifest|robots.txt|sitemap.xml).*)",
   ],
 };

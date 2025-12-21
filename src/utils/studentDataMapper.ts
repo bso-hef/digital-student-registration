@@ -1,35 +1,21 @@
-/**
- * Translation layer between German form field names (StudentData)
- * and English database field names (Student model)
- *
- * This allows the UI to use German field names while the database
- * uses standard English field names.
- */
 import type { Student } from "@/types/db";
 import type { StudentData } from "@/types/student.d";
+import { formatGermanDate, parseDate } from "@/utils/date.utils";
 
-/**
- * Maps German form data (StudentData) to English database model (Student)
- * @param formData - Data from student onboarding forms (German field names)
- * @returns Student object with English field names for database persistence
- */
 export function mapFormDataToModel(
   formData: Partial<StudentData>,
+  maxContactPersons: number = 3,
 ): Partial<Student> {
   const mapped: Partial<Student> = {};
 
-  // Basic personal information
   if (formData.vorname) mapped.firstName = formData.vorname;
   if (formData.nachname) mapped.lastName = formData.nachname;
   if (formData.geburtsname) mapped.birthName = formData.geburtsname;
   if (formData.geburtsdatum) {
-    mapped.dateOfBirth =
-      typeof formData.geburtsdatum === "string"
-        ? new Date(formData.geburtsdatum)
-        : formData.geburtsdatum;
+    const parsed = parseDate(formData.geburtsdatum);
+    if (parsed) mapped.dateOfBirth = parsed;
   }
   if (formData.geschlecht) {
-    // Map gender values
     const genderMap: { [key: string]: "male" | "female" | "diverse" } = {
       männlich: "male",
       weiblich: "female",
@@ -44,13 +30,11 @@ export function mapFormDataToModel(
   if (formData.geburtsland) mapped.birthCountry = formData.geburtsland;
   if (formData.religion) mapped.religion = formData.religion;
 
-  // Nationality
   if (formData.staatsangehoerigkeit1)
     mapped.nationality = formData.staatsangehoerigkeit1;
   if (formData.staatsangehoerigkeit2)
     mapped.secondNationality = formData.staatsangehoerigkeit2;
 
-  // Origin/Immigration
   if (formData.familiensprache)
     mapped.familyLanguage = formData.familiensprache;
   if (formData.zuzugsjahr) {
@@ -60,11 +44,9 @@ export function mapFormDataToModel(
         : formData.zuzugsjahr;
   }
 
-  // Contact information
   if (formData.email) mapped.email = formData.email;
   if (formData.mobil) mapped.phone = formData.mobil;
 
-  // Address (nested object)
   if (
     formData.straße ||
     formData.hausNr ||
@@ -78,22 +60,18 @@ export function mapFormDataToModel(
           : formData.straße || "",
       city: formData.ort || "",
       zip: formData.postleitzahl || "",
-      state: "", // Not collected in form
-      country: "DE", // Default to Germany
-      timezone: "Europe/Berlin", // Default timezone
+      state: "",
+      country: "DE",
+      timezone: "Europe/Berlin",
     };
   }
 
-  // School information
   if (formData.eintrittschule) {
-    mapped.schoolEntryDate =
-      typeof formData.eintrittschule === "string"
-        ? new Date(formData.eintrittschule)
-        : formData.eintrittschule;
+    const parsed = parseDate(formData.eintrittschule);
+    if (parsed) mapped.schoolEntryDate = parsed;
   }
   if (formData.klassenname) mapped.currentClassName = formData.klassenname;
 
-  // Previous education
   if (formData.vorhergehendeSchule)
     mapped.previousSchool = formData.vorhergehendeSchule;
   if (formData.vorhergehendeSchulform)
@@ -102,16 +80,12 @@ export function mapFormDataToModel(
     mapped.previousSchoolLevel = formData.vorhergehendeStufe;
   if (formData.abschluesse) mapped.degrees = formData.abschluesse;
 
-  // Vocational training
   if (formData.beruf) mapped.profession = formData.beruf;
   if (formData.betriebEintritt) {
-    mapped.trainingStartDate =
-      typeof formData.betriebEintritt === "string"
-        ? new Date(formData.betriebEintritt)
-        : formData.betriebEintritt;
+    const parsed = parseDate(formData.betriebEintritt);
+    if (parsed) mapped.trainingStartDate = parsed;
   }
 
-  // Employer information (nested object)
   if (formData.betriebName) {
     mapped.employer = {
       companyName: formData.betriebName || "",
@@ -123,18 +97,28 @@ export function mapFormDataToModel(
       ]
         .filter(Boolean)
         .join(" "),
-      contactName: [formData.betriebApVorname, formData.betriebApNachname]
-        .filter(Boolean)
-        .join(" "),
-      contactEmail: formData.betriebEmail || "",
+      // Use betriebApName from CompanyContactForm
+      contactName: formData.betriebApName || "",
+      contactEmail:
+        formData.betriebEmail ||
+        formData.betriebApEmail ||
+        ((formData as Record<string, unknown>).betriebMail as string) ||
+        "",
       contactPhone:
-        formData.betriebTelefon1 || formData.betriebApTelefon1 || "",
+        formData.betriebTelefon1 ||
+        ((formData as Record<string, unknown>).betriebTel as string) ||
+        formData.betriebApTelefon1 ||
+        "",
       contactSalutation: formData.betriebApAnrede || "",
-      verified: false, // Default to unverified
+      // Second contact (optional)
+      contact2Name: formData.betriebAp2Name || "",
+      contact2Email: formData.betriebAp2Email || "",
+      contact2Phone: formData.betriebAp2Telefon1 || "",
+      contact2Salutation: formData.betriebAp2Anrede || "",
+      verified: false,
     };
   }
 
-  // Contact persons / Parents / Guardians (up to 3)
   const contactPersons: Array<{
     type: string;
     firstName: string;
@@ -151,8 +135,7 @@ export function mapFormDataToModel(
     };
   }> = [];
 
-  // Loop through all 3 possible contacts
-  for (let i = 1; i <= 3; i++) {
+  for (let i = 1; i <= maxContactPersons; i++) {
     const vorname = formData[`ansprechpartner${i}Vorname` as keyof StudentData];
     const nachname =
       formData[`ansprechpartner${i}Nachname` as keyof StudentData];
@@ -203,7 +186,6 @@ export function mapFormDataToModel(
     mapped.contactPersons = contactPersons;
   }
 
-  // Agreements / Consents
   if (
     formData.datenschutz !== undefined ||
     formData.teilnahmeunterricht !== undefined ||
@@ -223,14 +205,9 @@ export function mapFormDataToModel(
   return mapped;
 }
 
-/**
- * Maps English database model (Student) to German form data (StudentData)
- * Used for pre-filling forms with existing student data
- * @param student - Student object from database (English field names)
- * @returns StudentData object with German field names for forms
- */
 export function mapModelToFormData(
   student: Partial<Student>,
+  maxContactPersons: number = 3,
 ): Partial<StudentData> {
   console.log("[mapModelToFormData] Input student:", {
     firstName: student.firstName,
@@ -245,10 +222,7 @@ export function mapModelToFormData(
   if (student.lastName) mapped.nachname = student.lastName;
   if (student.birthName) mapped.geburtsname = student.birthName;
   if (student.dateOfBirth) {
-    mapped.geburtsdatum =
-      student.dateOfBirth instanceof Date
-        ? student.dateOfBirth.toISOString().split("T")[0]
-        : new Date(student.dateOfBirth).toISOString().split("T")[0];
+    mapped.geburtsdatum = formatGermanDate(student.dateOfBirth);
   }
 
   console.log("[mapModelToFormData] Mapped basic fields:", {
@@ -257,7 +231,6 @@ export function mapModelToFormData(
     geburtsdatum: mapped.geburtsdatum,
   });
   if (student.gender) {
-    // Map English gender values to German
     const genderMap: Record<string, string> = {
       male: "männlich",
       female: "weiblich",
@@ -269,21 +242,17 @@ export function mapModelToFormData(
   if (student.birthCountry) mapped.geburtsland = student.birthCountry;
   if (student.religion) mapped.religion = student.religion;
 
-  // Nationality
   if (student.nationality) mapped.staatsangehoerigkeit1 = student.nationality;
   if (student.secondNationality)
     mapped.staatsangehoerigkeit2 = student.secondNationality;
 
-  // Origin/Immigration
   if (student.familyLanguage) mapped.familiensprache = student.familyLanguage;
   if (student.immigrationYear)
     mapped.zuzugsjahr = student.immigrationYear.toString();
 
-  // Contact information
   if (student.email) mapped.email = student.email;
   if (student.phone) mapped.mobil = student.phone;
 
-  // Address (flatten nested object)
   if (student.address) {
     const addressParts = student.address.street?.split(" ") || [];
     const hausNr = addressParts.pop() || "";
@@ -295,16 +264,11 @@ export function mapModelToFormData(
     mapped.ort = student.address.city || "";
   }
 
-  // School information
   if (student.schoolEntryDate) {
-    mapped.eintrittschule =
-      student.schoolEntryDate instanceof Date
-        ? student.schoolEntryDate.toISOString().split("T")[0]
-        : new Date(student.schoolEntryDate).toISOString().split("T")[0];
+    mapped.eintrittschule = formatGermanDate(student.schoolEntryDate);
   }
   if (student.currentClassName) mapped.klassenname = student.currentClassName;
 
-  // Previous education
   if (student.previousSchool)
     mapped.vorhergehendeSchule = student.previousSchool;
   if (student.previousSchoolType)
@@ -313,38 +277,55 @@ export function mapModelToFormData(
     mapped.vorhergehendeStufe = student.previousSchoolLevel;
   if (student.degrees) mapped.abschluesse = student.degrees;
 
-  // Vocational training
   if (student.profession) mapped.beruf = student.profession;
   if (student.trainingStartDate) {
-    mapped.betriebEintritt =
-      student.trainingStartDate instanceof Date
-        ? student.trainingStartDate.toISOString().split("T")[0]
-        : new Date(student.trainingStartDate).toISOString().split("T")[0];
+    mapped.betriebEintritt = formatGermanDate(student.trainingStartDate);
   }
 
-  // Employer information (flatten nested object)
   if (student.employer) {
     mapped.betriebName = student.employer.companyName || "";
 
-    // This is a simplification - in reality, address parsing is complex
-    // For now, just put the full address in the street field
-    mapped.betriebStraße = student.employer.address || "";
+    // Parse combined address back into separate fields
+    // Format: "street houseNr zip city" (e.g., "Musterstr 123 12345 Berlin")
+    if (student.employer.address) {
+      const parts = student.employer.address.split(" ");
+      // Try to find the 5-digit German zip code to split the address
+      const zipIndex = parts.findIndex((p) => /^\d{5}$/.test(p));
+      if (zipIndex > 0 && parts.length >= 4) {
+        // Assume house number is right before zip
+        const houseNrIndex = zipIndex - 1;
+        mapped.betriebStraße = parts.slice(0, houseNrIndex).join(" ");
+        mapped.betriebHausNr = parts[houseNrIndex];
+        mapped.betriebPlz = parts[zipIndex];
+        mapped.betriebOrt = parts.slice(zipIndex + 1).join(" ");
+      } else {
+        // Fallback: put everything in street
+        mapped.betriebStraße = student.employer.address;
+        mapped.betriebHausNr = "";
+        mapped.betriebPlz = "";
+        mapped.betriebOrt = "";
+      }
+    }
 
-    // Parse contact name
-    const nameParts = student.employer.contactName?.split(" ") || [];
-    mapped.betriebApVorname = nameParts[0] || "";
-    mapped.betriebApNachname = nameParts.slice(1).join(" ") || "";
+    // Set betriebApName for CompanyContactForm
+    mapped.betriebApName = student.employer.contactName || "";
 
     mapped.betriebEmail = student.employer.contactEmail || "";
     mapped.betriebTelefon1 = student.employer.contactPhone || "";
+    mapped.betriebApTelefon1 = student.employer.contactPhone || "";
+    mapped.betriebApEmail = student.employer.contactEmail || "";
     mapped.betriebApAnrede = student.employer.contactSalutation || "";
+
+    // Second contact (optional)
+    mapped.betriebAp2Name = student.employer.contact2Name || "";
+    mapped.betriebAp2Email = student.employer.contact2Email || "";
+    mapped.betriebAp2Telefon1 = student.employer.contact2Phone || "";
+    mapped.betriebAp2Anrede = student.employer.contact2Salutation || "";
   }
 
-  // Contact persons / Parents / Guardians (map all up to 3)
   if (student.contactPersons && student.contactPersons.length > 0) {
     student.contactPersons.forEach((contact, index) => {
-      // Only map first 3 contacts
-      if (index >= 3) return;
+      if (index >= maxContactPersons) return;
 
       const contactNumber = index + 1;
       const prefix = `ansprechpartner${contactNumber}` as
@@ -371,7 +352,6 @@ export function mapModelToFormData(
     });
   }
 
-  // Agreements / Consents (flatten nested object)
   if (student.agreements) {
     mapped.datenschutz = student.agreements.dataProtection || false;
     mapped.teilnahmeunterricht = student.agreements.classParticipation || false;
@@ -383,11 +363,6 @@ export function mapModelToFormData(
   return mapped;
 }
 
-/**
- * Validates that all required onboarding fields are present
- * @param student - Student object to validate
- * @returns Array of missing field names (empty if all required fields present)
- */
 export function validateOnboardingData(student: Partial<Student>): string[] {
   const requiredFields: (keyof Student)[] = [
     "firstName",
@@ -409,7 +384,6 @@ export function validateOnboardingData(student: Partial<Student>): string[] {
     }
   }
 
-  // Check nested address fields
   if (student.address) {
     if (!student.address.street) missingFields.push("address.street");
     if (!student.address.city) missingFields.push("address.city");

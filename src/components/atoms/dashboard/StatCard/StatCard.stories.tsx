@@ -1,4 +1,4 @@
-import GroupIcon from "@mui/icons-material/Group";
+import GroupRoundedIcon from "@mui/icons-material/GroupRounded";
 import { Meta, StoryObj } from "@storybook/react-vite";
 import { expect } from "@storybook/test";
 
@@ -18,7 +18,7 @@ export const Default: Story = {
   args: {
     label: "Total Students",
     value: 1234,
-    icon: <GroupIcon />,
+    icon: <GroupRoundedIcon />,
     gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
   },
   play: async ({ canvasElement }) => {

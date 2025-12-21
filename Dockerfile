@@ -1,22 +1,19 @@
-# Digital Student Registration - Multi-Stage Dockerfile
-# Optimized for production deployment with minimal image size
+# Digital Student Registration - Production Dockerfile
+# Multi-stage build optimized for production deployment
 
-# Stage 1: Base image with Node.js
+# Stage 1: Base image with Node.js and Yarn
 FROM node:22.20.0-alpine AS base
 
-# Install dependencies only when needed
-RUN apk add --no-cache libc6-compat
+# Yarn 1.22.22 is already pre-installed in node:22.20.0-alpine
+# No need to install libc6-compat or yarn again
 
 WORKDIR /app
 
 # Stage 2: Install dependencies
 FROM base AS deps
 
-# Copy package files
-COPY package.json yarn.lock .yarnrc.yml ./
-COPY .yarn ./.yarn
+COPY package.json yarn.lock ./
 
-# Install dependencies with frozen lockfile for reproducible builds
 RUN yarn install --frozen-lockfile --production=false
 
 # Stage 3: Build the application
@@ -24,57 +21,71 @@ FROM base AS builder
 
 WORKDIR /app
 
-# Copy dependencies from deps stage
 COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/.yarn ./.yarn
-
-# Copy application source code
 COPY . .
 
-# Set build-time environment variables
+# Build-time arguments for NEXT_PUBLIC variables
+ARG NEXT_PUBLIC_APP_URL
+ARG NEXT_PUBLIC_API_URL
+
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 
-# Build Next.js application
-# Increase memory limit for large builds
-RUN NODE_OPTIONS="--max-old-space-size=4096" yarn build
+# Validate and display build configuration
+# This helps debug port configuration issues in Docker deployments
+RUN echo "========================================" && \
+    echo "Build Configuration:" && \
+    echo "  NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}" && \
+    echo "  NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}" && \
+    echo "========================================" && \
+    if [ -z "$NEXT_PUBLIC_APP_URL" ]; then \
+      echo "WARNING: NEXT_PUBLIC_APP_URL is not set. Using relative URLs for API calls." && \
+      echo "This is acceptable since the app uses relative URLs for same-origin API calls."; \
+    fi && \
+    if [ -z "$NEXT_PUBLIC_API_URL" ]; then \
+      echo "WARNING: NEXT_PUBLIC_API_URL is not set. Using relative URLs for API calls." && \
+      echo "This is acceptable since the app uses relative URLs for same-origin API calls."; \
+    fi
+
+RUN NODE_OPTIONS="--max-old-space-size=4096" yarn build && \
+    find .next -name "*.map" -type f -delete && \
+    rm -rf .next/cache
 
 # Stage 4: Production runtime
-FROM base AS runner
+FROM node:22.20.0-alpine AS runner
 
 WORKDIR /app
 
-# Don't run as root user for security
-RUN addgroup --system --gid 1001 nodejs && \
+# Accept port as build argument
+ARG APP_PORT=3000
+
+RUN apk add --no-cache wget dumb-init && \
+    addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
-# Set production environment
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
-ENV PORT=3000
+ENV PORT=${APP_PORT}
 ENV HOSTNAME="0.0.0.0"
 
-# Copy necessary files from builder
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/package.json ./
 
-# Copy health check script
-COPY --from=builder /app/scripts/docker-healthcheck.sh ./scripts/
-RUN chmod +x ./scripts/docker-healthcheck.sh
+# Create logs directory with proper ownership
+RUN mkdir -p ./logs/server-logs && \
+    chown -R nextjs:nodejs ./logs
 
-# Set ownership for nextjs user
-RUN chown -R nextjs:nodejs /app
-
-# Switch to non-root user
 USER nextjs
 
-# Expose application port
-EXPOSE 3000
+EXPOSE ${APP_PORT}
 
-# Health check using the health endpoint
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-  CMD ./scripts/docker-healthcheck.sh || exit 1
-
-# Start the application
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 CMD ["node", "server.js"]
+
+LABEL maintainer="Digital Student Registration Team"
+LABEL description="Production Docker image for Digital Student Registration"
+LABEL version="1.0.0"

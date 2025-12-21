@@ -31,6 +31,13 @@ const classService = {
       data: { studentIds },
     });
   },
+  checkClasses: (classNames: string[]) => {
+    return http.post<{
+      existing: string[];
+      missing: string[];
+      classMap: Record<string, string>;
+    }>("/api/classes/check", { classNames });
+  },
 };
 
 export default classService;

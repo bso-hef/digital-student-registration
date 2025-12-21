@@ -1,4 +1,5 @@
 import { SETUP_COOKIE_NAME } from "@/lib/auth/setupCookie";
+import { serverConfig } from "@/lib/config/app-config";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
@@ -16,8 +17,9 @@ export async function GET(req: NextRequest) {
     const redirectUrl = searchParams.get("redirect");
 
     // Create response (either redirect or JSON)
+    // Use NEXTAUTH_URL (runtime variable) for correct redirect in Docker deployments
     const response = redirectUrl
-      ? NextResponse.redirect(new URL(redirectUrl, req.url))
+      ? NextResponse.redirect(new URL(redirectUrl, serverConfig.nextAuth.url))
       : NextResponse.json(
           {
             success: true,

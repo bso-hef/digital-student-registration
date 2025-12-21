@@ -64,19 +64,8 @@ function getErrorDetails(
           message: t("onboarding.error.studentNotFound.message"),
         };
 
-      case OnboardingErrorCode.NO_CLASS_ASSIGNED:
-        return {
-          severity: "warning" as const,
-          title: t("onboarding.error.noClassAssigned.title"),
-          message: t("onboarding.error.noClassAssigned.message"),
-        };
-
-      case OnboardingErrorCode.CLASS_INACTIVE:
-        return {
-          severity: "warning" as const,
-          title: t("onboarding.error.classInactive.title"),
-          message: t("onboarding.error.classInactive.message"),
-        };
+      // Note: NO_CLASS_ASSIGNED and CLASS_INACTIVE errors removed
+      // Students can now onboard without class assignment
 
       case OnboardingErrorCode.ALREADY_ONBOARDED:
         return {

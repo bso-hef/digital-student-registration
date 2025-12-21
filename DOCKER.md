@@ -93,10 +93,10 @@ docker-compose logs -f app
 
 ```bash
 # 1. Copy environment template
-cp .env.docker.example .env
+cp .env.production.template .env.production
 
 # 2. Configure production environment variables
-nano .env
+nano .env.production
 # CRITICAL: Update all security-sensitive values:
 #   - MONGO_PASSWORD (strong random password)
 #   - NEXTAUTH_SECRET (64+ character random string)
@@ -104,13 +104,13 @@ nano .env
 #   - NEXT_PUBLIC_API_URL (your domain: https://your-domain.com)
 
 # 3. Build and start production containers
-docker-compose -f docker-compose.prod.yml up -d --build
+docker-compose up -d --build
 
 # 4. Check container health
-docker-compose -f docker-compose.prod.yml ps
+docker-compose ps
 
 # 5. View logs
-docker-compose -f docker-compose.prod.yml logs -f app
+docker-compose logs -f app
 
 # 6. Set up reverse proxy (nginx/Caddy) for SSL
 # See "Reverse Proxy Setup" section below
@@ -155,17 +155,269 @@ node -e "console.log(require('crypto').randomBytes(64).toString('base64'))"
 
 ### Docker Compose Files
 
-- **`docker-compose.yml`**: Development environment
-  - Hot-reload enabled
-  - Source code mounted as volume
-  - Includes Mongo Express (DB UI)
-  - Self-signed SSL certificates
-
-- **`docker-compose.prod.yml`**: Production environment
-  - Optimized builds
-  - No development tools
+- **`docker-compose.yml`**: Production environment (DEFAULT)
+  - Full-featured production stack
+  - Includes Caddy reverse proxy with automatic HTTPS
+  - MongoDB database and Redis caching layer
+  - Optimized builds with security hardening
   - Resource limits configured
-  - Security hardening applied
+  - Use `yarn dev` locally for development (no Docker needed)
+
+- **`docker-compose.windows.yml`**: Windows-specific deployment
+  - For Docker Desktop on Windows with WSL2
+  - Simplified setup without Caddy (direct port exposure)
+  - Suitable for local testing on Windows
+
+---
+
+## Important: Port Configuration and Environment Variables
+
+### Understanding Build-Time vs Runtime Variables
+
+**CRITICAL**: Next.js has two types of environment variables that behave very differently in Docker:
+
+#### Build-Time Variables (`NEXT_PUBLIC_*`)
+
+These variables are **embedded into the JavaScript bundle** during the build process:
+
+- **When they're read**: During `docker build` / `yarn build`
+- **Where they're used**: Client-side (browser) JavaScript code
+- **When they can be changed**: Only by rebuilding the Docker image
+- **Examples**: `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_API_URL`
+
+⚠️ **Common Pitfall**: Setting `NEXT_PUBLIC_*` variables at runtime (in `docker-compose.yml` environment section or `.env`) has **NO EFFECT** on already-built images. The values are already hardcoded in the JavaScript files.
+
+#### Runtime Variables (no `NEXT_PUBLIC_` prefix)
+
+These variables are read when the container starts:
+
+- **When they're read**: When the Next.js server starts
+- **Where they're used**: Server-side code only
+- **When they can be changed**: Anytime, just restart the container
+- **Examples**: `MONGODB_URI`, `NEXTAUTH_SECRET`, `PORT`
+
+### Port Configuration Guide
+
+This application uses **relative URLs for API calls** (since Next.js API Routes are on the same domain), which makes it work seamlessly with any port without rebuilding.
+
+#### Quick Start: Using Port 8080
+
+1. **Create/update your `.env` file**:
+
+```bash
+APP_PORT=8080
+NEXT_PUBLIC_APP_URL=http://localhost:8080
+NEXT_PUBLIC_API_URL=http://localhost:8080
+NEXTAUTH_URL=http://localhost:8080
+```
+
+2. **Build the Docker image** (required only once, or when changing ports):
+
+```bash
+# Linux
+docker compose --profile linux build --no-cache
+
+# Windows
+docker compose --profile windows build --no-cache
+```
+
+3. **Start the containers**:
+
+```bash
+# Linux
+docker compose --profile linux up -d
+
+# Windows
+docker compose --profile windows up -d
+```
+
+4. **Access the application**:
+
+```
+http://localhost:8080
+```
+
+#### Changing Ports After Initial Build
+
+If you need to change the port (e.g., from 8080 to 9000):
+
+1. **Update `.env` file**:
+
+```bash
+APP_PORT=9000
+NEXT_PUBLIC_APP_URL=http://localhost:9000
+NEXT_PUBLIC_API_URL=http://localhost:9000
+NEXTAUTH_URL=http://localhost:9000
+```
+
+2. **Rebuild the image** (REQUIRED - this re-embeds the new URL):
+
+```bash
+docker compose --profile linux build --no-cache
+```
+
+3. **Recreate containers**:
+
+```bash
+docker compose --profile linux up -d --force-recreate
+```
+
+#### Why Relative URLs Are Used
+
+The application's API service (`src/lib/services/api.ts`) uses an empty `baseURL` in axios:
+
+```typescript
+const http = Axios.create({
+  baseURL: "", // Empty = relative to current origin
+  withCredentials: true,
+});
+```
+
+**Benefits**:
+
+- ✅ Client-side API calls automatically use the current page's origin
+- ✅ Works with any port without rebuilding
+- ✅ Simplifies Docker deployments
+- ✅ No hardcoded URLs in the JavaScript bundle
+
+**Example**: If you access the app at `http://localhost:8080`, all API calls automatically go to `http://localhost:8080/api/*`, regardless of what `NEXT_PUBLIC_API_URL` was set during build.
+
+#### Verification Steps
+
+After building, verify the configuration:
+
+**1. Check build output** (should show your configured URLs):
+
+```bash
+docker compose --profile linux build
+# Look for:
+# ========================================
+# Build Configuration:
+#   NEXT_PUBLIC_APP_URL=http://localhost:8080
+#   NEXT_PUBLIC_API_URL=http://localhost:8080
+# ========================================
+```
+
+**2. Check server is running on correct port**:
+
+```bash
+docker exec dsr-app netstat -tuln | grep LISTEN
+# Should show: 0.0.0.0:8080
+```
+
+**3. Test API endpoint**:
+
+```bash
+curl http://localhost:8080/api/health/live
+# Should return: {"status":"ok"}
+```
+
+**4. Check browser network tab**:
+
+- Open http://localhost:8080
+- Open Browser DevTools → Network tab
+- API calls should go to `http://localhost:8080/api/*` (matching your configured port)
+
+#### Troubleshooting Port Issues
+
+**Problem**: API calls still going to port 3000 after changing to 8080
+
+**Solution**:
+
+```bash
+# 1. Verify .env has correct values
+cat .env | grep PORT
+
+# 2. Rebuild image with --no-cache flag
+docker compose --profile linux build --no-cache
+
+# 3. Remove old containers and recreate
+docker compose --profile linux down
+docker compose --profile linux up -d --force-recreate
+
+# 4. Verify in browser
+# Open DevTools → Network tab
+# Check API calls are using port 8080
+```
+
+**Problem**: Build uses port 3000 even though .env has 8080
+
+**Cause**: Docker Compose isn't reading your `.env` file, or you have the wrong file name
+
+**Solution**:
+
+```bash
+# Ensure file is named exactly ".env" (not ".env.local" or ".env.production")
+ls -la .env
+
+# Pass build args explicitly:
+docker compose --profile linux build --build-arg NEXT_PUBLIC_API_URL=http://localhost:8080
+
+# Or create/update .env file
+echo "APP_PORT=8080" > .env
+echo "NEXT_PUBLIC_API_URL=http://localhost:8080" >> .env
+```
+
+**Problem**: Server running on port 8080 but browser shows connection refused
+
+**Cause**: Firewall blocking the port, or port mapping incorrect
+
+**Solution**:
+
+```bash
+# Check port mapping in docker-compose.yml
+docker compose config | grep ports
+
+# Check if port is accessible
+curl http://localhost:8080/api/health/live
+
+# Check container logs
+docker compose logs app
+```
+
+### Production Port Configuration
+
+For production deployments on a custom domain:
+
+1. **Update `.env` with production values**:
+
+```bash
+APP_PORT=8080
+NEXT_PUBLIC_APP_URL=https://your-domain.com
+NEXT_PUBLIC_API_URL=https://your-domain.com
+NEXTAUTH_URL=https://your-domain.com
+```
+
+2. **Build production image**:
+
+```bash
+docker compose --profile linux build --no-cache
+```
+
+3. **Deploy with reverse proxy** (nginx/Caddy) for SSL termination:
+
+```nginx
+# nginx config
+server {
+    listen 443 ssl http2;
+    server_name your-domain.com;
+
+    # SSL certificates
+    ssl_certificate /etc/letsencrypt/live/your-domain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/your-domain.com/privkey.pem;
+
+    # Proxy to Docker container
+    location / {
+        proxy_pass http://localhost:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+**Important**: The `NEXT_PUBLIC_APP_URL` should match your public domain, not `localhost:8080`. The Docker container listens on 8080 internally, but users access it via your domain.
 
 ---
 
@@ -283,35 +535,35 @@ docker-compose down -v
 
 ```bash
 # Build images without starting
-docker-compose -f docker-compose.prod.yml build
+docker-compose build
 
 # Build with no cache (clean build)
-docker-compose -f docker-compose.prod.yml build --no-cache
+docker-compose build --no-cache
 
 # Build and start
-docker-compose -f docker-compose.prod.yml up -d --build
+docker-compose up -d --build
 ```
 
 ### Production Commands
 
 ```bash
 # Start production environment
-docker-compose -f docker-compose.prod.yml up -d
+docker-compose up -d
 
 # View logs (detached)
-docker-compose -f docker-compose.prod.yml logs -f
+docker-compose logs -f
 
 # Check service health
-docker-compose -f docker-compose.prod.yml ps
+docker-compose ps
 
 # Update application (after git pull)
-docker-compose -f docker-compose.prod.yml up -d --build app
+docker-compose up -d --build app
 
 # Stop services
-docker-compose -f docker-compose.prod.yml down
+docker-compose down
 
 # Restart services
-docker-compose -f docker-compose.prod.yml restart
+docker-compose restart
 ```
 
 ### Production Health Checks
@@ -321,10 +573,10 @@ docker-compose -f docker-compose.prod.yml restart
 docker ps
 
 # Test health endpoint directly
-docker-compose -f docker-compose.prod.yml exec app ./docker-healthcheck.sh
+docker-compose exec app ./docker-healthcheck.sh
 
 # Check MongoDB health
-docker-compose -f docker-compose.prod.yml exec mongo mongosh --eval "db.adminCommand('ping')"
+docker-compose exec mongo mongosh --eval "db.adminCommand('ping')"
 
 # View resource usage
 docker stats
@@ -370,7 +622,7 @@ See [Reverse Proxy Setup](#reverse-proxy-setup) section below.
 If you prefer to handle SSL directly in the container:
 
 ```yaml
-# docker-compose.prod.yml
+# docker-compose.yml
 services:
   app:
     volumes:
@@ -560,7 +812,7 @@ networks:
 
 ```bash
 # Using docker-compose
-docker-compose -f docker-compose.prod.yml exec mongo mongodump \
+docker-compose exec mongo mongodump \
   --username=admin \
   --password=your-password \
   --authenticationDatabase=admin \
@@ -584,7 +836,7 @@ docker run --rm \
 docker cp ./backup digital-student-mongo-prod:/data/restore
 
 # Restore database
-docker-compose -f docker-compose.prod.yml exec mongo mongorestore \
+docker-compose exec mongo mongorestore \
   --username=admin \
   --password=your-password \
   --authenticationDatabase=admin \
@@ -605,42 +857,42 @@ docker run --rm \
 git pull origin main
 
 # 2. Rebuild and restart containers
-docker-compose -f docker-compose.prod.yml up -d --build app
+docker-compose up -d --build app
 
 # 3. Check logs for errors
-docker-compose -f docker-compose.prod.yml logs -f app
+docker-compose logs -f app
 
 # 4. Verify health
-docker-compose -f docker-compose.prod.yml ps
+docker-compose ps
 ```
 
 ### View Logs
 
 ```bash
 # All services
-docker-compose -f docker-compose.prod.yml logs -f
+docker-compose logs -f
 
 # Specific service
-docker-compose -f docker-compose.prod.yml logs -f app
+docker-compose logs -f app
 
 # Last 100 lines
-docker-compose -f docker-compose.prod.yml logs --tail=100 app
+docker-compose logs --tail=100 app
 
 # Since specific time
-docker-compose -f docker-compose.prod.yml logs --since 2025-01-01T12:00:00
+docker-compose logs --since 2025-01-01T12:00:00
 
 # Export logs to file
-docker-compose -f docker-compose.prod.yml logs app > app-logs.txt
+docker-compose logs app > app-logs.txt
 ```
 
 ### Clean Up
 
 ```bash
 # Remove stopped containers
-docker-compose -f docker-compose.prod.yml down
+docker-compose down
 
 # Remove containers and volumes (CAUTION: deletes database)
-docker-compose -f docker-compose.prod.yml down -v
+docker-compose down -v
 
 # Clean up unused Docker resources
 docker system prune -a
@@ -765,7 +1017,7 @@ sudo systemctl start docker
 docker stats
 ```
 
-**Increase memory limits** in `docker-compose.prod.yml`:
+**Increase memory limits** in `docker-compose.yml`:
 
 ```yaml
 deploy:
@@ -843,7 +1095,7 @@ node server.js
 
 ### Performance
 
-1. **Use production builds** (`docker-compose.prod.yml`)
+1. **Use production builds** (`docker-compose.yml`)
 2. **Enable caching** in reverse proxy (nginx, Caddy)
 3. **Monitor resource usage**: `docker stats`
 4. **Set appropriate resource limits**

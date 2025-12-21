@@ -1,5 +1,6 @@
 import { isSystemSetup } from "@/lib/auth/auth";
 import { SETUP_COOKIE_NAME } from "@/lib/auth/setupCookie";
+import { appConfig } from "@/lib/config/app-config";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
@@ -21,8 +22,9 @@ export async function GET(req: NextRequest) {
       const redirectUrl = searchParams.get("redirect");
 
       // Create response (either redirect or JSON)
+      // Use configured app URL to ensure consistent redirects with correct port
       const response = redirectUrl
-        ? NextResponse.redirect(new URL(redirectUrl, req.url))
+        ? NextResponse.redirect(new URL(redirectUrl, appConfig.app.url))
         : NextResponse.json(
             {
               success: true,

@@ -90,8 +90,8 @@ export async function PATCH(request: NextRequest) {
       logger.info("No settings found, creating new settings document");
       settings = new AppSettings(body);
     } else {
-      // Update existing settings
-      Object.assign(settings, body);
+      // Update existing settings using set() for proper nested document handling
+      settings.set(body);
     }
 
     await settings.save();

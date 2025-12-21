@@ -13,9 +13,9 @@ import {
   DropResult,
   Droppable,
 } from "@hello-pangea/dnd";
-import DeleteIcon from "@mui/icons-material/Delete";
-import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
-import EditIcon from "@mui/icons-material/Edit";
+import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
+import DragIndicatorRoundedIcon from "@mui/icons-material/DragIndicatorRounded";
+import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import {
   Box,
   Chip,
@@ -33,10 +33,9 @@ const Container = styled(Paper)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing(2),
-  padding: theme.spacing(3),
-  backgroundColor: theme.palette.background.paper,
+  background: "transparent",
   borderRadius: theme.spacing(1),
-  border: `1px solid ${theme.palette.divider}`,
+  boxShadow: "none",
 }));
 
 const OptionItem = styled(ListItem, {
@@ -58,7 +57,7 @@ const OptionItem = styled(ListItem, {
   },
 }));
 
-const DragHandle = styled(DragIndicatorIcon)(({ theme }) => ({
+const DragHandle = styled(DragIndicatorRoundedIcon)(({ theme }) => ({
   color: theme.palette.text.secondary,
   cursor: "grab",
   "&:active": {
@@ -318,14 +317,14 @@ const AgreementsManager: React.FC<AgreementsManagerProps> = ({
                           </Box>
 
                           <SmallIconButton
-                            icon={<EditIcon />}
+                            icon={<EditRoundedIcon />}
                             onAction={() => handleEdit(agreement)}
                             title={t("general.Edit")}
                             placement="top"
                           />
 
                           <SmallIconButton
-                            icon={<DeleteIcon />}
+                            icon={<DeleteRoundedIcon />}
                             onAction={() => handleDeleteClick(agreement.id)}
                             title={t("general.Delete")}
                             placement="top"

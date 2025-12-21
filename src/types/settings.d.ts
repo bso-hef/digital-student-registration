@@ -1,5 +1,3 @@
-// Settings types for Admin Onboarding Configuration
-
 export interface DropdownOption {
   value: string;
   label: string;
@@ -26,7 +24,6 @@ export interface FormSteps {
 }
 
 export interface OnboardingSettings {
-  // Dropdown Options
   genderOptions: DropdownOption[];
   salutationOptions: DropdownOption[];
   religionOptions: DropdownOption[];
@@ -38,7 +35,8 @@ export interface OnboardingSettings {
   professionOptions: DropdownOption[];
   countryOptions: DropdownOption[];
 
-  // Field Configurations
+  maxContactPersons?: number;
+
   fieldConfigs: {
     geschlecht: FieldConfig;
     religion: FieldConfig;
@@ -52,11 +50,9 @@ export interface OnboardingSettings {
     ansprechpartnerArt: FieldConfig;
   };
 
-  // Form Step Visibility
   formSteps: FormSteps;
 }
 
-// Agreement Item (individual configurable agreement)
 export interface AgreementItem {
   id: string;
   key: string;
@@ -74,17 +70,14 @@ export interface AgreementItem {
   icon?: string;
 }
 
-// Agreements Settings (for consent forms, privacy policies, etc.)
 export interface AgreementSettings {
   agreements: AgreementItem[];
-  // Old fields kept for migration
   privacyPolicyEnabled?: boolean;
   termsOfServiceEnabled?: boolean;
   parentalConsentEnabled?: boolean;
   dataProcessingAgreementEnabled?: boolean;
 }
 
-// Integration Settings (for third-party integrations)
 export interface IntegrationSettings {
   emailServiceEnabled: boolean;
   emailServiceProvider: string;
@@ -93,7 +86,6 @@ export interface IntegrationSettings {
   calendarSyncEnabled: boolean;
 }
 
-// Audit Settings (for logging and monitoring)
 export interface AuditSettings {
   logStudentChanges: boolean;
   logClassChanges: boolean;
@@ -102,17 +94,30 @@ export interface AuditSettings {
   exportEnabled: boolean;
 }
 
+export interface WlanSettings {
+  enabled: boolean;
+  ssid: string;
+  password: string;
+  securityType: "WPA" | "WPA2" | "WPA3" | "WEP" | "nopass";
+  hidden: boolean;
+}
+
+export interface SystemSettings {
+  mobileBlockerEnabled: boolean;
+  wlan?: WlanSettings;
+}
+
 export interface AppSettings {
   _id?: string;
   onboarding: OnboardingSettings;
   agreements: AgreementSettings;
   integrations: IntegrationSettings;
   audit: AuditSettings;
+  system: SystemSettings;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-// API Request/Response types
 export interface UpdateOnboardingSettingsRequest {
   onboarding: Partial<OnboardingSettings>;
 }

@@ -40,7 +40,7 @@ export interface ContactPerson {
 
 const ContactPersonSchema = new Schema(
   {
-    type: { type: String, required: true }, // parent, guardian, emergency contact, etc.
+    type: { type: String, required: true },
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     phone: { type: String },
@@ -57,6 +57,11 @@ interface Employer {
   contactEmail: string;
   contactPhone?: string;
   contactSalutation?: string;
+  // Second contact (optional)
+  contact2Name?: string;
+  contact2Email?: string;
+  contact2Phone?: string;
+  contact2Salutation?: string;
   verified: boolean;
 }
 
@@ -68,6 +73,11 @@ const EmployerSchema = new Schema(
     contactEmail: { type: String, default: "" },
     contactPhone: { type: String, default: "" },
     contactSalutation: { type: String, default: "" },
+    // Second contact (optional)
+    contact2Name: { type: String, default: "" },
+    contact2Email: { type: String, default: "" },
+    contact2Phone: { type: String, default: "" },
+    contact2Salutation: { type: String, default: "" },
     verified: { type: Boolean, default: false },
   },
   { _id: false },
@@ -97,7 +107,6 @@ const ClassHistoryItemSchema = new Schema(
 
 const StudentSchema = new Schema(
   {
-    // Basic personal information
     firstName: { type: String, required: true, trim: true },
     lastName: { type: String, required: true, trim: true },
     birthName: { type: String, trim: true },
@@ -111,53 +120,42 @@ const StudentSchema = new Schema(
     birthCountry: { type: String, trim: true },
     religion: { type: String, trim: true },
 
-    // Nationality
     nationality: { type: String, trim: true },
     secondNationality: { type: String, trim: true },
 
-    // Origin/Immigration
     familyLanguage: { type: String, trim: true },
     immigrationYear: { type: Number },
 
-    // Contact information
     email: { type: String, trim: true, lowercase: true },
     phone: { type: String, trim: true },
     address: { type: AddressSchema, default: undefined },
 
-    // School information
     currentClass: {
       type: ObjectId,
       ref: SCHEMA.CLASS,
       default: null,
     },
-    currentClassName: { type: String, trim: true }, // Cached class name
+    currentClassName: { type: String, trim: true },
     schoolEntryDate: { type: Date },
     classHistory: { type: [ClassHistoryItemSchema], default: [] },
 
-    // Previous education
     previousSchool: { type: String, trim: true },
     previousSchoolType: { type: String, trim: true },
     previousSchoolLevel: { type: String, trim: true },
     degrees: { type: String, trim: true },
 
-    // Vocational training
     profession: { type: String, trim: true },
     trainingStartDate: { type: Date },
 
-    // Employer information (for vocational students)
     employer: { type: EmployerSchema, default: undefined },
 
-    // Contact persons (parents, guardians)
     contactPersons: { type: [ContactPersonSchema], default: [] },
 
-    // Agreements and consents
     agreements: { type: AgreementsSchema, default: undefined },
 
-    // Onboarding progress
     onboardingStep: { type: Number, default: 0 },
     previousStep: { type: Number, default: null },
 
-    // System fields
     firstNameNorm: { type: String, required: true, index: true },
     lastNameNorm: { type: String, required: true, index: true },
     collisionGroup: { type: String, index: true },
@@ -190,7 +188,6 @@ StudentSchema.index(
 
 StudentSchema.plugin(mongoosePaginate);
 
-// Pre-save hook: Generate verification code if not present
 StudentSchema.pre(
   "save",
   async function (
@@ -198,10 +195,9 @@ StudentSchema.pre(
       verificationCode?: string;
     },
   ) {
-    // Generate verification code if not present
-    if (!this.verificationCode) {
+    // Only generate verification code for NEW documents to avoid modifying paths on updates
+    if (!this.verificationCode && this.isNew) {
       const checkExists = async (code: string): Promise<boolean> => {
-        // Use this.constructor to access the model after it's instantiated
         const Model = this.constructor as mongoose.Model<mongoose.Document>;
         const existing = await Model.findOne({
           verificationCode: code,
@@ -213,16 +209,50 @@ StudentSchema.pre(
   },
 );
 
-// Pre-save hook: Validate employer info for vocational classes
 StudentSchema.pre(
   "save",
   async function (
     this: mongoose.Document & {
       currentClass?: mongoose.Types.ObjectId;
       employer?: Employer;
+      status?: string;
     },
   ) {
+    // Get all modified paths to understand what's being updated
+    const modifiedPaths = this.modifiedPaths();
+
+    // Filter out automatic timestamp fields and auto-generated fields to focus on substantive changes
+    const substantiveChanges = modifiedPaths.filter(
+      (path) =>
+        path !== "updatedAt" &&
+        path !== "createdAt" &&
+        path !== "verificationCode", // Auto-generated by first pre-save hook
+    );
+
+    // If ONLY currentClass is being modified, this is an admin class assignment - skip validation
+    if (
+      substantiveChanges.length === 1 &&
+      substantiveChanges[0] === "currentClass"
+    ) {
+      return;
+    }
+
+    // If currentClass and classHistory are being updated together, also skip (admin assignment)
+    if (
+      substantiveChanges.length === 2 &&
+      substantiveChanges.includes("currentClass") &&
+      substantiveChanges.includes("classHistory")
+    ) {
+      return;
+    }
+
+    // Only validate employer info when status is being changed to "onboarded" (onboarding completion)
+    const isOnboardingCompletion =
+      this.isModified("status") && this.status === "onboarded";
+
+    if (!isOnboardingCompletion) return;
     if (!this.currentClass) return;
+
     const ClassModel = mongoose.model(SCHEMA.CLASS);
     const classDoc = await ClassModel.findById(this.currentClass).lean();
     if (classDoc && !Array.isArray(classDoc) && classDoc.requiresEmployerInfo) {

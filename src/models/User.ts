@@ -10,6 +10,12 @@ export interface IUser extends Document {
   role: string;
   active: boolean;
   lastLogin: Date | null;
+  firstName: string;
+  lastName: string;
+  avatar: string | null;
+  phone: string;
+  jobTitle: string;
+  timezone: string;
   createdAt: Date;
   updatedAt: Date;
   verifyPassword(candidatePassword: string): Promise<boolean>;
@@ -55,21 +61,57 @@ const UserSchema = new Schema(
       type: Date,
       default: null,
     },
+    firstName: {
+      type: String,
+      default: "",
+      trim: true,
+      maxlength: 100,
+    },
+    lastName: {
+      type: String,
+      default: "",
+      trim: true,
+      maxlength: 100,
+    },
+    avatar: {
+      type: String,
+      default: null,
+      validate: {
+        validator: function (v: string | null) {
+          if (!v) return true;
+          return v.length <= 1400000;
+        },
+        message: "Avatar image size exceeds 1MB limit",
+      },
+    },
+    phone: {
+      type: String,
+      default: "",
+      trim: true,
+      maxlength: 30,
+    },
+    jobTitle: {
+      type: String,
+      default: "",
+      trim: true,
+      maxlength: 100,
+    },
+    timezone: {
+      type: String,
+      default: "Europe/Berlin",
+      trim: true,
+    },
   },
   { versionKey: false, timestamps: true },
 );
 
-// Hash password before saving if it's modified
 UserSchema.pre("save", async function (next) {
-  // Only hash the password if it has been modified (or is new)
   if (!this.isModified("password")) {
     return next();
   }
 
   try {
-    // Generate salt with 12 rounds (recommended for security)
     const salt = await bcrypt.genSalt(12);
-    // Hash the password
     this.password = await bcrypt.hash(this.password, salt);
     next();
   } catch (err) {
@@ -77,17 +119,13 @@ UserSchema.pre("save", async function (next) {
   }
 });
 
-// Hash recovery code before saving if it's modified
 UserSchema.pre("save", async function (next) {
-  // Only hash the recovery code if it has been modified (or is new)
   if (!this.isModified("recoveryCode")) {
     return next();
   }
 
   try {
-    // Generate salt with 12 rounds
     const salt = await bcrypt.genSalt(12);
-    // Hash the recovery code
     this.recoveryCode = await bcrypt.hash(this.recoveryCode, salt);
     next();
   } catch (err) {
@@ -95,7 +133,6 @@ UserSchema.pre("save", async function (next) {
   }
 });
 
-// Method to verify password
 UserSchema.methods.verifyPassword = async function (
   candidatePassword: string,
 ): Promise<boolean> {
@@ -106,7 +143,6 @@ UserSchema.methods.verifyPassword = async function (
   }
 };
 
-// Method to verify recovery code
 UserSchema.methods.verifyRecoveryCode = async function (
   candidateCode: string,
 ): Promise<boolean> {

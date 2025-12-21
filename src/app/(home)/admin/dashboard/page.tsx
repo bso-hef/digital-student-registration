@@ -7,7 +7,7 @@ import AdminSettingsHeader from "@/components/molecules/AdminSettingsHeader";
 import DraggableChartGrid from "@/components/molecules/dashboard/DraggableChartGrid";
 import DraggableStatsGrid from "@/components/molecules/dashboard/DraggableStatsGrid";
 import {
-  getDashboardHealth,
+  getDashboardActivity,
   getDashboardStats,
   loadDashboardLayout,
   refreshDashboard,
@@ -17,8 +17,8 @@ import {
 import { AppDispatch, RootState } from "@/store/store";
 import { DashboardLayout } from "@/types/dashboard";
 import { applicationScrollbar } from "@/utils/styling.utils";
-import RefreshIcon from "@mui/icons-material/Refresh";
-import RestartAltIcon from "@mui/icons-material/RestartAlt";
+import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
+import RestartAltRoundedIcon from "@mui/icons-material/RestartAltRounded";
 import { Box, CircularProgress, styled } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
@@ -30,6 +30,8 @@ const Wrapper = styled(Box)(({ theme }) => ({
   justifyContent: "flex-start",
   width: "100%",
   height: "100%",
+  overflow: "hidden",
+  overflowY: "auto",
   color: theme.palette.text.default,
 }));
 
@@ -56,27 +58,21 @@ const DashboardPage = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
 
-  const { stats, health, loading, error, layout } = useSelector(
-    (state: RootState) => state.dashboard,
-  );
+  const { stats, loading, error, layout, recentActivity, activityLoading } =
+    useSelector((state: RootState) => state.dashboard);
 
   useEffect(() => {
     dispatch(loadDashboardLayout());
     dispatch(getDashboardStats());
-    dispatch(getDashboardHealth());
-
-    // Auto-refresh health data every 30 seconds
-    const healthInterval = setInterval(() => {
-      dispatch(getDashboardHealth(true)); // silent refresh
-    }, 30000);
+    dispatch(getDashboardActivity());
 
     // Auto-refresh stats every 5 minutes
     const statsInterval = setInterval(() => {
       dispatch(getDashboardStats());
+      dispatch(getDashboardActivity(true));
     }, 300000);
 
     return () => {
-      clearInterval(healthInterval);
       clearInterval(statsInterval);
     };
   }, [dispatch]);
@@ -133,14 +129,14 @@ const DashboardPage = () => {
     <Wrapper>
       <AdminSettingsHeader title={t("dashboard.title")} onLoad={loading}>
         <SmallIconButton
-          icon={<RestartAltIcon />}
+          icon={<RestartAltRoundedIcon />}
           onAction={handleResetLayout}
           hugeIcon
           title={t("dashboard.resetLayout")}
           placement="bottom"
         />
         <SmallIconButton
-          icon={<RefreshIcon />}
+          icon={<RefreshRoundedIcon />}
           onAction={handleRefresh}
           disabled={loading}
           hugeIcon
@@ -165,8 +161,9 @@ const DashboardPage = () => {
           {layout?.charts && (
             <DraggableChartGrid
               stats={stats}
-              health={health}
               loading={loading}
+              recentActivity={recentActivity}
+              activityLoading={activityLoading}
               order={layout.charts}
               onReorder={handleChartsReorder}
             />

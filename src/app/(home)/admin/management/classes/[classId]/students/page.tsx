@@ -22,6 +22,7 @@ import {
 } from "@/store/actions/classActions";
 import { AppDispatch } from "@/store/store";
 import { Student } from "@/types/db";
+import { formatGermanDate } from "@/utils/date.utils";
 import { filterStudents } from "@/utils/filter.utils";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
@@ -139,19 +140,11 @@ const StudentClassSettingsTab = () => {
 
   const getTableData = useCallback(() => {
     return filterStudents(searchString, students).map((student: Student) => {
-      const dateOfBirth =
-        student?.dateOfBirth &&
-        new Date(student.dateOfBirth).toLocaleDateString("de-DE", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-        });
-
       return {
         id: student?._id,
         firstName: student?.firstName,
         lastName: student?.lastName,
-        dateOfBirth: dateOfBirth || "-",
+        dateOfBirth: formatGermanDate(student?.dateOfBirth) || "-",
         gender: <GenderDisplay gender={student?.gender} />,
         status: <StudentStatus studentStatus={student?.status} />,
       };
@@ -164,6 +157,7 @@ const StudentClassSettingsTab = () => {
         open={openStudentAddModal}
         onClose={handleAddStudentModalClose}
         onAddStudents={handleAddStudents}
+        classId={classId as string}
       />
       <ConfirmationModal
         open={openStudentRemoveModal}

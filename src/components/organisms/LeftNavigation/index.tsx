@@ -2,16 +2,20 @@
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 
+import ActionsTooltip from "@/components/atoms/ActionsTooltip";
 import GeneralInput from "@/components/atoms/GeneralInput";
 import OnboardingVersion from "@/components/atoms/OnboardingVersion";
 import ProfileAvatar from "@/components/atoms/ProfileAvatar";
-import GeneralButton from "@/components/atoms/buttons/GeneralButton";
+import GeneralMenu from "@/components/atoms/menus/GeneralMenu";
 import { logoutUser } from "@/store/actions/authActions";
 import { AppDispatch, RootState } from "@/store/store";
 import { getName } from "@/utils/string.utils";
+import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
 import ExpandLessRoundedIcon from "@mui/icons-material/ExpandLessRounded";
 import ExpandMoreRoundedIcon from "@mui/icons-material/ExpandMoreRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
+import ManageAccountsRoundedIcon from "@mui/icons-material/ManageAccountsRounded";
+import MonitorHeartRoundedIcon from "@mui/icons-material/MonitorHeartRounded";
 import OpenInNewRoundedIcon from "@mui/icons-material/OpenInNewRounded";
 import {
   Box,
@@ -59,7 +63,9 @@ const StyledNavigation = styled(Box)(() => ({
   overflowY: "auto",
 }));
 
-const StyledListItem = styled(ListItem)<{
+const StyledListItem = styled(ListItem, {
+  shouldForwardProp: (prop) => prop !== "sub" && prop !== "selected",
+})<{
   button?: string;
   selected?: boolean;
   sub?: boolean;
@@ -87,20 +93,20 @@ const StyledListItem = styled(ListItem)<{
   },
 }));
 
-const StyledListItemIcon = styled(ListItemIcon)<{ selected?: boolean }>(
-  ({ theme, selected }) => ({
-    color: selected ? theme.palette.icon.primary : theme.palette.icon.secondary,
-    minWidth: "32px",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "32px",
-    height: "32px",
-  }),
-);
+const StyledListItemIcon = styled(ListItemIcon, {
+  shouldForwardProp: (prop) => prop !== "selected",
+})<{ selected?: boolean }>(({ theme, selected }) => ({
+  color: selected ? theme.palette.icon.primary : theme.palette.icon.secondary,
+  minWidth: "32px",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  width: "32px",
+  height: "32px",
+}));
 
 const StyledListItemText = styled(ListItemText, {
-  shouldForwardProp: (prop) => prop !== "isSelected",
+  shouldForwardProp: (prop) => prop !== "selected",
 })<{ selected?: boolean }>(({ theme, selected }) => ({
   color: selected ? theme.palette.text.primary : theme.palette.text.default,
   fontSize: "16px",
@@ -133,12 +139,15 @@ const NameText = styled(Typography)(({ theme }) => ({
   maxWidth: "100%",
 }));
 
-const LogoutContainer = styled(Box)(({ theme }) => ({
-  width: "100%",
-  marginBottom: theme.spacing(2),
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
+const JobTitleText = styled(Typography)(({ theme }) => ({
+  fontSize: "13px",
+  lineHeight: "18px",
+  fontWeight: 400,
+  color: theme.palette.text.secondary,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+  maxWidth: "100%",
 }));
 
 const LeftNavigation = () => {
@@ -150,6 +159,23 @@ const LeftNavigation = () => {
   const { user } = useSelector((state: RootState) => state.auth);
 
   const [open, setOpen] = useState<boolean[]>([]);
+  const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
+
+  const handleAvatarClick = (event: React.MouseEvent<HTMLElement>) => {
+    setMenuAnchor(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setMenuAnchor(null);
+  };
+
+  const handleLogout = async () => {
+    handleMenuClose();
+    const result = await dispatch(logoutUser());
+    if (result.success) {
+      router.push("/login");
+    }
+  };
 
   const hasRoute = useCallback(
     (path: string) => pathname.includes(path),
@@ -221,12 +247,68 @@ const LeftNavigation = () => {
     <StyledWrapper>
       <StyledNavigation>
         <Box width="100%">
-          <ProfileAvatar size={80} />
+          <Box display="flex" justifyContent="center" width="100%">
+            <ActionsTooltip title={t("navigation.openMenu")} placement="bottom">
+              <Box
+                onClick={handleAvatarClick}
+                sx={{
+                  cursor: "pointer",
+                  "&:hover": { opacity: 0.8 },
+                  width: 92,
+                  height: 92,
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  border: menuAnchor
+                    ? `3px solid ${theme.palette.primary.main}`
+                    : "3px solid transparent",
+                  transition: "border-color 0.2s ease-in-out",
+                }}
+              >
+                <ProfileAvatar
+                  size={80}
+                  avatar={user?.avatar}
+                  initialsFallback={getName(user)}
+                />
+              </Box>
+            </ActionsTooltip>
+            <GeneralMenu
+              anchorEl={menuAnchor}
+              open={Boolean(menuAnchor)}
+              onClose={handleMenuClose}
+              anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+              transformOrigin={{ vertical: "top", horizontal: "center" }}
+              menuItems={[
+                {
+                  label: t("navigation.dashboard"),
+                  startIcon: <DashboardRoundedIcon />,
+                  onClick: () => router.push("/admin/dashboard"),
+                },
+                {
+                  label: t("navigation.profileSettings"),
+                  startIcon: <ManageAccountsRoundedIcon />,
+                  onClick: () => router.push("/admin/settings/profile"),
+                },
+                {
+                  label: t("navigation.systemSettings"),
+                  startIcon: <MonitorHeartRoundedIcon />,
+                  onClick: () => router.push("/admin/settings/system"),
+                },
+                {
+                  label: t("navigation.Logout"),
+                  startIcon: <LogoutRoundedIcon color="error" />,
+                  onClick: handleLogout,
+                },
+              ]}
+            />
+          </Box>
           <WelcomeContainer>
             <WelcomeText>
               {t("navigation.welcome", { name: "" }).trim()}
             </WelcomeText>
             <NameText>{getName(user) || "Admin"}</NameText>
+            {user?.jobTitle && <JobTitleText>{user.jobTitle}</JobTitleText>}
           </WelcomeContainer>
           <Divider sx={{ my: 2 }} />
         </Box>
@@ -347,23 +429,6 @@ const LeftNavigation = () => {
           })}
         </List>
       </StyledNavigation>
-      {user && (
-        <LogoutContainer>
-          <GeneralButton
-            label={t("navigation.Logout")}
-            startIcon={<LogoutRoundedIcon />}
-            onAction={async () => {
-              const result = await dispatch(logoutUser());
-              if (result.success) {
-                router.push("/login");
-              }
-            }}
-            fullWidth={false}
-            fullHeight={false}
-            isPrimary={false}
-          />
-        </LogoutContainer>
-      )}
       <OnboardingVersion />
     </StyledWrapper>
   );

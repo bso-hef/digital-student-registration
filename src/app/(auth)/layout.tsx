@@ -2,7 +2,6 @@
 
 import AccessibilityMenu from "@/components/molecules/AccessibilityMenu";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
-import { applicationScrollbar } from "@/utils/styling.utils";
 import { Box, styled } from "@mui/material";
 
 const AuthLayoutContainer = styled(Box)(({ theme }) => ({
@@ -11,7 +10,7 @@ const AuthLayoutContainer = styled(Box)(({ theme }) => ({
   alignItems: "center",
   justifyContent: "center",
   minHeight: "100vh",
-  height: "100%",
+  height: "100vh",
   width: "100%",
   textAlign: "center",
   backgroundColor: theme.palette.surface.interface.background,
@@ -25,15 +24,13 @@ const AuthLayoutBox = styled(Box)(({ theme }) => ({
   flexDirection: "row",
   alignItems: "center",
   justifyContent: "center",
-  minHeight: "100vh",
   height: "100%",
   width: "100%",
   textAlign: "center",
   backgroundColor: theme.palette.surface.interface.background,
   color: theme.palette.text.default,
   padding: "2rem 1rem",
-  overflow: "auto",
-  ...applicationScrollbar(theme),
+  overflow: "hidden",
   [theme.breakpoints.down("md")]: {
     padding: "1.5rem 1rem",
   },

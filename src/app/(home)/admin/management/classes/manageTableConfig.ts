@@ -8,6 +8,7 @@ export const classTableHeaders = (t: TFunction) => [
     numeric: false,
     disablePadding: false,
     sortable: true,
+    clickable: true,
     label: t("settings.manageClass.className"),
   },
   {

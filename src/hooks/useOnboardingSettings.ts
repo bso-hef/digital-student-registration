@@ -5,10 +5,6 @@ import { AppDispatch, RootState } from "@/store/store";
 import { DropdownOption } from "@/types/settings";
 import { useDispatch, useSelector } from "react-redux";
 
-/**
- * Custom hook to access onboarding settings in forms
- * Automatically fetches settings if not already loaded
- */
 export const useOnboardingSettings = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { data, loading, error } = useSelector(
@@ -22,23 +18,14 @@ export const useOnboardingSettings = () => {
     }
   }, [onboarding, loading, dispatch]);
 
-  /**
-   * Get enabled options only, sorted by order
-   */
   const getEnabledOptions = (
     options: DropdownOption[] = [],
   ): DropdownOption[] =>
     options.filter((opt) => opt.enabled).sort((a, b) => a.order - b.order);
 
-  /**
-   * Get option values for validation
-   */
   const getOptionValues = (options: DropdownOption[] = []): string[] =>
     getEnabledOptions(options).map((opt) => opt.value);
 
-  /**
-   * Convert options to MUI Select format
-   */
   const getSelectOptions = (
     options: DropdownOption[] = [],
   ): Array<{ value: string; label: string }> =>
@@ -51,7 +38,6 @@ export const useOnboardingSettings = () => {
     settings: onboarding,
     loading,
     error,
-    // Dropdown options
     genderOptions: onboarding?.genderOptions || [],
     salutationOptions: onboarding?.salutationOptions || [],
     religionOptions: onboarding?.religionOptions || [],
@@ -62,9 +48,8 @@ export const useOnboardingSettings = () => {
     languageOptions: onboarding?.languageOptions || [],
     professionOptions: onboarding?.professionOptions || [],
     countryOptions: onboarding?.countryOptions || [],
-    // Field configs
     fieldConfigs: onboarding?.fieldConfigs || {},
-    // Helper functions
+    maxContactPersons: onboarding?.maxContactPersons ?? 3,
     getEnabledOptions,
     getOptionValues,
     getSelectOptions,

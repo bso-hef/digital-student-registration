@@ -2,19 +2,20 @@ import React, { useEffect, useMemo, useState } from "react";
 
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
 import SmallIconButton from "@/components/atoms/buttons/SmallIconButton";
+import FormikDropdown from "@/components/atoms/dropdowns/FormikDropdown";
 import EnhancedCollapse from "@/components/molecules/EnhancedCollapse";
 import { useOnboardingSettings } from "@/hooks/useOnboardingSettings";
 import { createValidateStudentContactPersonData } from "@/lib/validate/student.validate";
 import { updateStudentOnboardingData } from "@/store/actions/studentActions";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { StudentData } from "@/types/student";
-import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { Alert, Box, MenuItem, styled } from "@mui/material";
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
+import { Alert, Box, styled } from "@mui/material";
 import dayjs from "dayjs";
 import { FormikProps } from "formik";
 import { Field, Form, Formik } from "formik";
-import { Select, TextField } from "formik-mui";
+import { TextField } from "formik-mui";
 import { useTranslation } from "react-i18next";
 
 const StyledForm = styled(Form)(() => ({
@@ -82,8 +83,12 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
 }) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const { contactPersonTypeOptions, getEnabledOptions, loading } =
-    useOnboardingSettings();
+  const {
+    contactPersonTypeOptions,
+    getEnabledOptions,
+    loading,
+    maxContactPersons,
+  } = useOnboardingSettings();
 
   // Get data from Redux if not provided via props
   const studentDataFromRedux = useAppSelector((state) => state.student.data);
@@ -164,7 +169,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
 
   const handleAddContact = () => {
     const nextContact = visibleContacts.length + 1;
-    if (nextContact <= 3) {
+    if (nextContact <= maxContactPersons) {
       setVisibleContacts([...visibleContacts, nextContact]);
       setExpandedContact(nextContact);
     }
@@ -187,26 +192,18 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
     contactNumber: number,
     errors: Record<string, string | undefined>,
     touched: Record<string, boolean | undefined>,
+    isRequired: boolean,
   ) => {
     const prefix = `ansprechpartner${contactNumber}`;
     return (
       <StyledFieldsContainer>
         {/* Contact Type */}
-        <Field
-          component={Select}
+        <FormikDropdown
           name={`${prefix}Art`}
           label={t("onboarding.legalGuardian.contactType")}
-          variant="outlined"
-          margin="normal"
-          fullWidth
-          error={touched[`${prefix}Art`] && Boolean(errors[`${prefix}Art`])}
-        >
-          {getEnabledOptions(contactPersonTypeOptions).map((option) => (
-            <MenuItem key={option.value} value={option.value}>
-              {option.label}
-            </MenuItem>
-          ))}
-        </Field>
+          options={getEnabledOptions(contactPersonTypeOptions)}
+          required={isRequired}
+        />
 
         {/* First Name */}
         <Field
@@ -216,6 +213,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
           variant="outlined"
           margin="normal"
           fullWidth
+          required={isRequired}
           error={
             touched[`${prefix}Vorname`] && Boolean(errors[`${prefix}Vorname`])
           }
@@ -230,6 +228,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
           variant="outlined"
           margin="normal"
           fullWidth
+          required={isRequired}
           error={
             touched[`${prefix}Nachname`] && Boolean(errors[`${prefix}Nachname`])
           }
@@ -246,6 +245,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
           variant="outlined"
           margin="normal"
           fullWidth
+          required={isRequired}
           error={touched[`${prefix}Plz`] && Boolean(errors[`${prefix}Plz`])}
           helperText={touched[`${prefix}Plz`] && errors[`${prefix}Plz`]}
         />
@@ -258,6 +258,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
           variant="outlined"
           margin="normal"
           fullWidth
+          required={isRequired}
           error={touched[`${prefix}Ort`] && Boolean(errors[`${prefix}Ort`])}
           helperText={touched[`${prefix}Ort`] && errors[`${prefix}Ort`]}
         />
@@ -270,6 +271,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
           variant="outlined"
           margin="normal"
           fullWidth
+          required={isRequired}
           error={
             touched[`${prefix}Straße`] && Boolean(errors[`${prefix}Straße`])
           }
@@ -284,6 +286,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
           variant="outlined"
           margin="normal"
           fullWidth
+          required={isRequired}
           error={
             touched[`${prefix}HausNr`] && Boolean(errors[`${prefix}HausNr`])
           }
@@ -342,12 +345,12 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
           )}
 
           {/* Add Contact button at the top */}
-          {visibleContacts.length < 3 && (
+          {visibleContacts.length < maxContactPersons && (
             <GeneralButton
               label={t("onboarding.legalGuardian.addContact")}
               onAction={handleAddContact}
               isPrimary={false}
-              startIcon={<AddIcon />}
+              startIcon={<AddRoundedIcon />}
               fullWidth
               withTooltip
               tooltipLabel={t("onboarding.legalGuardian.addContactTooltip")}
@@ -378,12 +381,13 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
                 headerAction={
                   contactNumber > 1 ? (
                     <SmallIconButton
-                      icon={<DeleteIcon />}
+                      icon={<DeleteRoundedIcon />}
                       customColor="#d32f2f"
                       hoverAllowed
                       noMargin
                       title={t("onboarding.legalGuardian.removeContactTooltip")}
                       placement="top"
+                      onAction={() => handleRemoveContact(contactNumber)}
                     />
                   ) : undefined
                 }
@@ -406,7 +410,12 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
                     : undefined
                 }
               >
-                {renderContactFields(contactNumber, errors, touched)}
+                {renderContactFields(
+                  contactNumber,
+                  errors,
+                  touched,
+                  !isAdult && contactNumber === 1,
+                )}
               </EnhancedCollapse>
             </Box>
           ))}

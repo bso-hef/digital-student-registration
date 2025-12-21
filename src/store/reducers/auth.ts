@@ -1,9 +1,15 @@
 import * as TYPES from "../types";
-import { AppAction } from "./index";
+import { AppAction } from "../types";
 
 export interface AuthUser {
   email: string;
   role: string;
+  firstName?: string;
+  lastName?: string;
+  avatar?: string | null;
+  phone?: string;
+  jobTitle?: string;
+  timezone?: string;
 }
 
 export interface AuthState {
@@ -14,6 +20,9 @@ export interface AuthState {
   setupCompleted: boolean;
   checkingSession: boolean;
   checkingSetup: boolean;
+  setupWizardStep: number;
+  setupWizardEmail: string;
+  setupWizardPassword: string;
 }
 
 const initialAuthState: AuthState = {
@@ -24,11 +33,13 @@ const initialAuthState: AuthState = {
   setupCompleted: false,
   checkingSession: false,
   checkingSetup: false,
+  setupWizardStep: 0,
+  setupWizardEmail: "",
+  setupWizardPassword: "",
 };
 
 const authReducer = (state = initialAuthState, action: AppAction) => {
   switch (action.type) {
-    // Login actions
     case TYPES.AUTH_LOGIN_REQUEST:
       return {
         ...state,
@@ -54,7 +65,6 @@ const authReducer = (state = initialAuthState, action: AppAction) => {
         error: action.payload,
       };
 
-    // Logout actions
     case TYPES.AUTH_LOGOUT_REQUEST:
       return {
         ...state,
@@ -66,6 +76,9 @@ const authReducer = (state = initialAuthState, action: AppAction) => {
       return {
         ...initialAuthState,
         setupCompleted: state.setupCompleted,
+        setupWizardStep: 0,
+        setupWizardEmail: "",
+        setupWizardPassword: "",
       };
 
     case TYPES.AUTH_LOGOUT_FAILURE:
@@ -75,7 +88,6 @@ const authReducer = (state = initialAuthState, action: AppAction) => {
         error: action.payload,
       };
 
-    // Setup actions
     case TYPES.AUTH_SETUP_REQUEST:
       return {
         ...state,
@@ -98,7 +110,6 @@ const authReducer = (state = initialAuthState, action: AppAction) => {
         error: action.payload,
       };
 
-    // Reset password actions
     case TYPES.AUTH_RESET_PASSWORD_REQUEST:
       return {
         ...state,
@@ -120,7 +131,6 @@ const authReducer = (state = initialAuthState, action: AppAction) => {
         error: action.payload,
       };
 
-    // Check session actions
     case TYPES.AUTH_CHECK_SESSION_REQUEST:
       return {
         ...state,
@@ -143,7 +153,6 @@ const authReducer = (state = initialAuthState, action: AppAction) => {
         user: null,
       };
 
-    // Check setup status actions
     case TYPES.AUTH_CHECK_SETUP_REQUEST:
       return {
         ...state,
@@ -163,7 +172,6 @@ const authReducer = (state = initialAuthState, action: AppAction) => {
         checkingSetup: false,
       };
 
-    // Sync session (for when session changes externally)
     case TYPES.AUTH_SYNC_SESSION:
       return {
         ...state,
@@ -171,11 +179,91 @@ const authReducer = (state = initialAuthState, action: AppAction) => {
         user: action.payload.user,
       };
 
-    // Clear error
     case TYPES.AUTH_CLEAR_ERROR:
       return {
         ...state,
         error: null,
+      };
+
+    case TYPES.AUTH_UPDATE_SETUP_WIZARD:
+      return {
+        ...state,
+        setupWizardStep: action.payload.step ?? state.setupWizardStep,
+        setupWizardEmail: action.payload.email ?? state.setupWizardEmail,
+        setupWizardPassword:
+          action.payload.password ?? state.setupWizardPassword,
+      };
+
+    case TYPES.AUTH_CLEAR_SETUP_WIZARD:
+      return {
+        ...state,
+        setupWizardStep: 0,
+        setupWizardEmail: "",
+        setupWizardPassword: "",
+      };
+
+    case TYPES.AUTH_UPDATE_PROFILE_REQUEST:
+      return {
+        ...state,
+        isLoading: true,
+        error: null,
+      };
+
+    case TYPES.AUTH_UPDATE_PROFILE_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        user: state.user
+          ? {
+              ...state.user,
+              firstName: action.payload.firstName,
+              lastName: action.payload.lastName,
+              avatar: action.payload.avatar,
+              phone: action.payload.phone,
+              jobTitle: action.payload.jobTitle,
+              timezone: action.payload.timezone,
+            }
+          : null,
+        error: null,
+      };
+
+    case TYPES.AUTH_UPDATE_PROFILE_FAILURE:
+      return {
+        ...state,
+        isLoading: false,
+        error: action.payload,
+      };
+
+    case TYPES.AUTH_FETCH_PROFILE_REQUEST:
+      return {
+        ...state,
+        isLoading: true,
+        error: null,
+      };
+
+    case TYPES.AUTH_FETCH_PROFILE_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        user: state.user
+          ? {
+              ...state.user,
+              firstName: action.payload.firstName,
+              lastName: action.payload.lastName,
+              avatar: action.payload.avatar,
+              phone: action.payload.phone,
+              jobTitle: action.payload.jobTitle,
+              timezone: action.payload.timezone,
+            }
+          : null,
+        error: null,
+      };
+
+    case TYPES.AUTH_FETCH_PROFILE_FAILURE:
+      return {
+        ...state,
+        isLoading: false,
+        error: action.payload,
       };
 
     default:

@@ -115,13 +115,13 @@ describe("dropdown.constants", () => {
   });
 
   describe("SCHOOL_LEVEL_OPTIONS", () => {
-    it("should have 9 school level options (Klasse 5-13)", () => {
-      expect(SCHOOL_LEVEL_OPTIONS.length).toBe(9);
+    it("should have 10 school level options (Klasse 5-14)", () => {
+      expect(SCHOOL_LEVEL_OPTIONS.length).toBe(10);
     });
 
-    it("should include all grades from 5 to 13", () => {
+    it("should include all grades from 5 to 14", () => {
       const values = SCHOOL_LEVEL_OPTIONS.map((opt) => opt.value);
-      for (let i = 5; i <= 13; i++) {
+      for (let i = 5; i <= 14; i++) {
         expect(values).toContain(`Klasse ${i}`);
       }
     });

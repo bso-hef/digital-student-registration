@@ -10,7 +10,6 @@ import i18n from "i18next";
 import { AppThunk } from "../store";
 import * as TYPES from "../types";
 
-// Hilfsfunktion: undefined entfernen (null bleibt erhalten!)
 const stripUndefined = <T extends object>(obj: T): T =>
   Object.fromEntries(
     Object.entries(obj).filter(([, v]) => v !== undefined),
@@ -125,9 +124,7 @@ export const addStudentsToClass =
       await classService.addStudentsToClass(classId, studentIds);
       dispatch({ type: TYPES.ADD_STUDENTS_TO_CLASS_SUCCESS });
       successNotification(i18n.t("actions.studentsAddedToClass"));
-      // Refresh the students list after adding
       dispatch(getClassStudents(classId));
-      // Refresh global students to update class assignments
       const { getStudents } = await import("./studentActions");
       dispatch(getStudents());
     } catch (error) {
@@ -148,9 +145,7 @@ export const removeStudentsFromClass =
       await classService.removeStudentsFromClass(classId, studentIds);
       dispatch({ type: TYPES.REMOVE_STUDENTS_FROM_CLASS_SUCCESS });
       successNotification(i18n.t("actions.studentsRemovedFromClass"));
-      // Refresh the students list after removing
       dispatch(getClassStudents(classId));
-      // Refresh global students to update class assignments
       const { getStudents } = await import("./studentActions");
       dispatch(getStudents());
     } catch (error) {
