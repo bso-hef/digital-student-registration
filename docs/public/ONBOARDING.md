@@ -1,625 +1,494 @@
-# Student Onboarding Process
+# Schüler-Onboarding Anleitung
 
-Complete documentation of the 10-step student onboarding flow.
-
-## Table of Contents
-
-- [Overview](#overview)
-- [Onboarding Flow](#onboarding-flow)
-- [Step Details](#step-details)
-- [Form Validation](#form-validation)
-- [Data Flow](#data-flow)
-- [Navigation](#navigation)
+Willkommen zur digitalen Schüleranmeldung! Diese Anleitung führt dich Schritt für Schritt durch den Anmeldeprozess.
 
 ---
 
-## Overview
+## Inhaltsverzeichnis
 
-The student onboarding process is a **10-step wizard** that collects comprehensive student information. Each step focuses on a specific aspect of the student's profile.
-
-### Key Features
-
-- **Multi-step wizard** with progress indicator
-- **Form validation** using Formik + Yup
-- **Auto-save** to Redux state on each step
-- **Step navigation** with back/next buttons
-- **Summary review** before final submission
-- **Mobile-responsive** design
-
-### User Flow
-
-```
-URL: /student/[studentId]
-
-Step 0: Welcome
-  ↓
-Step 1: General Information
-  ↓
-Step 2: Origin/Nationality
-  ↓
-Step 3: Address
-  ↓
-Step 4: Parents/Guardians
-  ↓
-Step 5: Previous Education
-  ↓
-Step 6: Training Program
-  ↓
-Step 7: Company Contact (conditional)
-  ↓
-Step 8: Summary Review
-  ↓
-Step 9: Completion
-```
+1. [Einleitung](#einleitung)
+2. [Anmeldung starten](#anmeldung-starten)
+3. [Die Anmeldeschritte im Detail](#die-anmeldeschritte-im-detail)
+4. [Navigation und Bedienung](#navigation-und-bedienung)
+5. [Häufige Fragen (FAQ)](#häufige-fragen-faq)
+6. [Fehlerbehebung](#fehlerbehebung)
 
 ---
 
-## Onboarding Flow
+## Einleitung
 
-### Access Point
+### Was ist das Schüler-Onboarding?
 
-Students access onboarding via unique URL:
+Das Schüler-Onboarding ist ein digitales Anmeldeformular, mit dem du deine persönlichen Daten für die Schule erfassen kannst. Der Prozess ist in mehrere übersichtliche Schritte unterteilt.
 
-```
-https://app.example.com/student/[unique-student-id]
-```
+### Was du benötigst
 
-The `studentId` is generated when the student record is created.
+Bevor du beginnst, halte folgende Informationen bereit:
 
-### Step Navigation
+- **Verifizierungscode** - Ein 6-stelliger Code, den du von deiner Schule erhalten hast (z.B. `ABC123`)
+- **Persönliche Daten** - Geburtsdatum, Staatsangehörigkeit, etc.
+- **Adresse** - Deine aktuelle Wohnadresse
+- **Kontaktdaten** - E-Mail-Adresse und Telefonnummer
+- **Daten eines Ansprechpartners** - Kontaktdaten eines Elternteils oder Erziehungsberechtigten (für Minderjährige erforderlich)
+- **Vorherige Schule** - Name und Art deiner letzten Schule
 
-Located in: `src/constants/studentSteps.constants.tsx`
+**Für Berufsschüler zusätzlich:**
 
-```typescript
-export const getStudentSteps = (t: TFunction): StepDef[] => [
-  { id: 0, label: t("student.steps.Welcome"), icon: <HomeRoundedIcon /> },
-  { id: 1, label: t("student.steps.General"), icon: <InfoRoundedIcon /> },
-  { id: 2, label: t("student.steps.Origin"), icon: <PublicRoundedIcon /> },
-  { id: 3, label: t("student.steps.Address"), icon: <LocationOnRoundedIcon /> },
-  { id: 4, label: t("student.steps.Parents"), icon: <FamilyRestroomRoundedIcon /> },
-  { id: 5, label: t("student.steps.Pre Education"), icon: <SchoolRoundedIcon /> },
-  { id: 6, label: t("student.steps.Training"), icon: <WorkRoundedIcon /> },
-  { id: 7, label: t("student.steps.Company Contact"), icon: <BusinessRoundedIcon /> },
-  { id: 8, label: t("student.steps.Summary"), icon: <SummarizeRoundedIcon /> },
-  { id: 9, label: t("student.steps.Completion"), icon: <EmojiEventsRoundedIcon /> },
-];
-```
+- **Ausbildungsbetrieb** - Name, Adresse und Kontaktdaten deines Betriebs
+- **Ansprechpartner im Betrieb** - Name und Kontaktdaten
 
-### Current Step Tracking
+### Zeitaufwand
 
-Stored in Redux:
+Die Anmeldung dauert etwa **10-15 Minuten**. Du kannst jederzeit unterbrechen und später fortfahren – deine Daten werden automatisch gespeichert.
 
-```typescript
-// Redux state
-student: {
-  currentStep: number,       // 0-9
-  data: StudentFormData      // All form data
-}
-```
+### Wichtige Hinweise
+
+- Felder mit einem **\*** sind Pflichtfelder und müssen ausgefüllt werden
+- Deine Daten werden nach jedem Schritt automatisch gespeichert
+- Du kannst die Anmeldung auf einem anderen Gerät fortsetzen
+- Die Anzahl der Schritte kann je nach Situation variieren (8-11 Schritte)
 
 ---
 
-## Step Details
+## Anmeldung starten
 
-### Step 0: Welcome
+### Schritt 1: Website aufrufen
 
-**Component:** `src/components/organisms/forms/WelcomeForm/index.tsx`
+Öffne die Anmeldeseite in deinem Webbrowser. Die URL erhältst du von deiner Schule.
 
-**Purpose:** Introduction and onboarding overview
+### Schritt 2: Verifizierung
 
-**Fields:** None (information only)
+Auf der Startseite musst du dich mit deinem Verifizierungscode anmelden:
 
-**Actions:**
+1. Gib deinen **Vornamen** ein
+2. Gib deinen **Nachnamen** ein
+3. Gib deinen **Verifizierungscode** ein (6 Zeichen, z.B. `ABC123`)
+4. Klicke auf **Weiter**
 
-- "Start" button → Navigate to Step 1
+> **Tipp:** Der Verifizierungscode besteht aus 6 Zeichen (Buchstaben und Zahlen). Achte auf die korrekte Schreibweise – Groß- und Kleinschreibung ist wichtig!
 
-**Content:**
+### Mögliche Fehlermeldungen bei der Verifizierung
 
-- Welcome message
-- Overview of onboarding process
-- Estimated time to complete
-- Privacy information
-
----
-
-### Step 1: General Information
-
-**Component:** `src/components/organisms/forms/GeneralForm/index.tsx`
-
-**Purpose:** Collect basic student information
-
-**Fields:**
-
-- First Name (required)
-- Last Name (required)
-- Date of Birth (required)
-- Gender (required)
-- Email (optional)
-- Phone (optional)
-
-**Validation:**
-
-```typescript
-{
-  firstName: Yup.string().required("First name is required").min(2),
-  lastName: Yup.string().required("Last name is required").min(2),
-  dateOfBirth: Yup.date().required("Date of birth is required").max(new Date()),
-  gender: Yup.string().required("Gender is required").oneOf(["male", "female", "other"]),
-  email: Yup.string().email("Invalid email format").nullable(),
-  phone: Yup.string().min(10).nullable()
-}
-```
+| Fehlermeldung            | Bedeutung                                    | Lösung                                     |
+| ------------------------ | -------------------------------------------- | ------------------------------------------ |
+| „Schüler nicht gefunden" | Die eingegebenen Daten stimmen nicht überein | Überprüfe Vor- und Nachname sowie den Code |
+| „Ungültiger Code"        | Der Code ist falsch formatiert               | Der Code muss genau 6 Zeichen haben        |
+| „Bereits abgeschlossen"  | Die Anmeldung wurde schon durchgeführt       | Wende dich an deine Schule                 |
 
 ---
 
-### Step 2: Origin/Nationality
+## Die Anmeldeschritte im Detail
 
-**Component:** `src/components/organisms/forms/OriginForm/index.tsx`
+Nach erfolgreicher Verifizierung startet der Anmeldeprozess. Je nach deiner Situation siehst du zwischen 8 und 11 Schritte.
 
-**Purpose:** Collect nationality and birthplace information
+### Übersicht der Schritte
 
-**Fields:**
-
-- Country of Birth (required)
-- City of Birth (required)
-- Nationality (required)
-- Second Nationality (optional)
-- Native Language (required)
-- Additional Languages (optional)
-
-**Validation:**
-
-```typescript
-{
-  countryOfBirth: Yup.string().required("Country of birth is required"),
-  cityOfBirth: Yup.string().required("City of birth is required"),
-  nationality: Yup.string().required("Nationality is required"),
-  secondNationality: Yup.string().nullable(),
-  nativeLanguage: Yup.string().required("Native language is required"),
-  additionalLanguages: Yup.array().of(Yup.string())
-}
-```
+| Schritt | Name             | Für wen?                               |
+| ------- | ---------------- | -------------------------------------- |
+| 1       | Willkommen       | Alle                                   |
+| 2       | Allgemeine Daten | Alle                                   |
+| 3       | Herkunft         | Nur wenn Geburtsland nicht Deutschland |
+| 4       | Adresse          | Alle                                   |
+| 5       | Ansprechpartner  | Alle (für Minderjährige Pflicht)       |
+| 6       | Vorbildung       | Alle                                   |
+| 7       | Berufsausbildung | Nur Berufsschulklassen                 |
+| 8       | Betriebskontakt  | Nur Berufsschulklassen                 |
+| 9       | Vereinbarungen   | Alle                                   |
+| 10      | Zusammenfassung  | Alle                                   |
+| 11      | Abschluss        | Alle                                   |
 
 ---
 
-### Step 3: Address
+### Schritt 1: Willkommen
 
-**Component:** `src/components/organisms/forms/AddressForm/index.tsx`
+Dies ist die Begrüßungsseite. Hier erfährst du:
 
-**Purpose:** Collect current residential address
+- Wie viele Schritte deine Anmeldung umfasst
+- Was dich erwartet
+- Dass Felder mit \* Pflichtfelder sind
 
-**Fields:**
-
-- Street Address (required)
-- City (required)
-- State/Province (optional)
-- Postal Code (required)
-- Country (required)
-
-**Validation:**
-
-```typescript
-{
-  street: Yup.string().required("Street address is required"),
-  city: Yup.string().required("City is required"),
-  state: Yup.string().nullable(),
-  zip: Yup.string().required("Postal code is required").min(5),
-  country: Yup.string().required("Country is required")
-}
-```
-
-**Auto-Detection:**
-
-- Timezone automatically detected from country code
-- Uses `countries-and-timezones` package
+**Aktion:** Klicke auf **Starten**, um mit der Anmeldung zu beginnen.
 
 ---
 
-### Step 4: Parents/Guardians
+### Schritt 2: Allgemeine Daten
 
-**Component:** `src/components/organisms/forms/ParentsForm/index.tsx`
+In diesem Schritt gibst du deine persönlichen Grunddaten ein.
 
-**Purpose:** Collect parent/guardian contact information
+#### Pflichtfelder
 
-**Fields:**
+| Feld                    | Beschreibung             | Beispiel                     |
+| ----------------------- | ------------------------ | ---------------------------- |
+| Vorname\*               | Dein Rufname             | Max                          |
+| Nachname\*              | Dein Familienname        | Mustermann                   |
+| Geschlecht\*            | Wähle aus der Liste      | Männlich / Weiblich / Divers |
+| Geburtsdatum\*          | Dein Geburtstag          | 15.03.2008                   |
+| Geburtsort\*            | Stadt/Ort deiner Geburt  | Berlin                       |
+| Geburtsland\*           | Land deiner Geburt       | Deutschland                  |
+| Staatsangehörigkeit 1\* | Deine Staatsbürgerschaft | Deutsch                      |
 
-- Parent 1:
-  - Name (required)
-  - Relationship (required)
-  - Phone (required)
-  - Email (optional)
-- Parent 2:
-  - Name (optional)
-  - Relationship (optional)
-  - Phone (optional)
-  - Email (optional)
+#### Optionale Felder
 
-**Validation:**
+| Feld                  | Beschreibung                   | Beispiel   |
+| --------------------- | ------------------------------ | ---------- |
+| Geburtsname           | Falls abweichend vom Nachnamen | Müller     |
+| Religion              | Deine Religionszugehörigkeit   | Katholisch |
+| Staatsangehörigkeit 2 | Falls du eine zweite hast      | Türkisch   |
 
-```typescript
-{
-  parent1: Yup.object({
-    name: Yup.string().required("Parent 1 name is required"),
-    relationship: Yup.string().required("Relationship is required"),
-    phone: Yup.string().required("Phone is required"),
-    email: Yup.string().email().nullable()
-  }),
-  parent2: Yup.object({
-    name: Yup.string().nullable(),
-    relationship: Yup.string().nullable(),
-    phone: Yup.string().nullable(),
-    email: Yup.string().email().nullable()
-  })
-}
-```
+> **Wichtig:** Wenn du ein anderes Geburtsland als Deutschland auswählst, erscheint ein zusätzlicher Schritt „Herkunft" im Ablauf.
 
 ---
 
-### Step 5: Previous Education
+### Schritt 3: Herkunft (bedingt)
 
-**Component:** `src/components/organisms/forms/PreEducationForm/index.tsx`
+Dieser Schritt erscheint **nur**, wenn du im vorherigen Schritt ein anderes Geburtsland als Deutschland angegeben hast.
 
-**Purpose:** Collect previous school information
+#### Pflichtfelder
 
-**Fields:**
+| Feld              | Beschreibung                              | Beispiel |
+| ----------------- | ----------------------------------------- | -------- |
+| Herkunftsland\*   | Das Land, aus dem du kommst               | Türkei   |
+| Zuzugsjahr\*      | Jahr der Einreise nach Deutschland        | 2015     |
+| Familiensprache\* | Die Sprache, die zu Hause gesprochen wird | Türkisch |
 
-- Last School Name (required)
-- School Type (required)
-- Graduation Year (required)
-- Final Grade/GPA (optional)
-- Degree/Certificate (optional)
-
-**Validation:**
-
-```typescript
-{
-  lastSchoolName: Yup.string().required("Last school name is required"),
-  schoolType: Yup.string().required("School type is required"),
-  graduationYear: Yup.number().required("Graduation year is required").min(1950).max(new Date().getFullYear()),
-  finalGrade: Yup.string().nullable(),
-  degree: Yup.string().nullable()
-}
-```
+> **Hinweis:** Bei der Familiensprache kannst du je nach Einstellung der Schule auch einen eigenen Wert eingeben, falls deine Sprache nicht in der Liste ist.
 
 ---
 
-### Step 6: Training Program
+### Schritt 4: Adresse
 
-**Component:** `src/components/organisms/forms/TrainingForm/index.tsx`
+Hier gibst du deine aktuelle Wohnadresse und Kontaktdaten ein.
 
-**Purpose:** Select training program or class
+#### Adressdaten (alle Pflichtfelder)
 
-**Fields:**
+| Feld         | Beschreibung             | Beispiel     |
+| ------------ | ------------------------ | ------------ |
+| Straße\*     | Name der Straße          | Musterstraße |
+| Hausnummer\* | Deine Hausnummer         | 42a          |
+| PLZ\*        | Postleitzahl (5 Ziffern) | 12345        |
+| Ort\*        | Stadt oder Gemeinde      | Musterstadt  |
 
-- Program Type (required)
-- Vocational Training (checkbox)
-- Start Date (required)
-- Expected End Date (optional)
+#### Kontaktdaten
 
-**Validation:**
+| Feld     | Pflicht? | Beschreibung         | Beispiel                  |
+| -------- | -------- | -------------------- | ------------------------- |
+| E-Mail\* | Ja       | Deine E-Mail-Adresse | <max.mustermann@email.de> |
+| Mobil    | Nein     | Deine Handynummer    | +49 170 1234567           |
+| Telefon  | Nein     | Festnetznummer       | +49 30 1234567            |
 
-```typescript
-{
-  programType: Yup.string().required("Program type is required"),
-  isVocational: Yup.boolean(),
-  startDate: Yup.date().required("Start date is required"),
-  expectedEndDate: Yup.date().nullable().min(Yup.ref("startDate"))
-}
-```
-
-**Conditional Logic:**
-
-- If `isVocational` is checked → Show Step 7 (Company Contact)
-- If `isVocational` is unchecked → Skip Step 7
-
----
-
-### Step 7: Company Contact (Conditional)
-
-**Component:** `src/components/organisms/forms/CompanyContactForm/index.tsx`
-
-**Purpose:** Collect employer information for vocational students
-
-**Visibility:** Only shown if Step 6 indicates vocational training
-
-**Fields:**
-
-- Company Name (required)
-- Company Address (required)
-- Contact Person Name (required)
-- Contact Email (required)
-- Contact Phone (optional)
-
-**Validation:**
-
-```typescript
-{
-  companyName: Yup.string().required("Company name is required"),
-  companyAddress: Yup.string().required("Company address is required"),
-  contactName: Yup.string().required("Contact person name is required"),
-  contactEmail: Yup.string().email("Invalid email").required("Contact email is required"),
-  contactPhone: Yup.string().nullable()
-}
-```
-
----
-
-### Step 8: Summary Review
-
-**Component:** `src/components/organisms/forms/SummaryForm/index.tsx`
-
-**Purpose:** Review all entered information before submission
-
-**Display:**
-
-- Read-only view of all collected data
-- Grouped by section (General, Address, Parents, etc.)
-- "Edit" buttons to return to specific steps
-
-**Actions:**
-
-- "Edit Step X" → Navigate back to that step
-- "Submit" → Final submission
-
-**Validation:**
-
-- Comprehensive validation of all previous steps
-- Ensures no required fields are missing
-
----
-
-### Step 9: Completion
-
-**Component:** `src/components/organisms/forms/FormCompletion/index.tsx`
-
-**Purpose:** Confirmation and next steps
-
-**Display:**
-
-- Success message
-- Confirmation number
-- Next steps information
-- Download/print option for summary
-
-**Actions:**
-
-- "Download Summary" → PDF generation
-- "Close" → Exit onboarding
-
----
-
-## Form Validation
-
-### Validation Library
-
-Uses **Yup** for schema validation:
-
-```typescript
-// src/lib/validate/student.validate.ts
-import * as Yup from "yup";
-
-export const validateGeneralStudentData = Yup.object({
-  firstName: Yup.string().required("First name is required").min(2),
-  lastName: Yup.string().required("Last name is required").min(2),
-  dateOfBirth: Yup.date().required().max(new Date()),
-  // ... more fields
-});
-```
-
-### Real-Time Validation
-
-Formik provides real-time validation:
-
-```typescript
-<Formik
-  initialValues={initialValues}
-  validationSchema={validationSchema}
-  validateOnChange={true}
-  validateOnBlur={true}
-  onSubmit={handleSubmit}
+> **Format-Hinweise:**
 >
-  {/* Form fields */}
-</Formik>
-```
-
-### Error Display
-
-Errors shown below each field:
-
-```typescript
-import { TextField } from "formik-mui";
-
-<Field
-  component={TextField}
-  name="firstName"
-  label="First Name"
-  fullWidth
-  required
-/>
-// Formik automatically shows validation errors
-```
+> - PLZ muss genau 5 Ziffern haben
+> - Telefonnummern können mit +49 oder 0 beginnen
+> - E-Mail muss ein gültiges Format haben (mit @ und Domain)
 
 ---
 
-## Data Flow
+### Schritt 5: Ansprechpartner
 
-### 1. Initial State
+In diesem Schritt gibst du die Kontaktdaten deiner Eltern oder Erziehungsberechtigten an.
 
-When student accesses onboarding URL:
+#### Wichtig: Altersabhängige Anforderungen
 
-```typescript
-// Redux initial state
-student: {
-  currentStep: 0,
-  data: {},
-  loading: false,
-  error: null
-}
-```
+- **Minderjährige (unter 18 Jahren):** Mindestens ein Ansprechpartner ist **Pflicht**
+- **Volljährige (18 Jahre oder älter):** Ansprechpartner sind **optional**
 
-### 2. Step Progression
+Du kannst bis zu **3 Ansprechpartner** hinzufügen.
 
-On each "Next" button click:
+#### Felder pro Ansprechpartner
 
-```typescript
-// 1. Validate current step
-const isValid = await formik.validateForm();
+| Feld                       | Pflicht (Minderjährige) | Beschreibung                 |
+| -------------------------- | ----------------------- | ---------------------------- |
+| Art des Ansprechpartners\* | Ja                      | Mutter, Vater, Vormund, etc. |
+| Vorname\*                  | Ja                      | Vorname der Person           |
+| Nachname\*                 | Ja                      | Nachname der Person          |
+| Straße\*                   | Ja                      | Straße der Wohnadresse       |
+| Hausnummer\*               | Ja                      | Hausnummer                   |
+| PLZ\*                      | Ja                      | Postleitzahl                 |
+| Ort\*                      | Ja                      | Stadt                        |
+| Mobil                      | Nein                    | Handynummer                  |
+| Telefon                    | Nein                    | Festnetznummer               |
 
-if (isValid) {
-  // 2. Save data to Redux
-  dispatch(updateStudentData(formData));
+#### Ansprechpartner hinzufügen
 
-  // 3. Increment step
-  dispatch(setCurrentStep(currentStep + 1));
-}
-```
+1. Der erste Ansprechpartner ist bereits sichtbar
+2. Klicke auf **Ansprechpartner hinzufügen**, um weitere hinzuzufügen
+3. Klicke auf das **Papierkorb-Symbol**, um einen Ansprechpartner zu entfernen
 
-### 3. Final Submission
-
-On Step 8 "Submit":
-
-```typescript
-// 1. Compile all data from Redux
-const studentData = {
-  ...student.data,
-  status: "onboarded",
-};
-
-// 2. Send to API
-await studentService.update(studentId, studentData);
-
-// 3. Navigate to completion
-dispatch(setCurrentStep(9));
-```
-
-### Data Persistence
-
-- **Redux State**: All form data stored in Redux
-- **Redux Persist**: State persisted to localStorage
-- **Auto-Save**: Each step saves to Redux
-- **Final Submit**: Data sent to MongoDB via API
+> **Hinweis für Volljährige:** Du siehst einen Hinweis, dass die Angabe von Ansprechpartnern für dich optional ist. Du kannst diesen Schritt leer lassen.
 
 ---
 
-## Navigation
+### Schritt 6: Vorbildung
 
-### Navigation Controls
+Hier gibst du Informationen zu deiner schulischen Vorbildung an.
 
-Located in: `src/components/organisms/StepForm/index.tsx`
+#### Pflichtfelder
 
-```typescript
-<Box display="flex" justifyContent="space-between">
-  {/* Back Button */}
-  {currentStep > 0 && (
-    <GeneralButton
-      label="Back"
-      onAction={() => dispatch(setCurrentStep(currentStep - 1))}
-    />
-  )}
+| Feld               | Beschreibung                 | Beispiel                    |
+| ------------------ | ---------------------------- | --------------------------- |
+| Vorherige Schule\* | Name deiner letzten Schule   | Max-Mustermann-Gesamtschule |
+| Vorherige Stufe\*  | Letzte besuchte Klassenstufe | Klasse 10                   |
+| Schulform\*        | Art der vorherigen Schule    | Gesamtschule                |
 
-  {/* Next/Submit Button */}
-  <GeneralButton
-    label={currentStep === 8 ? "Submit" : "Next"}
-    onAction={formik.handleSubmit}
-    disabled={!formik.isValid}
-  />
-</Box>
-```
+#### Optionale Felder
 
-### Progress Indicator
+| Feld       | Beschreibung         | Beispiel           |
+| ---------- | -------------------- | ------------------ |
+| Abschlüsse | Erworbene Abschlüsse | Realschulabschluss |
 
-Shows current step and progress:
-
-```typescript
-// src/app/(home)/student/DynamicPageStepper.tsx
-<Stepper activeStep={currentStep} alternativeLabel>
-  {steps.map((step) => (
-    <Step key={step.id}>
-      <StepLabel icon={step.icon}>
-        {step.label}
-      </StepLabel>
-    </Step>
-  ))}
-</Stepper>
-```
-
-### Step Skipping
-
-- Steps can be skipped by clicking on completed steps in the stepper
-- Conditional steps (Step 7) are automatically skipped if not applicable
+> **Tipp:** Bei Abschlüssen kannst du je nach Einstellung auch eigene Werte eingeben, falls dein Abschluss nicht in der Liste ist.
 
 ---
 
-## Accessibility
+### Schritt 7: Berufsausbildung (bedingt)
 
-### Keyboard Navigation
+Dieser Schritt erscheint **nur**, wenn du einer **Berufsschulklasse** zugewiesen bist.
 
-- Tab through form fields
-- Enter to submit
-- Escape to cancel modals
+#### Ausbildungsdaten (alle Pflichtfelder)
 
-### Screen Reader Support
+| Feld               | Beschreibung                 | Beispiel                |
+| ------------------ | ---------------------------- | ----------------------- |
+| Beruf\*            | Dein Ausbildungsberuf        | Industriekaufmann/-frau |
+| Betriebseintritt\* | Datum des Ausbildungsbeginns | 01.08.2024              |
 
-- Proper ARIA labels
-- Form field descriptions
-- Error announcements
+#### Betriebsdaten (alle Pflichtfelder)
 
-### Visual Indicators
-
-- Required field markers (\*)
-- Error states with red borders
-- Success states with green checkmarks
-
----
-
-## Mobile Optimization
-
-### Responsive Design
-
-- Stepper switches to vertical on mobile
-- Form fields stack vertically
-- Touch-friendly buttons and inputs
-- Adaptive font sizes
-
-### Mobile-Specific Features
-
-- Date pickers use native controls
-- Dropdown selects optimized for touch
-- Back button always accessible
+| Feld           | Beschreibung                    | Beispiel              |
+| -------------- | ------------------------------- | --------------------- |
+| Betriebsname\* | Name deines Ausbildungsbetriebs | Muster GmbH           |
+| Straße\*       | Straße des Betriebs             | Industriestraße       |
+| Hausnummer\*   | Hausnummer                      | 10                    |
+| PLZ\*          | Postleitzahl des Betriebs       | 54321                 |
+| Ort\*          | Stadt des Betriebs              | Musterstadt           |
+| E-Mail\*       | E-Mail-Adresse des Betriebs     | <info@muster-gmbh.de> |
+| Telefon        | Telefonnummer des Betriebs      | +49 30 9876543        |
 
 ---
 
-## Testing
+### Schritt 8: Betriebskontakt (bedingt)
 
-### Unit Tests
+Dieser Schritt erscheint **nur** bei Berufsschulklassen und sammelt die Kontaktdaten deiner Ansprechpartner im Betrieb.
 
-Located in: `tests/unit/components/organisms/forms/`
+#### Ansprechpartner 1 (Pflicht)
 
-Test each form component:
+| Feld      | Beschreibung           | Beispiel                   |
+| --------- | ---------------------- | -------------------------- |
+| Anrede\*  | Herr, Frau oder Divers | Frau                       |
+| Name\*    | Vollständiger Name     | Maria Schmidt              |
+| Telefon\* | Telefonnummer          | +49 30 9876543             |
+| E-Mail\*  | E-Mail-Adresse         | <m.schmidt@muster-gmbh.de> |
 
-- Renders correctly
-- Validates fields
-- Handles submission
-- Shows errors
+#### Ansprechpartner 2 (Optional)
 
-### E2E Tests
+Du kannst einen zweiten Betriebskontakt hinzufügen, indem du auf **Ansprechpartner hinzufügen** klickst.
 
-Located in: `tests/e2e/student/onboarding/onboarding.spec.ts`
-
-Test complete flow:
-
-- Navigate through all steps
-- Fill out all required fields
-- Submit successfully
-- Verify data saved to database
+> **Wichtig:** Wenn du beim zweiten Ansprechpartner ein Feld ausfüllst, müssen alle Felder ausgefüllt werden.
 
 ---
 
-## Future Enhancements
+### Schritt 9: Vereinbarungen
 
-- **Save & Resume Later** - Allow partial completion
-- **File Uploads** - For documents (birth certificate, transcripts)
-- **Multi-Language** - Already has i18n, add more languages
-- **Email Notifications** - Confirmation emails at each stage
-- **SMS Verification** - Verify phone numbers
-- **Digital Signature** - For consent forms
+In diesem Schritt musst du verschiedenen Vereinbarungen und Datenschutzbestimmungen zustimmen.
+
+#### Typische Vereinbarungen
+
+- **Datenschutzbestimmungen** - Einwilligung zur Verarbeitung deiner Daten
+- **Schulordnung** - Anerkennung der Schulregeln
+- **Unterrichtsteilnahme** - Bestätigung der Teilnahme
+- **Personenabbildung** - Einwilligung zu Foto-/Videoaufnahmen
+- **Microsoft Teams** - Einwilligung zur Nutzung von Teams
+
+#### So funktioniert es
+
+1. Lies dir jede Vereinbarung durch
+2. Setze das Häkchen bei jeder Vereinbarung, der du zustimmst
+3. **Pflicht-Vereinbarungen** sind mit einem roten „Erforderlich"-Badge markiert – diese müssen akzeptiert werden
+4. **Optionale Vereinbarungen** können, müssen aber nicht akzeptiert werden
+
+> **Hinweis:** Die angezeigten Vereinbarungen können je nach Schule variieren.
+
+---
+
+### Schritt 10: Zusammenfassung
+
+In der Zusammenfassung siehst du alle eingegebenen Daten auf einen Blick.
+
+#### Daten prüfen
+
+Die Zusammenfassung zeigt alle Abschnitte als ausklappbare Bereiche:
+
+- **Allgemeine Informationen** - Name, Geburtsdaten, etc.
+- **Herkunft** - Nur wenn im Ablauf vorhanden
+- **Adresse** - Wohnadresse und Kontaktdaten
+- **Ansprechpartner** - Kontaktpersonen
+- **Vorbildung** - Schulische Vorbildung
+- **Berufsausbildung** - Nur bei Berufsschülern
+- **Betriebskontakt** - Nur bei Berufsschülern
+- **Vereinbarungen** - Akzeptierte Vereinbarungen
+
+#### Daten bearbeiten
+
+Wenn du einen Fehler entdeckst:
+
+1. Klicke auf das **Bearbeiten-Symbol** (Stift) neben dem jeweiligen Abschnitt
+2. Du wirst zum entsprechenden Schritt zurückgeführt
+3. Nimm deine Änderungen vor
+4. Klicke auf **Zurück zur Zusammenfassung**
+
+#### Bestätigung und Absenden
+
+1. Prüfe alle Daten sorgfältig
+2. Setze das Häkchen bei **„Ich bestätige, dass die angegebenen Daten korrekt sind"**
+3. Klicke auf **Absenden**
+
+> **Wichtig:** Nach dem Absenden können die Daten nur noch durch die Schule geändert werden. Prüfe daher alles genau!
+
+---
+
+### Schritt 11: Abschluss
+
+Geschafft! Du siehst eine Bestätigungsseite mit:
+
+- Einem grünen Häkchen
+- Der Nachricht „Anmeldung abgeschlossen"
+- Informationen zu den nächsten Schritten
+
+**Was passiert jetzt?**
+
+- Deine Daten wurden erfolgreich übermittelt
+- Die Schule wird deine Anmeldung bearbeiten
+- Bei Fragen oder Änderungen wende dich an deine Schule
+
+---
+
+## Navigation und Bedienung
+
+### Buttons und Steuerung
+
+| Button                         | Funktion                                          |
+| ------------------------------ | ------------------------------------------------- |
+| **Weiter**                     | Zum nächsten Schritt (nach Validierung)           |
+| **Zurück**                     | Zum vorherigen Schritt                            |
+| **Starten**                    | Beginnt die Anmeldung (nur Willkommen-Seite)      |
+| **Absenden**                   | Sendet die Anmeldung ab (nur Zusammenfassung)     |
+| **Zurück zur Zusammenfassung** | Erscheint beim Bearbeiten aus der Zusammenfassung |
+
+### Fortschrittsanzeige
+
+Am oberen Bildschirmrand siehst du eine Fortschrittsanzeige (Stepper):
+
+- **Aktueller Schritt** - Farbig hervorgehoben
+- **Abgeschlossene Schritte** - Mit Häkchen markiert
+- **Kommende Schritte** - Grau dargestellt
+
+> **Auf dem Smartphone:** Die Fortschrittsanzeige wird ausgeblendet, um Platz zu sparen. Du siehst stattdessen „Schritt X von Y".
+
+### Automatisches Speichern
+
+- Deine Daten werden **nach jedem Schritt** automatisch gespeichert
+- Du kannst den Browser schließen und später fortfahren
+- Bei der erneuten Anmeldung mit deinem Code startest du am letzten gespeicherten Schritt
+
+---
+
+## Häufige Fragen (FAQ)
+
+### Ich habe meinen Verifizierungscode vergessen. Was tun?
+
+Wende dich an deine Schule oder die Person, die dir den Code gegeben hat. Der Code kann nicht wiederhergestellt werden, aber die Schule kann dir einen neuen mitteilen.
+
+### Kann ich die Anmeldung später fortsetzen?
+
+Ja! Deine Daten werden nach jedem Schritt gespeichert. Wenn du dich erneut mit deinem Verifizierungscode anmeldest, kannst du dort weitermachen, wo du aufgehört hast.
+
+### Kann ich die Anmeldung auf einem anderen Gerät fortsetzen?
+
+Ja, das ist möglich. Melde dich einfach auf dem anderen Gerät mit deinem Verifizierungscode an. Du wirst zum letzten gespeicherten Schritt geführt.
+
+### Warum sehe ich nur 8 Schritte statt 11?
+
+Die Anzahl der Schritte hängt von deiner Situation ab:
+
+- **Herkunft-Schritt** erscheint nur, wenn dein Geburtsland nicht Deutschland ist
+- **Berufsausbildung** und **Betriebskontakt** erscheinen nur bei Berufsschulklassen
+
+### Warum kann ich nicht zum nächsten Schritt?
+
+Der „Weiter"-Button ist nur aktiv, wenn alle Pflichtfelder korrekt ausgefüllt sind. Prüfe:
+
+- Sind alle Felder mit \* ausgefüllt?
+- Ist das Format korrekt (z.B. E-Mail, PLZ)?
+- Wurden alle erforderlichen Vereinbarungen akzeptiert?
+
+Fehlende oder fehlerhafte Felder werden rot markiert.
+
+### Kann ich meine Daten nach dem Absenden noch ändern?
+
+Nein, nach dem Absenden ist die Anmeldung abgeschlossen. Wenn du einen Fehler bemerkst, wende dich an deine Schule. Die Schule kann deine Daten korrigieren.
+
+### Muss ich als Volljähriger auch Ansprechpartner angeben?
+
+Nein, für Volljährige (18 Jahre oder älter) ist die Angabe von Ansprechpartnern optional. Du siehst einen entsprechenden Hinweis im Formular.
+
+### Was bedeutet „Erforderlich" bei den Vereinbarungen?
+
+Vereinbarungen mit dem roten „Erforderlich"-Badge müssen akzeptiert werden, um die Anmeldung abzuschließen. Andere Vereinbarungen sind optional.
+
+### Funktioniert die Anmeldung auf dem Smartphone?
+
+Ja! Die Anmeldung ist für mobile Geräte optimiert. Die Darstellung passt sich automatisch an.
+
+> **Hinweis:** Drehe dein Smartphone ins Hochformat, falls du eine Meldung erhältst, dass das Querformat nicht unterstützt wird.
+
+---
+
+## Fehlerbehebung
+
+### Validierungsfehler
+
+Wenn ein Feld rot markiert ist, wurde ein Validierungsfehler erkannt:
+
+| Fehler                     | Ursache                    | Lösung                            |
+| -------------------------- | -------------------------- | --------------------------------- |
+| „Pflichtfeld"              | Feld ist leer              | Fülle das Feld aus                |
+| „Ungültiges E-Mail-Format" | E-Mail hat falsches Format | Prüfe auf @ und Domain (z.B. .de) |
+| „PLZ muss 5 Ziffern haben" | PLZ ist zu kurz/lang       | Gib genau 5 Ziffern ein           |
+| „Ungültiges Datum"         | Datum ist nicht korrekt    | Wähle ein gültiges Datum          |
+| „Telefonnummer ungültig"   | Format nicht erkannt       | Nutze Format: +49 123 456789      |
+
+### Technische Probleme
+
+**Seite lädt nicht:**
+
+- Prüfe deine Internetverbindung
+- Lade die Seite neu (F5 oder Browser-Refresh)
+- Versuche einen anderen Browser
+
+**Daten wurden nicht gespeichert:**
+
+- Stelle sicher, dass du auf „Weiter" geklickt hast
+- Daten werden erst beim Schrittwechsel gespeichert
+- Prüfe deine Internetverbindung
+
+**Fehlermeldung beim Absenden:**
+
+- Prüfe, ob alle Pflichtfelder ausgefüllt sind
+- Prüfe, ob alle erforderlichen Vereinbarungen akzeptiert wurden
+- Versuche es nach einigen Minuten erneut
+
+**„Bereits abgeschlossen"-Meldung:**
+
+- Deine Anmeldung wurde bereits erfolgreich durchgeführt
+- Wende dich an die Schule, falls du Änderungen benötigst
+
+### Browser-Empfehlungen
+
+Für die beste Erfahrung empfehlen wir:
+
+- Google Chrome (aktuellste Version)
+- Mozilla Firefox (aktuellste Version)
+- Microsoft Edge (aktuellste Version)
+- Safari (aktuellste Version)
+
+> **Tipp:** Halte deinen Browser immer aktuell und aktiviere JavaScript.
