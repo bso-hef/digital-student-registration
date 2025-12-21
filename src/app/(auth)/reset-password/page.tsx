@@ -17,7 +17,7 @@ import {
   PASSWORD_REGEX,
   RECOVERY_CODE_REGEX,
 } from "@/utils/validation.utils";
-import { ArrowBack } from "@mui/icons-material";
+import { ArrowBackRounded } from "@mui/icons-material";
 import { Alert, Box, TextField, Typography, styled } from "@mui/material";
 import { Field, Form, Formik } from "formik";
 import Link from "next/link";
@@ -198,7 +198,7 @@ export default function ResetPasswordPage() {
                 <BackToLoginContainer>
                   <StyledLink href="/login">
                     <BackToLoginTypography variant="body2" color="primary">
-                      <ArrowBack fontSize="small" />
+                      <ArrowBackRounded fontSize="small" />
                       {t("auth.resetPassword.backToLogin")}
                     </BackToLoginTypography>
                   </StyledLink>

@@ -34,6 +34,7 @@
     "of": "of",
     "none": "None",
     "loadingSettings": "Loading settings...",
+    "loading": "Loading...",
     "Submit": "Submit",
     "Submitting": "Submitting...",
     "Accepted": "Accepted",
@@ -46,6 +47,9 @@
     "male": "Male",
     "female": "Female",
     "diverse": "Diverse"
+  },
+  "classAutocomplete": {
+    "requiresEmployerInfo": "Requires employer information"
   },
   "error": {
     "Page not found": "Page not found",
@@ -179,7 +183,12 @@
       "parsingCSV": "Parsing CSV file...",
       "importingStudents": "Importing students...",
       "pleaseWait": "This may take a moment for large datasets",
-      "importing": "Importing..."
+      "importing": "Importing...",
+      "firstNameRequired": "First name is required",
+      "lastNameRequired": "Last name is required",
+      "dateOfBirthRequired": "Date of birth is required",
+      "classNameMissing": "Class is not assigned",
+      "employerMissing": "Employer information is missing"
     },
     "generateQrModal": {
       "creatingZip": "Creating ZIP...",
@@ -190,9 +199,14 @@
       "landscape": "Landscape",
       "filenameSchema": "Filename Schema",
       "filenameSchemaExample": "Example: {lastName}_{firstName}_{class}.pdf",
+      "availableOptions": "Available",
+      "filename": "Filename",
       "options": "Options",
       "showClassOnPdf": "Show class on PDF",
       "shortenIdInLink": "Shorten ID in link (first 8 characters)",
+      "includeWlan": "Include WiFi QR Code",
+      "includeWlanTooltip": "Add a QR code for the school WiFi network ({{ssid}})",
+      "wlanLabel": "School WiFi",
       "previewMock": "Preview (Mock):",
       "onboardingWizard": "Onboarding Wizard",
       "class": "Class:",
@@ -214,7 +228,60 @@
         "option2Step1": "Visit:",
         "option2Step2": "Enter your first name and last name",
         "option2Step3": "Enter your verification code:"
-      }
+      },
+      "newRegistration": {
+        "title": "Generate New Student Registration QR Code",
+        "description": "Create a QR code that allows anyone to start a new student registration.",
+        "pdfTitle": "New Student Registration",
+        "filename": "new_student_registration",
+        "filenameHelper": "Name for the generated PDF file",
+        "pdfInstructions": {
+          "title": "How to register as a new student:",
+          "option1Title": "Option 1: Scan the QR code",
+          "option1Text": "Please scan the QR code above with your smartphone camera to open the registration form directly.",
+          "option2Title": "Option 2: Manual entry",
+          "option2Step1": "Visit:",
+          "option2Step2": "Click on 'Create New Student' to start the registration process"
+        }
+      },
+      "includeClass": "Show class on PDF",
+      "shortenId": "Shorten ID in link",
+      "classTitle_one": "Generate QR Codes for {{count}} class",
+      "classTitle_other": "Generate QR Codes for {{count}} classes",
+      "loadingStudents": "Loading students...",
+      "noStudents": "No students in selected classes",
+      "totalStudents": "{{count}} students total",
+      "classCount": "{{count}} class(es)",
+      "includeCoverPages": "Include cover pages",
+      "includeCoverPagesTooltip": "Adds a page with the class name before each class"
+    },
+    "generateClassQrModal": {
+      "title": "Generate QR Codes for Classes",
+      "subtitle": "{{count}} classes selected",
+      "totalStudents": "{{count}} students total",
+      "loadingStudents": "Loading students...",
+      "loadError": "Failed to load students",
+      "noStudents": "No students in selected classes",
+      "exportMode": "Export Mode",
+      "zipMode": "ZIP (Separate Files)",
+      "combinedMode": "Combined PDF",
+      "coverPage": "Include cover pages",
+      "coverPageTooltip": "Adds a page with the class name before each class",
+      "numbering": "Include numbering",
+      "numberingTooltip": "Shows 'Student 1/n, 2/n, ...' on each page",
+      "preview": "Preview",
+      "coverPagePreview": "Cover page preview:",
+      "classes": "Classes:",
+      "files": "File(s):",
+      "studentCount": "{{count}} students",
+      "studentLabel": "Student",
+      "numberingPreview": "Numbering format:",
+      "downloadZip": "Download ZIP",
+      "downloadCombined": "Download PDF",
+      "creatingPdf": "Creating PDF...",
+      "progress": "Progress: {{progress}}%",
+      "schoolYear": "School Year {{year}}",
+      "coverPageLabel": "Cover Page"
     },
     "exportStudentData": {
       "title": "Export Student Data",
@@ -247,8 +314,10 @@
       "agreements": "Agreements"
     },
     "addClass": {
-      "title": "Add Class",
+      "title": "Import Classes",
+      "subtitle": "Add one or more classes",
       "subtitleSingle": "Create a single class",
+      "csvPreviewSubtitle": "Review and edit imported classes",
       "className": "Class Name",
       "classNamePlaceholder": "e.g. 11A, 12B, ...",
       "companyClass": "Company Class",
@@ -262,7 +331,22 @@
       "createClasses": "Create Class",
       "schoolYearFrom": "School Year From",
       "schoolYearTo": "School Year To",
-      "yearOrderError": "Must be after 'from'"
+      "yearOrderError": "Must be after 'from'",
+      "newClass": "New Class",
+      "deleteRow": "Delete",
+      "parsingCSV": "Parsing CSV...",
+      "importingClasses": "Importing classes...",
+      "pleaseWait": "Please wait...",
+      "validClasses": "valid",
+      "withWarnings": "with warnings",
+      "invalidClasses": "invalid",
+      "totalClasses": "{{count}} total",
+      "addAnotherClass": "Add Another Class",
+      "uploadDifferentCsv": "Upload Different CSV",
+      "uploadCsv": "Upload CSV",
+      "importing": "Importing...",
+      "importClasses": "Import {{count}} Classes",
+      "gradeMissing": "Grade is not set"
     },
     "addStudentsToClass": {
       "title": "Add Students to Class",
@@ -285,6 +369,59 @@
       "confirmText": "Creating a duplicate student will generate a new profile with separate credentials.",
       "cancel": "Cancel",
       "createAnyway": "Create Anyway"
+    },
+    "missingClasses": {
+      "title": "Classes Not Found",
+      "message": "The following classes from your CSV don't exist yet:",
+      "hint": "You can create these classes and import, or import students without class assignment.",
+      "createFirst": "Create Classes First",
+      "createAndImport": "Create Classes & Import",
+      "creating": "Creating Classes...",
+      "importAnyway": "Import Without Classes"
+    },
+    "importClassCSV": {
+      "title": "Import Classes from CSV",
+      "subtitle": "Review and import classes from your CSV file",
+      "validClasses": "valid",
+      "invalidClasses": "invalid",
+      "totalClasses": "Total: {{count}} classes",
+      "clickToExpand": "Click a row to expand and edit all fields",
+      "deleteRow": "Remove",
+      "parsingCSV": "Parsing CSV file...",
+      "importingClasses": "Importing classes...",
+      "pleaseWait": "This may take a moment",
+      "importing": "Importing...",
+      "importClasses": "Import {{count}} Classes",
+      "uploadCSV": "Upload CSV",
+      "uploadDifferentFile": "Upload Different File",
+      "noData": "No CSV Data",
+      "uploadToStart": "Upload a CSV file to get started"
+    },
+    "exportClassData": {
+      "title": "Export Classes",
+      "subtitle": "Export class data to CSV",
+      "exportAllTitle": "Export All Classes",
+      "exportSelectedTitle": "Export Selected Classes",
+      "exportAllDescription": "Export all classes in the system to a CSV file",
+      "exportSelectedDescription": "Export only the selected classes to a CSV file",
+      "classCount": "Number of classes to export",
+      "csvInfo": "The CSV file will include class name, school year, grade, vocational status, and active status",
+      "download": "Download CSV"
+    },
+    "quickManage": {
+      "title": "Quick Class Management",
+      "subtitle": "Quickly add or remove classes",
+      "addNewClass": "Add New Class",
+      "existingClasses": "Existing Classes",
+      "noClasses": "No classes yet",
+      "students": "students",
+      "deleteClass": "Delete class",
+      "confirmDeleteTitle": "Delete Class?",
+      "confirmDeleteMessage": "Are you sure you want to delete the class \"{{name}}\"? This action cannot be undone.",
+      "fillRequired": "Please enter a class name",
+      "classNameLabel": "Class",
+      "classNameHint": "e.g. 12InfoA, 7B, BFS...",
+      "gradeAutoExtract": "Grade is automatically extracted from class name (e.g. 12InfoA → Grade 12)"
     },
     "createStudent": {
       "title": "Create New Student Profile",
@@ -357,13 +494,16 @@
       "totalStudents": "Total Students",
       "totalClasses": "Total Classes",
       "unassignedStudents": "Unassigned Students",
-      "activeClasses": "Active Classes"
+      "activeClasses": "Active Classes",
+      "onboardingProgress": "Onboarding Progress"
     },
     "charts": {
       "registrationTrend": "Registration Trend (Last 7 Days)",
       "studentStatus": "Students by Status",
       "classDistribution": "Classes by Grade",
-      "systemMetrics": "System Metrics"
+      "systemMetrics": "System Metrics",
+      "gradeLabel": "Grade {{grade}}",
+      "noGrade": "No Grade"
     },
     "status": {
       "imported": "Created",
@@ -398,6 +538,18 @@
       "version": "Version",
       "architecture": "Architecture"
     },
+    "recentActivity": {
+      "title": "Recent Activity",
+      "onboardingComplete": "{{name}} completed onboarding",
+      "studentAdded": "{{name}} was added",
+      "studentImported": "{{count}} students imported",
+      "classChanged": "{{name}} moved to {{class}}",
+      "noActivity": "No recent activity",
+      "justNow": "Just now",
+      "minutesAgo": "{{count}}m ago",
+      "hoursAgo": "{{count}}h ago",
+      "daysAgo": "{{count}}d ago"
+    },
     "errors": {
       "loadFailed": "Failed to load dashboard data",
       "retry": "Retry"
@@ -411,11 +563,13 @@
     "general": {
       "title": "General Information",
       "schoolEntry": "School Entry Date",
+      "schoolEntryDate": "School Entry Date",
       "className": "Class Name",
       "personalInfo": "Personal Information",
       "firstName": "First Name",
       "lastName": "Last Name",
       "birthName": "Birth Name",
+      "name": "Name",
       "gender": "Gender",
       "birthInfo": "Birth Information",
       "birthDate": "Date of Birth",
@@ -460,6 +614,9 @@
       "contactPerson1": "Contact Person 1",
       "contactPerson2": "Contact Person 2",
       "contactPerson3": "Contact Person 3",
+      "contact1Title": "Contact Person 1",
+      "contact2Title": "Contact Person 2",
+      "contact3Title": "Contact Person 3",
       "addContact": "Add Contact Person",
       "addContactTooltip": "Add another contact person",
       "removeContact": "Remove Contact Person",
@@ -487,19 +644,31 @@
       "postalCode": "Postal Code",
       "city": "City",
       "phone": "Phone",
-      "email": "Email"
+      "email": "Email",
+      "companyAddress": "Company Address",
+      "companyPhone": "Company Phone",
+      "companyEmail": "Company Email"
     },
     "companyContact": {
       "salutation": "Salutation",
       "firstName": "First Name",
       "lastName": "Last Name",
       "phone": "Phone",
-      "contactPerson": "Company Contact Person"
+      "email": "Email",
+      "contactPerson": "Company Contact Person",
+      "contact1": "Contact Person 1",
+      "contact2": "Contact Person 2",
+      "contact1Title": "Contact Person 1",
+      "contact2Title": "Contact Person 2",
+      "addContact": "Add Contact Person",
+      "removeContact": "Remove Contact Person",
+      "name": "Name"
     },
     "agreements": {
       "title": "Agreements",
       "description": "Please read and accept the following agreements to continue with your registration.",
       "required": "This agreement is required",
+      "requiredBadge": "Required",
       "datenschutz": "Data Protection Agreement",
       "datenschutzDesc": "I consent to the processing of my personal data in accordance with the data protection policy.",
       "teilnahmeunterricht": "Class Participation Consent",
@@ -517,7 +686,8 @@
       "subtitle": "Complete your registration in {{count}} steps.",
       "paragraph1": "We'll guide you step by step through the registration.",
       "paragraph2": "Check your information and update anything that's incorrect.",
-      "paragraph3": "You can go back anytime to make changes."
+      "paragraph3": "You can go back anytime to make changes.",
+      "requiredFieldsHint": "* Required fields"
     },
     "summary": {
       "title": "Summary",
@@ -530,7 +700,8 @@
       "training": "Vocational Training",
       "companyContact": "Company Contact Person",
       "agreements": "Agreements",
-      "confirmationText": "I have read the summary and accept that the data is accurate"
+      "confirmationText": "I have read the summary and accept that the data is accurate",
+      "goBackToSummary": "Go back to summary"
     },
     "completion": {
       "title": "Enrollment Complete!",
@@ -786,8 +957,14 @@
       "companyClass": "Company Class",
       "isClassActive": "Active",
       "addClass": "Add Class",
+      "importClasses": "Import Classes",
       "deleteClasses": "Delete Classes",
       "deleteClassRequest": "Are you sure you want to delete the selected class(es)? This action cannot be undone.",
+      "importCSV": "Import CSV",
+      "exportCSV": "Export CSV",
+      "exportSuccess": "Classes exported successfully",
+      "generateQr": "Generate QR Codes",
+      "quickManage": "Quick Manage",
       "checkInActive": "Check-in active",
       "schoolYear": "School Year",
       "grade": "Grade",
@@ -850,7 +1027,19 @@
       "mobileBlocker": "Mobile Device Blocking",
       "mobileBlockerDescription": "Block mobile and tablet devices from accessing the admin area",
       "mobileBlockerEnabled": "Enabled",
-      "mobileBlockerDisabled": "Disabled"
+      "mobileBlockerDisabled": "Disabled",
+      "wlan": {
+        "title": "WLAN Configuration",
+        "description": "Configure the school WiFi network to include on QR code PDFs. Students can scan the WiFi QR code to connect to the network.",
+        "enabled": "Enable WLAN QR Code",
+        "ssid": "Network Name (SSID)",
+        "ssidPlaceholder": "Enter network name",
+        "password": "Password",
+        "securityType": "Security Type",
+        "noPassword": "Open (No Password)",
+        "hidden": "Hidden Network",
+        "securityWarning": "Note: The WiFi password will be visible in the generated PDFs. Only share these documents with trusted recipients."
+      }
     }
   },
   "audit": {
@@ -887,12 +1076,46 @@
       "partial": "Partial"
     },
     "descriptions": {
+      "createdStudents": "Created {{count}} student(s)",
+      "failedCreateStudents": "Failed to create students",
+      "updatedStudent": "Updated student: {{name}}",
+      "failedUpdateStudent": "Failed to update student",
+      "deletedStudents": "Deleted {{count}} student(s)",
+      "deletedStudent": "Deleted student: {{name}}",
+      "failedDeleteStudents": "Failed to delete students",
+      "failedDeleteStudent": "Failed to delete student",
+      "createdClasses": "Created {{count}} class(es)",
+      "failedCreateClasses": "Failed to create classes",
+      "updatedClass": "Updated class: {{name}}",
+      "failedUpdateClass": "Failed to update class",
+      "deletedClasses": "Deleted {{count}} class(es)",
+      "failedDeleteClasses": "Failed to delete classes",
+      "updatedGeneralSettings": "Updated general settings",
+      "failedUpdateGeneralSettings": "Failed to update general settings",
       "updatedAgreementSettings": "Updated agreement settings",
       "failedUpdateAgreementSettings": "Failed to update agreement settings",
+      "updatedOnboardingSettings": "Updated onboarding settings",
+      "failedUpdateOnboardingSettings": "Failed to update onboarding settings",
       "updatedProfile": "Updated user profile",
       "failedUpdateProfile": "Failed to update user profile",
       "changedPassword": "Changed account password",
-      "failedPasswordChange": "Failed to change password"
+      "failedPasswordChange": "Failed to change password",
+      "clearedAuditLogs": "Cleared {{count}} audit log(s)",
+      "failedClearAuditLogs": "Failed to clear audit logs"
+    },
+    "actions": {
+      "student.create": "Student Created",
+      "student.update": "Student Updated",
+      "student.delete": "Student Deleted",
+      "class.create": "Class Created",
+      "class.update": "Class Updated",
+      "class.delete": "Class Deleted",
+      "settings.update_general": "Settings Updated",
+      "settings.update_agreements": "Agreements Updated",
+      "settings.update_onboarding": "Onboarding Updated",
+      "auth.profile_update": "Profile Updated",
+      "auth.password_change": "Password Changed",
+      "system.clear_audit_logs": "Audit Logs Cleared"
     }
   },
   "auth": {

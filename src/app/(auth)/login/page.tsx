@@ -12,7 +12,7 @@ import GeneralButton from "@/components/atoms/buttons/GeneralButton";
 import { loginUser } from "@/store/actions/authActions";
 import { AppDispatch, RootState } from "@/store/store";
 import { EMAIL_REGEX } from "@/utils/validation.utils";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { VisibilityOffRounded, VisibilityRounded } from "@mui/icons-material";
 import {
   Alert,
   Box,
@@ -151,7 +151,11 @@ export default function LoginPage() {
                           onClick={() => setShowPassword(!showPassword)}
                           edge="end"
                         >
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                          {showPassword ? (
+                            <VisibilityOffRounded />
+                          ) : (
+                            <VisibilityRounded />
+                          )}
                         </IconButton>
                       </InputAdornment>
                     ),

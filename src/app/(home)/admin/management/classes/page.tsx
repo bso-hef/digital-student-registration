@@ -7,6 +7,8 @@ import ClassStatus from "@/components/atoms/status/ClassStatus";
 import AdminSettingsHeader from "@/components/molecules/AdminSettingsHeader";
 import AddClassModal from "@/components/organisms/modals/AddClassModal";
 import ConfirmationModal from "@/components/organisms/modals/ConfirmationModal";
+import GenerateQrModal from "@/components/organisms/modals/GenerateQrModal";
+import TeacherQuickManageModal from "@/components/organisms/modals/TeacherQuickManageModal";
 import DataTable from "@/components/organisms/tables/DataTable";
 import {
   addClass,
@@ -17,8 +19,19 @@ import {
 } from "@/store/actions/classActions";
 import { AppDispatch } from "@/store/store";
 import { ClassCreateInput, ClassInterface } from "@/types/class";
+import {
+  ParsedClass,
+  buildClassDataCsv,
+  downloadBlob,
+  parseClassCSVFile,
+} from "@/utils/classCSV.utils";
 import { filterClasses } from "@/utils/filter.utils";
+import { successNotification } from "@/utils/notification.utils";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
+import FileDownloadRoundedIcon from "@mui/icons-material/FileDownloadRounded";
+import QrCode2RoundedIcon from "@mui/icons-material/QrCode2Rounded";
+import TuneRoundedIcon from "@mui/icons-material/TuneRounded";
+import UploadFileRoundedIcon from "@mui/icons-material/UploadFileRounded";
 import { Box, styled } from "@mui/material";
 import { debounce, isString } from "lodash";
 import Link from "next/link";
@@ -63,6 +76,17 @@ const ClassManagementPage = () => {
   const [selectedItems, setSelectedItems] = useState<(string | number)[]>([]);
   const [clearSelected, setClearSelected] = useState(false);
 
+  // CSV Import state
+  const [csvData, setCsvData] = useState<ParsedClass[]>([]);
+  const [isParsingCSV, setIsParsingCSV] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
+
+  // Quick manage modal state
+  const [openQuickManageModal, setOpenQuickManageModal] = useState(false);
+
+  // Generate QR modal state
+  const [openGenerateQrModal, setOpenGenerateQrModal] = useState(false);
+
   useEffect(() => {
     dispatch(getClasses());
 
@@ -78,6 +102,9 @@ const ClassManagementPage = () => {
 
   const handleAddClassModalClose = useCallback(() => {
     setOpenClassAddModal(false);
+    setCsvData([]);
+    setIsParsingCSV(false);
+    setIsImporting(false);
   }, []);
 
   const handleDeleteClassModalOpen = useCallback(() => {
@@ -90,8 +117,11 @@ const ClassManagementPage = () => {
 
   const handleAddClass = useCallback(
     (classData: ClassCreateInput[]) => {
+      setIsImporting(true);
       dispatch(addClass(classData));
-      handleAddClassModalClose();
+      setTimeout(() => {
+        handleAddClassModalClose();
+      }, 500);
     },
     [dispatch, handleAddClassModalClose],
   );
@@ -188,12 +218,90 @@ const ClassManagementPage = () => {
     handleDeleteClassModalClose();
   }, [dispatch, handleDeleteClassModalClose, selectedItems, classes]);
 
+  // CSV Import handler - opens file picker
+  const handleUploadCSV = useCallback(() => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".csv,text/csv";
+    input.onchange = async (event: Event) => {
+      const file = (event.target as HTMLInputElement).files?.[0];
+      if (file) {
+        setIsParsingCSV(true);
+        // Open modal if not already open
+        if (!openClassAddModal) {
+          setOpenClassAddModal(true);
+        }
+        try {
+          const rows = await parseClassCSVFile(file);
+          if (rows && rows.length > 0) {
+            setCsvData(rows);
+          }
+        } finally {
+          setIsParsingCSV(false);
+        }
+      }
+    };
+    input.click();
+  }, [openClassAddModal]);
+
+  // Direct export - no modal
+  const handleExport = useCallback(() => {
+    const classesToExport =
+      selectedItems.length > 0
+        ? classes.filter((c: ClassInterface) =>
+            selectedItems.includes(c._id as string | number),
+          )
+        : classes;
+
+    const csvBlob = buildClassDataCsv(classesToExport);
+    const filename = `classes_export_${new Date().toISOString().slice(0, 10)}.csv`;
+    downloadBlob(csvBlob, filename);
+
+    successNotification(t("settings.manageClass.exportSuccess"));
+  }, [classes, selectedItems, t]);
+
+  // Quick manage handlers
+  const handleQuickManageModalOpen = useCallback(() => {
+    setOpenQuickManageModal(true);
+  }, []);
+
+  const handleQuickManageModalClose = useCallback(() => {
+    setOpenQuickManageModal(false);
+  }, []);
+
+  const handleQuickManageAddClass = useCallback(
+    (classData: ClassCreateInput[]) => {
+      dispatch(addClass(classData));
+    },
+    [dispatch],
+  );
+
+  const handleQuickManageDeleteClass = useCallback(
+    (ids: string[]) => {
+      dispatch(deleteClasses(ids));
+    },
+    [dispatch],
+  );
+
+  // Generate QR modal handlers
+  const handleGenerateQrModalOpen = useCallback(() => {
+    setOpenGenerateQrModal(true);
+  }, []);
+
+  const handleGenerateQrModalClose = useCallback(() => {
+    setOpenGenerateQrModal(false);
+  }, []);
+
   return (
     <Wrapper>
       <AddClassModal
         open={openClassAddModal}
         onClose={handleAddClassModalClose}
         onAddClass={handleAddClass}
+        onUploadCSV={handleUploadCSV}
+        csvData={csvData}
+        isParsingCSV={isParsingCSV}
+        isImporting={isImporting}
       />
       <ConfirmationModal
         open={openClassDeleteModal}
@@ -202,12 +310,52 @@ const ClassManagementPage = () => {
         title={`${t("settings.manageClass.deleteClasses")}?`}
         message={t("settings.manageClass.deleteClassRequest")}
       />
+      <TeacherQuickManageModal
+        open={openQuickManageModal}
+        onClose={handleQuickManageModalClose}
+        classes={classes}
+        onAddClass={handleQuickManageAddClass}
+        onDeleteClass={handleQuickManageDeleteClass}
+      />
+      <GenerateQrModal
+        open={openGenerateQrModal}
+        onClose={handleGenerateQrModalClose}
+        students={[]}
+        classMode={true}
+        selectedClassIds={selectedItems as string[]}
+        classes={classes}
+      />
       <AdminSettingsHeader
         title={t("navigation.classManagement")}
         onSearch={(value: string) => {
           handleSearchString(value);
         }}
       >
+        <GeneralButton
+          label={t("settings.manageClass.exportCSV")}
+          onAction={handleExport}
+          fullHeight={false}
+          fullWidth={false}
+          isPrimary={false}
+          startIcon={<FileDownloadRoundedIcon />}
+        />
+        <GeneralButton
+          label={t("settings.manageClass.generateQr")}
+          onAction={handleGenerateQrModalOpen}
+          fullHeight={false}
+          fullWidth={false}
+          isPrimary={false}
+          disabled={selectedItems.length === 0}
+          startIcon={<QrCode2RoundedIcon />}
+        />
+        <GeneralButton
+          label={t("settings.manageClass.quickManage")}
+          onAction={handleQuickManageModalOpen}
+          fullHeight={false}
+          fullWidth={false}
+          isPrimary={false}
+          startIcon={<TuneRoundedIcon />}
+        />
         <GeneralButton
           label={t("settings.manageClass.deleteClasses")}
           onAction={handleDeleteClassModalOpen}
@@ -218,10 +366,11 @@ const ClassManagementPage = () => {
           startIcon={<DeleteOutlineRoundedIcon />}
         />
         <GeneralButton
-          label={t("settings.manageClass.addClass")}
+          label={t("settings.manageClass.importClasses")}
           onAction={handleAddClassModalOpen}
           fullHeight={false}
           fullWidth={false}
+          startIcon={<UploadFileRoundedIcon />}
         />
       </AdminSettingsHeader>
       <StyledTableBox>

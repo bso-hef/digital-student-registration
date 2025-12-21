@@ -1,23 +1,34 @@
 "use client";
 
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
+import GeneralButton from "@/components/atoms/buttons/GeneralButton";
 import SmallIconButton from "@/components/atoms/buttons/SmallIconButton";
 import HealthIndicator from "@/components/atoms/dashboard/HealthIndicator";
 import MetricLabel from "@/components/atoms/dashboard/MetricLabel";
 import AdminSettingsHeader from "@/components/molecules/AdminSettingsHeader";
+import EnhancedCollapse from "@/components/molecules/EnhancedCollapse";
 import { getDashboardHealth } from "@/store/actions/dashboardActions";
 import { getSettings, updateSettings } from "@/store/actions/settingsActions";
 import { useAppDispatch, useAppSelector } from "@/store/store";
-import RefreshIcon from "@mui/icons-material/Refresh";
+import { WlanSettings } from "@/types/settings";
+import { applicationScrollbar } from "@/utils/styling.utils";
+import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
+import StorageRoundedIcon from "@mui/icons-material/StorageRounded";
+import VisibilityOffRoundedIcon from "@mui/icons-material/VisibilityOffRounded";
+import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
 import {
   Box,
-  Card,
-  CardContent,
   CircularProgress,
-  Divider,
+  FormControl,
   FormControlLabel,
+  IconButton,
+  InputAdornment,
+  InputLabel,
+  MenuItem,
+  Select,
   Switch,
+  TextField,
   Typography,
   styled,
 } from "@mui/material";
@@ -30,34 +41,16 @@ const Wrapper = styled(Box)(({ theme }) => ({
   justifyContent: "flex-start",
   width: "100%",
   height: "100%",
+  overflow: "hidden",
   color: theme.palette.text.default,
 }));
 
 const ContentWrapper = styled(Box)(({ theme }) => ({
   width: "100%",
+  margin: "0 auto",
   padding: theme.spacing(3),
-}));
-
-const StatusCard = styled(Card)(({ theme }) => ({
-  background: theme.palette.surface.interface.base,
-  border: `1px solid ${theme.palette.border.seperator}`,
-  borderRadius: theme.spacing(2),
-  boxShadow: "rgba(0, 0, 0, 0.05) 0px 4px 12px",
-  marginBottom: theme.spacing(3),
-}));
-
-const StatusCardContent = styled(CardContent)(({ theme }) => ({
-  padding: theme.spacing(3),
-  "&:last-child": {
-    paddingBottom: theme.spacing(3),
-  },
-}));
-
-const SectionTitle = styled(Typography)(({ theme }) => ({
-  fontSize: "1.25rem",
-  fontWeight: 700,
-  color: theme.palette.text.default,
-  marginBottom: theme.spacing(2),
+  overflowY: "auto",
+  ...applicationScrollbar(theme),
 }));
 
 const MetricsGrid = styled(Box)(({ theme }) => ({
@@ -89,11 +82,67 @@ const formatUptime = (seconds: number): string => {
   return `${minutes}m`;
 };
 
+const defaultWlanSettings: WlanSettings = {
+  enabled: false,
+  ssid: "",
+  password: "",
+  securityType: "WPA2",
+  hidden: false,
+};
+
 const AdminSystemPage = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { health, loading } = useAppSelector((state) => state.dashboard);
   const appSettings = useAppSelector((state) => state.appSettings.data);
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [localWlanSettings, setLocalWlanSettings] =
+    useState<WlanSettings>(defaultWlanSettings);
+  const [expandedSections, setExpandedSections] = useState({
+    mobileBlocker: true,
+    wlan: true,
+    overallStatus: true,
+    systemMetrics: true,
+    serverInfo: true,
+  });
+
+  const toggleSection = (section: keyof typeof expandedSections) => {
+    setExpandedSections((prev) => ({
+      ...prev,
+      [section]: !prev[section],
+    }));
+  };
+
+  const savedWlanSettings = appSettings?.system?.wlan;
+
+  // Sync local state when settings are loaded from server
+  useEffect(() => {
+    if (savedWlanSettings) {
+      setLocalWlanSettings(savedWlanSettings);
+    }
+  }, [savedWlanSettings]);
+
+  // Check if WLAN settings have been modified
+  const isWlanDirty = useMemo(() => {
+    if (!savedWlanSettings) {
+      // If no saved settings, check if local differs from defaults
+      return (
+        localWlanSettings.enabled !== defaultWlanSettings.enabled ||
+        localWlanSettings.ssid !== defaultWlanSettings.ssid ||
+        localWlanSettings.password !== defaultWlanSettings.password ||
+        localWlanSettings.securityType !== defaultWlanSettings.securityType ||
+        localWlanSettings.hidden !== defaultWlanSettings.hidden
+      );
+    }
+    return (
+      localWlanSettings.enabled !== savedWlanSettings.enabled ||
+      localWlanSettings.ssid !== savedWlanSettings.ssid ||
+      localWlanSettings.password !== savedWlanSettings.password ||
+      localWlanSettings.securityType !== savedWlanSettings.securityType ||
+      localWlanSettings.hidden !== savedWlanSettings.hidden
+    );
+  }, [localWlanSettings, savedWlanSettings]);
 
   const fetchHealth = useCallback(() => {
     dispatch(getDashboardHealth());
@@ -116,6 +165,26 @@ const AdminSystemPage = () => {
       updateSettings({
         system: {
           mobileBlockerEnabled: newValue,
+          wlan: savedWlanSettings,
+        },
+      }),
+    );
+  };
+
+  const handleWlanChange = (field: keyof WlanSettings, value: unknown) => {
+    setLocalWlanSettings((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleSaveWlan = () => {
+    dispatch(
+      updateSettings({
+        system: {
+          mobileBlockerEnabled:
+            appSettings?.system?.mobileBlockerEnabled ?? true,
+          wlan: localWlanSettings,
         },
       }),
     );
@@ -125,7 +194,9 @@ const AdminSystemPage = () => {
     <Wrapper>
       <AdminSettingsHeader title={t("navigation.systemSettings")}>
         <SmallIconButton
-          icon={loading ? <CircularProgress size={20} /> : <RefreshIcon />}
+          icon={
+            loading ? <CircularProgress size={20} /> : <RefreshRoundedIcon />
+          }
           onAction={fetchHealth}
           title={t("dashboard.actions.refresh")}
           placement="bottom"
@@ -136,67 +207,191 @@ const AdminSystemPage = () => {
       </AdminSettingsHeader>
 
       <ContentWrapper>
-        {/* Mobile Blocker Settings */}
-        <StatusCard>
-          <StatusCardContent>
-            <SectionTitle>{t("settings.system.mobileBlocker")}</SectionTitle>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              {t("settings.system.mobileBlockerDescription")}
-            </Typography>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={appSettings?.system?.mobileBlockerEnabled ?? true}
-                  onChange={handleMobileBlockerToggle}
-                  color="primary"
-                />
-              }
-              label={
-                appSettings?.system?.mobileBlockerEnabled
-                  ? t("settings.system.mobileBlockerEnabled")
-                  : t("settings.system.mobileBlockerDisabled")
-              }
-            />
-          </StatusCardContent>
-        </StatusCard>
+        <Box display="flex" flexDirection="column" gap={2}>
+          {/* Mobile Blocker Settings */}
+          <EnhancedCollapse
+            title={t("settings.system.mobileBlocker")}
+            subtitle={t("settings.system.mobileBlockerDescription")}
+            expanded={expandedSections.mobileBlocker}
+            onAction={() => toggleSection("mobileBlocker")}
+          >
+            <Box display="flex" justifyContent="flex-start">
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={appSettings?.system?.mobileBlockerEnabled ?? true}
+                    onChange={handleMobileBlockerToggle}
+                    color="primary"
+                  />
+                }
+                label={
+                  appSettings?.system?.mobileBlockerEnabled
+                    ? t("settings.system.mobileBlockerEnabled")
+                    : t("settings.system.mobileBlockerDisabled")
+                }
+                sx={{ ml: 0 }}
+              />
+            </Box>
+          </EnhancedCollapse>
 
-        {/* Overall Status */}
-        <StatusCard>
-          <StatusCardContent>
-            <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="space-between"
-              mb={2}
-            >
-              <SectionTitle sx={{ mb: 0 }}>
-                {t("dashboard.health.overallStatus")}
-              </SectionTitle>
-              {health && (
+          {/* WLAN Configuration */}
+          <EnhancedCollapse
+            title={t("settings.system.wlan.title")}
+            subtitle={t("settings.system.wlan.description")}
+            expanded={expandedSections.wlan}
+            onAction={() => toggleSection("wlan")}
+            headerAction={
+              <GeneralButton
+                label={t("general.Save")}
+                isPrimary={false}
+                disabled={!isWlanDirty}
+                onAction={handleSaveWlan}
+              />
+            }
+          >
+            <Box display="flex" justifyContent="flex-start" sx={{ mb: 2 }}>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={localWlanSettings.enabled}
+                    onChange={(e) =>
+                      handleWlanChange("enabled", e.target.checked)
+                    }
+                    color="primary"
+                  />
+                }
+                label={t("settings.system.wlan.enabled")}
+                sx={{ ml: 0 }}
+              />
+            </Box>
+
+            {localWlanSettings.enabled && (
+              <Box display="flex" flexDirection="column" gap={2.5} mt={1}>
+                <TextField
+                  label={t("settings.system.wlan.ssid")}
+                  value={localWlanSettings.ssid}
+                  onChange={(e) => handleWlanChange("ssid", e.target.value)}
+                  fullWidth
+                  size="small"
+                  placeholder={t("settings.system.wlan.ssidPlaceholder")}
+                />
+
+                <TextField
+                  label={t("settings.system.wlan.password")}
+                  type={showPassword ? "text" : "password"}
+                  value={localWlanSettings.password}
+                  onChange={(e) => handleWlanChange("password", e.target.value)}
+                  fullWidth
+                  size="small"
+                  slotProps={{
+                    input: {
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            onClick={() => setShowPassword(!showPassword)}
+                            edge="end"
+                            size="small"
+                          >
+                            {showPassword ? (
+                              <VisibilityOffRoundedIcon />
+                            ) : (
+                              <VisibilityRoundedIcon />
+                            )}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    },
+                  }}
+                />
+
+                <FormControl fullWidth size="small">
+                  <InputLabel>
+                    {t("settings.system.wlan.securityType")}
+                  </InputLabel>
+                  <Select
+                    value={localWlanSettings.securityType}
+                    label={t("settings.system.wlan.securityType")}
+                    onChange={(e) =>
+                      handleWlanChange("securityType", e.target.value)
+                    }
+                  >
+                    <MenuItem value="WPA">WPA</MenuItem>
+                    <MenuItem value="WPA2">WPA2</MenuItem>
+                    <MenuItem value="WPA3">WPA3</MenuItem>
+                    <MenuItem value="WEP">WEP</MenuItem>
+                    <MenuItem value="nopass">
+                      {t("settings.system.wlan.noPassword")}
+                    </MenuItem>
+                  </Select>
+                </FormControl>
+
+                <Box display="flex" justifyContent="flex-start">
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={localWlanSettings.hidden}
+                        onChange={(e) =>
+                          handleWlanChange("hidden", e.target.checked)
+                        }
+                        color="primary"
+                        size="small"
+                      />
+                    }
+                    label={t("settings.system.wlan.hidden")}
+                    sx={{ ml: 0 }}
+                  />
+                </Box>
+
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{
+                    mt: 1,
+                    p: 1.5,
+                    bgcolor: "action.hover",
+                    borderRadius: 1,
+                  }}
+                >
+                  {t("settings.system.wlan.securityWarning")}
+                </Typography>
+              </Box>
+            )}
+          </EnhancedCollapse>
+
+          {/* Overall Status */}
+          <EnhancedCollapse
+            title={t("dashboard.health.overallStatus")}
+            subtitle={
+              health?.status === "up"
+                ? t("dashboard.health.systemOperational")
+                : t("dashboard.health.systemDown")
+            }
+            expanded={expandedSections.overallStatus}
+            onAction={() => toggleSection("overallStatus")}
+            headerAction={
+              health && (
                 <HealthIndicator
                   status={health.status}
                   label={t(`dashboard.health.${health.status}`)}
                 />
-              )}
-            </Box>
-            <Typography variant="body2" color="text.secondary">
-              {health?.status === "up"
-                ? t("dashboard.health.systemOperational")
-                : t("dashboard.health.systemDown")}
-            </Typography>
-          </StatusCardContent>
-        </StatusCard>
-
-        {/* Database Status */}
-        <StatusCard>
-          <StatusCardContent>
-            <SectionTitle>{t("dashboard.health.databaseStatus")}</SectionTitle>
+              )
+            }
+          >
+            {/* Database Status */}
             <Box
               display="flex"
               alignItems="center"
               justifyContent="space-between"
+              sx={{
+                p: 1.5,
+                bgcolor: "action.hover",
+                borderRadius: 1,
+              }}
             >
-              <Typography variant="body1">MongoDB</Typography>
+              <Box display="flex" alignItems="center" gap={1}>
+                <StorageRoundedIcon fontSize="small" color="action" />
+                <Typography variant="body2">MongoDB</Typography>
+              </Box>
               {health && (
                 <HealthIndicator status={health.checks.mongo.status} />
               )}
@@ -210,13 +405,14 @@ const AdminSystemPage = () => {
                 {health.checks.mongo.error}
               </Typography>
             )}
-          </StatusCardContent>
-        </StatusCard>
+          </EnhancedCollapse>
 
-        {/* System Metrics */}
-        <StatusCard>
-          <StatusCardContent>
-            <SectionTitle>{t("dashboard.health.systemMetrics")}</SectionTitle>
+          {/* System Metrics */}
+          <EnhancedCollapse
+            title={t("dashboard.health.systemMetrics")}
+            expanded={expandedSections.systemMetrics}
+            onAction={() => toggleSection("systemMetrics")}
+          >
             <MetricsGrid>
               <MetricCard>
                 <MetricLabel
@@ -255,14 +451,14 @@ const AdminSystemPage = () => {
                 />
               </MetricCard>
             </MetricsGrid>
-          </StatusCardContent>
-        </StatusCard>
+          </EnhancedCollapse>
 
-        {/* Server Info */}
-        <StatusCard>
-          <StatusCardContent>
-            <SectionTitle>{t("dashboard.health.serverInfo")}</SectionTitle>
-            <Divider sx={{ mb: 2 }} />
+          {/* Server Info */}
+          <EnhancedCollapse
+            title={t("dashboard.health.serverInfo")}
+            expanded={expandedSections.serverInfo}
+            onAction={() => toggleSection("serverInfo")}
+          >
             <Box display="flex" flexDirection="column" gap={1.5}>
               <Box
                 display="flex"
@@ -313,8 +509,8 @@ const AdminSystemPage = () => {
                 </Typography>
               </Box>
             </Box>
-          </StatusCardContent>
-        </StatusCard>
+          </EnhancedCollapse>
+        </Box>
       </ContentWrapper>
     </Wrapper>
   );

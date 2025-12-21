@@ -34,6 +34,7 @@
     "of": "von",
     "none": "Keine Angabe",
     "loadingSettings": "Lade Einstellungen...",
+    "loading": "Laden...",
     "Submit": "Absenden",
     "Submitting": "Wird übermittelt...",
     "Accepted": "Akzeptiert",
@@ -46,6 +47,9 @@
     "male": "Männlich",
     "female": "Weiblich",
     "diverse": "Divers"
+  },
+  "classAutocomplete": {
+    "requiresEmployerInfo": "Erfordert Arbeitgeberinformationen"
   },
   "error": {
     "Page not found": "Seite nicht gefunden",
@@ -90,7 +94,7 @@
       "Origin": "Herkunft",
       "Address": "Adresse",
       "Legal Guardian": "Ansprechpartner",
-      "Pre Education": "Vorbildung",
+      "Pre Education": "Letzter Bildungsstand",
       "Training": "Ausbildung",
       "Company Contact": "Unternehmenskontakt",
       "Agreements": "Vereinbarungen",
@@ -168,7 +172,7 @@
       "schoolEntryDate": "Schuleintritt",
       "previousSchool": "Vorherige Schule",
       "previousSchoolType": "Schulform",
-      "degrees": "Abschlüsse",
+      "degrees": "Höchster bisheriger Abschluss",
       "companyName": "Firmenname",
       "companyAddress": "Firmenadresse",
       "contactName": "Ansprechpartner",
@@ -179,7 +183,12 @@
       "parsingCSV": "CSV-Datei wird verarbeitet...",
       "importingStudents": "Schüler werden importiert...",
       "pleaseWait": "Dies kann bei großen Datenmengen einen Moment dauern",
-      "importing": "Importiere..."
+      "importing": "Importiere...",
+      "firstNameRequired": "Vorname ist erforderlich",
+      "lastNameRequired": "Nachname ist erforderlich",
+      "dateOfBirthRequired": "Geburtsdatum ist erforderlich",
+      "classNameMissing": "Klasse ist nicht zugewiesen",
+      "employerMissing": "Arbeitgeberinformationen fehlen"
     },
     "generateQrModal": {
       "creatingZip": "Erzeuge ZIP...",
@@ -190,9 +199,14 @@
       "landscape": "Querformat",
       "filenameSchema": "Dateinamensschema",
       "filenameSchemaExample": "Beispiel: {nachname}_{vorname}_{klasse}.pdf",
+      "availableOptions": "Verfügbar",
+      "filename": "Dateiname",
       "options": "Optionen",
       "showClassOnPdf": "Klasse auf PDF anzeigen",
       "shortenIdInLink": "ID im Link kürzen (erste 8 Zeichen)",
+      "includeWlan": "WLAN-QR-Code einschließen",
+      "includeWlanTooltip": "QR-Code für das Schul-WLAN hinzufügen ({{ssid}})",
+      "wlanLabel": "Schul-WLAN",
       "previewMock": "Vorschau (Mock):",
       "onboardingWizard": "Onboarding-Assistent",
       "class": "Klasse:",
@@ -214,7 +228,60 @@
         "option2Step1": "Besuchen Sie:",
         "option2Step2": "Geben Sie Ihren Vor- und Nachnamen ein",
         "option2Step3": "Geben Sie Ihren Verifizierungscode ein:"
-      }
+      },
+      "newRegistration": {
+        "title": "QR-Code für Neuanmeldung erstellen",
+        "description": "Erstellen Sie einen QR-Code, mit dem sich neue Schüler anmelden können.",
+        "pdfTitle": "Neuanmeldung Schüler",
+        "filename": "neuanmeldung_schueler",
+        "filenameHelper": "Name für die generierte PDF-Datei",
+        "pdfInstructions": {
+          "title": "So melden Sie sich als neuer Schüler an:",
+          "option1Title": "Option 1: QR-Code scannen",
+          "option1Text": "Scannen Sie den QR-Code oben mit Ihrer Smartphone-Kamera, um das Anmeldeformular direkt zu öffnen.",
+          "option2Title": "Option 2: Manuelle Eingabe",
+          "option2Step1": "Besuchen Sie:",
+          "option2Step2": "Klicken Sie auf 'Neuen Schüler anlegen', um den Anmeldeprozess zu starten"
+        }
+      },
+      "includeClass": "Klasse auf PDF anzeigen",
+      "shortenId": "ID im Link kürzen",
+      "classTitle_one": "QR-Codes für {{count}} Klasse generieren",
+      "classTitle_other": "QR-Codes für {{count}} Klassen generieren",
+      "loadingStudents": "Lade Schüler...",
+      "noStudents": "Keine Schüler in den ausgewählten Klassen",
+      "totalStudents": "{{count}} Schüler gesamt",
+      "classCount": "{{count}} Klasse(n)",
+      "includeCoverPages": "Deckblätter einschließen",
+      "includeCoverPagesTooltip": "Fügt vor jeder Klasse eine Seite mit dem Klassennamen hinzu"
+    },
+    "generateClassQrModal": {
+      "title": "QR-Codes für Klassen generieren",
+      "subtitle": "{{count}} Klassen ausgewählt",
+      "totalStudents": "{{count}} Schüler gesamt",
+      "loadingStudents": "Lade Schüler...",
+      "loadError": "Fehler beim Laden der Schüler",
+      "noStudents": "Keine Schüler in den ausgewählten Klassen",
+      "exportMode": "Exportmodus",
+      "zipMode": "ZIP (Einzelne Dateien)",
+      "combinedMode": "Kombiniertes PDF",
+      "coverPage": "Deckblätter einschließen",
+      "coverPageTooltip": "Fügt vor jeder Klasse eine Seite mit dem Klassennamen hinzu",
+      "numbering": "Nummerierung einschließen",
+      "numberingTooltip": "Zeigt 'Schüler 1/n, 2/n, ...' auf jeder Seite",
+      "preview": "Vorschau",
+      "coverPagePreview": "Deckblatt-Vorschau:",
+      "classes": "Klassen:",
+      "files": "Datei(en):",
+      "studentCount": "{{count}} Schüler",
+      "studentLabel": "Schüler",
+      "numberingPreview": "Nummerierungsformat:",
+      "downloadZip": "ZIP herunterladen",
+      "downloadCombined": "PDF herunterladen",
+      "creatingPdf": "PDF wird erstellt...",
+      "progress": "Fortschritt: {{progress}}%",
+      "schoolYear": "Schuljahr {{year}}",
+      "coverPageLabel": "Deckblatt"
     },
     "exportStudentData": {
       "title": "Schülerdaten exportieren",
@@ -247,8 +314,10 @@
       "agreements": "Zustimmungen"
     },
     "addClass": {
-      "title": "Klasse hinzufügen",
+      "title": "Klassen importieren",
+      "subtitle": "Eine oder mehrere Klassen hinzufügen",
       "subtitleSingle": "Erstelle eine einzelne Klasse",
+      "csvPreviewSubtitle": "Importierte Klassen überprüfen und bearbeiten",
       "className": "Klassenname",
       "classNamePlaceholder": "z.B. 11A, 12B, ...",
       "companyClass": "Berufsklasse",
@@ -259,10 +328,25 @@
       "active": "Aktiv",
       "required": "Pflichtfeld",
       "onlyNumbers": "Nur Zahlen erlaubt",
-      "createClasses": "Klassen anlegen",
+      "createClasses": "Klasse anlegen",
       "schoolYearFrom": "Schuljahr von",
       "schoolYearTo": "Schuljahr bis",
-      "yearOrderError": "Das Endjahr muss größer als das Startjahr sein"
+      "yearOrderError": "Das Endjahr muss größer als das Startjahr sein",
+      "newClass": "Neue Klasse",
+      "deleteRow": "Löschen",
+      "parsingCSV": "CSV wird gelesen...",
+      "importingClasses": "Klassen werden importiert...",
+      "pleaseWait": "Bitte warten...",
+      "validClasses": "gültig",
+      "withWarnings": "mit Warnungen",
+      "invalidClasses": "ungültig",
+      "totalClasses": "{{count}} insgesamt",
+      "addAnotherClass": "Weitere Klasse hinzufügen",
+      "uploadDifferentCsv": "Andere CSV hochladen",
+      "uploadCsv": "CSV hochladen",
+      "importing": "Importiere...",
+      "importClasses": "{{count}} Klassen importieren",
+      "gradeMissing": "Jahrgang ist nicht festgelegt"
     },
     "addStudentsToClass": {
       "title": "Schüler zur Klasse hinzufügen",
@@ -285,6 +369,59 @@
       "confirmText": "Das Anlegen eines doppelten Schülers erstellt ein neues Profil mit separaten Zugangsdaten.",
       "cancel": "Abbrechen",
       "createAnyway": "Trotzdem erstellen"
+    },
+    "missingClasses": {
+      "title": "Klassen nicht gefunden",
+      "message": "Die folgenden Klassen aus Ihrer CSV existieren noch nicht:",
+      "hint": "Sie können diese Klassen erstellen und importieren, oder die Schüler ohne Klassenzuweisung importieren.",
+      "createFirst": "Klassen zuerst erstellen",
+      "createAndImport": "Klassen erstellen & importieren",
+      "creating": "Klassen werden erstellt...",
+      "importAnyway": "Ohne Klassen importieren"
+    },
+    "importClassCSV": {
+      "title": "Klassen aus CSV importieren",
+      "subtitle": "Überprüfen und importieren Sie Klassen aus Ihrer CSV-Datei",
+      "validClasses": "gültig",
+      "invalidClasses": "ungültig",
+      "totalClasses": "Gesamt: {{count}} Klassen",
+      "clickToExpand": "Klicken Sie auf eine Zeile um alle Felder zu bearbeiten",
+      "deleteRow": "Entfernen",
+      "parsingCSV": "CSV-Datei wird verarbeitet...",
+      "importingClasses": "Klassen werden importiert...",
+      "pleaseWait": "Dies kann einen Moment dauern",
+      "importing": "Importiere...",
+      "importClasses": "{{count}} Klassen importieren",
+      "uploadCSV": "CSV hochladen",
+      "uploadDifferentFile": "Andere Datei hochladen",
+      "noData": "Keine CSV-Daten",
+      "uploadToStart": "Laden Sie eine CSV-Datei hoch um zu beginnen"
+    },
+    "exportClassData": {
+      "title": "Klassen exportieren",
+      "subtitle": "Klassendaten als CSV exportieren",
+      "exportAllTitle": "Alle Klassen exportieren",
+      "exportSelectedTitle": "Ausgewählte Klassen exportieren",
+      "exportAllDescription": "Alle Klassen im System als CSV-Datei exportieren",
+      "exportSelectedDescription": "Nur die ausgewählten Klassen als CSV-Datei exportieren",
+      "classCount": "Anzahl der zu exportierenden Klassen",
+      "csvInfo": "Die CSV-Datei enthält Klassenname, Schuljahr, Jahrgang, Berufsklassen-Status und Aktivstatus",
+      "download": "CSV herunterladen"
+    },
+    "quickManage": {
+      "title": "Schnellverwaltung Klassen",
+      "subtitle": "Klassen schnell hinzufügen oder entfernen",
+      "addNewClass": "Neue Klasse hinzufügen",
+      "existingClasses": "Vorhandene Klassen",
+      "noClasses": "Noch keine Klassen vorhanden",
+      "students": "Schüler",
+      "deleteClass": "Klasse löschen",
+      "confirmDeleteTitle": "Klasse löschen?",
+      "confirmDeleteMessage": "Sind Sie sicher, dass Sie die Klasse \"{{name}}\" löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+      "fillRequired": "Bitte Klassennamen eingeben",
+      "classNameLabel": "Klasse",
+      "classNameHint": "z.B. 12InfoA, 7B, BFS...",
+      "gradeAutoExtract": "Jahrgang wird automatisch aus Klassenname extrahiert (z.B. 12InfoA → Jahrgang 12)"
     },
     "createStudent": {
       "title": "Neues Schülerprofil erstellen",
@@ -357,13 +494,16 @@
       "totalStudents": "Schüler gesamt",
       "totalClasses": "Klassen gesamt",
       "unassignedStudents": "Nicht zugeordnete Schüler",
-      "activeClasses": "Aktive Klassen"
+      "activeClasses": "Aktive Klassen",
+      "onboardingProgress": "Onboarding-Fortschritt"
     },
     "charts": {
       "registrationTrend": "Anmeldungstrend (letzte 7 Tage)",
       "studentStatus": "Schüler nach Status",
       "classDistribution": "Klassen nach Jahrgang",
-      "systemMetrics": "Systemmetriken"
+      "systemMetrics": "Systemmetriken",
+      "gradeLabel": "Klasse {{grade}}",
+      "noGrade": "Keine Klasse"
     },
     "status": {
       "imported": "Angelegt",
@@ -398,6 +538,18 @@
       "version": "Version",
       "architecture": "Architektur"
     },
+    "recentActivity": {
+      "title": "Letzte Aktivitäten",
+      "onboardingComplete": "{{name}} hat Onboarding abgeschlossen",
+      "studentAdded": "{{name}} wurde hinzugefügt",
+      "studentImported": "{{count}} Schüler importiert",
+      "classChanged": "{{name}} wurde zu {{class}} verschoben",
+      "noActivity": "Keine Aktivitäten",
+      "justNow": "Gerade eben",
+      "minutesAgo": "vor {{count}} Min.",
+      "hoursAgo": "vor {{count}} Std.",
+      "daysAgo": "vor {{count}} Tagen"
+    },
     "errors": {
       "loadFailed": "Laden der Dashboard-Daten fehlgeschlagen",
       "retry": "Erneut versuchen"
@@ -411,11 +563,13 @@
     "general": {
       "title": "Allgemeine Daten",
       "schoolEntry": "Eintritt Schule",
+      "schoolEntryDate": "Schuleintritt",
       "className": "Klassenname",
       "personalInfo": "Persönliche Daten",
       "firstName": "Vorname",
       "lastName": "Nachname",
       "birthName": "Geburtsname",
+      "name": "Name",
       "gender": "Geschlecht",
       "birthInfo": "Geburtsinformationen",
       "birthDate": "Geburtsdatum",
@@ -460,6 +614,9 @@
       "contactPerson1": "Ansprechpartner 1",
       "contactPerson2": "Ansprechpartner 2",
       "contactPerson3": "Ansprechpartner 3",
+      "contact1Title": "Ansprechpartner 1",
+      "contact2Title": "Ansprechpartner 2",
+      "contact3Title": "Ansprechpartner 3",
       "addContact": "Ansprechpartner hinzufügen",
       "addContactTooltip": "Einen weiteren Ansprechpartner hinzufügen",
       "removeContact": "Ansprechpartner entfernen",
@@ -470,11 +627,11 @@
       "previousSchool": "Vorherige Schule",
       "schoolType": "Schulform",
       "level": "Stufe",
-      "degrees": "Abschlüsse",
+      "degrees": "Höchster bisheriger Abschluss",
       "previousSchoolName": "Vorhergehende Schule",
       "previousLevel": "Vorhergehende Stufe",
       "previousSchoolType": "Vorhergehende Schulform",
-      "qualifications": "Abschlüsse"
+      "qualifications": "Höchster bisheriger Abschluss"
     },
     "training": {
       "profession": "Beruf",
@@ -487,19 +644,31 @@
       "postalCode": "PLZ",
       "city": "Ort",
       "phone": "Telefon",
-      "email": "E-Mail"
+      "email": "E-Mail",
+      "companyAddress": "Betriebsadresse",
+      "companyPhone": "Betriebstelefon",
+      "companyEmail": "Betriebs-E-Mail"
     },
     "companyContact": {
       "salutation": "Anrede",
       "firstName": "Vorname",
       "lastName": "Nachname",
       "phone": "Telefon",
-      "contactPerson": "Ansprechpartner im Betrieb"
+      "email": "E-Mail",
+      "contactPerson": "Ansprechpartner im Betrieb",
+      "contact1": "Ansprechpartner 1",
+      "contact2": "Ansprechpartner 2",
+      "contact1Title": "Ansprechpartner 1",
+      "contact2Title": "Ansprechpartner 2",
+      "addContact": "Ansprechpartner hinzufügen",
+      "removeContact": "Ansprechpartner entfernen",
+      "name": "Name"
     },
     "agreements": {
       "title": "Vereinbarungen",
       "description": "Bitte lesen und akzeptieren Sie die folgenden Vereinbarungen, um mit der Anmeldung fortzufahren.",
       "required": "Diese Vereinbarung ist erforderlich",
+      "requiredBadge": "Erforderlich",
       "datenschutz": "Datenschutzvereinbarung",
       "datenschutzDesc": "Ich willige in die Verarbeitung meiner personenbezogenen Daten gemäß der Datenschutzrichtlinie ein.",
       "teilnahmeunterricht": "Einwilligung zur Teilnahme am Unterricht",
@@ -517,7 +686,8 @@
       "subtitle": "Schließe deine Anmeldung in {{count}} Schritten ab.",
       "paragraph1": "Wir führen dich Schritt für Schritt durch die Anmeldung.",
       "paragraph2": "Überprüfe deine Daten und korrigiere, was nicht stimmt.",
-      "paragraph3": "Du kannst jederzeit zurückgehen und Änderungen vornehmen."
+      "paragraph3": "Du kannst jederzeit zurückgehen und Änderungen vornehmen.",
+      "requiredFieldsHint": "* Pflichtfelder"
     },
     "summary": {
       "title": "Zusammenfassung",
@@ -526,11 +696,12 @@
       "origin": "Herkunft und Einwanderung",
       "address": "Adresse und Kontakt",
       "contactPerson": "Ansprechpartner",
-      "education": "Vorbildung",
+      "education": "Letzter Bildungsstand",
       "training": "Ausbildung",
       "companyContact": "Ansprechpartner im Betrieb",
       "agreements": "Vereinbarungen",
-      "confirmationText": "Ich habe die Zusammenfassung gelesen und bestätige, dass die Angaben korrekt sind"
+      "confirmationText": "Ich habe die Zusammenfassung gelesen und bestätige, dass die Angaben korrekt sind",
+      "goBackToSummary": "Zurück zur Übersicht"
     },
     "completion": {
       "title": "Einschreibung abgeschlossen!",
@@ -755,9 +926,9 @@
       "previousSchool": "Vorherige Schule",
       "previousSchoolType": "Vorherige Schulform",
       "previousSchoolLevel": "Vorherige Stufe",
-      "degrees": "Abschlüsse",
+      "degrees": "Höchster bisheriger Abschluss",
       "currentEducation": "Aktuelle Ausbildung",
-      "previousEducation": "Vorbildung",
+      "previousEducation": "Letzter Bildungsstand",
       "vocationalTraining": "Berufliche Ausbildung",
       "profession": "Beruf",
       "trainingStartDate": "Ausbildungsbeginn",
@@ -786,8 +957,14 @@
       "companyClass": "Berufsklasse",
       "isClassActive": "Aktiv",
       "addClass": "Klasse hinzufügen",
+      "importClasses": "Klassen importieren",
       "deleteClasses": "Klassen löschen",
       "deleteClassRequest": "Sind Sie sicher, dass Sie die ausgewählten Klassen löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+      "importCSV": "CSV importieren",
+      "exportCSV": "CSV exportieren",
+      "exportSuccess": "Klassen erfolgreich exportiert",
+      "generateQr": "QR-Codes generieren",
+      "quickManage": "Schnellverwaltung",
       "checkInActive": "Check-in aktiv",
       "schoolYear": "Schuljahr",
       "grade": "Jahrgang",
@@ -850,7 +1027,19 @@
       "mobileBlocker": "Mobile Gerätesperre",
       "mobileBlockerDescription": "Mobile Geräte und Tablets vom Zugriff auf den Admin-Bereich blockieren",
       "mobileBlockerEnabled": "Aktiviert",
-      "mobileBlockerDisabled": "Deaktiviert"
+      "mobileBlockerDisabled": "Deaktiviert",
+      "wlan": {
+        "title": "WLAN-Konfiguration",
+        "description": "Konfigurieren Sie das Schul-WLAN für die QR-Code-PDFs. Schüler können den WLAN-QR-Code scannen, um sich mit dem Netzwerk zu verbinden.",
+        "enabled": "WLAN-QR-Code aktivieren",
+        "ssid": "Netzwerkname (SSID)",
+        "ssidPlaceholder": "Netzwerkname eingeben",
+        "password": "Passwort",
+        "securityType": "Sicherheitstyp",
+        "noPassword": "Offen (Kein Passwort)",
+        "hidden": "Verstecktes Netzwerk",
+        "securityWarning": "Hinweis: Das WLAN-Passwort ist in den generierten PDFs sichtbar. Teilen Sie diese Dokumente nur mit vertrauenswürdigen Empfängern."
+      }
     }
   },
   "audit": {
@@ -887,12 +1076,46 @@
       "partial": "Teilweise"
     },
     "descriptions": {
+      "createdStudents": "{{count}} Schüler erstellt",
+      "failedCreateStudents": "Fehler beim Erstellen der Schüler",
+      "updatedStudent": "Schüler aktualisiert: {{name}}",
+      "failedUpdateStudent": "Fehler beim Aktualisieren des Schülers",
+      "deletedStudents": "{{count}} Schüler gelöscht",
+      "deletedStudent": "Schüler gelöscht: {{name}}",
+      "failedDeleteStudents": "Fehler beim Löschen der Schüler",
+      "failedDeleteStudent": "Fehler beim Löschen des Schülers",
+      "createdClasses": "{{count}} Klasse(n) erstellt",
+      "failedCreateClasses": "Fehler beim Erstellen der Klassen",
+      "updatedClass": "Klasse aktualisiert: {{name}}",
+      "failedUpdateClass": "Fehler beim Aktualisieren der Klasse",
+      "deletedClasses": "{{count}} Klasse(n) gelöscht",
+      "failedDeleteClasses": "Fehler beim Löschen der Klassen",
+      "updatedGeneralSettings": "Allgemeine Einstellungen aktualisiert",
+      "failedUpdateGeneralSettings": "Fehler beim Aktualisieren der allgemeinen Einstellungen",
       "updatedAgreementSettings": "Vereinbarungseinstellungen aktualisiert",
       "failedUpdateAgreementSettings": "Aktualisierung der Vereinbarungseinstellungen fehlgeschlagen",
+      "updatedOnboardingSettings": "Onboarding-Einstellungen aktualisiert",
+      "failedUpdateOnboardingSettings": "Fehler beim Aktualisieren der Onboarding-Einstellungen",
       "updatedProfile": "Benutzerprofil aktualisiert",
       "failedUpdateProfile": "Fehler beim Aktualisieren des Benutzerprofils",
       "changedPassword": "Kontopasswort geändert",
-      "failedPasswordChange": "Fehler beim Ändern des Passworts"
+      "failedPasswordChange": "Fehler beim Ändern des Passworts",
+      "clearedAuditLogs": "{{count}} Audit-Protokoll(e) gelöscht",
+      "failedClearAuditLogs": "Fehler beim Löschen der Audit-Protokolle"
+    },
+    "actions": {
+      "student.create": "Schüler erstellt",
+      "student.update": "Schüler aktualisiert",
+      "student.delete": "Schüler gelöscht",
+      "class.create": "Klasse erstellt",
+      "class.update": "Klasse aktualisiert",
+      "class.delete": "Klasse gelöscht",
+      "settings.update_general": "Einstellungen aktualisiert",
+      "settings.update_agreements": "Vereinbarungen aktualisiert",
+      "settings.update_onboarding": "Onboarding aktualisiert",
+      "auth.profile_update": "Profil aktualisiert",
+      "auth.password_change": "Passwort geändert",
+      "system.clear_audit_logs": "Audit-Protokolle gelöscht"
     }
   },
   "auth": {

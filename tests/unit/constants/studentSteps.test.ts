@@ -376,8 +376,8 @@ describe("getActiveSteps", () => {
 
       const activeSteps = getActiveSteps(allSteps, studentData, currentClass);
 
-      // Empty string is not Germany, so OriginForm should show
-      expect(activeSteps.some((step) => step.id === 2)).toBe(true);
+      // Empty string means country not yet selected, so OriginForm should be hidden
+      expect(activeSteps.some((step) => step.id === 2)).toBe(false);
     });
 
     it("should handle undefined geburtsland", () => {
@@ -397,8 +397,8 @@ describe("getActiveSteps", () => {
 
       const activeSteps = getActiveSteps(allSteps, studentData, currentClass);
 
-      // Undefined is not Germany, so OriginForm should show
-      expect(activeSteps.some((step) => step.id === 2)).toBe(true);
+      // Undefined means country not yet selected, so OriginForm should be hidden
+      expect(activeSteps.some((step) => step.id === 2)).toBe(false);
     });
 
     it("should handle whitespace in country name", () => {

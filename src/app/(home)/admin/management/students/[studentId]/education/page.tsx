@@ -182,6 +182,7 @@ const EducationStudentSettingsTab = () => {
                           onChange={(newValue) =>
                             setFieldValue("schoolEntryDate", newValue)
                           }
+                          format="DD.MM.YYYY"
                           slotProps={{ textField: { fullWidth: true } }}
                         />
                       </LocalizationProvider>
@@ -255,6 +256,7 @@ const EducationStudentSettingsTab = () => {
                           onChange={(newValue) =>
                             setFieldValue("trainingStartDate", newValue)
                           }
+                          format="DD.MM.YYYY"
                           slotProps={{ textField: { fullWidth: true } }}
                         />
                       </LocalizationProvider>

@@ -1,5 +1,6 @@
 import type { Student } from "@/types/db";
 import type { StudentData } from "@/types/student.d";
+import { formatGermanDate, parseDate } from "@/utils/date.utils";
 
 export function mapFormDataToModel(
   formData: Partial<StudentData>,
@@ -11,10 +12,8 @@ export function mapFormDataToModel(
   if (formData.nachname) mapped.lastName = formData.nachname;
   if (formData.geburtsname) mapped.birthName = formData.geburtsname;
   if (formData.geburtsdatum) {
-    mapped.dateOfBirth =
-      typeof formData.geburtsdatum === "string"
-        ? new Date(formData.geburtsdatum)
-        : formData.geburtsdatum;
+    const parsed = parseDate(formData.geburtsdatum);
+    if (parsed) mapped.dateOfBirth = parsed;
   }
   if (formData.geschlecht) {
     const genderMap: { [key: string]: "male" | "female" | "diverse" } = {
@@ -68,10 +67,8 @@ export function mapFormDataToModel(
   }
 
   if (formData.eintrittschule) {
-    mapped.schoolEntryDate =
-      typeof formData.eintrittschule === "string"
-        ? new Date(formData.eintrittschule)
-        : formData.eintrittschule;
+    const parsed = parseDate(formData.eintrittschule);
+    if (parsed) mapped.schoolEntryDate = parsed;
   }
   if (formData.klassenname) mapped.currentClassName = formData.klassenname;
 
@@ -85,10 +82,8 @@ export function mapFormDataToModel(
 
   if (formData.beruf) mapped.profession = formData.beruf;
   if (formData.betriebEintritt) {
-    mapped.trainingStartDate =
-      typeof formData.betriebEintritt === "string"
-        ? new Date(formData.betriebEintritt)
-        : formData.betriebEintritt;
+    const parsed = parseDate(formData.betriebEintritt);
+    if (parsed) mapped.trainingStartDate = parsed;
   }
 
   if (formData.betriebName) {
@@ -102,11 +97,11 @@ export function mapFormDataToModel(
       ]
         .filter(Boolean)
         .join(" "),
-      contactName: [formData.betriebApVorname, formData.betriebApNachname]
-        .filter(Boolean)
-        .join(" "),
+      // Use betriebApName from CompanyContactForm
+      contactName: formData.betriebApName || "",
       contactEmail:
         formData.betriebEmail ||
+        formData.betriebApEmail ||
         ((formData as Record<string, unknown>).betriebMail as string) ||
         "",
       contactPhone:
@@ -115,6 +110,11 @@ export function mapFormDataToModel(
         formData.betriebApTelefon1 ||
         "",
       contactSalutation: formData.betriebApAnrede || "",
+      // Second contact (optional)
+      contact2Name: formData.betriebAp2Name || "",
+      contact2Email: formData.betriebAp2Email || "",
+      contact2Phone: formData.betriebAp2Telefon1 || "",
+      contact2Salutation: formData.betriebAp2Anrede || "",
       verified: false,
     };
   }
@@ -222,10 +222,7 @@ export function mapModelToFormData(
   if (student.lastName) mapped.nachname = student.lastName;
   if (student.birthName) mapped.geburtsname = student.birthName;
   if (student.dateOfBirth) {
-    mapped.geburtsdatum =
-      student.dateOfBirth instanceof Date
-        ? student.dateOfBirth.toISOString().split("T")[0]
-        : new Date(student.dateOfBirth).toISOString().split("T")[0];
+    mapped.geburtsdatum = formatGermanDate(student.dateOfBirth);
   }
 
   console.log("[mapModelToFormData] Mapped basic fields:", {
@@ -268,10 +265,7 @@ export function mapModelToFormData(
   }
 
   if (student.schoolEntryDate) {
-    mapped.eintrittschule =
-      student.schoolEntryDate instanceof Date
-        ? student.schoolEntryDate.toISOString().split("T")[0]
-        : new Date(student.schoolEntryDate).toISOString().split("T")[0];
+    mapped.eintrittschule = formatGermanDate(student.schoolEntryDate);
   }
   if (student.currentClassName) mapped.klassenname = student.currentClassName;
 
@@ -285,24 +279,48 @@ export function mapModelToFormData(
 
   if (student.profession) mapped.beruf = student.profession;
   if (student.trainingStartDate) {
-    mapped.betriebEintritt =
-      student.trainingStartDate instanceof Date
-        ? student.trainingStartDate.toISOString().split("T")[0]
-        : new Date(student.trainingStartDate).toISOString().split("T")[0];
+    mapped.betriebEintritt = formatGermanDate(student.trainingStartDate);
   }
 
   if (student.employer) {
     mapped.betriebName = student.employer.companyName || "";
 
-    mapped.betriebStraße = student.employer.address || "";
+    // Parse combined address back into separate fields
+    // Format: "street houseNr zip city" (e.g., "Musterstr 123 12345 Berlin")
+    if (student.employer.address) {
+      const parts = student.employer.address.split(" ");
+      // Try to find the 5-digit German zip code to split the address
+      const zipIndex = parts.findIndex((p) => /^\d{5}$/.test(p));
+      if (zipIndex > 0 && parts.length >= 4) {
+        // Assume house number is right before zip
+        const houseNrIndex = zipIndex - 1;
+        mapped.betriebStraße = parts.slice(0, houseNrIndex).join(" ");
+        mapped.betriebHausNr = parts[houseNrIndex];
+        mapped.betriebPlz = parts[zipIndex];
+        mapped.betriebOrt = parts.slice(zipIndex + 1).join(" ");
+      } else {
+        // Fallback: put everything in street
+        mapped.betriebStraße = student.employer.address;
+        mapped.betriebHausNr = "";
+        mapped.betriebPlz = "";
+        mapped.betriebOrt = "";
+      }
+    }
 
-    const nameParts = student.employer.contactName?.split(" ") || [];
-    mapped.betriebApVorname = nameParts[0] || "";
-    mapped.betriebApNachname = nameParts.slice(1).join(" ") || "";
+    // Set betriebApName for CompanyContactForm
+    mapped.betriebApName = student.employer.contactName || "";
 
     mapped.betriebEmail = student.employer.contactEmail || "";
     mapped.betriebTelefon1 = student.employer.contactPhone || "";
+    mapped.betriebApTelefon1 = student.employer.contactPhone || "";
+    mapped.betriebApEmail = student.employer.contactEmail || "";
     mapped.betriebApAnrede = student.employer.contactSalutation || "";
+
+    // Second contact (optional)
+    mapped.betriebAp2Name = student.employer.contact2Name || "";
+    mapped.betriebAp2Email = student.employer.contact2Email || "";
+    mapped.betriebAp2Telefon1 = student.employer.contact2Phone || "";
+    mapped.betriebAp2Anrede = student.employer.contact2Salutation || "";
   }
 
   if (student.contactPersons && student.contactPersons.length > 0) {

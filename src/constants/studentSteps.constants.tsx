@@ -102,11 +102,15 @@ export const getActiveSteps = (
 ): StepDef[] => {
   const isVocational = Boolean(currentClass?.isVocational);
 
-  // Check if student is from Germany (hide Origin form if true)
+  // Check if student is from Germany or country not yet selected (hide Origin form if true)
   // Normalize country value to handle both ISO codes ("DE") and full names ("Deutschland", "Germany")
   const country = (studentData.geburtsland || "").trim().toUpperCase();
-  const isFromGermany =
-    country === "DE" || country === "DEUTSCHLAND" || country === "GERMANY";
+  // Hide Origin step if country is empty (not yet selected) OR if from Germany
+  const shouldHideOrigin =
+    country === "" ||
+    country === "DE" ||
+    country === "DEUTSCHLAND" ||
+    country === "GERMANY";
 
   return allSteps.filter((step) => {
     // Filter vocational steps (Training & Company Contact)
@@ -114,9 +118,9 @@ export const getActiveSteps = (
       return isVocational;
     }
 
-    // Filter origin step (only show if NOT from Germany)
+    // Filter origin step (only show if explicitly non-German country selected)
     if (step.requiresNonGerman) {
-      return !isFromGermany;
+      return !shouldHideOrigin;
     }
 
     // Include all non-conditional steps

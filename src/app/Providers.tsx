@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 
+import { ThemedToaster } from "@/components/ThemedToaster";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { SessionProvider } from "next-auth/react";
@@ -27,7 +28,10 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         <PersistGate loading={null} persistor={persistor}>
           <I18nextProvider i18n={i18n}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <ThemeWrapper>{children}</ThemeWrapper>
+              <ThemeWrapper>
+                <ThemedToaster />
+                {children}
+              </ThemeWrapper>
             </LocalizationProvider>
           </I18nextProvider>
         </PersistGate>

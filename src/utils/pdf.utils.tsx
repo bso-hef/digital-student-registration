@@ -1,8 +1,13 @@
 import { Student as FullStudent } from "@/types/db";
+import { WlanSettings } from "@/types/settings";
 import i18next from "i18next";
 import { jsPDF } from "jspdf";
 
-import { makeQrDataUrl } from "./qr.utils";
+import {
+  makeQrDataUrl,
+  makeStudentQrDataUrl,
+  makeWlanQrDataUrl,
+} from "./qr.utils";
 
 export type Student = {
   _id: string;
@@ -22,6 +27,8 @@ export type PdfSettings = {
   wizardUrlTemplate: string; // z.B. WIZZARD_URL mit {short-id}
   locale?: string;
   hidePageLabel?: boolean; // Hide the page size label in actual PDF exports (keep in preview)
+  includeWlan?: boolean; // Include WLAN QR code on PDF
+  wlanSettings?: WlanSettings; // WLAN configuration
 };
 
 /**
@@ -40,6 +47,7 @@ function extractBaseUrl(wizardUrlTemplate: string): string {
 
 /**
  * Renders an instruction box on the PDF explaining how students can complete their registration.
+ * Optionally includes a WLAN QR code inside the instruction box on the left side.
  */
 function renderInstructionBox(
   doc: jsPDF,
@@ -50,12 +58,19 @@ function renderInstructionBox(
   verificationCode: string,
   baseUrl: string,
   t: (key: string) => string,
+  wlanQrDataUrl?: string,
 ): void {
   const boxPad = 4;
+  const lineHeight = 5;
+
+  // WLAN QR code dimensions (inside the box)
+  const wlanQrSize = wlanQrDataUrl ? 26 : 0;
+  const wlanInternalPad = wlanQrDataUrl ? wlanQrSize + 6 : 0;
+
+  // Calculate positions - box spans full width
   const boxX = pad;
   const boxY = startY + 4;
   const boxW = pageW - pad * 2;
-  const lineHeight = 5;
 
   // Calculate box height based on content
   const boxH = lineHeight * 8 + boxPad * 2;
@@ -65,10 +80,29 @@ function renderInstructionBox(
     return;
   }
 
-  // Draw light gray background box
+  // Draw light gray background box for instructions
   doc.setFillColor(245, 245, 245);
   doc.setDrawColor(220, 220, 220);
   doc.roundedRect(boxX, boxY, boxW, boxH, 2, 2, "FD");
+
+  // Render WLAN QR code inside the box on the left
+  if (wlanQrDataUrl) {
+    const wlanQrX = boxX + boxPad;
+    const wlanQrY = boxY + (boxH - wlanQrSize) / 2; // Center vertically
+
+    doc.addImage(
+      wlanQrDataUrl,
+      "PNG",
+      wlanQrX,
+      wlanQrY,
+      wlanQrSize,
+      wlanQrSize,
+    );
+  }
+
+  // Text content starts after WLAN QR (if present)
+  const textStartX = boxX + boxPad + wlanInternalPad;
+  const textMaxW = boxW - boxPad * 2 - wlanInternalPad - 4;
 
   let y = boxY + boxPad + 4;
 
@@ -76,7 +110,7 @@ function renderInstructionBox(
   doc.setFont("helvetica", "bold");
   doc.setFontSize(9);
   doc.setTextColor(0);
-  doc.text(t("modals.generateQrModal.pdfInstructions.title"), boxX + boxPad, y);
+  doc.text(t("modals.generateQrModal.pdfInstructions.title"), textStartX, y);
   y += lineHeight + 1;
 
   // Option 1
@@ -84,7 +118,7 @@ function renderInstructionBox(
   doc.setFontSize(8);
   doc.text(
     t("modals.generateQrModal.pdfInstructions.option1Title"),
-    boxX + boxPad,
+    textStartX,
     y,
   );
   y += lineHeight;
@@ -93,9 +127,9 @@ function renderInstructionBox(
   doc.setFontSize(8);
   const option1Lines = doc.splitTextToSize(
     t("modals.generateQrModal.pdfInstructions.option1Text"),
-    boxW - boxPad * 2 - 4,
+    textMaxW,
   );
-  doc.text(option1Lines, boxX + boxPad + 4, y);
+  doc.text(option1Lines, textStartX + 4, y);
   y += lineHeight * Math.max(option1Lines.length, 1) + 1;
 
   // Option 2
@@ -103,7 +137,7 @@ function renderInstructionBox(
   doc.setFontSize(8);
   doc.text(
     t("modals.generateQrModal.pdfInstructions.option2Title"),
-    boxX + boxPad,
+    textStartX,
     y,
   );
   y += lineHeight;
@@ -113,7 +147,7 @@ function renderInstructionBox(
   // Step 1: Visit URL
   doc.text(
     `1. ${t("modals.generateQrModal.pdfInstructions.option2Step1")} ${baseUrl}/student`,
-    boxX + boxPad + 4,
+    textStartX + 4,
     y,
   );
   y += lineHeight;
@@ -121,7 +155,7 @@ function renderInstructionBox(
   // Step 2: Enter name
   doc.text(
     `2. ${t("modals.generateQrModal.pdfInstructions.option2Step2")}`,
-    boxX + boxPad + 4,
+    textStartX + 4,
     y,
   );
   y += lineHeight;
@@ -130,14 +164,14 @@ function renderInstructionBox(
   doc.setFont("helvetica", "normal");
   doc.text(
     `3. ${t("modals.generateQrModal.pdfInstructions.option2Step3")} `,
-    boxX + boxPad + 4,
+    textStartX + 4,
     y,
   );
   // Add the code in bold
   const step3Text = `3. ${t("modals.generateQrModal.pdfInstructions.option2Step3")} `;
   const step3Width = doc.getTextWidth(step3Text);
   doc.setFont("helvetica", "bold");
-  doc.text(verificationCode, boxX + boxPad + 4 + step3Width, y);
+  doc.text(verificationCode, textStartX + 4 + step3Width, y);
 }
 
 export async function buildPdfForStudent(
@@ -176,7 +210,17 @@ export async function buildPdfForStudent(
   const qrSize = Math.min(isPortrait ? 45 : 35, contentH);
   const qrX = pad;
   const qrY = contentY;
-  const qrData = await makeQrDataUrl(wizUrl);
+
+  // Check if WLAN is enabled
+  const hasWlan =
+    settings.includeWlan &&
+    settings.wlanSettings?.enabled &&
+    settings.wlanSettings?.ssid;
+
+  // Use student icon QR when WLAN is present to differentiate
+  const qrData = hasWlan
+    ? await makeStudentQrDataUrl(wizUrl)
+    : await makeQrDataUrl(wizUrl);
   doc.addImage(qrData, "PNG", qrX, qrY, qrSize, qrSize);
 
   const textX = qrX + qrSize + 8;
@@ -238,6 +282,17 @@ export async function buildPdfForStudent(
   const urlLines = doc.splitTextToSize(wizUrl, textMaxW);
   doc.text(urlLines, textX, ty);
 
+  // Generate WLAN QR code if settings are provided
+  let wlanQrDataUrl: string | undefined;
+  if (hasWlan) {
+    wlanQrDataUrl = await makeWlanQrDataUrl(
+      settings.wlanSettings!.ssid,
+      settings.wlanSettings!.password,
+      settings.wlanSettings!.securityType,
+      settings.wlanSettings!.hidden,
+    );
+  }
+
   // Render instruction box below the QR code section
   const instructionStartY = qrY + qrSize + 2;
   const baseUrl = extractBaseUrl(settings.wizardUrlTemplate);
@@ -250,6 +305,7 @@ export async function buildPdfForStudent(
     s.verificationCode || "",
     baseUrl,
     t,
+    wlanQrDataUrl,
   );
 
   // Only show page label if not hidden (for preview purposes)
@@ -317,7 +373,17 @@ async function renderStudentQrContent(
   const qrSize = Math.min(isPortrait ? 45 : 35, contentH);
   const qrX = pad;
   const qrY = contentY;
-  const qrData = await makeQrDataUrl(wizUrl);
+
+  // Check if WLAN is enabled
+  const hasWlan =
+    settings.includeWlan &&
+    settings.wlanSettings?.enabled &&
+    settings.wlanSettings?.ssid;
+
+  // Use student icon QR when WLAN is present to differentiate
+  const qrData = hasWlan
+    ? await makeStudentQrDataUrl(wizUrl)
+    : await makeQrDataUrl(wizUrl);
   doc.addImage(qrData, "PNG", qrX, qrY, qrSize, qrSize);
 
   const textX = qrX + qrSize + 8;
@@ -379,6 +445,17 @@ async function renderStudentQrContent(
   const urlLines = doc.splitTextToSize(wizUrl, textMaxW);
   doc.text(urlLines, textX, ty);
 
+  // Generate WLAN QR code if settings are provided
+  let wlanQrDataUrl: string | undefined;
+  if (hasWlan) {
+    wlanQrDataUrl = await makeWlanQrDataUrl(
+      settings.wlanSettings!.ssid,
+      settings.wlanSettings!.password,
+      settings.wlanSettings!.securityType,
+      settings.wlanSettings!.hidden,
+    );
+  }
+
   // Render instruction box below the QR code section
   const instructionStartY = qrY + qrSize + 2;
   const baseUrl = extractBaseUrl(settings.wizardUrlTemplate);
@@ -391,6 +468,7 @@ async function renderStudentQrContent(
     s.verificationCode || "",
     baseUrl,
     t,
+    wlanQrDataUrl,
   );
 
   // Filename in bottom right
@@ -443,6 +521,245 @@ export async function buildCombinedQrPdf(
   return doc.output("blob");
 }
 
+export type NewRegistrationPdfSettings = {
+  pageSize: "A4" | "A5";
+  orientation: "portrait" | "landscape";
+  wizardUrlTemplate: string;
+  locale?: string;
+  includeWlan?: boolean;
+  wlanSettings?: WlanSettings;
+};
+
+/**
+ * Renders an instruction box for new student registration PDF.
+ * Similar to renderInstructionBox but without verification code steps.
+ * Optionally includes a WLAN QR code inside the instruction box on the left side.
+ */
+function renderNewRegistrationInstructionBox(
+  doc: jsPDF,
+  startY: number,
+  pageW: number,
+  pageH: number,
+  pad: number,
+  baseUrl: string,
+  t: (key: string) => string,
+  wlanQrDataUrl?: string,
+): void {
+  const boxPad = 4;
+  const lineHeight = 5;
+
+  // WLAN QR code dimensions (inside the box)
+  const wlanQrSize = wlanQrDataUrl ? 26 : 0;
+  const wlanInternalPad = wlanQrDataUrl ? wlanQrSize + 6 : 0;
+
+  // Calculate positions - box spans full width
+  const boxX = pad;
+  const boxY = startY + 4;
+  const boxW = pageW - pad * 2;
+
+  // Calculate box height based on content (fewer lines than student version)
+  const boxH = lineHeight * 6 + boxPad * 2;
+
+  // Don't render if it would go past the page
+  if (boxY + boxH > pageH - pad - 10) {
+    return;
+  }
+
+  // Draw light gray background box
+  doc.setFillColor(245, 245, 245);
+  doc.setDrawColor(220, 220, 220);
+  doc.roundedRect(boxX, boxY, boxW, boxH, 2, 2, "FD");
+
+  // Render WLAN QR code inside the box on the left
+  if (wlanQrDataUrl) {
+    const wlanQrX = boxX + boxPad;
+    const wlanQrY = boxY + (boxH - wlanQrSize) / 2; // Center vertically
+
+    doc.addImage(
+      wlanQrDataUrl,
+      "PNG",
+      wlanQrX,
+      wlanQrY,
+      wlanQrSize,
+      wlanQrSize,
+    );
+  }
+
+  // Text content starts after WLAN QR (if present)
+  const textStartX = boxX + boxPad + wlanInternalPad;
+  const textMaxW = boxW - boxPad * 2 - wlanInternalPad - 4;
+
+  let y = boxY + boxPad + 4;
+
+  // Title
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(9);
+  doc.setTextColor(0);
+  doc.text(
+    t("modals.generateQrModal.newRegistration.pdfInstructions.title"),
+    textStartX,
+    y,
+  );
+  y += lineHeight + 1;
+
+  // Option 1
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(8);
+  doc.text(
+    t("modals.generateQrModal.newRegistration.pdfInstructions.option1Title"),
+    textStartX,
+    y,
+  );
+  y += lineHeight;
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8);
+  const option1Lines = doc.splitTextToSize(
+    t("modals.generateQrModal.newRegistration.pdfInstructions.option1Text"),
+    textMaxW,
+  );
+  doc.text(option1Lines, textStartX + 4, y);
+  y += lineHeight * Math.max(option1Lines.length, 1) + 1;
+
+  // Option 2
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(8);
+  doc.text(
+    t("modals.generateQrModal.newRegistration.pdfInstructions.option2Title"),
+    textStartX,
+    y,
+  );
+  y += lineHeight;
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8);
+  // Step 1: Visit URL
+  doc.text(
+    `1. ${t("modals.generateQrModal.newRegistration.pdfInstructions.option2Step1")} ${baseUrl}/student`,
+    textStartX + 4,
+    y,
+  );
+  y += lineHeight;
+
+  // Step 2: Click to create
+  doc.text(
+    `2. ${t("modals.generateQrModal.newRegistration.pdfInstructions.option2Step2")}`,
+    textStartX + 4,
+    y,
+  );
+}
+
+/**
+ * Builds a PDF with a QR code for new student registration.
+ * This PDF links to the base /student page where users can create a new student.
+ */
+export async function buildNewRegistrationPdf(
+  settings: NewRegistrationPdfSettings,
+): Promise<Blob> {
+  const { locale = "en" } = settings;
+  const t = (key: string) => i18next.t(key, { lng: locale });
+
+  const isPortrait = settings.orientation === "portrait";
+  const doc = new jsPDF({
+    orientation: isPortrait ? "portrait" : "landscape",
+    unit: "mm",
+    format: settings.pageSize.toLowerCase(),
+  });
+
+  const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
+
+  const pad = 12;
+  const innerH = pageH - pad * 2;
+  const headerH = 10;
+  const footerH = 8;
+  const contentY = pad + headerH + 4;
+  const contentH = innerH - headerH - footerH - 6;
+
+  // Header
+  doc.setFontSize(11);
+  doc.setFont("helvetica");
+  doc.text(t("modals.generateQrModal.newRegistration.pdfTitle"), pad, pad + 7);
+
+  // QR code URL points to the base /student page
+  const baseUrl = extractBaseUrl(settings.wizardUrlTemplate);
+  const wizUrl = `${baseUrl}/student`;
+
+  const qrSize = Math.min(isPortrait ? 45 : 35, contentH);
+  const qrX = pad;
+  const qrY = contentY;
+  const qrData = await makeQrDataUrl(wizUrl);
+  doc.addImage(qrData, "PNG", qrX, qrY, qrSize, qrSize);
+
+  const textX = qrX + qrSize + 8;
+  const textMaxW = pageW - pad - textX;
+
+  // Title text
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(16);
+  doc.text(
+    t("modals.generateQrModal.newRegistration.pdfTitle"),
+    textX,
+    qrY + 6,
+    {
+      maxWidth: textMaxW,
+    },
+  );
+
+  // Description
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(11);
+  let ty = qrY + 16;
+  const descLines = doc.splitTextToSize(
+    t("modals.generateQrModal.newRegistration.description"),
+    textMaxW,
+  );
+  doc.text(descLines, textX, ty);
+  ty += 6 * descLines.length + 4;
+
+  // URL
+  doc.setTextColor(0);
+  doc.setFontSize(9);
+  const urlLines = doc.splitTextToSize(wizUrl, textMaxW);
+  doc.text(urlLines, textX, ty);
+
+  // Generate WLAN QR code if settings are provided
+  let wlanQrDataUrl: string | undefined;
+  if (
+    settings.includeWlan &&
+    settings.wlanSettings?.enabled &&
+    settings.wlanSettings?.ssid
+  ) {
+    wlanQrDataUrl = await makeWlanQrDataUrl(
+      settings.wlanSettings.ssid,
+      settings.wlanSettings.password,
+      settings.wlanSettings.securityType,
+      settings.wlanSettings.hidden,
+    );
+  }
+
+  // Render instruction box below the QR code section
+  const instructionStartY = qrY + qrSize + 2;
+  renderNewRegistrationInstructionBox(
+    doc,
+    instructionStartY,
+    pageW,
+    pageH,
+    pad,
+    baseUrl,
+    t,
+    wlanQrDataUrl,
+  );
+
+  // Filename in bottom right
+  const filename = t("modals.generateQrModal.newRegistration.filename");
+  doc.setFontSize(9);
+  doc.setTextColor(100);
+  doc.text(`${filename}.pdf`, pageW - pad, pageH - pad, { align: "right" });
+
+  return doc.output("blob");
+}
+
 export type StudentDataPdfSettings = {
   pageSize: "A4" | "A5";
   orientation: "portrait" | "landscape";
@@ -483,6 +800,29 @@ function formatDate(
   });
 }
 
+/**
+ * Converts a string to Title Case (each word capitalized).
+ * Excludes email addresses, phone numbers, and other non-name values.
+ */
+function toTitleCase(value: string | undefined | null): string | undefined {
+  if (!value) return undefined;
+  // Don't capitalize if it looks like an email, phone, or URL
+  if (
+    value.includes("@") ||
+    value.includes("://") ||
+    /^\+?\d[\d\s\-()]+$/.test(value)
+  ) {
+    return value;
+  }
+  return value
+    .split(" ")
+    .map((word) => {
+      if (word.length === 0) return word;
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    })
+    .join(" ");
+}
+
 function renderField(
   doc: jsPDF,
   label: string,
@@ -495,8 +835,10 @@ function renderField(
     return y;
   }
 
+  // Apply Title Case to the value for proper capitalization
+  const capitalizedValue = toTitleCase(value?.toString());
   const displayValue =
-    value && value.toString().trim() !== "" ? value.toString() : "—";
+    capitalizedValue && capitalizedValue.trim() !== "" ? capitalizedValue : "—";
 
   // Calculate 50/50 split
   const availableWidth =
@@ -525,11 +867,12 @@ function checkPageBreak(
   doc: jsPDF,
   currentY: number,
   layout: LayoutConfig,
-  requiredSpace: number = 30,
+  requiredSpace: number = 20,
 ): number {
   if (currentY + requiredSpace > layout.pageHeight - layout.bottomMargin) {
     doc.addPage();
-    return layout.contentStart;
+    // Use topMargin for subsequent pages (no header needed)
+    return layout.topMargin + 5;
   }
   return currentY;
 }
@@ -576,7 +919,7 @@ function renderGeneralSection(
   y = renderField(
     doc,
     t("onboarding.general.gender"),
-    student.gender,
+    student.gender ? t(`gender.${student.gender}`) : undefined,
     y,
     layout,
     includeEmptyFields,
@@ -935,12 +1278,13 @@ function renderVocationalSection(
   );
 
   if (student.employer) {
+    y += layout.sectionGap;
     y = checkPageBreak(doc, y, layout);
 
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(11);
-    doc.text(t("onboarding.training.company"), layout.leftMargin + 2, y);
-    y += 6;
+    doc.setFontSize(14);
+    doc.text(t("onboarding.training.company"), layout.leftMargin, y);
+    y += 8;
 
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
@@ -979,17 +1323,13 @@ function renderVocationalSection(
     );
 
     if (student.employer.contactName) {
-      y += 3;
+      y += layout.sectionGap;
       y = checkPageBreak(doc, y, layout);
 
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(11);
-      doc.text(
-        t("onboarding.summary.companyContact"),
-        layout.leftMargin + 2,
-        y,
-      );
-      y += 6;
+      doc.setFontSize(14);
+      doc.text(t("onboarding.summary.companyContact"), layout.leftMargin, y);
+      y += 8;
 
       doc.setFont("helvetica", "normal");
       doc.setFontSize(10);
@@ -1014,6 +1354,14 @@ function renderVocationalSection(
         doc,
         t("onboarding.companyContact.phone"),
         student.employer.contactPhone,
+        y,
+        layout,
+        includeEmptyFields,
+      );
+      y = renderField(
+        doc,
+        t("onboarding.companyContact.email"),
+        student.employer.contactEmail,
         y,
         layout,
         includeEmptyFields,
@@ -1081,7 +1429,7 @@ function renderAgreementsSection(
 
     // Render label (left 50%) without Unicode character
     doc.setFont("helvetica", "bold");
-    doc.text(`${label}:`, layout.leftMargin + 4, y);
+    doc.text(`${label}:`, layout.leftMargin, y);
 
     // Render status (right 50%) with visual distinction
     doc.setFont("helvetica", isAccepted ? "bold" : "normal");
@@ -1131,9 +1479,9 @@ export async function buildStudentDataPdf(
     leftMargin: 15,
     rightMargin: 15,
     topMargin: 15,
-    bottomMargin: 25,
+    bottomMargin: 15,
     contentStart: 38,
-    sectionGap: 10,
+    sectionGap: 8,
     fieldRowHeight: 7,
   };
 

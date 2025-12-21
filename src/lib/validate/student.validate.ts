@@ -334,7 +334,7 @@ export const createValidateStudentContactPersonData = (age: number) => {
   return validateStudentContactPersonData;
 };
 
-// Step 5: Vorbildung
+// Step 5: Letzter Bildungsstand
 export const validateStudentPreviousSchoolData = Yup.object({
   vorhergehendeSchule: Yup.string().required(
     "Vorhergehende Schule ist erforderlich",
@@ -373,12 +373,87 @@ export const createValidateStudentPreviousSchoolData = (
   });
 };
 
-// Step 6: Betrieb (Optional - Wenn admin klasse erstellt, dann checkbox ob Betrieb vorhanden oder nötig)
+// Step 6a: Training/Betrieb Info (Company information only - no contact person)
+// Used by TrainingForm
+export const validateStudentTrainingData = Yup.object({
+  beruf: Yup.string().required("Beruf ist erforderlich"),
+  betriebEintritt: Yup.mixed()
+    .nullable()
+    .test("valid-date", "Ungültiges Datum", (value) => {
+      if (!value) return false; // Required field
+      if (dayjs.isDayjs(value)) {
+        return value.isValid();
+      }
+      return false;
+    })
+    .required("Eintrittsdatum ist erforderlich"),
+  betriebName: Yup.string().required("Name des Betriebs ist erforderlich"),
+  betriebStraße: Yup.string().required("Straße ist erforderlich"),
+  betriebHausNr: Yup.string().required("Hausnummer ist erforderlich"),
+  betriebPlz: Yup.string()
+    .matches(/^\d{5}$/, "PLZ muss 5 Ziffern haben")
+    .required("PLZ ist erforderlich"),
+  betriebOrt: Yup.string().required("Ort ist erforderlich"),
+  betriebTelefon1: Yup.string()
+    .matches(/^\+?[0-9 ]{6,20}$/, "Ungültige Telefonnummer")
+    .nullable(),
+  betriebEmail: Yup.string()
+    .email("Ungültige E-Mail-Adresse")
+    .required("E-Mail ist erforderlich für Betriebe"),
+});
+
+// Dynamic version for TrainingForm with profession options
+export const createValidateStudentTrainingData = (
+  professionOptions: string[],
+  allowCustomProfession = true,
+) => {
+  const berufValidation = allowCustomProfession
+    ? Yup.string().required("Beruf ist erforderlich")
+    : Yup.string()
+        .oneOf(professionOptions, "Ungültiger Beruf")
+        .required("Beruf ist erforderlich");
+
+  return Yup.object({
+    beruf: berufValidation,
+    betriebEintritt: Yup.mixed()
+      .nullable()
+      .test("valid-date", "Ungültiges Datum", (value) => {
+        if (!value) return false; // Required field
+        if (dayjs.isDayjs(value)) {
+          return value.isValid();
+        }
+        return false;
+      })
+      .required("Eintrittsdatum ist erforderlich"),
+    betriebName: Yup.string().required("Name des Betriebs ist erforderlich"),
+    betriebStraße: Yup.string().required("Straße ist erforderlich"),
+    betriebHausNr: Yup.string().required("Hausnummer ist erforderlich"),
+    betriebPlz: Yup.string()
+      .matches(/^\d{5}$/, "PLZ muss 5 Ziffern haben")
+      .required("PLZ ist erforderlich"),
+    betriebOrt: Yup.string().required("Ort ist erforderlich"),
+    betriebTelefon1: Yup.string()
+      .matches(/^\+?[0-9 ]{6,20}$/, "Ungültige Telefonnummer")
+      .nullable(),
+    betriebEmail: Yup.string()
+      .email("Ungültige E-Mail-Adresse")
+      .required("E-Mail ist erforderlich für Betriebe"),
+  });
+};
+
+// Step 6b: Full Company Data (includes contact person)
 // Falls Betriebsangabe pflichtig ist, aber keiner existiert dann optional checkbox "Kein Betrieb vorhanden"
 export const validateStudentCompanyData = Yup.object({
   beruf: Yup.string().required("Beruf ist erforderlich"),
-  betriebEintritt: Yup.date()
-    .typeError("Ungültiges Datum")
+  betriebEintritt: Yup.mixed()
+    .nullable()
+    .test("valid-date", "Ungültiges Datum", (value) => {
+      if (!value) return false; // Required field
+      if (dayjs.isDayjs(value)) {
+        return value.isValid();
+      }
+      return false;
+    })
     .required("Eintrittsdatum ist erforderlich"),
   betriebName: Yup.string().required("Name des Betriebs ist erforderlich"),
   betriebStraße: Yup.string().required("Straße ist erforderlich"),
@@ -422,8 +497,15 @@ export const createValidateStudentCompanyData = (
 
   return Yup.object({
     beruf: berufValidation,
-    betriebEintritt: Yup.date()
-      .typeError("Ungültiges Datum")
+    betriebEintritt: Yup.mixed()
+      .nullable()
+      .test("valid-date", "Ungültiges Datum", (value) => {
+        if (!value) return false; // Required field
+        if (dayjs.isDayjs(value)) {
+          return value.isValid();
+        }
+        return false;
+      })
       .required("Eintrittsdatum ist erforderlich"),
     betriebName: Yup.string().required("Name des Betriebs ist erforderlich"),
     betriebStraße: Yup.string().required("Straße ist erforderlich"),
@@ -450,6 +532,80 @@ export const createValidateStudentCompanyData = (
     betriebAnsprechpartnerTel: Yup.string()
       .matches(/^\+?[0-9 ]{6,20}$/, "Ungültige Telefonnummer")
       .required("Telefonnummer ist erforderlich"),
+  });
+};
+
+// Step 7: Company Contact Person(s) - separate validation for CompanyContactForm
+// Contact 1 is always required, Contact 2 is conditional (all-or-nothing)
+export const createValidateStudentCompanyContactData = (
+  salutationOptions: string[],
+) => {
+  // Helper to check if any Contact 2 field has value
+  const hasAnyContact2Value = (parent: Record<string, unknown>) => {
+    return !!(
+      parent.betriebAp2Anrede ||
+      parent.betriebAp2Name ||
+      parent.betriebAp2Telefon1 ||
+      parent.betriebAp2Email
+    );
+  };
+
+  return Yup.object({
+    // Contact 1 - always required
+    betriebApAnrede: Yup.string()
+      .oneOf(salutationOptions, "Ungültige Anrede")
+      .required("Anrede ist erforderlich"),
+    betriebApName: Yup.string().required("Name ist erforderlich"),
+    betriebApTelefon1: Yup.string()
+      .matches(/^\+?[0-9 ]{6,20}$/, "Ungültige Telefonnummer")
+      .required("Telefonnummer ist erforderlich"),
+    betriebApEmail: Yup.string()
+      .email("Ungültige E-Mail-Adresse")
+      .required("E-Mail ist erforderlich"),
+
+    // Contact 2 - conditional (all required if any field filled)
+    betriebAp2Anrede: Yup.string().test(
+      "conditional-required",
+      "Anrede ist erforderlich",
+      function (value) {
+        if (hasAnyContact2Value(this.parent)) {
+          return !!value && value.trim() !== "";
+        }
+        return true;
+      },
+    ),
+    betriebAp2Name: Yup.string().test(
+      "conditional-required",
+      "Name ist erforderlich",
+      function (value) {
+        if (hasAnyContact2Value(this.parent)) {
+          return !!value && value.trim() !== "";
+        }
+        return true;
+      },
+    ),
+    betriebAp2Telefon1: Yup.string().test(
+      "conditional-required",
+      "Telefonnummer ist erforderlich",
+      function (value) {
+        if (hasAnyContact2Value(this.parent)) {
+          return !!value && /^\+?[0-9 ]{6,20}$/.test(value || "");
+        }
+        return true;
+      },
+    ),
+    betriebAp2Email: Yup.string().test(
+      "conditional-required",
+      "E-Mail ist erforderlich",
+      function (value) {
+        if (hasAnyContact2Value(this.parent)) {
+          // Check if value exists and is a valid email
+          if (!value || value.trim() === "") return false;
+          return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+        }
+        return true;
+      },
+    ),
   });
 };
 

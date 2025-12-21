@@ -18,7 +18,11 @@ import {
 } from "@/store/actions/authActions";
 import { AppDispatch, RootState } from "@/store/store";
 import { EMAIL_REGEX, PASSWORD_REGEX } from "@/utils/validation.utils";
-import { CheckCircle, ContentCopy, Download } from "@mui/icons-material";
+import {
+  CheckCircleRounded,
+  ContentCopyRounded,
+  DownloadRounded,
+} from "@mui/icons-material";
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 import {
   Alert,
@@ -592,14 +596,20 @@ export default function SetupPage() {
                               ? t("auth.setup.recovery.copied")
                               : t("auth.setup.recovery.copyButton")
                           }
-                          startIcon={copied ? <CheckCircle /> : <ContentCopy />}
+                          startIcon={
+                            copied ? (
+                              <CheckCircleRounded />
+                            ) : (
+                              <ContentCopyRounded />
+                            )
+                          }
                           isPrimary={false}
                           maxWidth="auto"
                         />
                         <GeneralButton
                           onAction={downloadRecoveryCode}
                           label={t("auth.setup.recovery.downloadButton")}
-                          startIcon={<Download />}
+                          startIcon={<DownloadRounded />}
                           isPrimary={false}
                           maxWidth="auto"
                         />

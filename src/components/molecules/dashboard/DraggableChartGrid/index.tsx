@@ -6,7 +6,7 @@ import StudentStatusChart from "@/components/organisms/dashboard/StudentStatusCh
 import {
   DashboardStats,
   GradeDistribution,
-  HealthReport,
+  RecentActivityItem,
   RegistrationTrendItem,
   StudentStatusBreakdown,
 } from "@/types/dashboard";
@@ -29,12 +29,13 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { Box } from "@mui/material";
 
-import SystemHealthWidget from "../SystemHealthWidget";
+import RecentActivityWidget from "../RecentActivityWidget";
 
 interface DraggableChartGridProps {
   stats: DashboardStats | null;
-  health: HealthReport | null;
   loading: boolean;
+  recentActivity: RecentActivityItem[];
+  activityLoading: boolean;
   order: string[];
   onReorder: (newOrder: string[]) => void;
 }
@@ -65,8 +66,9 @@ const SortableChartWrapper: React.FC<SortableChartWrapperProps> = ({
 
 const DraggableChartGrid: React.FC<DraggableChartGridProps> = ({
   stats,
-  health,
   loading,
+  recentActivity,
+  activityLoading,
   order,
   onReorder,
 }) => {
@@ -119,7 +121,12 @@ const DraggableChartGrid: React.FC<DraggableChartGridProps> = ({
         loading={loading}
       />
     ),
-    systemHealth: <SystemHealthWidget health={health} />,
+    recentActivity: (
+      <RecentActivityWidget
+        activities={recentActivity}
+        loading={activityLoading}
+      />
+    ),
   };
 
   return (

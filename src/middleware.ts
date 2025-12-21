@@ -13,8 +13,8 @@ export default auth((req) => {
   const { pathname } = req.nextUrl;
 
   // Get the base URL from environment or construct from request
-  // Use NEXT_PUBLIC_APP_URL to ensure consistent redirects with configured port
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || req.nextUrl.origin;
+  // Use NEXTAUTH_URL (runtime variable) instead of NEXT_PUBLIC_APP_URL (build-time)
+  const baseUrl = process.env.NEXTAUTH_URL || req.nextUrl.origin;
 
   // If setup is NOT complete
   if (!isSetupComplete) {

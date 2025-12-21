@@ -14,6 +14,7 @@ import {
   msToTime,
   removeCookie,
   setCookie,
+  toAppError,
   toLowerCase,
 } from "./general.utils";
 
@@ -275,10 +276,87 @@ describe("general.utils", () => {
       expect(getAvatarFullURL(null as unknown as string)).toBe("");
     });
 
+    it("should return data URL as-is", () => {
+      const dataUrl = "data:image/png;base64,iVBORw0KGgoAAAANS...";
+      expect(getAvatarFullURL(dataUrl)).toBe(dataUrl);
+    });
+
+    it("should return http/https URL as-is", () => {
+      expect(getAvatarFullURL("http://example.com/avatar.jpg")).toBe(
+        "http://example.com/avatar.jpg",
+      );
+      expect(getAvatarFullURL("https://example.com/avatar.jpg")).toBe(
+        "https://example.com/avatar.jpg",
+      );
+    });
+
     it("should return path as-is for relative paths", () => {
       expect(getAvatarFullURL("/path/to/avatar.jpg")).toBe(
         "/path/to/avatar.jpg",
       );
+    });
+  });
+
+  describe("toAppError", () => {
+    it("should convert Error instance to AppError", async () => {
+      const error = new Error("Test error message");
+      const result = await toAppError(error);
+      expect(result).toEqual({ message: "Test error message" });
+    });
+
+    it("should convert Response object to AppError with JSON details", async () => {
+      const mockJson = { error: "Detailed error" };
+      const response = new Response(JSON.stringify(mockJson), {
+        status: 400,
+        statusText: "Bad Request",
+      });
+
+      const result = await toAppError(response);
+      expect(result).toEqual({
+        message: "Bad Request",
+        statusCode: 400,
+        details: mockJson,
+      });
+    });
+
+    it("should handle Response without statusText", async () => {
+      // Response with empty body returns null from json()
+      const response = new Response("null", {
+        status: 500,
+        statusText: "",
+      });
+
+      const result = await toAppError(response);
+      expect(result).toEqual({
+        message: "Request failed",
+        statusCode: 500,
+        details: null,
+      });
+    });
+
+    it("should handle Response when json() throws", async () => {
+      // Response with invalid JSON body will throw when json() is called
+      const response = new Response("not valid json", {
+        status: 500,
+        statusText: "Internal Error",
+      });
+
+      const result = await toAppError(response);
+      expect(result).toEqual({
+        message: "Internal Error",
+        statusCode: 500,
+        details: null,
+      });
+    });
+
+    it("should return unknown error for other types", async () => {
+      const result = await toAppError("some string error");
+      expect(result).toEqual({ message: "An unknown error occurred" });
+    });
+
+    it("should handle null/undefined errors", async () => {
+      const result = await toAppError(null);
+      expect(result).toEqual({ message: "An unknown error occurred" });
     });
   });
 });

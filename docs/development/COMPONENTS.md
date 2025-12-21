@@ -20,13 +20,13 @@ Complete guide for developing components using Atomic Design pattern.
 
 The application uses **Atomic Design** methodology to organize components into a hierarchy:
 
-```
+```text
 Atoms → Molecules → Organisms → Templates → Pages
 ```
 
 ### Component Location
 
-```
+```text
 src/components/
 ├── atoms/          # Basic UI elements
 ├── molecules/      # Composed components
@@ -90,7 +90,7 @@ src/components/
 
 ### Standard Component Structure
 
-```
+```text
 ComponentName/
 ├── index.tsx               # Component implementation
 └── ComponentName.test.tsx  # Unit tests
@@ -154,7 +154,7 @@ export default GeneralButton;
 
 ---
 
-## Atoms
+## Atom
 
 ### Button Components
 
@@ -299,7 +299,7 @@ import ProfileAvatar from "@/components/atoms/ProfileAvatar";
 
 ---
 
-## Molecules
+## Molecule
 
 ### Header Components
 
@@ -360,7 +360,7 @@ import SystemHealthWidget from "@/components/molecules/dashboard/SystemHealthWid
 
 ---
 
-## Organisms
+## Organism
 
 ### Table Components
 

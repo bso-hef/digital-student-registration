@@ -10,6 +10,9 @@ const dashboardService = {
   getHealthLive: () => {
     return http.get("/api/health/live");
   },
+  getRecentActivity: () => {
+    return http.get("/api/dashboard/activity");
+  },
 };
 
 export default dashboardService;

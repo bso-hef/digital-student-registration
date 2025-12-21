@@ -19,7 +19,9 @@ function parseAppUrl(urlString: string | undefined): {
       port: parsed.port || (parsed.protocol === "https:" ? "443" : "80"),
     };
   } catch (error) {
-    console.warn(`Failed to parse NEXT_PUBLIC_APP_URL: ${url}. Using defaults.`);
+    console.warn(
+      `Failed to parse NEXT_PUBLIC_APP_URL: ${url}. Using defaults.`,
+    );
     return {
       protocol: "http",
       hostname: "localhost",

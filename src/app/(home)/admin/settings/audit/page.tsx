@@ -102,7 +102,7 @@ const AdminSettingsAuditPage = () => {
       dispatch(
         setAuditLogFilters({
           ...filters,
-          category: value || undefined,
+          category: value === "all" ? undefined : value,
         }),
       );
     },
@@ -115,7 +115,7 @@ const AdminSettingsAuditPage = () => {
       dispatch(
         setAuditLogFilters({
           ...filters,
-          status: value || undefined,
+          status: value === "all" ? undefined : value,
         }),
       );
     },
@@ -206,12 +206,12 @@ const AdminSettingsAuditPage = () => {
         <FiltersBox>
           <Box sx={{ minWidth: 200 }}>
             <GeneralDropdown
-              value={filters.category || ""}
+              value={filters.category || "all"}
               onChange={handleCategoryFilter}
               label={t("audit.filterByCategory")}
               size="small"
               options={[
-                { value: "", label: t("general.All") },
+                { value: "all", label: t("general.All") },
                 { value: "student", label: t("audit.category.student") },
                 { value: "class", label: t("audit.category.class") },
                 { value: "settings", label: t("audit.category.settings") },
@@ -223,12 +223,12 @@ const AdminSettingsAuditPage = () => {
 
           <Box sx={{ minWidth: 200 }}>
             <GeneralDropdown
-              value={filters.status || ""}
+              value={filters.status || "all"}
               onChange={handleStatusFilter}
               label={t("audit.filterByStatus")}
               size="small"
               options={[
-                { value: "", label: t("general.All") },
+                { value: "all", label: t("general.All") },
                 { value: "success", label: t("audit.status.success") },
                 { value: "failure", label: t("audit.status.failure") },
                 { value: "partial", label: t("audit.status.partial") },
@@ -239,7 +239,7 @@ const AdminSettingsAuditPage = () => {
 
         <DataTable
           headers={auditTableHeaders(t)}
-          data={formatAuditTableData(logs)}
+          data={formatAuditTableData(logs, t)}
           loading={loading}
           onClickRowItem={handleRowClick}
           dataSelection={true}

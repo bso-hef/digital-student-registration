@@ -9,6 +9,7 @@ import React, {
 import GeneralInput from "@/components/atoms/GeneralInput";
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
 import SmallIconButton from "@/components/atoms/buttons/SmallIconButton";
+import classService from "@/lib/services/classService";
 import { CreateStudentInput, StudentFormRow } from "@/types/student";
 import { ParsedStudent } from "@/utils/csv.utils";
 import { uuid_v4 } from "@/utils/string.utils";
@@ -23,6 +24,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { useTranslation } from "react-i18next";
 
 import GeneralModal from "../GeneralModal";
+import MissingClassesWarningModal from "../MissingClassesWarningModal";
 import CSVStudentRow from "./CSVStudentRow";
 
 const StyledForm = styled(Box)(({ theme }) => ({
@@ -82,12 +84,17 @@ const StyledLoadingOverlay = styled(Box)(({ theme }) => ({
   minHeight: 200,
 }));
 
-const StyledProgressBar = styled(LinearProgress)({
+const StyledProgressBar = styled(LinearProgress)(({ theme }) => ({
   width: "100%",
   maxWidth: 400,
   height: 8,
   borderRadius: 4,
-});
+  backgroundColor: theme.palette.grey[200],
+  "& .MuiLinearProgress-bar": {
+    borderRadius: 4,
+    backgroundColor: theme.palette.primary.main,
+  },
+}));
 
 type AddStudentModalProps = {
   open: boolean;
@@ -109,10 +116,15 @@ const AddStudentModal: React.FC<AddStudentModalProps> = ({
   isImporting = false,
 }) => {
   const { t } = useTranslation();
-  const isLoading = isParsingCSV || isImporting;
   const [state, setState] = useState<StudentFormRow[]>([]);
   const [editableCsvData, setEditableCsvData] = useState<ParsedStudent[]>([]);
   const [isFormValid, setIsFormValid] = useState(false);
+  const [missingClassesModalOpen, setMissingClassesModalOpen] = useState(false);
+  const [missingClasses, setMissingClasses] = useState<string[]>([]);
+  const [isCheckingClasses, setIsCheckingClasses] = useState(false);
+  const [isCreatingClasses, setIsCreatingClasses] = useState(false);
+
+  const isLoading = isParsingCSV || isImporting || isCheckingClasses;
 
   // Check if CSV data has comprehensive fields (more than just basic info)
   const isComprehensiveCSV = useMemo(() => {
@@ -272,14 +284,122 @@ const AddStudentModal: React.FC<AddStudentModalProps> = ({
     }
   }, [state, editableCsvData, isComprehensiveCSV]);
 
-  const handleAdd = useCallback(() => {
-    // If comprehensive CSV, pass the editable data instead of just the form state
+  // Actually perform the import
+  const performImport = useCallback(() => {
     if (isComprehensiveCSV && editableCsvData.length > 0) {
       onAddStudents(editableCsvData as unknown as CreateStudentInput[]);
     } else {
       onAddStudents(state);
     }
   }, [onAddStudents, state, isComprehensiveCSV, editableCsvData]);
+
+  // Handle add button - check for missing classes first
+  const handleAdd = useCallback(async () => {
+    // For comprehensive CSV, check if classes exist before importing
+    if (isComprehensiveCSV && editableCsvData.length > 0) {
+      // Extract unique class names from CSV data
+      const classNames = [
+        ...new Set(
+          editableCsvData
+            .map((s) => s.className?.trim())
+            .filter((name): name is string => !!name),
+        ),
+      ];
+
+      // If no class names in CSV, proceed directly
+      if (classNames.length === 0) {
+        performImport();
+        return;
+      }
+
+      try {
+        setIsCheckingClasses(true);
+        const response = await classService.checkClasses(classNames);
+        const { missing } = response.data;
+
+        if (missing.length > 0) {
+          // Show warning modal with missing classes
+          setMissingClasses(missing);
+          setMissingClassesModalOpen(true);
+        } else {
+          // All classes exist, proceed with import
+          performImport();
+        }
+      } catch (error) {
+        console.error("Failed to check classes:", error);
+        // On error, proceed with import anyway
+        performImport();
+      } finally {
+        setIsCheckingClasses(false);
+      }
+    } else {
+      // Simple form, no class checking needed
+      performImport();
+    }
+  }, [isComprehensiveCSV, editableCsvData, performImport]);
+
+  // Get default school year dates based on current date
+  const getDefaultSchoolYear = useCallback(() => {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth(); // 0-indexed, August = 7
+
+    // If we're in August or later, school year is current year to next year
+    // Otherwise, school year is previous year to current year
+    if (currentMonth >= 7) {
+      // August or later
+      return {
+        schoolYearFrom: new Date(currentYear, 7, 1), // August 1 of current year
+        schoolYearTo: new Date(currentYear + 1, 6, 31), // July 31 of next year
+      };
+    } else {
+      return {
+        schoolYearFrom: new Date(currentYear - 1, 7, 1), // August 1 of previous year
+        schoolYearTo: new Date(currentYear, 6, 31), // July 31 of current year
+      };
+    }
+  }, []);
+
+  // Handle "Create Classes and Import" action
+  const handleCreateClassesFirst = useCallback(async () => {
+    if (missingClasses.length === 0) {
+      performImport();
+      return;
+    }
+
+    try {
+      setIsCreatingClasses(true);
+      const { schoolYearFrom, schoolYearTo } = getDefaultSchoolYear();
+
+      // Create classes with default school year
+      const classesToCreate = missingClasses.map((name) => ({
+        name,
+        schoolYearFrom,
+        schoolYearTo,
+        grade: null,
+        isVocational: true, // Default to vocational since this is a vocational school context
+        requiresEmployerInfo: false,
+        active: true,
+      }));
+
+      await classService.create(classesToCreate);
+
+      // Close the missing classes modal and proceed with import
+      setMissingClassesModalOpen(false);
+      performImport();
+    } catch (error) {
+      console.error("Failed to create classes:", error);
+      // On error, keep the modal open so user can try again or import anyway
+    } finally {
+      setIsCreatingClasses(false);
+    }
+  }, [missingClasses, getDefaultSchoolYear, performImport]);
+
+  // Handle "Import Anyway" action
+  const handleImportAnyway = useCallback(() => {
+    setMissingClassesModalOpen(false);
+    performImport();
+  }, [performImport]);
 
   const handleDobChange = (id: string) => (value: Dayjs | null) => {
     setState((prev) =>
@@ -481,21 +601,31 @@ const AddStudentModal: React.FC<AddStudentModalProps> = ({
   );
 
   return (
-    <GeneralModal
-      open={open}
-      onCloseModal={onClose}
-      customTitle={t("modals.addStudent.title")}
-      subtitle={
-        isComprehensiveCSV
-          ? t("modals.addStudent.csvPreviewSubtitle")
-          : t("modals.addStudent.subtitle")
-      }
-      modalWidth={isComprehensiveCSV ? 1100 : 960}
-      modalMaxHeight={isComprehensiveCSV ? 700 : 600}
-      contentChildren={contentChildren}
-      actionsChildren={actionChildren}
-      maxWidth="xl"
-    />
+    <>
+      <GeneralModal
+        open={open}
+        onCloseModal={onClose}
+        customTitle={t("modals.addStudent.title")}
+        subtitle={
+          isComprehensiveCSV
+            ? t("modals.addStudent.csvPreviewSubtitle")
+            : t("modals.addStudent.subtitle")
+        }
+        modalWidth={isComprehensiveCSV ? 1100 : 960}
+        modalMaxHeight={isComprehensiveCSV ? 700 : 600}
+        contentChildren={contentChildren}
+        actionsChildren={actionChildren}
+        maxWidth="xl"
+      />
+      <MissingClassesWarningModal
+        open={missingClassesModalOpen}
+        onClose={() => setMissingClassesModalOpen(false)}
+        onCreateClasses={handleCreateClassesFirst}
+        onImportAnyway={handleImportAnyway}
+        missingClasses={missingClasses}
+        isCreatingClasses={isCreatingClasses}
+      />
+    </>
   );
 };
 

@@ -112,8 +112,23 @@ export const DASHBOARD_GRADIENTS = {
     light: "#52d9ff",
     dark: "#1eb8e6",
   },
-  CHART_PRIMARY: "#667eea",
-  CHART_SECONDARY: "#4fc3f7",
+  ONBOARDING_PROGRESS: {
+    gradient: "linear-gradient(135deg, #11998e 0%, #38ef7d 100%)",
+    solid: "#25c76b",
+    light: "#4de88d",
+    dark: "#1cb35f",
+  },
+  // Chart colors - distinct for each chart type
+  CHART_LINE: "#8b5cf6", // Purple - Registration Trend
+  CHART_BAR: "#14b8a6", // Teal - Class Distribution
+  // Status colors for pie chart - distinct from each other
+  STATUS_IMPORTED: "#3b82f6", // Blue - Created/Imported
+  STATUS_INVITED: "#f59e0b", // Amber/Orange - Invited
+  STATUS_ONBOARDED: "#22c55e", // Green - Onboarded/Enrolled
+  STATUS_OTHER: "#6b7280", // Gray - Other
+  // Legacy - keep for backwards compatibility
+  CHART_PRIMARY: "#8b5cf6",
+  CHART_SECONDARY: "#3b82f6",
   CHART_ACCENT: "#f093fb",
-  CHART_SUCCESS: "#27cfff",
+  CHART_SUCCESS: "#22c55e",
 };

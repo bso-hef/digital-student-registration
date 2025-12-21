@@ -23,6 +23,15 @@ export const setCurrentStudentOnboardingStep =
     });
   };
 
+export const setEditingFromSummary =
+  (isEditing: boolean): AppThunk =>
+  (dispatch) => {
+    dispatch({
+      type: TYPES.SET_EDITING_FROM_SUMMARY,
+      payload: isEditing,
+    });
+  };
+
 export const getStudents = (): AppThunk => async (dispatch) => {
   dispatch({ type: TYPES.GET_STUDENTS_REQUEST });
   try {

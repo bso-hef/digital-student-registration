@@ -31,6 +31,7 @@ export async function GET() {
       totalClasses,
       unassignedStudents,
       activeClasses,
+      onboardedStudents,
       studentsByStatus,
       classesByGrade,
       recentStudents,
@@ -46,6 +47,9 @@ export async function GET() {
 
       // Active classes
       Class.countDocuments({ active: true }),
+
+      // Onboarded students count
+      Student.countDocuments({ status: "onboarded" }),
 
       // Students grouped by status
       Student.aggregate([
@@ -118,10 +122,10 @@ export async function GET() {
       }
     });
 
-    // Format grade distribution
+    // Format grade distribution - return raw grade values for i18n on frontend
     const gradeDistribution = classesByGrade.map(
       (item: { _id: number | null; count: number }) => ({
-        grade: item._id !== null ? `Klasse ${item._id}` : "Keine Klasse",
+        grade: item._id,
         count: item.count,
       }),
     );
@@ -143,12 +147,23 @@ export async function GET() {
       });
     }
 
+    // Calculate onboarding progress
+    const onboardingProgress = {
+      total: totalStudents,
+      onboarded: onboardedStudents,
+      percentage:
+        totalStudents > 0
+          ? Math.round((onboardedStudents / totalStudents) * 100)
+          : 0,
+    };
+
     const response = {
       quickStats: {
         totalStudents,
         totalClasses,
         unassignedStudents,
         activeClasses,
+        onboardingProgress,
       },
       studentStatusBreakdown: statusBreakdown,
       gradeDistribution,

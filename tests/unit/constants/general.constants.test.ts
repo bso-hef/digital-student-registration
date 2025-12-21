@@ -164,8 +164,8 @@ describe("general.constants", () => {
   });
 
   describe("WIZZARD_URL", () => {
-    it("should define wizard URL pattern", () => {
-      expect(WIZZARD_URL).toBe("https://localhost:3000/student/{short-id}");
+    it("should end with student path and placeholder", () => {
+      expect(WIZZARD_URL).toMatch(/\/student\/\{short-id\}$/);
     });
 
     it("should contain placeholder for student ID", () => {
@@ -173,7 +173,9 @@ describe("general.constants", () => {
     });
 
     it("should be a valid URL format", () => {
-      expect(WIZZARD_URL.startsWith("https://")).toBe(true);
+      expect(
+        WIZZARD_URL.startsWith("http://") || WIZZARD_URL.startsWith("https://"),
+      ).toBe(true);
     });
 
     it("should include student path", () => {

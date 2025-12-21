@@ -1,8 +1,15 @@
+export interface OnboardingProgress {
+  total: number;
+  onboarded: number;
+  percentage: number;
+}
+
 export interface QuickStats {
   totalStudents: number;
   totalClasses: number;
   unassignedStudents: number;
   activeClasses: number;
+  onboardingProgress: OnboardingProgress;
 }
 
 export interface StudentStatusBreakdown {
@@ -13,7 +20,7 @@ export interface StudentStatusBreakdown {
 }
 
 export interface GradeDistribution {
-  grade: string;
+  grade: number | null;
   count: number;
 }
 
@@ -69,9 +76,26 @@ export interface DashboardLayout {
   charts: string[];
 }
 
+export interface RecentActivityItem {
+  id: string;
+  type:
+    | "onboarding_complete"
+    | "student_added"
+    | "student_imported"
+    | "class_changed";
+  timestamp: string;
+  metadata?: {
+    studentName?: string;
+    className?: string;
+    count?: number;
+  };
+}
+
 export interface DashboardState {
   stats: DashboardStats | null;
   health: HealthReport | null;
+  recentActivity: RecentActivityItem[];
+  activityLoading: boolean;
   loading: boolean;
   error: string | null;
   lastUpdated: string | null;

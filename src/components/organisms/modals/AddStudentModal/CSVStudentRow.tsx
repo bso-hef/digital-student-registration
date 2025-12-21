@@ -5,13 +5,16 @@ import SmallIconButton from "@/components/atoms/buttons/SmallIconButton";
 import GeneralDropdown from "@/components/atoms/dropdowns/GeneralDropdown";
 import { ParsedStudent } from "@/utils/csv.utils";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
+import ErrorOutlineRoundedIcon from "@mui/icons-material/ErrorOutlineRounded";
 import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownRounded";
 import KeyboardArrowUpRoundedIcon from "@mui/icons-material/KeyboardArrowUpRounded";
+import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
 import {
   Box,
   Collapse,
   Divider,
   Paper,
+  Tooltip,
   Typography,
   styled,
 } from "@mui/material";
@@ -20,19 +23,28 @@ import dayjs from "dayjs";
 import { useTranslation } from "react-i18next";
 
 const StyledRowHeader = styled(Box, {
-  shouldForwardProp: (prop) => prop !== "expanded" && prop !== "hasError",
-})<{ expanded?: boolean; hasError?: boolean }>(
-  ({ theme, expanded, hasError }) => ({
+  shouldForwardProp: (prop) =>
+    prop !== "expanded" && prop !== "hasError" && prop !== "hasWarning",
+})<{ expanded?: boolean; hasError?: boolean; hasWarning?: boolean }>(
+  ({ theme, expanded, hasError, hasWarning }) => ({
     display: "flex",
     alignItems: "center",
     gap: theme.spacing(2),
     padding: theme.spacing(1.5, 2),
     backgroundColor: hasError
       ? theme.palette.error.light + "20"
-      : expanded
-        ? theme.palette.surface.button.focused
-        : theme.palette.surface.interface.base,
-    border: `1px solid ${hasError ? theme.palette.error.main : theme.palette.border.seperator}`,
+      : hasWarning
+        ? theme.palette.warning.light + "20"
+        : expanded
+          ? theme.palette.surface.button.focused
+          : theme.palette.surface.interface.base,
+    border: `1px solid ${
+      hasError
+        ? theme.palette.error.main
+        : hasWarning
+          ? theme.palette.warning.main
+          : theme.palette.border.seperator
+    }`,
     borderRadius: expanded ? theme.spacing(1, 1, 0, 0) : theme.spacing(1),
     cursor: "pointer",
     transition: "all 0.2s ease-in-out",
@@ -106,8 +118,26 @@ const CSVStudentRow: React.FC<CSVStudentRowProps> = ({
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
 
-  const hasError =
-    !student.firstName || !student.lastName || !student.dateOfBirth;
+  // Compute validation errors (required fields)
+  const validationErrors: string[] = [];
+  if (!student.firstName)
+    validationErrors.push(t("modals.addStudent.firstNameRequired"));
+  if (!student.lastName)
+    validationErrors.push(t("modals.addStudent.lastNameRequired"));
+  if (!student.dateOfBirth)
+    validationErrors.push(t("modals.addStudent.dateOfBirthRequired"));
+
+  const hasError = validationErrors.length > 0;
+
+  // Compute warnings (optional but recommended fields)
+  const warningMessages: string[] = [];
+  if (!student.className) {
+    warningMessages.push(t("modals.addStudent.classNameMissing"));
+  }
+  if (!student.employer?.companyName) {
+    warningMessages.push(t("modals.addStudent.employerMissing"));
+  }
+  const hasWarning = !hasError && warningMessages.length > 0;
 
   const handleFieldChange = (field: string, value: string | undefined) => {
     const updatedStudent = { ...student };
@@ -148,6 +178,7 @@ const CSVStudentRow: React.FC<CSVStudentRowProps> = ({
       <StyledRowHeader
         expanded={expanded}
         hasError={hasError}
+        hasWarning={hasWarning}
         onClick={() => setExpanded(!expanded)}
       >
         <Box display="flex" alignItems="center">
@@ -183,6 +214,16 @@ const CSVStudentRow: React.FC<CSVStudentRowProps> = ({
           <StyledHeaderText variant="body2" color="text.secondary">
             {employerText}
           </StyledHeaderText>
+          {hasError && (
+            <Tooltip title={validationErrors.join(", ")}>
+              <ErrorOutlineRoundedIcon color="error" fontSize="small" />
+            </Tooltip>
+          )}
+          {hasWarning && (
+            <Tooltip title={warningMessages.join(", ")}>
+              <WarningAmberRoundedIcon color="warning" fontSize="small" />
+            </Tooltip>
+          )}
         </StyledHeaderInfo>
 
         <SmallIconButton

@@ -21,6 +21,11 @@ export interface Employer {
   contactEmail: string;
   contactPhone?: string;
   contactSalutation?: string;
+  // Second contact (optional)
+  contact2Name?: string;
+  contact2Email?: string;
+  contact2Phone?: string;
+  contact2Salutation?: string;
   verified: boolean;
 }
 

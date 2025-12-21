@@ -26,6 +26,7 @@ import {
   styled,
   useTheme,
 } from "@mui/material";
+import dayjs from "dayjs";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 
@@ -57,15 +58,18 @@ const StyledPreviewBox = styled(Box, {
 })<{ isPortrait?: boolean }>(({ theme, isPortrait }) => ({
   width: "100%",
   height: "100%",
-  minHeight: isPortrait ? 200 : 140,
+  minHeight: isPortrait ? 200 : 180,
+  maxHeight: isPortrait ? undefined : 220,
   aspectRatio: isPortrait ? "210/297" : "297/210",
   borderRadius: theme.spacing(1),
   border: `1px dashed ${theme.palette.border.seperator}`,
   display: "flex",
   flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "center",
-  padding: theme.spacing(3),
+  alignItems: isPortrait ? "center" : "flex-start",
+  justifyContent: "flex-start",
+  padding: theme.spacing(2),
+  paddingTop: theme.spacing(2),
+  overflow: "auto",
   bgcolor: theme.palette.surface.interface.background,
 }));
 
@@ -123,7 +127,7 @@ const ExportStudentDataModal: React.FC<ExportStudentDataModalProps> = ({
 
   const resolveFilename = (s: StudentType, format: "pdf" | "json" | "csv") => {
     const sid = String(s._id || "");
-    const dateStr = new Date().toISOString().split("T")[0];
+    const dateStr = dayjs().format("DD-MM-YYYY");
     const classNameStr = getClassName(s) || "ohne_klasse";
 
     const extension =
@@ -170,7 +174,7 @@ const ExportStudentDataModal: React.FC<ExportStudentDataModalProps> = ({
         );
         setProgress(95);
 
-        const dateStr = new Date().toISOString().split("T")[0];
+        const dateStr = dayjs().format("DD-MM-YYYY");
         const filename = `student_data_export_${dateStr}.csv`;
         downloadBlob(filename, blob);
         setProgress(100);
@@ -247,7 +251,7 @@ const ExportStudentDataModal: React.FC<ExportStudentDataModalProps> = ({
           setProgress(Math.round((done / students.length) * 95));
         }
 
-        const dateStr = new Date().toISOString().split("T")[0];
+        const dateStr = dayjs().format("DD-MM-YYYY");
         const zipBlob = await buildZip(files, (p) =>
           setProgress(95 + Math.round((p || 0) * 0.05)),
         );

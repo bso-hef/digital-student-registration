@@ -2,6 +2,7 @@ import ClientLogger from "@/lib/client-logger";
 import { Student } from "@/types/db";
 import i18n from "i18next";
 
+import { formatGermanDate } from "./date.utils";
 import { errorNotification, successNotification } from "./notification.utils";
 
 export interface ParsedStudentAddress {
@@ -484,7 +485,7 @@ function buildCSVRow(
     student.firstName || "",
     student.lastName || "",
     student.birthName || "",
-    student.dateOfBirth || "",
+    formatGermanDate(student.dateOfBirth) || "",
     student.gender || "",
     student.religion || "",
     student.email || "",
@@ -540,7 +541,7 @@ function buildCSVRow(
     "", // House number not stored separately
     "", // Postal code not stored separately
     "", // City not stored separately
-    student.trainingStartDate || "",
+    formatGermanDate(student.trainingStartDate) || "",
     student.agreements?.dataProtection ? "true" : "false",
     student.agreements?.classParticipation ? "true" : "false",
     student.agreements?.schoolRules ? "true" : "false",

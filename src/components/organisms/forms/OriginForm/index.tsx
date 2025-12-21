@@ -159,6 +159,7 @@ const OriginForm: React.FC<OriginFormProps> = ({
                   error={touched.herkunftsland && Boolean(errors.herkunftsland)}
                   helperText={touched.herkunftsland && errors.herkunftsland}
                   fullWidth
+                  required
                 />
               )}
               fullWidth
@@ -177,6 +178,7 @@ const OriginForm: React.FC<OriginFormProps> = ({
                   variant: "outlined",
                   fullWidth: true,
                   margin: "normal",
+                  required: true,
                   error: touched.zuzugjahr && Boolean(errors.zuzugjahr),
                   helperText:
                     touched.zuzugjahr && errors.zuzugjahr
@@ -195,6 +197,7 @@ const OriginForm: React.FC<OriginFormProps> = ({
                 variant="outlined"
                 margin="normal"
                 fullWidth
+                required
                 error={
                   touched.familiensprache && Boolean(errors.familiensprache)
                 }
@@ -205,6 +208,7 @@ const OriginForm: React.FC<OriginFormProps> = ({
                 name="familiensprache"
                 label={t("onboarding.origin.familyLanguage", "Familiensprache")}
                 options={getEnabledOptions(languageOptions)}
+                required
               />
             )}
           </StyledForm>

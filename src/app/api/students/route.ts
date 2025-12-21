@@ -3,31 +3,17 @@ import { dbConnect } from "@/lib/config/mongo";
 import { norm } from "@/lib/config/norm";
 import { tServer } from "@/lib/server-i18n";
 import Logger from "@/lib/server-logger";
+import Class from "@/models/Class";
 import Student from "@/models/Student";
 import { createAuditLog } from "@/server/middleware/audit.middleware";
+import { parseDate } from "@/utils/date.utils";
 import { generateUniqueVerificationCode } from "@/utils/verification.utils";
+import { Types } from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
 const logger = new Logger("API <<==>> Students");
-
-const parseDob = (value: unknown): Date | null => {
-  if (!value) return null;
-  if (value instanceof Date) return isNaN(value.getTime()) ? null : value;
-  if (typeof value !== "string") return null;
-
-  const iso = new Date(value);
-  if (!isNaN(iso.getTime())) return iso;
-
-  const m = value.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
-  if (m) {
-    const [, dd, mm, yyyy] = m;
-    const d = new Date(Number(yyyy), Number(mm) - 1, Number(dd));
-    return isNaN(d.getTime()) ? null : d;
-  }
-  return null;
-};
 
 interface AddressInput {
   street?: string;
@@ -115,6 +101,7 @@ interface ShapedStudentDoc {
   };
   schoolEntryDate?: Date;
   currentClassName?: string;
+  currentClass?: Types.ObjectId | null;
   previousSchool?: string;
   previousSchoolLevel?: string;
   previousSchoolType?: string;
@@ -189,7 +176,7 @@ const shapeStudent = (row: StudentInput): ShapedStudent => {
   const firstName =
     typeof row?.firstName === "string" ? row.firstName.trim() : "";
   const lastName = typeof row?.lastName === "string" ? row.lastName.trim() : "";
-  const dob = parseDob(row?.dateOfBirth);
+  const dob = parseDate(row?.dateOfBirth);
 
   if (!firstName || !lastName || !dob) {
     return {
@@ -255,7 +242,7 @@ const shapeStudent = (row: StudentInput): ShapedStudent => {
   }
 
   // School info
-  const schoolEntryDate = parseDob(row.schoolEntryDate);
+  const schoolEntryDate = parseDate(row.schoolEntryDate);
   if (schoolEntryDate) doc.schoolEntryDate = schoolEntryDate;
 
   const className = getString(row.className);
@@ -278,7 +265,7 @@ const shapeStudent = (row: StudentInput): ShapedStudent => {
   const profession = getString(row.profession);
   if (profession) doc.profession = profession;
 
-  const trainingStartDate = parseDob(row.trainingStartDate);
+  const trainingStartDate = parseDate(row.trainingStartDate);
   if (trainingStartDate) doc.trainingStartDate = trainingStartDate;
 
   // Employer
@@ -420,6 +407,35 @@ export async function POST(request: Request) {
       );
     }
 
+    // Link students to existing classes
+    const classNames = [
+      ...new Set(
+        docs
+          .map((d) => d.currentClassName?.trim())
+          .filter((name): name is string => !!name),
+      ),
+    ];
+
+    const classMap = new Map<string, Types.ObjectId>();
+    if (classNames.length > 0) {
+      const existingClasses = await Class.find(
+        { name: { $in: classNames } },
+        { name: 1, _id: 1 },
+      ).lean();
+
+      existingClasses.forEach((c) => {
+        classMap.set(c.name, c._id as Types.ObjectId);
+      });
+
+      // Set currentClass ObjectId on docs where class exists
+      for (const doc of docs) {
+        if (doc.currentClassName) {
+          const classId = classMap.get(doc.currentClassName);
+          doc.currentClass = classId || null;
+        }
+      }
+    }
+
     const generatedCodes = new Set<string>();
 
     for (const doc of docs) {
@@ -447,6 +463,29 @@ export async function POST(request: Request) {
 
     // Create students with verification codes
     const result = await Student.create(docs);
+
+    // Update class student counts for affected classes
+    if (classMap.size > 0) {
+      const classCountMap = new Map<string, number>();
+      for (const student of result) {
+        if (student.currentClass) {
+          const classId = student.currentClass.toString();
+          classCountMap.set(classId, (classCountMap.get(classId) || 0) + 1);
+        }
+      }
+
+      if (classCountMap.size > 0) {
+        const bulkOps = Array.from(classCountMap.entries()).map(
+          ([classId, count]) => ({
+            updateOne: {
+              filter: { _id: classId },
+              update: { $inc: { studentCount: count } },
+            },
+          }),
+        );
+        await Class.bulkWrite(bulkOps);
+      }
+    }
 
     // Log audit entry
     await createAuditLog(

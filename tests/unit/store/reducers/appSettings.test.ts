@@ -95,6 +95,38 @@ describe("appSettingsReducer", () => {
     });
   });
 
+  describe("UPDATE_SETTINGS actions", () => {
+    it("should handle UPDATE_SETTINGS_REQUEST", () => {
+      const action = { type: TYPES.UPDATE_SETTINGS_REQUEST };
+      const state = appSettingsReducer(initialState, action);
+      expect(state.loading).toBe(true);
+      expect(state.error).toBe(null);
+    });
+
+    it("should handle UPDATE_SETTINGS_SUCCESS", () => {
+      const updatedSettings = { ...mockSettings, _id: "updated-settings" };
+      const action = {
+        type: TYPES.UPDATE_SETTINGS_SUCCESS,
+        payload: updatedSettings,
+      };
+      const state = appSettingsReducer(initialState, action);
+      expect(state.loading).toBe(false);
+      expect(state.data).toEqual(updatedSettings);
+      expect(state.error).toBe(null);
+    });
+
+    it("should handle UPDATE_SETTINGS_FAILURE", () => {
+      const error = new Error("Failed to update settings");
+      const action = {
+        type: TYPES.UPDATE_SETTINGS_FAILURE,
+        payload: error,
+      };
+      const state = appSettingsReducer(initialState, action);
+      expect(state.loading).toBe(false);
+      expect(state.error).toEqual(error);
+    });
+  });
+
   describe("GET_AGREEMENT_SETTINGS actions", () => {
     it("should handle GET_AGREEMENT_SETTINGS_REQUEST", () => {
       const action = { type: TYPES.GET_AGREEMENT_SETTINGS_REQUEST };
