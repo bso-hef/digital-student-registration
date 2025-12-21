@@ -5,6 +5,252 @@ All notable changes to the Digital Student Registration project will be document
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2025-12-21
+
+### Added
+
+#### Student Management Enhancements (#15)
+
+- **Student Detail Pages**
+  - New dedicated pages for viewing/editing student information
+  - `/admin/management/students/[studentId]/general` - General student info
+  - `/admin/management/students/[studentId]/contacts` - Contact information
+  - `/admin/management/students/[studentId]/education` - Education history
+  - `/admin/management/students/[studentId]/contact` - Quick contact view
+  - Tabbed navigation layout for student details
+
+- **Duplicate Student Detection**
+  - `POST /api/students/check-duplicate` - API endpoint for duplicate checking
+  - `DuplicateWarningModal` - Warns users when creating potentially duplicate students
+  - Prevents accidental duplicate entries
+
+- **Export Student Data Modal**
+  - `ExportStudentDataModal` - New comprehensive export dialog
+  - Enhanced PDF generation with improved formatting
+  - Multiple export format options
+
+#### Class Management Enhancements (#18)
+
+- **Class CSV Import**
+  - `CSVClassRow` component for CSV row editing
+  - `classCSV.utils.ts` - Utilities for parsing and validating class CSV files
+  - `classPdf.utils.tsx` - PDF generation for class lists
+  - Bulk import classes via CSV upload
+
+- **Class Validation API**
+  - `GET /api/classes/check` - Validate class existence
+  - `MissingClassesWarningModal` - Warns when referenced classes don't exist
+
+#### Admin Features (#15, #18)
+
+- **Profile Management**
+  - `/admin/settings/profile` - New admin profile page
+  - `POST /api/auth/profile` - Update profile information
+  - `POST /api/auth/profile/password` - Change password functionality
+  - `profile.validate.ts` - Profile validation schemas
+
+- **System Settings Page**
+  - `/admin/settings/system` - Centralized system configuration
+  - Improved settings organization
+
+- **Teacher Quick Manage Modal**
+  - `TeacherQuickManageModal` - Fast student management for teachers
+  - Streamlined workflow for common tasks
+
+#### Dashboard Improvements (#18)
+
+- **Recent Activity Widget**
+  - `RecentActivityWidget` - Shows recent system activity
+  - `GET /api/dashboard/activity` - Activity feed API endpoint
+  - Real-time activity tracking
+
+#### Form Improvements (#15, #18)
+
+- **Step Transition Wrapper**
+  - `StepTransitionWrapper` - Smooth animations between form steps
+  - Better visual feedback during navigation
+
+- **Form Loading Skeletons**
+  - `FormSkeletons` component for loading states
+  - Improved perceived performance
+
+- **Enhanced Validation**
+  - Updated student validation schemas
+  - Better error messages and feedback
+
+#### Mobile Experience (#15)
+
+- **Mobile Blocker**
+  - `MobileBlocker` - Prevents usage on unsupported mobile devices
+  - Informative message for mobile users
+
+- **Rotation Blocker**
+  - `RotationBlocker` - Enforces landscape/portrait orientation where needed
+  - Better UX on tablets
+
+#### Infrastructure (#15, #18)
+
+- **Redis Integration**
+  - `src/lib/redis.ts` - Redis client for caching and sessions
+  - Improved performance and scalability
+
+- **Windows Docker Support**
+  - `Dockerfile.windows` - Docker support for Windows containers
+  - `mongod.conf` - MongoDB configuration for Docker
+
+- **App Configuration System**
+  - `app-config.ts` - Centralized application configuration
+  - Environment-aware settings management
+
+#### Utilities (#15, #18)
+
+- **Date Utilities**
+  - `date.utils.ts` - Date formatting and manipulation helpers
+
+- **QR Code Utilities**
+  - `qr.utils.ts` - Enhanced QR code generation
+
+- **JSON Utilities**
+  - `json.utils.ts` - JSON parsing and validation helpers
+
+#### Documentation (#18)
+
+- **Admin Settings Documentation**
+  - `docs/public/ADMIN_SETTINGS.md` - Comprehensive admin settings guide
+  - Updated onboarding documentation
+
+#### Testing (#15, #18)
+
+- **Redux Action Tests**
+  - `auditLogActions.test.ts` - Audit log action tests
+  - `authActions.test.ts` - Authentication action tests
+  - `classActions.test.ts` - Class action tests
+  - `dashboardActions.test.ts` - Dashboard action tests
+  - `settingsActions.test.ts` - Settings action tests
+  - `studentActions.test.ts` - Student action tests
+  - `uiActions.test.ts` - UI action tests
+
+- **Redux Reducer Tests**
+  - `appSettings.test.ts` - App settings reducer tests
+  - `auth.test.ts` - Auth reducer tests
+  - `class.test.ts` - Class reducer tests
+  - `dashboard.test.ts` - Dashboard reducer tests
+  - `student.test.ts` - Student reducer tests
+
+- **Utility Tests**
+  - `date.utils.test.ts` - Date utility tests
+  - `json.utils.test.ts` - JSON utility tests
+  - `qr.utils.test.ts` - QR code utility tests
+  - `studentDataMapper.test.ts` - Data mapper tests
+  - `validation.utils.test.ts` - Validation utility tests
+  - `verification.utils.test.ts` - Verification utility tests
+  - `zip.utils.test.ts` - ZIP utility tests
+
+### Changed
+
+- **CSV Import Improvements**
+  - Enhanced CSV student import with better error handling
+  - Improved column mapping and validation
+  - Better support for different CSV formats
+
+- **PDF Export Enhancements**
+  - Improved PDF formatting and styling
+  - Better handling of long text and special characters
+  - Class roster PDF generation
+
+- **Docker Configuration**
+  - Consolidated Docker setup
+  - Removed docker-compose.prod.yml (merged into main docker-compose.yml)
+  - Updated health check scripts
+
+- **Student Data Mapper**
+  - Improved data transformation logic
+  - Better handling of optional fields
+
+- **Form Validation**
+  - Enhanced validation schemas
+  - More descriptive error messages
+  - Conditional validation improvements
+
+- **Translations**
+  - Updated German translations
+  - Updated English translations
+  - 250+ new translation keys
+
+- **Left Navigation**
+  - Improved navigation structure
+  - Better mobile responsiveness
+
+- **Class Autocomplete**
+  - Enhanced search functionality
+  - Better performance with large datasets
+
+- **DataTable Component**
+  - Improved sorting and filtering
+  - Better empty state handling
+
+- **Theme System**
+  - Added date picker theme overrides
+  - Improved dark mode support
+
+### Fixed
+
+- **Docker Issues**
+  - Fixed docker compose setup issues
+  - Resolved container networking problems
+
+- **Authentication Bugs**
+  - Fixed various authentication edge cases
+  - Improved session handling
+
+- **Form Validation Issues**
+  - Fixed validation not triggering correctly
+  - Resolved conditional field validation bugs
+
+- **Navigation Bugs**
+  - Fixed route highlighting issues
+  - Resolved breadcrumb display problems
+
+- **Date Picker Styling**
+  - Fixed calendar styling in dark mode
+  - Improved date picker accessibility
+
+- **Mobile Responsiveness**
+  - Fixed layout issues on smaller screens
+  - Improved touch interactions
+
+- **Student Count Recalculation**
+  - Added `/api/classes/recalculate-counts` endpoint
+  - Fixed incorrect student counts in classes
+
+### Security
+
+- **Next.js Security Updates**
+  - Fixed Next.js related security vulnerabilities
+  - Updated to patched versions
+
+- **General Security Hardening**
+  - Improved input validation
+  - Enhanced authentication checks
+  - Better error handling to prevent information leakage
+
+### Removed
+
+- **QUICK-START.md**
+  - Content consolidated into README.md
+
+- **docker-compose.prod.yml**
+  - Functionality merged into main docker-compose.yml
+
+- **Integrations Page Placeholder**
+  - Removed `/admin/settings/integrations` placeholder page
+
+- **Deprecated Utilities**
+  - Removed unused utility functions
+  - Cleaned up deprecated code
+
+---
+
 ## [1.0.0] - 2025-11-11
 
 ### Added
