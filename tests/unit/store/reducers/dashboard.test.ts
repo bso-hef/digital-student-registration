@@ -12,6 +12,8 @@ describe("dashboardReducer", () => {
   const initialState = {
     stats: null,
     health: null,
+    recentActivity: [],
+    activityLoading: false,
     loading: false,
     error: null,
     lastUpdated: null,
@@ -20,13 +22,13 @@ describe("dashboardReducer", () => {
         "totalStudents",
         "totalClasses",
         "unassignedStudents",
-        "activeClasses",
+        "onboardingProgress",
       ],
       charts: [
         "registrationTrend",
         "studentStatus",
         "classDistribution",
-        "systemHealth",
+        "recentActivity",
       ],
     },
   };
@@ -223,6 +225,60 @@ describe("dashboardReducer", () => {
       };
       const state = dashboardReducer(initialState, action);
       expect(state.error).toBe(error);
+    });
+  });
+
+  describe("GET_DASHBOARD_ACTIVITY actions", () => {
+    const mockActivity = [
+      { id: "1", type: "login", userId: "user1", timestamp: new Date().toISOString() },
+      { id: "2", type: "registration", userId: "user2", timestamp: new Date().toISOString() },
+    ];
+
+    it("should handle GET_DASHBOARD_ACTIVITY_REQUEST", () => {
+      const action = { type: TYPES.GET_DASHBOARD_ACTIVITY_REQUEST };
+      const state = dashboardReducer(initialState, action);
+      expect(state.activityLoading).toBe(true);
+    });
+
+    it("should handle GET_DASHBOARD_ACTIVITY_SUCCESS", () => {
+      const action = {
+        type: TYPES.GET_DASHBOARD_ACTIVITY_SUCCESS,
+        payload: mockActivity,
+      };
+      const state = dashboardReducer(initialState, action);
+      expect(state.activityLoading).toBe(false);
+      expect(state.recentActivity).toEqual(mockActivity);
+    });
+
+    it("should handle GET_DASHBOARD_ACTIVITY_SUCCESS with empty array", () => {
+      const action = {
+        type: TYPES.GET_DASHBOARD_ACTIVITY_SUCCESS,
+        payload: [],
+      };
+      const state = dashboardReducer(initialState, action);
+      expect(state.activityLoading).toBe(false);
+      expect(state.recentActivity).toEqual([]);
+    });
+
+    it("should handle GET_DASHBOARD_ACTIVITY_FAILURE", () => {
+      const existingState = {
+        ...initialState,
+        activityLoading: true,
+      };
+      const action = { type: TYPES.GET_DASHBOARD_ACTIVITY_FAILURE };
+      const state = dashboardReducer(existingState, action);
+      expect(state.activityLoading).toBe(false);
+    });
+
+    it("should preserve existing activity on failure", () => {
+      const existingState = {
+        ...initialState,
+        recentActivity: mockActivity,
+        activityLoading: true,
+      };
+      const action = { type: TYPES.GET_DASHBOARD_ACTIVITY_FAILURE };
+      const state = dashboardReducer(existingState, action);
+      expect(state.recentActivity).toEqual(mockActivity);
     });
   });
 

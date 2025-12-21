@@ -15,6 +15,7 @@ describe("studentReducer", () => {
   const initialState = {
     currentStep: 0,
     previousStep: null,
+    editingFromSummary: false,
     data: {} as StudentData,
     students: [],
     loading: false,
@@ -23,6 +24,7 @@ describe("studentReducer", () => {
     studentStatus: null,
     currentStudentId: null,
     currentStudent: null,
+    currentStudentLoading: false,
   };
 
   const mockStudent: Student = {
@@ -376,6 +378,128 @@ describe("studentReducer", () => {
       const action = { type: TYPES.CLEAR_STUDENT_ERROR };
       const state = studentReducer(existingState, action);
       expect(state.error).toBe(null);
+    });
+  });
+
+  describe("SET_EDITING_FROM_SUMMARY action", () => {
+    it("should handle SET_EDITING_FROM_SUMMARY true", () => {
+      const action = {
+        type: TYPES.SET_EDITING_FROM_SUMMARY,
+        payload: true,
+      };
+      const state = studentReducer(initialState, action);
+      expect(state.editingFromSummary).toBe(true);
+    });
+
+    it("should handle SET_EDITING_FROM_SUMMARY false", () => {
+      const existingState = {
+        ...initialState,
+        editingFromSummary: true,
+      };
+      const action = {
+        type: TYPES.SET_EDITING_FROM_SUMMARY,
+        payload: false,
+      };
+      const state = studentReducer(existingState, action);
+      expect(state.editingFromSummary).toBe(false);
+    });
+  });
+
+  describe("UPDATE_STUDENT_CLASS actions", () => {
+    it("should handle UPDATE_STUDENT_CLASS_REQUEST", () => {
+      const action = { type: TYPES.UPDATE_STUDENT_CLASS_REQUEST };
+      const state = studentReducer(initialState, action);
+      expect(state.loading).toBe(true);
+      expect(state.error).toBe(null);
+    });
+
+    it("should handle UPDATE_STUDENT_CLASS_SUCCESS", () => {
+      const existingState = { ...initialState, loading: true };
+      const action = { type: TYPES.UPDATE_STUDENT_CLASS_SUCCESS };
+      const state = studentReducer(existingState, action);
+      expect(state.loading).toBe(false);
+    });
+
+    it("should handle UPDATE_STUDENT_CLASS_FAILURE", () => {
+      const error = new Error("Failed to update student class");
+      const action = {
+        type: TYPES.UPDATE_STUDENT_CLASS_FAILURE,
+        payload: error,
+      };
+      const state = studentReducer(initialState, action);
+      expect(state.loading).toBe(false);
+      expect(state.error).toEqual(error);
+    });
+  });
+
+  describe("Admin student detail actions", () => {
+    it("should handle GET_STUDENT_REQUEST", () => {
+      const action = { type: TYPES.GET_STUDENT_REQUEST };
+      const state = studentReducer(initialState, action);
+      expect(state.currentStudentLoading).toBe(true);
+      expect(state.error).toBe(null);
+    });
+
+    it("should handle GET_STUDENT_SUCCESS", () => {
+      const action = {
+        type: TYPES.GET_STUDENT_SUCCESS,
+        payload: mockStudent,
+      };
+      const state = studentReducer(initialState, action);
+      expect(state.currentStudentLoading).toBe(false);
+      expect(state.currentStudent).toEqual(mockStudent);
+    });
+
+    it("should handle GET_STUDENT_FAILURE", () => {
+      const error = new Error("Failed to get student");
+      const action = {
+        type: TYPES.GET_STUDENT_FAILURE,
+        payload: error,
+      };
+      const state = studentReducer(initialState, action);
+      expect(state.currentStudentLoading).toBe(false);
+      expect(state.error).toEqual(error);
+    });
+
+    it("should handle UPDATE_STUDENT_REQUEST", () => {
+      const action = { type: TYPES.UPDATE_STUDENT_REQUEST };
+      const state = studentReducer(initialState, action);
+      expect(state.currentStudentLoading).toBe(true);
+      expect(state.error).toBe(null);
+    });
+
+    it("should handle UPDATE_STUDENT_SUCCESS", () => {
+      const updatedStudent = { ...mockStudent, firstName: "Updated" } as Student;
+      const action = {
+        type: TYPES.UPDATE_STUDENT_SUCCESS,
+        payload: updatedStudent,
+      };
+      const state = studentReducer(initialState, action);
+      expect(state.currentStudentLoading).toBe(false);
+      expect(state.currentStudent).toEqual(updatedStudent);
+    });
+
+    it("should handle UPDATE_STUDENT_FAILURE", () => {
+      const error = new Error("Failed to update student");
+      const action = {
+        type: TYPES.UPDATE_STUDENT_FAILURE,
+        payload: error,
+      };
+      const state = studentReducer(initialState, action);
+      expect(state.currentStudentLoading).toBe(false);
+      expect(state.error).toEqual(error);
+    });
+
+    it("should handle CLEAR_CURRENT_STUDENT", () => {
+      const existingState = {
+        ...initialState,
+        currentStudent: mockStudent,
+        currentStudentLoading: true,
+      };
+      const action = { type: TYPES.CLEAR_CURRENT_STUDENT };
+      const state = studentReducer(existingState, action);
+      expect(state.currentStudent).toBe(null);
+      expect(state.currentStudentLoading).toBe(false);
     });
   });
 

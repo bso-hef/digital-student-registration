@@ -24,12 +24,12 @@ describe("ui.constants", () => {
   });
 
   describe("ROWS_PER_PAGE_OPTIONS", () => {
-    it("should contain pagination options [5, 10, 25]", () => {
-      expect(ROWS_PER_PAGE_OPTIONS).toEqual([5, 10, 25]);
+    it("should contain pagination options [5, 10, 25, 50, 100]", () => {
+      expect(ROWS_PER_PAGE_OPTIONS).toEqual([5, 10, 25, 50, 100]);
     });
 
-    it("should have exactly 3 options", () => {
-      expect(ROWS_PER_PAGE_OPTIONS.length).toBe(3);
+    it("should have exactly 5 options", () => {
+      expect(ROWS_PER_PAGE_OPTIONS.length).toBe(5);
     });
 
     it("should contain only numbers", () => {
@@ -39,12 +39,11 @@ describe("ui.constants", () => {
     });
 
     it("should be in ascending order", () => {
-      expect(ROWS_PER_PAGE_OPTIONS[0]).toBeLessThan(
-        ROWS_PER_PAGE_OPTIONS[1],
-      );
-      expect(ROWS_PER_PAGE_OPTIONS[1]).toBeLessThan(
-        ROWS_PER_PAGE_OPTIONS[2],
-      );
+      for (let i = 0; i < ROWS_PER_PAGE_OPTIONS.length - 1; i++) {
+        expect(ROWS_PER_PAGE_OPTIONS[i]).toBeLessThan(
+          ROWS_PER_PAGE_OPTIONS[i + 1],
+        );
+      }
     });
   });
 

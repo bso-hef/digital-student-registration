@@ -208,5 +208,10 @@ describe("filter.utils", () => {
       const result = filterClasses("11A", mockClasses);
       expect(result).toHaveLength(1);
     });
+
+    it("should handle non-array input", () => {
+      const result = filterClasses("test", {} as any);
+      expect(result).toEqual([]);
+    });
   });
 });

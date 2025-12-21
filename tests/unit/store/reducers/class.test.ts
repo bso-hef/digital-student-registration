@@ -393,6 +393,114 @@ describe("classReducer", () => {
     });
   });
 
+  describe("UPDATE_CLASS_SUCCESS with current class", () => {
+    it("should update currentClass when updated class matches current class", () => {
+      const existingState = {
+        ...initialState,
+        classes: [mockClass],
+        byId: { class1: mockClass },
+        currentClass: {
+          data: mockClass,
+          loading: false,
+          error: null,
+          success: true,
+        },
+      };
+      const updatedClass = { ...mockClass, name: "Updated Current Class" };
+      const action = {
+        type: TYPES.UPDATE_CLASS_SUCCESS,
+        payload: updatedClass,
+      };
+      const state = classReducer(existingState, action);
+      expect(state.currentClass.data?.name).toBe("Updated Current Class");
+    });
+
+    it("should not update currentClass when updated class does not match", () => {
+      const otherClass = { ...mockClass, _id: "class2" };
+      const existingState = {
+        ...initialState,
+        classes: [mockClass, otherClass],
+        byId: { class1: mockClass, class2: otherClass },
+        currentClass: {
+          data: mockClass,
+          loading: false,
+          error: null,
+          success: true,
+        },
+      };
+      const updatedClass = { ...otherClass, name: "Updated Other Class" };
+      const action = {
+        type: TYPES.UPDATE_CLASS_SUCCESS,
+        payload: updatedClass,
+      };
+      const state = classReducer(existingState, action);
+      expect(state.currentClass.data?.name).toBe("Class A"); // unchanged
+      expect(state.byId["class2"].name).toBe("Updated Other Class");
+    });
+
+    it("should handle UPDATE_CLASS_SUCCESS when currentClass.data is null", () => {
+      const existingState = {
+        ...initialState,
+        classes: [mockClass],
+        byId: { class1: mockClass },
+      };
+      const updatedClass = { ...mockClass, name: "Updated Class" };
+      const action = {
+        type: TYPES.UPDATE_CLASS_SUCCESS,
+        payload: updatedClass,
+      };
+      const state = classReducer(existingState, action);
+      expect(state.currentClass.data).toBe(null);
+      expect(state.classes[0].name).toBe("Updated Class");
+    });
+  });
+
+  describe("GET_CLASSES_SUCCESS edge cases", () => {
+    it("should handle GET_CLASSES_SUCCESS with null classes", () => {
+      const action = {
+        type: TYPES.GET_CLASSES_SUCCESS,
+        payload: { classes: null, total: 0, page: 1, pages: 0 },
+      };
+      const state = classReducer(initialState, action);
+      expect(state.classes).toEqual([]);
+    });
+
+    it("should handle GET_CLASSES_SUCCESS with undefined pagination values", () => {
+      const existingState = {
+        ...initialState,
+        page: 5,
+        limit: 50,
+        total: 100,
+        pages: 2,
+      };
+      const action = {
+        type: TYPES.GET_CLASSES_SUCCESS,
+        payload: { classes: [mockClass] },
+      };
+      const state = classReducer(existingState, action);
+      expect(state.page).toBe(5); // preserved
+      expect(state.limit).toBe(50); // preserved
+      expect(state.total).toBe(100); // preserved
+      expect(state.pages).toBe(2); // preserved
+    });
+
+    it("should merge existing byId with new classes", () => {
+      const existingClass = { ...mockClass, _id: "existing1" };
+      const existingState = {
+        ...initialState,
+        byId: { existing1: existingClass },
+      };
+      const newClass = { ...mockClass, _id: "new1" };
+      const action = {
+        type: TYPES.GET_CLASSES_SUCCESS,
+        payload: { classes: [newClass], page: 1, total: 1, pages: 1 },
+      };
+      const state = classReducer(existingState, action);
+      expect(state.byId["existing1"]).toEqual(existingClass);
+      expect(state.byId["new1"]).toEqual(newClass);
+    });
+  });
+
   describe("edge cases", () => {
     it("should handle multiple classes in GET_CLASSES_SUCCESS", () => {
       const class2 = { ...mockClass, _id: "class2", name: "Class B" };

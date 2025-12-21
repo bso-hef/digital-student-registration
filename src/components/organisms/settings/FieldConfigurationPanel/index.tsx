@@ -79,20 +79,18 @@ const FieldConfigurationPanel: React.FC<FieldConfigurationPanelProps> = ({
           <TableHead>
             <TableRow>
               <TableCell>
-                <HeaderText component="span">
-                  {t("settings.onboarding.table.field")}
-                </HeaderText>
+                <HeaderText>{t("settings.onboarding.table.field")}</HeaderText>
               </TableCell>
               <TableCell align="center">
                 <Tooltip title={t("settings.onboarding.table.requiredTooltip")}>
-                  <HeaderText component="span">
+                  <HeaderText>
                     {t("settings.onboarding.table.required")}
                   </HeaderText>
                 </Tooltip>
               </TableCell>
               <TableCell align="center">
                 <Tooltip title={t("settings.onboarding.table.visibleTooltip")}>
-                  <HeaderText component="span">
+                  <HeaderText>
                     {t("settings.onboarding.table.visible")}
                   </HeaderText>
                 </Tooltip>
@@ -101,7 +99,7 @@ const FieldConfigurationPanel: React.FC<FieldConfigurationPanelProps> = ({
                 <Tooltip
                   title={t("settings.onboarding.table.allowCustomTooltip")}
                 >
-                  <HeaderText component="span">
+                  <HeaderText>
                     {t("settings.onboarding.table.allowCustom")}
                   </HeaderText>
                 </Tooltip>

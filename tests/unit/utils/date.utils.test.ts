@@ -57,6 +57,20 @@ describe("date.utils", () => {
       expect(result?.getFullYear()).toBe(2002);
     });
 
+    it("should return null for invalid Dayjs objects", () => {
+      const invalidDayjsObj = dayjs("invalid");
+      expect(invalidDayjsObj.isValid()).toBe(false);
+      const result = parseDate(invalidDayjsObj);
+      expect(result).toBeNull();
+    });
+
+    it("should return null for non-string non-date types", () => {
+      expect(parseDate(12345)).toBeNull();
+      expect(parseDate({})).toBeNull();
+      expect(parseDate([])).toBeNull();
+      expect(parseDate(true)).toBeNull();
+    });
+
     it("should return null for null input", () => {
       expect(parseDate(null)).toBeNull();
     });
