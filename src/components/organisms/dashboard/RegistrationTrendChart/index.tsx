@@ -2,10 +2,10 @@ import React from "react";
 
 import ChartContainer from "@/components/molecules/dashboard/ChartContainer";
 import { RegistrationTrendItem } from "@/types/dashboard";
+import ShowChartIcon from "@mui/icons-material/ShowChart";
+import { Box, Typography } from "@mui/material";
 import { LineChart } from "@mui/x-charts/LineChart";
 import { useTranslation } from "react-i18next";
-import { Box, Typography } from "@mui/material";
-import ShowChartIcon from "@mui/icons-material/ShowChart";
 
 import { DASHBOARD_GRADIENTS } from "@/constants/theme.constants";
 

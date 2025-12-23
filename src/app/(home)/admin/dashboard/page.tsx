@@ -143,9 +143,7 @@ const DashboardPage = () => {
           placement="bottom"
         />
         <SmallIconButton
-          icon={
-            layout.isLocked ? <LockRoundedIcon /> : <LockOpenRoundedIcon />
-          }
+          icon={layout.isLocked ? <LockRoundedIcon /> : <LockOpenRoundedIcon />}
           onAction={handleToggleLock}
           hugeIcon
           title={

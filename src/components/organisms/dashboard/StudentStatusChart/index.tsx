@@ -2,10 +2,10 @@ import React from "react";
 
 import ChartContainer from "@/components/molecules/dashboard/ChartContainer";
 import { StudentStatusBreakdown } from "@/types/dashboard";
+import PieChartIcon from "@mui/icons-material/PieChart";
+import { Box, Typography } from "@mui/material";
 import { PieChart } from "@mui/x-charts/PieChart";
 import { useTranslation } from "react-i18next";
-import { Box, Typography } from "@mui/material";
-import PieChartIcon from "@mui/icons-material/PieChart";
 
 import { DASHBOARD_GRADIENTS } from "@/constants/theme.constants";
 

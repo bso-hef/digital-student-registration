@@ -37,7 +37,9 @@ export async function GET(
       );
     }
 
-    const classData = (await Class.findById(classId).lean()) as ClassLean | null;
+    const classData = (await Class.findById(
+      classId,
+    ).lean()) as ClassLean | null;
 
     if (!classData) {
       return NextResponse.json({ message: "Class not found" }, { status: 404 });

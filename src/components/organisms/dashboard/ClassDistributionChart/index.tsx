@@ -2,10 +2,10 @@ import React from "react";
 
 import ChartContainer from "@/components/molecules/dashboard/ChartContainer";
 import { GradeDistribution } from "@/types/dashboard";
+import BarChartIcon from "@mui/icons-material/BarChart";
+import { Box, Typography } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { useTranslation } from "react-i18next";
-import { Box, Typography } from "@mui/material";
-import BarChartIcon from "@mui/icons-material/BarChart";
 
 import { DASHBOARD_GRADIENTS } from "@/constants/theme.constants";
 

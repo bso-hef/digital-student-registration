@@ -81,12 +81,11 @@ export const resetDashboardLayout = (): AppThunk => (dispatch) => {
   localStorage.removeItem(LAYOUT_STORAGE_KEY);
 };
 
-export const toggleDashboardLock =
-  (): AppThunk => (dispatch, getState) => {
-    dispatch({ type: TYPES.TOGGLE_DASHBOARD_LOCK });
-    const { dashboard } = getState();
-    saveDashboardLayoutToStorage(dashboard.layout);
-  };
+export const toggleDashboardLock = (): AppThunk => (dispatch, getState) => {
+  dispatch({ type: TYPES.TOGGLE_DASHBOARD_LOCK });
+  const { dashboard } = getState();
+  saveDashboardLayoutToStorage(dashboard.layout);
+};
 
 export const loadDashboardLayout = (): AppThunk => (dispatch) => {
   const savedLayout = loadDashboardLayoutFromStorage();
