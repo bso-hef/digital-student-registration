@@ -99,9 +99,9 @@ const EmptyState = styled(Box)(({ theme }) => ({
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
-  height: 200,
+  height: "100%",
   color: theme.palette.text.secondary,
-  gap: theme.spacing(1),
+  gap: theme.spacing(2),
 }));
 
 interface RecentActivityWidgetProps {
@@ -188,8 +188,8 @@ const RecentActivityWidget: React.FC<RecentActivityWidgetProps> = ({
             />
           ) : activities.length === 0 ? (
             <EmptyState>
-              <InboxRoundedIcon sx={{ fontSize: 48, opacity: 0.5 }} />
-              <Typography variant="body2">
+              <InboxRoundedIcon sx={{ fontSize: 64, opacity: 0.3 }} />
+              <Typography variant="body1">
                 {t("dashboard.recentActivity.noActivity")}
               </Typography>
             </EmptyState>

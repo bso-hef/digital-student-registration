@@ -503,7 +503,8 @@
       "classDistribution": "Klassen nach Jahrgang",
       "systemMetrics": "Systemmetriken",
       "gradeLabel": "Klasse {{grade}}",
-      "noGrade": "Keine Klasse"
+      "noGrade": "Keine Klasse",
+      "noData": "Keine Daten verfügbar"
     },
     "status": {
       "imported": "Angelegt",
