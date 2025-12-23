@@ -31,7 +31,7 @@ services:
   app-linux:
     profiles:
       - linux
-    image: ${DOCKER_IMAGE:-dsr-app}:${APP_VERSION:-2.0.0}
+    image: ${DOCKER_IMAGE:-dsr-app}:${APP_VERSION:-2.1.0}
     container_name: dsr-app
     restart: unless-stopped
     ports:
@@ -47,7 +47,7 @@ services:
       REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
       NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
-      NEXT_PUBLIC_VERSION: ${APP_VERSION:-2.0.0}
+      NEXT_PUBLIC_VERSION: ${APP_VERSION:-2.1.0}
       NEXT_PUBLIC_NAME: ${APP_NAME:-Digital Student Registration}
     networks:
       - app-network
@@ -76,7 +76,7 @@ services:
   app-windows:
     profiles:
       - windows
-    image: ${DOCKER_IMAGE:-dsr-app}:${APP_VERSION:-2.0.0}-windows
+    image: ${DOCKER_IMAGE:-dsr-app}:${APP_VERSION:-2.1.0}-windows
     container_name: dsr-app
     restart: unless-stopped
     ports:
@@ -92,7 +92,7 @@ services:
       REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
       NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
-      NEXT_PUBLIC_VERSION: ${APP_VERSION:-2.0.0}
+      NEXT_PUBLIC_VERSION: ${APP_VERSION:-2.1.0}
       NEXT_PUBLIC_NAME: ${APP_NAME:-Digital Student Registration}
     networks:
       - app-network
