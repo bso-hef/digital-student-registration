@@ -13,6 +13,7 @@ import GeneralButton from "@/components/atoms/buttons/GeneralButton";
 import SmallIconButton from "@/components/atoms/buttons/SmallIconButton";
 import ClassStatus from "@/components/atoms/status/ClassStatus";
 import { ClassCreateInput, ClassInterface } from "@/types/class";
+import { extractGradeFromName } from "@/utils/classCSV.utils";
 import { applicationScrollbar } from "@/utils/styling.utils";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
@@ -84,18 +85,6 @@ type TeacherQuickManageModalProps = {
   onDeleteClass: (ids: string[]) => void;
 };
 
-/**
- * Extract grade from class name (e.g., "12InfoA" → 12, "7A" → 7, "BFS" → null)
- */
-function extractGradeFromName(name: string): number | null {
-  const match = name.match(/^(\d{1,2})/);
-  if (match) {
-    const grade = parseInt(match[1], 10);
-    if (grade >= 1 && grade <= 14) return grade;
-  }
-  return null;
-}
-
 const TeacherQuickManageModal: React.FC<TeacherQuickManageModalProps> = ({
   open,
   onClose,
@@ -142,6 +131,7 @@ const TeacherQuickManageModal: React.FC<TeacherQuickManageModalProps> = ({
       isVocational: false,
       requiresEmployerInfo: false,
       active: true,
+      incomplete: extractedGrade === null, // Mark as incomplete if grade cannot be extracted
     };
 
     onAddClass([payload]);

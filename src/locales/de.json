@@ -29,6 +29,7 @@
     "No": "Nein",
     "Inactive": "Inaktiv",
     "Active": "Aktiv",
+    "Incomplete": "Unvollständig",
     "All": "Alle",
     "generatePassword": "Sicheres Passwort generieren",
     "of": "von",
@@ -184,6 +185,13 @@
       "importingStudents": "Schüler werden importiert...",
       "pleaseWait": "Dies kann bei großen Datenmengen einen Moment dauern",
       "importing": "Importiere...",
+      "progress": {
+        "parsing": "CSV-Datei wird verarbeitet...",
+        "checkingClasses": "Klassen werden überprüft...",
+        "creatingClasses": "Klassen werden erstellt...",
+        "importingStudents": "Schüler werden importiert...",
+        "refreshing": "Daten werden aktualisiert..."
+      },
       "firstNameRequired": "Vorname ist erforderlich",
       "lastNameRequired": "Nachname ist erforderlich",
       "dateOfBirthRequired": "Geburtsdatum ist erforderlich",

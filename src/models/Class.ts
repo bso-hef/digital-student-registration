@@ -15,9 +15,17 @@ const ClassSchema = new Schema(
 
     studentCount: { type: Number, default: 0 },
     active: { type: Boolean, default: true, required: true },
+    incomplete: { type: Boolean, default: false, index: true },
   },
   { versionKey: false, timestamps: true },
 );
+
+// Auto-calculate incomplete field based on grade
+ClassSchema.pre("save", function (next) {
+  // Set incomplete to true if grade is null, otherwise false
+  this.incomplete = this.grade === null || this.grade === undefined;
+  next();
+});
 
 ClassSchema.pre("validate", function (next) {
   const from = this.get("schoolYearFrom") as Date | undefined;

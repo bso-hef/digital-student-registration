@@ -29,6 +29,7 @@
     "No": "No",
     "Inactive": "Inactive",
     "Active": "Active",
+    "Incomplete": "Incomplete",
     "All": "All",
     "generatePassword": "Generate secure password",
     "of": "of",
@@ -184,6 +185,13 @@
       "importingStudents": "Importing students...",
       "pleaseWait": "This may take a moment for large datasets",
       "importing": "Importing...",
+      "progress": {
+        "parsing": "Parsing CSV file...",
+        "checkingClasses": "Checking classes...",
+        "creatingClasses": "Creating classes...",
+        "importingStudents": "Importing students...",
+        "refreshing": "Refreshing data..."
+      },
       "firstNameRequired": "First name is required",
       "lastNameRequired": "Last name is required",
       "dateOfBirthRequired": "Date of birth is required",

@@ -140,6 +140,9 @@ const StudentManagementPage = () => {
   const handleAddStudentModalClose = useCallback(() => {
     setOpenStudentAddModal(false);
     setCsvData([]);
+    // Reset loading states to prevent stuck loader
+    setIsImporting(false);
+    setIsParsingCSV(false);
   }, []);
 
   const handleDeleteStudentModalOpen = useCallback(() => {
@@ -171,6 +174,8 @@ const StudentManagementPage = () => {
       setIsImporting(true);
       try {
         await dispatch(addStudents(students));
+        // Refresh both students and classes to show new data
+        await dispatch(getClasses());
         handleAddStudentModalClose();
       } finally {
         setIsImporting(false);
