@@ -26,7 +26,15 @@ export default async function RootLayout({
   // Check both cookie and database state on EVERY request
   const cookieStore = await cookies();
   const cookieSaysComplete = getSetupCookieValue(cookieStore);
-  const dbSaysComplete = await isSystemSetup();
+
+  // Wrap in try-catch for graceful degradation in Docker/production
+  let dbSaysComplete = false;
+  try {
+    dbSaysComplete = await isSystemSetup();
+  } catch (error) {
+    console.error("Failed to check system setup:", error);
+    // On error: fallback to false, setup flow will be triggered
+  }
 
   // If cookie says complete but database says not complete (e.g., DB was reset)
   // Clear the cookie and redirect to setup

@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 
 import { THEME } from "@/constants/general.constants";
-import { getCookie } from "@/utils/general.utils";
 import { PaletteMode } from "@mui/material";
 import { StyledEngineProvider, ThemeProvider } from "@mui/material/styles";
 import { shallowEqual, useSelector } from "react-redux";
@@ -27,13 +26,8 @@ export default function ThemeWrapper({
     shallowEqual,
   );
 
-  const localStorageTheme =
-    typeof window !== "undefined" ? localStorage.getItem("theme") : null;
-
-  const cookieTheme = getCookie("theme");
-
-  const userSelectedMode =
-    localStorageTheme ?? cookieTheme ?? currentTheme ?? THEME.LIGHT;
+  // Use Redux state directly - redux-persist handles persistence
+  const userSelectedMode = currentTheme ?? THEME.LIGHT;
 
   // Resolve the actual theme mode (converts "auto" to "light" or "dark")
   const [resolvedMode, setResolvedMode] = useState<PaletteMode>(
