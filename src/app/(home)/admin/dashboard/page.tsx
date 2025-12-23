@@ -13,10 +13,13 @@ import {
   refreshDashboard,
   resetDashboardLayout,
   setDashboardLayout,
+  toggleDashboardLock,
 } from "@/store/actions/dashboardActions";
 import { AppDispatch, RootState } from "@/store/store";
 import { DashboardLayout } from "@/types/dashboard";
 import { applicationScrollbar } from "@/utils/styling.utils";
+import LockOpenRoundedIcon from "@mui/icons-material/LockOpenRounded";
+import LockRoundedIcon from "@mui/icons-material/LockRounded";
 import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
 import RestartAltRoundedIcon from "@mui/icons-material/RestartAltRounded";
 import { Box, CircularProgress, styled } from "@mui/material";
@@ -85,6 +88,10 @@ const DashboardPage = () => {
     dispatch(resetDashboardLayout());
   };
 
+  const handleToggleLock = () => {
+    dispatch(toggleDashboardLock());
+  };
+
   const handleStatsReorder = (newOrder: string[]) => {
     const newLayout: DashboardLayout = {
       ...layout,
@@ -136,6 +143,19 @@ const DashboardPage = () => {
           placement="bottom"
         />
         <SmallIconButton
+          icon={
+            layout.isLocked ? <LockRoundedIcon /> : <LockOpenRoundedIcon />
+          }
+          onAction={handleToggleLock}
+          hugeIcon
+          title={
+            layout.isLocked
+              ? t("dashboard.unlockLayout")
+              : t("dashboard.lockLayout")
+          }
+          placement="bottom"
+        />
+        <SmallIconButton
           icon={<RefreshRoundedIcon />}
           onAction={handleRefresh}
           disabled={loading}
@@ -154,6 +174,7 @@ const DashboardPage = () => {
               stats={stats.quickStats}
               order={layout.quickStats}
               onReorder={handleStatsReorder}
+              isLocked={layout.isLocked}
             />
           )}
 
@@ -166,6 +187,7 @@ const DashboardPage = () => {
               activityLoading={activityLoading}
               order={layout.charts}
               onReorder={handleChartsReorder}
+              isLocked={layout.isLocked}
             />
           )}
         </Box>

@@ -4,22 +4,28 @@ import { GeneralSkeletonLoader } from "@/components/atoms/GeneralSkeletonLoader"
 import DragIndicatorRoundedIcon from "@mui/icons-material/DragIndicatorRounded";
 import { Box, Card, CardContent, Typography, styled } from "@mui/material";
 
-const StyledCard = styled(Card)(({ theme }) => ({
+const StyledCard = styled(Card, {
+  shouldForwardProp: (prop) => prop !== "isLocked",
+})<{ isLocked?: boolean }>(({ theme, isLocked }) => ({
   background: theme.palette.surface.interface.base,
   border: `1px solid ${theme.palette.border.seperator}`,
   borderRadius: theme.spacing(1.5),
   boxShadow: "rgba(0, 0, 0, 0.05) 0px 2px 8px",
   height: "100%",
   position: "relative",
-  cursor: "grab",
+  cursor: isLocked ? "default" : "grab",
   transition: "all 0.3s ease-in-out",
   "&:active": {
-    cursor: "grabbing",
+    cursor: isLocked ? "default" : "grabbing",
   },
   "&:hover": {
-    border: `2px dashed ${theme.palette.border.hover}`,
-    boxShadow: "rgba(0, 0, 0, 0.15) 0px 6px 20px",
-    transform: "scale(1.01)",
+    border: isLocked
+      ? `1px solid ${theme.palette.border.seperator}`
+      : `2px dashed ${theme.palette.border.hover}`,
+    boxShadow: isLocked
+      ? "rgba(0, 0, 0, 0.05) 0px 2px 8px"
+      : "rgba(0, 0, 0, 0.15) 0px 6px 20px",
+    transform: isLocked ? "none" : "scale(1.01)",
   },
 }));
 
@@ -59,6 +65,7 @@ interface ChartContainerProps {
   children: React.ReactNode;
   loading?: boolean;
   height?: number | string;
+  isLocked?: boolean;
 }
 
 const ChartContainer: React.FC<ChartContainerProps> = ({
@@ -66,16 +73,19 @@ const ChartContainer: React.FC<ChartContainerProps> = ({
   children,
   loading = false,
   height = 300,
+  isLocked = false,
 }) => {
   return (
-    <StyledCard>
-      <DragHandle className="drag-handle">
-        <DragIndicatorRoundedIcon
-          sx={{
-            fontSize: 24,
-          }}
-        />
-      </DragHandle>
+    <StyledCard isLocked={isLocked}>
+      {!isLocked && (
+        <DragHandle className="drag-handle">
+          <DragIndicatorRoundedIcon
+            sx={{
+              fontSize: 24,
+            }}
+          />
+        </DragHandle>
+      )}
       <StyledCardContent>
         <Title>{title}</Title>
         <Box sx={{ height, width: "100%" }}>

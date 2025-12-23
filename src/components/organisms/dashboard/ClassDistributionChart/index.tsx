@@ -12,11 +12,13 @@ import { DASHBOARD_GRADIENTS } from "@/constants/theme.constants";
 interface ClassDistributionChartProps {
   data: GradeDistribution[];
   loading?: boolean;
+  isLocked?: boolean;
 }
 
 const ClassDistributionChart: React.FC<ClassDistributionChartProps> = ({
   data,
   loading = false,
+  isLocked = false,
 }) => {
   const { t } = useTranslation();
 
@@ -35,6 +37,7 @@ const ClassDistributionChart: React.FC<ClassDistributionChartProps> = ({
       title={t("dashboard.charts.classDistribution")}
       loading={loading}
       height={300}
+      isLocked={isLocked}
     >
       {isEmpty ? (
         <Box

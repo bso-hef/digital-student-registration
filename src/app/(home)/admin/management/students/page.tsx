@@ -36,6 +36,7 @@ import QrCode2RoundedIcon from "@mui/icons-material/QrCode2Rounded";
 import UploadFileRoundedIcon from "@mui/icons-material/UploadFileRounded";
 import { Box, SelectChangeEvent, Typography, styled } from "@mui/material";
 import { debounce, isString } from "lodash";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
@@ -256,8 +257,16 @@ const StudentManagementPage = () => {
 
       return {
         id: student?._id,
-        firstName: student?.firstName,
-        lastName: student?.lastName,
+        firstName: (
+          <Link href={`/admin/management/students/${student._id}/general`}>
+            {student?.firstName}
+          </Link>
+        ),
+        lastName: (
+          <Link href={`/admin/management/students/${student._id}/general`}>
+            {student?.lastName}
+          </Link>
+        ),
         class: (
           <ClassAutocomplete
             studentId={student._id}

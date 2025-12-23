@@ -12,11 +12,13 @@ import { DASHBOARD_GRADIENTS } from "@/constants/theme.constants";
 interface RegistrationTrendChartProps {
   data: RegistrationTrendItem[];
   loading?: boolean;
+  isLocked?: boolean;
 }
 
 const RegistrationTrendChart: React.FC<RegistrationTrendChartProps> = ({
   data,
   loading = false,
+  isLocked = false,
 }) => {
   const { t } = useTranslation();
 
@@ -39,6 +41,7 @@ const RegistrationTrendChart: React.FC<RegistrationTrendChartProps> = ({
       title={t("dashboard.charts.registrationTrend")}
       loading={loading}
       height={300}
+      isLocked={isLocked}
     >
       {isEmpty ? (
         <Box

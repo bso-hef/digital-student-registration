@@ -74,6 +74,7 @@ export interface HealthReport {
 export interface DashboardLayout {
   quickStats: string[];
   charts: string[];
+  isLocked: boolean;
 }
 
 export interface RecentActivityItem {

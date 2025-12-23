@@ -32,6 +32,7 @@ interface DraggableStatsGridProps {
   stats: QuickStats;
   order: string[];
   onReorder: (newOrder: string[]) => void;
+  isLocked?: boolean;
 }
 
 interface SortableStatCardProps {
@@ -40,6 +41,7 @@ interface SortableStatCardProps {
   value: number | string;
   icon: React.ReactNode;
   gradient: string;
+  isLocked?: boolean;
 }
 
 const SortableStatCard: React.FC<SortableStatCardProps> = ({
@@ -48,6 +50,7 @@ const SortableStatCard: React.FC<SortableStatCardProps> = ({
   value,
   icon,
   gradient,
+  isLocked = false,
 }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
@@ -58,13 +61,19 @@ const SortableStatCard: React.FC<SortableStatCardProps> = ({
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...(!isLocked ? listeners : {})}
+    >
       <StatCard
         id={id}
         label={label}
         value={value}
         icon={icon}
         gradient={gradient}
+        isLocked={isLocked}
       />
     </div>
   );
@@ -74,6 +83,7 @@ const DraggableStatsGrid: React.FC<DraggableStatsGridProps> = ({
   stats,
   order,
   onReorder,
+  isLocked = false,
 }) => {
   const { t } = useTranslation();
 
@@ -163,6 +173,7 @@ const DraggableStatsGrid: React.FC<DraggableStatsGridProps> = ({
                 value={config.value}
                 icon={config.icon}
                 gradient={config.gradient}
+                isLocked={isLocked}
               />
             );
           })}

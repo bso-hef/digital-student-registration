@@ -1,4 +1,11 @@
 import type { NextConfig } from "next";
+import { readFileSync } from "fs";
+import { join } from "path";
+
+// Read package.json to get app name and version
+const packageJson = JSON.parse(
+  readFileSync(join(process.cwd(), "package.json"), "utf-8"),
+);
 
 /**
  * Parse URL from environment variable to extract components
@@ -37,6 +44,15 @@ const appUrl = parseAppUrl(process.env.NEXT_PUBLIC_APP_URL);
  * @type {import('next').NextConfig}
  */
 const nextConfig: NextConfig = {
+  // Inject package.json values as environment variables
+  env: {
+    NEXT_PUBLIC_NAME: packageJson.name
+      .split("-")
+      .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" "),
+    NEXT_PUBLIC_VERSION: packageJson.version,
+  },
+
   // Enable standalone output for Docker deployment
   // This creates a minimal Node.js server with all dependencies
   output: "standalone",

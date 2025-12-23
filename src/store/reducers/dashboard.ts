@@ -22,6 +22,7 @@ const DEFAULT_LAYOUT: DashboardLayout = {
     "classDistribution",
     "recentActivity",
   ],
+  isLocked: true,
 };
 
 const initialState: DashboardState = {
@@ -86,6 +87,15 @@ const dashboardReducer = (
       return {
         ...state,
         layout: DEFAULT_LAYOUT,
+      };
+
+    case TYPES.TOGGLE_DASHBOARD_LOCK:
+      return {
+        ...state,
+        layout: {
+          ...state.layout,
+          isLocked: !state.layout.isLocked,
+        },
       };
 
     case TYPES.GET_DASHBOARD_ACTIVITY_REQUEST:

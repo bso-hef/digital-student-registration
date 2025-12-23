@@ -487,6 +487,8 @@
   "dashboard": {
     "title": "Dashboard",
     "resetLayout": "Layout zurücksetzen",
+    "lockLayout": "Layout sperren",
+    "unlockLayout": "Layout entsperren",
     "actions": {
       "refresh": "Aktualisieren"
     },

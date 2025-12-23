@@ -12,11 +12,13 @@ import { DASHBOARD_GRADIENTS } from "@/constants/theme.constants";
 interface StudentStatusChartProps {
   data: StudentStatusBreakdown;
   loading?: boolean;
+  isLocked?: boolean;
 }
 
 const StudentStatusChart: React.FC<StudentStatusChartProps> = ({
   data,
   loading = false,
+  isLocked = false,
 }) => {
   const { t } = useTranslation();
 
@@ -55,6 +57,7 @@ const StudentStatusChart: React.FC<StudentStatusChartProps> = ({
       title={t("dashboard.charts.studentStatus")}
       loading={loading}
       height={300}
+      isLocked={isLocked}
     >
       {isEmpty ? (
         <Box

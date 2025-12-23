@@ -81,6 +81,13 @@ export const resetDashboardLayout = (): AppThunk => (dispatch) => {
   localStorage.removeItem(LAYOUT_STORAGE_KEY);
 };
 
+export const toggleDashboardLock =
+  (): AppThunk => (dispatch, getState) => {
+    dispatch({ type: TYPES.TOGGLE_DASHBOARD_LOCK });
+    const { dashboard } = getState();
+    saveDashboardLayoutToStorage(dashboard.layout);
+  };
+
 export const loadDashboardLayout = (): AppThunk => (dispatch) => {
   const savedLayout = loadDashboardLayoutFromStorage();
   if (savedLayout) {
@@ -124,6 +131,12 @@ const loadDashboardLayoutFromStorage = (): DashboardLayout | null => {
         layout.quickStats = layout.quickStats.filter(
           (s) => s !== "activeClasses",
         );
+        needsSave = true;
+      }
+
+      // Migrate: Add isLocked if missing (default: true)
+      if (layout.isLocked === undefined) {
+        layout.isLocked = true;
         needsSave = true;
       }
 
