@@ -214,11 +214,16 @@ export function validateConfig(): void {
     const errorMessage = `Configuration validation failed:\n${errors.join("\n")}`;
     console.error(errorMessage);
 
-    if (appConfig.env.isProduction) {
+    // Allow skipping validation via environment variable (for local testing)
+    const skipValidation = process.env.SKIP_URL_VALIDATION === "true";
+
+    if (appConfig.env.isProduction && !skipValidation) {
       throw new Error(errorMessage);
     } else {
       console.warn(
-        "Configuration errors detected (development mode - continuing anyway)",
+        skipValidation
+          ? "Configuration errors detected (SKIP_URL_VALIDATION=true - continuing anyway)"
+          : "Configuration errors detected (development mode - continuing anyway)",
       );
     }
   }
