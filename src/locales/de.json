@@ -547,7 +547,15 @@
       "serverInfo": "Serverinformationen",
       "service": "Dienst",
       "version": "Version",
-      "architecture": "Architektur"
+      "architecture": "Architektur",
+      "redis": "Redis",
+      "cores": "Kerne",
+      "uptimeDay": "Tag",
+      "uptimeDays": "Tage",
+      "uptimeHour": "Stunde",
+      "uptimeHours": "Stunden",
+      "uptimeMinute": "Minute",
+      "uptimeMinutes": "Minuten"
     },
     "recentActivity": {
       "title": "Letzte Aktivitäten",

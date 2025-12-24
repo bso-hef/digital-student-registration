@@ -14,11 +14,35 @@ const REDIS_PASSWORD = process.env.REDIS_PASSWORD || undefined;
 const REDIS_DB = parseInt(process.env.REDIS_DB || "0", 10);
 const REDIS_KEY_PREFIX = process.env.REDIS_KEY_PREFIX || "dsr:";
 
+// Track if we've logged the development warning
+let hasLoggedDevWarning = false;
+const isDevelopment = process.env.NODE_ENV === "development";
+
 // Connection options
 const redisOptions: RedisOptions = {
   retryStrategy: (times: number) => {
+    // In development: Give up after 3 retries (Redis is optional)
+    if (isDevelopment) {
+      if (times === 1 && !hasLoggedDevWarning) {
+        logger.warn(
+          "Redis not available in development mode (this is expected)",
+        );
+        hasLoggedDevWarning = true;
+      }
+      if (times >= 3) {
+        return null; // Stop retrying
+      }
+      return 500; // Wait 500ms before retry
+    }
+
+    // In production: Keep retrying with exponential backoff
     const delay = Math.min(times * 50, 2000);
-    logger.warn(`Redis connection retry attempt ${times}, waiting ${delay}ms`);
+    if (times % 10 === 0) {
+      // Only log every 10th retry to reduce spam
+      logger.warn(
+        `Redis connection retry attempt ${times}, waiting ${delay}ms`,
+      );
+    }
     return delay;
   },
   maxRetriesPerRequest: 3,
@@ -58,15 +82,24 @@ export function getRedisClient(): Redis {
     });
 
     redisClient.on("error", (err) => {
-      logger.error("Redis client error:", err);
+      // In development: Suppress error logs (expected when Redis is not running)
+      if (!isDevelopment) {
+        logger.error("Redis client error:", err);
+      }
     });
 
     redisClient.on("close", () => {
-      logger.warn("Redis client connection closed");
+      // In development: Suppress close warnings
+      if (!isDevelopment) {
+        logger.warn("Redis client connection closed");
+      }
     });
 
     redisClient.on("reconnecting", (time: number) => {
-      logger.warn(`Redis client reconnecting in ${time}ms`);
+      // In development: Suppress reconnecting warnings
+      if (!isDevelopment) {
+        logger.warn(`Redis client reconnecting in ${time}ms`);
+      }
     });
 
     return redisClient;
@@ -99,10 +132,16 @@ export async function disconnectRedis(): Promise<void> {
 export async function isRedisAvailable(): Promise<boolean> {
   try {
     const client = getRedisClient();
+
+    // Check connection status first
+    if (client.status !== "ready") {
+      return false;
+    }
+
     const result = await client.ping();
     return result === "PONG";
   } catch (error) {
-    logger.warn("Redis is not available:", error);
+    // Silently return false - don't log (health checks call this frequently)
     return false;
   }
 }

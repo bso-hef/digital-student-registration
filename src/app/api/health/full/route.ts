@@ -1,5 +1,7 @@
 import { auth } from "@/lib/auth/auth";
+import { appConfig } from "@/lib/config/app-config";
 import { dbConnect, getMongoState } from "@/lib/config/mongo";
+import { isRedisAvailable } from "@/lib/redis";
 import { formatBytes } from "@/server/utils/server.utils";
 import os from "os";
 
@@ -30,21 +32,41 @@ export async function GET() {
     };
   }
 
+  try {
+    const redisUp = await isRedisAvailable();
+    checks.redis = { status: redisUp ? "up" : "down" };
+  } catch (err: unknown) {
+    checks.redis = {
+      status: "down",
+      error: err instanceof Error ? err.message : "redis failed",
+    };
+  }
+
+  // Determine critical checks based on environment
+  const isDevelopment = appConfig.env.isDevelopment;
+
+  // In development: Only MongoDB is critical (Redis is optional)
+  // In production: Both MongoDB and Redis are critical
+  const criticalChecks = isDevelopment ? ["mongo"] : ["mongo", "redis"];
+
+  const allCriticalChecksUp = criticalChecks.every(
+    (checkName) =>
+      checks[checkName] &&
+      (checks[checkName] as { status: string }).status === "up",
+  );
+
   const report = {
-    status: (Object.values(checks) as { status: string }[]).every(
-      (c) => c.status === "up",
-    )
-      ? "up"
-      : "down",
+    status: allCriticalChecksUp ? "up" : "down",
     checks,
     meta: {
       service: "digital-student-onboarding",
-      version: process.env.NEXT_PUBLIC_APP_VERSION ?? "dev",
+      version: appConfig.app.version,
+      environment: isDevelopment ? "development" : "production",
       now: new Date().toISOString(),
       uptimeSec: Math.floor(process.uptime()),
       node: process.version,
       system: {
-        hostname: os.hostname(),
+        hostname: appConfig.app.hostname,
         platform: os.platform(),
         arch: os.arch(),
         cpus: os.cpus()?.length,

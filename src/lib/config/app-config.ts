@@ -1,3 +1,5 @@
+import packageJson from "../../../package.json";
+
 /**
  * Parse a URL string into its components
  */
@@ -89,7 +91,7 @@ export const appConfig = {
   // Application Settings
   app: {
     name: getEnv("NEXT_PUBLIC_NAME", "Digital Student Registration"),
-    version: getEnv("NEXT_PUBLIC_VERSION", "1.0.0"),
+    version: packageJson.version,
     url: appUrl,
     protocol: parsedAppUrl.protocol,
     hostname: parsedAppUrl.hostname,
@@ -176,6 +178,35 @@ export function validateConfig(): void {
 
     if (!serverConfig.mongodb.uri) {
       errors.push("MONGODB_URI is required");
+    }
+  }
+
+  // CRITICAL: Validate that localhost URLs are not used in production
+  // This prevents QR codes with localhost URLs from being generated
+  if (appConfig.env.isProduction) {
+    const urlsToCheck = [
+      { name: "NEXT_PUBLIC_APP_URL", value: appConfig.app.url },
+      { name: "NEXT_PUBLIC_API_URL", value: appConfig.api.url },
+    ];
+
+    if (!isBrowser && serverConfig.nextAuth.url) {
+      urlsToCheck.push({
+        name: "NEXTAUTH_URL",
+        value: serverConfig.nextAuth.url,
+      });
+    }
+
+    for (const { name, value } of urlsToCheck) {
+      if (value && value.includes("localhost")) {
+        errors.push(
+          `${name} contains 'localhost' in production! This will cause QR codes and links to be non-functional. Set to your production domain (e.g., https://school.example.com)`,
+        );
+      }
+      if (value && value.includes("127.0.0.1")) {
+        errors.push(
+          `${name} contains '127.0.0.1' in production! This will cause QR codes and links to be non-functional. Set to your production domain (e.g., https://school.example.com)`,
+        );
+      }
     }
   }
 
