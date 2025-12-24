@@ -9,6 +9,7 @@ Docker deployment guide for Digital Student Registration.
 If you deploy without setting production URLs, **all QR codes will contain `localhost:3000`**.
 
 **REQUIRED before building:**
+
 ```bash
 export NEXT_PUBLIC_APP_URL=https://your-domain.com
 export NEXT_PUBLIC_API_URL=https://your-domain.com
@@ -22,16 +23,19 @@ The application **fails to start** in production if URLs contain "localhost" (v2
 ## Prerequisites
 
 **Required:**
+
 - Docker Engine 20.10+
 - Docker Compose 2.0+
 - 4GB RAM minimum (8GB recommended)
 
 **Linux:**
+
 ```bash
 chmod +x scripts/*.sh
 ```
 
 **Windows:**
+
 ```powershell
 Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
@@ -88,25 +92,26 @@ Docker mapping: `host_port:container_port` (only host port changes)
 
 ### Required
 
-| Variable | Example | When |
-|----------|---------|------|
+| Variable              | Example              | When           |
+| --------------------- | -------------------- | -------------- |
 | `NEXT_PUBLIC_APP_URL` | `https://school.com` | **BUILD TIME** |
 | `NEXT_PUBLIC_API_URL` | `https://school.com` | **BUILD TIME** |
-| `NEXTAUTH_URL` | `https://school.com` | **BUILD TIME** |
-| `MONGO_USER` | `admin` | Runtime |
-| `MONGO_PASSWORD` | `[password]` | Runtime |
-| `REDIS_PASSWORD` | `[password]` | Runtime |
-| `NEXTAUTH_SECRET` | `[64 chars]` | Runtime |
+| `NEXTAUTH_URL`        | `https://school.com` | **BUILD TIME** |
+| `MONGO_USER`          | `admin`              | Runtime        |
+| `MONGO_PASSWORD`      | `[password]`         | Runtime        |
+| `REDIS_PASSWORD`      | `[password]`         | Runtime        |
+| `NEXTAUTH_SECRET`     | `[64 chars]`         | Runtime        |
 
 ### Optional (with defaults)
 
-| Variable | Default |
-|----------|---------|
-| `APP_PORT` | `3000` |
-| `MONGO_DB` | `digital-student-registration` |
-| `APP_VERSION` | From `package.json` |
+| Variable      | Default                        |
+| ------------- | ------------------------------ |
+| `APP_PORT`    | `3000`                         |
+| `MONGO_DB`    | `digital-student-registration` |
+| `APP_VERSION` | From `package.json`            |
 
 **Generate secrets:**
+
 ```bash
 openssl rand -base64 64 | tr -d "=+/" | cut -c1-64
 ```
@@ -117,17 +122,17 @@ openssl rand -base64 64 | tr -d "=+/" | cut -c1-64
 
 ```yaml
 services:
-  app-linux:        # Next.js application (Alpine Linux)
-  app-windows:      # Next.js application (Windows Server Core)
-  mongo:            # MongoDB 7.0 database
-  redis:            # Redis 7 cache
+  app-linux: # Next.js application (Alpine Linux)
+  app-windows: # Next.js application (Windows Server Core)
+  mongo: # MongoDB 7.0 database
+  redis: # Redis 7 cache
 
 volumes:
-  mongo-data:       # Persistent MongoDB data
-  redis-data:       # Persistent Redis data
+  mongo-data: # Persistent MongoDB data
+  redis-data: # Persistent Redis data
 
 networks:
-  app-network:      # Internal bridge network
+  app-network: # Internal bridge network
 ```
 
 ---
@@ -242,6 +247,7 @@ docker compose exec mongo mongorestore \
 **Problem:** QR codes contain `localhost:3000`
 
 **Solution:**
+
 ```bash
 export NEXT_PUBLIC_APP_URL=https://your-domain.com
 export NEXT_PUBLIC_API_URL=https://your-domain.com
@@ -342,6 +348,7 @@ healthcheck:
 ```
 
 **Manual check:**
+
 ```bash
 curl http://localhost:3000/api/health/live
 curl http://localhost:3000/api/health/full
