@@ -37,30 +37,24 @@ services:
   app-linux:
     profiles:
       - linux
-    image: ${DOCKER_IMAGE:-dsr-app}:${APP_VERSION:-2.1.0}
+    image: dsr-app:latest
     pull_policy: never
     container_name: dsr-app
     restart: unless-stopped
     ports:
-      # Port mapping: host_port:container_port
-      # Container always uses port 3000 internally, host port is configurable
       - "${APP_PORT:-3000}:3000"
     environment:
       NODE_ENV: production
-      # Container port is always 3000 (Next.js standard)
       PORT: 3000
       HOSTNAME: "0.0.0.0"
       NEXT_TELEMETRY_DISABLED: 1
-      # REQUIRED: Must be set to production domain (no defaults to prevent accidental localhost deployment)
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
       NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
       NEXTAUTH_URL: ${NEXTAUTH_URL}
-      # Optional: Skip URL validation for local testing (set SKIP_URL_VALIDATION=true in .env)
       SKIP_URL_VALIDATION: ${SKIP_URL_VALIDATION:-false}
       MONGODB_URI: mongodb://${MONGO_USER}:${MONGO_PASSWORD}@mongo:27017/${MONGO_DB:-digital-student-registration}?authSource=admin
       REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
-      # Version from package.json (passed as build arg)
       NEXT_PUBLIC_VERSION: ${APP_VERSION:-2.1.0}
       NEXT_PUBLIC_NAME: ${APP_NAME:-Digital Student Registration}
     networks:
@@ -91,30 +85,24 @@ services:
   app-windows:
     profiles:
       - windows
-    image: ${DOCKER_IMAGE:-dsr-app}:${APP_VERSION:-2.1.0}-windows
+    image: dsr-app:latest-windows
     pull_policy: never
     container_name: dsr-app
     restart: unless-stopped
     ports:
-      # Port mapping: host_port:container_port
-      # Container always uses port 3000 internally, host port is configurable
       - "${APP_PORT:-3000}:3000"
     environment:
       NODE_ENV: production
-      # Container port is always 3000 (Next.js standard)
       PORT: 3000
       HOSTNAME: "0.0.0.0"
       NEXT_TELEMETRY_DISABLED: 1
-      # REQUIRED: Must be set to production domain (no defaults to prevent accidental localhost deployment)
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
       NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
       NEXTAUTH_URL: ${NEXTAUTH_URL}
-      # Optional: Skip URL validation for local testing (set SKIP_URL_VALIDATION=true in .env)
       SKIP_URL_VALIDATION: ${SKIP_URL_VALIDATION:-false}
       MONGODB_URI: mongodb://${MONGO_USER}:${MONGO_PASSWORD}@mongo:27017/${MONGO_DB:-digital-student-registration}?authSource=admin
       REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
-      # Version from package.json (passed as build arg)
       NEXT_PUBLIC_VERSION: ${APP_VERSION:-2.1.0}
       NEXT_PUBLIC_NAME: ${APP_NAME:-Digital Student Registration}
     networks:

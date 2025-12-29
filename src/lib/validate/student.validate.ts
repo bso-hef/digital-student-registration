@@ -34,21 +34,21 @@ export const validateManualCreationForm = Yup.object({
     .trim()
     .min(2, "Nachname muss mindestens 2 Zeichen lang sein")
     .max(50, "Nachname darf maximal 50 Zeichen lang sein"),
-  dateOfBirth: Yup.date()
-    .typeError("Ungültiges Datum")
+  dateOfBirth: Yup.mixed()
     .required("Geburtsdatum ist erforderlich")
-    .max(dayjs().toDate(), "Geburtsdatum darf nicht in der Zukunft liegen")
-    .min(
-      dayjs().subtract(120, "years").toDate(),
-      "Geburtsdatum darf nicht mehr als 120 Jahre zurückliegen",
-    )
+    .test("valid-date", "Ungültiges Datum", (value) => {
+      if (!value) return false;
+      if (dayjs.isDayjs(value)) {
+        return value.isValid();
+      }
+      return false;
+    })
     .test(
-      "reasonable-age",
-      "Schüler muss zwischen 3 und 100 Jahre alt sein",
-      function (value) {
-        if (!value) return false;
-        const age = dayjs().diff(dayjs(value), "years");
-        return age >= 3 && age <= 100;
+      "not-future",
+      "Geburtsdatum darf nicht in der Zukunft liegen",
+      (value) => {
+        if (!value || !dayjs.isDayjs(value)) return false;
+        return value.isBefore(dayjs()) || value.isSame(dayjs(), "day");
       },
     ),
 });

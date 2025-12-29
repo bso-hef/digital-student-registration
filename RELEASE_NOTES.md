@@ -1,6 +1,6 @@
 # Digital Student Registration - Version 2.1.0
 
-**Veröffentlichungsdatum:** 24. Dezember 2025
+**Veröffentlichungsdatum:** 29. Dezember 2025
 
 Wir freuen uns, Version 2.1.0 der **Digitalen Schülerverwaltung** anzukündigen - ein Update mit Fokus auf verbesserte Deployment-Prozesse, Dashboard-Verbesserungen und Bugfixes.
 
@@ -123,7 +123,7 @@ Die meisten Änderungen sind abwärtskompatibel. Beim Update:
 ## Versionsinformationen
 
 - **Version**: 2.1.0
-- **Veröffentlichungsdatum**: 24. Dezember 2025
+- **Veröffentlichungsdatum**: 29. Dezember 2025
 - **Codename**: Deployment
 - **Status**: Produktionsbereit
 

@@ -29,6 +29,7 @@ const SubTitle = styled(Typography)(({ theme }) => ({
   lineHeight: "32px !important",
   letterSpacing: "0.115px",
   color: theme.palette.text.information,
+  marginBottom: theme.spacing(2),
 }));
 
 interface CustomTitleProps {
