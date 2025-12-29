@@ -14,6 +14,7 @@ export interface ParsedClass {
   isVocational: boolean;
   requiresEmployerInfo: boolean;
   active: boolean;
+  incomplete: boolean;
   // Validation status
   isValid?: boolean;
   validationErrors?: string[];
@@ -27,7 +28,7 @@ export interface ClassCSVRow extends ParsedClass {
 /**
  * Extract grade from class name (e.g., "12InfoA" → 12, "7A" → 7, "BFS" → null)
  */
-function extractGradeFromName(name: string): number | null {
+export function extractGradeFromName(name: string): number | null {
   const match = name.match(/^(\d{1,2})/);
   if (match) {
     const grade = parseInt(match[1], 10);
@@ -220,6 +221,7 @@ function parseClassCSVRow(
     isVocational: false,
     requiresEmployerInfo: false,
     active: true,
+    incomplete: false,
   };
 
   headerMapping.forEach(({ index, englishField }) => {
@@ -256,6 +258,9 @@ function parseClassCSVRow(
   if (result.grade === null && result.name) {
     result.grade = extractGradeFromName(result.name as string);
   }
+
+  // Set incomplete status based on whether grade exists
+  result.incomplete = result.grade === null;
 
   const parsedClass = result as unknown as ParsedClass;
   const validationErrors = validateParsedClass(parsedClass);
@@ -487,6 +492,7 @@ export function convertToClassCreateInput(
         isVocational: pc.isVocational,
         requiresEmployerInfo: pc.requiresEmployerInfo,
         active: pc.active,
+        incomplete: pc.incomplete,
       };
     });
 }

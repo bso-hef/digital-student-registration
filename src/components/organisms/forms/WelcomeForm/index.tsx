@@ -27,8 +27,7 @@ const Information = styled(Typography)(({ theme }) => ({
   fontWeight: 400,
   lineHeight: "24px !important",
   letterSpacing: "0.115px",
-  color: theme.palette.text.default,
-  marginBottom: theme.spacing(1),
+  color: theme.palette.text.information,
   textAlign: "left",
 }));
 

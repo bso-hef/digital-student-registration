@@ -2,6 +2,8 @@ import React from "react";
 
 import ChartContainer from "@/components/molecules/dashboard/ChartContainer";
 import { StudentStatusBreakdown } from "@/types/dashboard";
+import PieChartIcon from "@mui/icons-material/PieChart";
+import { Box, Typography } from "@mui/material";
 import { PieChart } from "@mui/x-charts/PieChart";
 import { useTranslation } from "react-i18next";
 
@@ -10,11 +12,13 @@ import { DASHBOARD_GRADIENTS } from "@/constants/theme.constants";
 interface StudentStatusChartProps {
   data: StudentStatusBreakdown;
   loading?: boolean;
+  isLocked?: boolean;
 }
 
 const StudentStatusChart: React.FC<StudentStatusChartProps> = ({
   data,
   loading = false,
+  isLocked = false,
 }) => {
   const { t } = useTranslation();
 
@@ -45,24 +49,52 @@ const StudentStatusChart: React.FC<StudentStatusChartProps> = ({
     },
   ].filter((item) => item.value > 0);
 
+  // Check if data is empty
+  const isEmpty = chartData.length === 0;
+
   return (
     <ChartContainer
       title={t("dashboard.charts.studentStatus")}
       loading={loading}
       height={300}
+      isLocked={isLocked}
     >
-      <PieChart
-        series={[
-          {
-            data: chartData,
-            innerRadius: 30,
-            outerRadius: 100,
-            paddingAngle: 2,
-            cornerRadius: 5,
-          },
-        ]}
-        margin={{ right: 180 }}
-      />
+      {isEmpty ? (
+        <Box
+          sx={{
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 2,
+          }}
+        >
+          <PieChartIcon
+            sx={{
+              fontSize: 64,
+              color: "text.secondary",
+              opacity: 0.3,
+            }}
+          />
+          <Typography variant="body1" color="text.secondary">
+            {t("dashboard.charts.noData")}
+          </Typography>
+        </Box>
+      ) : (
+        <PieChart
+          series={[
+            {
+              data: chartData,
+              innerRadius: 30,
+              outerRadius: 100,
+              paddingAngle: 2,
+              cornerRadius: 5,
+            },
+          ]}
+          margin={{ right: 180 }}
+        />
+      )}
     </ChartContainer>
   );
 };

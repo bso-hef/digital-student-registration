@@ -9,8 +9,14 @@ import React, {
 import GeneralInput from "@/components/atoms/GeneralInput";
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
 import SmallIconButton from "@/components/atoms/buttons/SmallIconButton";
+import ImportProgressIndicator, {
+  ImportStep,
+} from "@/components/molecules/ImportProgressIndicator";
 import classService from "@/lib/services/classService";
+import { addClass } from "@/store/actions/classActions";
+import { AppDispatch } from "@/store/store";
 import { CreateStudentInput, StudentFormRow } from "@/types/student";
+import { extractGradeFromName } from "@/utils/classCSV.utils";
 import { ParsedStudent } from "@/utils/csv.utils";
 import { uuid_v4 } from "@/utils/string.utils";
 import { applicationScrollbar } from "@/utils/styling.utils";
@@ -18,10 +24,11 @@ import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 import RemoveRoundedIcon from "@mui/icons-material/RemoveRounded";
 import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
-import { Box, Chip, LinearProgress, Typography, styled } from "@mui/material";
+import { Box, Chip, Typography, styled } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs, { Dayjs } from "dayjs";
 import { useTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
 
 import GeneralModal from "../GeneralModal";
 import MissingClassesWarningModal from "../MissingClassesWarningModal";
@@ -74,28 +81,6 @@ const StyledRowsContainer = styled(Box)(({ theme }) => ({
   ...applicationScrollbar(theme),
 }));
 
-const StyledLoadingOverlay = styled(Box)(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "center",
-  gap: theme.spacing(3),
-  padding: theme.spacing(6),
-  minHeight: 200,
-}));
-
-const StyledProgressBar = styled(LinearProgress)(({ theme }) => ({
-  width: "100%",
-  maxWidth: 400,
-  height: 8,
-  borderRadius: 4,
-  backgroundColor: theme.palette.grey[200],
-  "& .MuiLinearProgress-bar": {
-    borderRadius: 4,
-    backgroundColor: theme.palette.primary.main,
-  },
-}));
-
 type AddStudentModalProps = {
   open: boolean;
   onClose: () => void;
@@ -116,6 +101,7 @@ const AddStudentModal: React.FC<AddStudentModalProps> = ({
   isImporting = false,
 }) => {
   const { t } = useTranslation();
+  const dispatch: AppDispatch = useDispatch();
   const [state, setState] = useState<StudentFormRow[]>([]);
   const [editableCsvData, setEditableCsvData] = useState<ParsedStudent[]>([]);
   const [isFormValid, setIsFormValid] = useState(false);
@@ -123,8 +109,24 @@ const AddStudentModal: React.FC<AddStudentModalProps> = ({
   const [missingClasses, setMissingClasses] = useState<string[]>([]);
   const [isCheckingClasses, setIsCheckingClasses] = useState(false);
   const [isCreatingClasses, setIsCreatingClasses] = useState(false);
+  const [currentProgressStep, setCurrentProgressStep] =
+    useState<ImportStep>("parsing");
 
-  const isLoading = isParsingCSV || isImporting || isCheckingClasses;
+  const isLoading =
+    isParsingCSV || isImporting || isCheckingClasses || isCreatingClasses;
+
+  // Update progress step based on current loading state
+  useEffect(() => {
+    if (isParsingCSV) {
+      setCurrentProgressStep("parsing");
+    } else if (isCheckingClasses) {
+      setCurrentProgressStep("checking_classes");
+    } else if (isCreatingClasses) {
+      setCurrentProgressStep("creating_classes");
+    } else if (isImporting) {
+      setCurrentProgressStep("importing_students");
+    }
+  }, [isParsingCSV, isCheckingClasses, isCreatingClasses, isImporting]);
 
   // Check if CSV data has comprehensive fields (more than just basic info)
   const isComprehensiveCSV = useMemo(() => {
@@ -372,17 +374,22 @@ const AddStudentModal: React.FC<AddStudentModalProps> = ({
       const { schoolYearFrom, schoolYearTo } = getDefaultSchoolYear();
 
       // Create classes with default school year
-      const classesToCreate = missingClasses.map((name) => ({
-        name,
-        schoolYearFrom,
-        schoolYearTo,
-        grade: null,
-        isVocational: true, // Default to vocational since this is a vocational school context
-        requiresEmployerInfo: false,
-        active: true,
-      }));
+      const classesToCreate = missingClasses.map((name) => {
+        const grade = extractGradeFromName(name);
+        return {
+          name,
+          schoolYearFrom,
+          schoolYearTo,
+          grade,
+          isVocational: true, // Default to vocational since this is a vocational school context
+          requiresEmployerInfo: false,
+          active: true,
+          incomplete: grade === null, // Mark as incomplete if grade cannot be extracted
+        };
+      });
 
-      await classService.create(classesToCreate);
+      // Use Redux action to create classes - this updates Redux state automatically
+      await dispatch(addClass(classesToCreate));
 
       // Close the missing classes modal and proceed with import
       setMissingClassesModalOpen(false);
@@ -393,7 +400,7 @@ const AddStudentModal: React.FC<AddStudentModalProps> = ({
     } finally {
       setIsCreatingClasses(false);
     }
-  }, [missingClasses, getDefaultSchoolYear, performImport]);
+  }, [missingClasses, getDefaultSchoolYear, performImport, dispatch]);
 
   // Handle "Import Anyway" action
   const handleImportAnyway = useCallback(() => {
@@ -415,19 +422,9 @@ const AddStudentModal: React.FC<AddStudentModalProps> = ({
     );
   };
 
-  // Loading content
+  // Loading content with progress indicator
   const loadingContent = (
-    <StyledLoadingOverlay>
-      <Typography variant="h6" color="text.primary">
-        {isParsingCSV
-          ? t("modals.addStudent.parsingCSV")
-          : t("modals.addStudent.importingStudents")}
-      </Typography>
-      <StyledProgressBar />
-      <Typography variant="body2" color="text.secondary">
-        {t("modals.addStudent.pleaseWait")}
-      </Typography>
-    </StyledLoadingOverlay>
+    <ImportProgressIndicator currentStep={currentProgressStep} />
   );
 
   // CSV Preview with editable collapsible rows

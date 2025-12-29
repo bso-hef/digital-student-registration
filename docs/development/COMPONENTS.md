@@ -1,753 +1,422 @@
 # Component Development Guide
 
-Complete guide for developing components using Atomic Design pattern.
-
-## Table of Contents
-
-- [Overview](#overview)
-- [Atomic Design Pattern](#atomic-design-pattern)
-- [Component Structure](#component-structure)
-- [Atoms](#atoms)
-- [Molecules](#molecules)
-- [Organisms](#organisms)
-- [Creating New Components](#creating-new-components)
-- [Component Best Practices](#component-best-practices)
-- [Testing Components](#testing-components)
-
----
+Component development using Atomic Design pattern.
 
 ## Overview
 
-The application uses **Atomic Design** methodology to organize components into a hierarchy:
-
-```text
-Atoms → Molecules → Organisms → Templates → Pages
-```
-
-### Component Location
-
-```text
-src/components/
-├── atoms/          # Basic UI elements
-├── molecules/      # Composed components
-└── organisms/      # Complex features
-```
-
-### Naming Conventions
-
-- **PascalCase** for component names: `GeneralButton`
-- **Index file** for exports: `index.tsx`
-- **Test file** alongside component: `ComponentName.test.tsx`
+**Pattern:** Atomic Design (Atoms → Molecules → Organisms)
+**Styling:** Material-UI `styled()` API with Emotion
+**Testing:** Vitest + React Testing Library
+**Location:** `src/components/`
 
 ---
 
-## Atomic Design Pattern
+## Structure
+
+```
+src/components/
+├── atoms/          # Basic UI elements (buttons, inputs, badges)
+├── molecules/      # Composed components (headers, menus)
+└── organisms/      # Complex features (forms, tables, modals)
+```
+
+**Naming:** PascalCase (`GeneralButton`, `DataTable`)
+**Export:** Via `index.tsx` in each directory
+
+---
+
+## Atomic Design
 
 ### Atoms
 
-**Definition:** Basic building blocks that can't be broken down further.
+Basic building blocks. Cannot be broken down further.
 
 **Examples:**
 
-- Buttons
-- Inputs
-- Labels
-- Icons
-- Avatars
-
-**Location:** `src/components/atoms/`
+- `GeneralButton` - Reusable button with variants
+- `GeneralInput` - Text input with error states
+- `ClassStatus` - Status badge
+- `Logo` - Application logo
 
 ### Molecules
 
-**Definition:** Groups of atoms functioning together as a unit.
+Composed of atoms. Still relatively simple.
 
 **Examples:**
 
-- Form fields with labels
-- Search bars
-- Header with logo and navigation
-- Card with title and content
-
-**Location:** `src/components/molecules/`
+- `AdminSettingsHeader` - Header with title + actions
+- `StatCard` - Dashboard statistic card
+- `AccessibilityMenu` - Accessibility settings menu
 
 ### Organisms
 
-**Definition:** Complex components composed of atoms and molecules.
+Complex features combining atoms and molecules.
 
 **Examples:**
 
-- Navigation bars
-- Data tables
-- Forms
-- Modals
-- Charts
-
-**Location:** `src/components/organisms/`
+- **Forms** - 10 onboarding forms (WelcomeForm, GeneralForm, etc.)
+- **Tables** - DataTable with sorting, filtering, pagination
+- **Modals** - GeneralModal, AddClassModal, AddStudentModal
+- **Navigation** - LeftNavigation with collapsible sections
 
 ---
 
-## Component Structure
+## Creating Components
 
-### Standard Component Structure
-
-```text
-ComponentName/
-├── index.tsx               # Component implementation
-└── ComponentName.test.tsx  # Unit tests
-```
-
-### Example Component
+### 1. Basic Component
 
 ```typescript
-// src/components/atoms/buttons/GeneralButton/index.tsx
-import { Button, ButtonProps, styled } from "@mui/material";
-import { FC } from "react";
+// src/components/atoms/MyComponent/index.tsx
+'use client';  // If using hooks/state
 
-interface GeneralButtonProps {
-  label: string;
-  onAction: () => void;
-  variant?: "contained" | "outlined" | "text";
-  color?: "primary" | "secondary" | "error";
-  disabled?: boolean;
-  fullWidth?: boolean;
-  icon?: React.ReactNode;
-}
+import { styled } from '@mui/material';
 
-const StyledButton = styled(Button)(({ theme }) => ({
-  textTransform: "none",
-  fontWeight: 600,
-  padding: theme.spacing(1.5, 3),
-  borderRadius: theme.shape.borderRadius,
-  transition: "all 0.2s ease-in-out",
-
-  "&:hover": {
-    transform: "translateY(-2px)",
-    boxShadow: theme.shadows[4],
-  },
-}));
-
-const GeneralButton: FC<GeneralButtonProps> = ({
-  label,
-  onAction,
-  variant = "contained",
-  color = "primary",
-  disabled = false,
-  fullWidth = false,
-  icon,
-}) => {
-  return (
-    <StyledButton
-      variant={variant}
-      color={color}
-      onClick={onAction}
-      disabled={disabled}
-      fullWidth={fullWidth}
-      startIcon={icon}
-    >
-      {label}
-    </StyledButton>
-  );
-};
-
-export default GeneralButton;
-```
-
----
-
-## Atom
-
-### Button Components
-
-**Location:** `src/components/atoms/buttons/`
-
-#### GeneralButton
-
-General-purpose button with variants.
-
-```typescript
-import GeneralButton from "@/components/atoms/buttons/GeneralButton";
-
-<GeneralButton
-  label="Save"
-  onAction={handleSave}
-  variant="contained"
-  color="primary"
-/>
-```
-
-**Props:**
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `label` | `string` | Required | Button text |
-| `onAction` | `() => void` | Required | Click handler |
-| `variant` | `string` | `"contained"` | Button style |
-| `color` | `string` | `"primary"` | Button color |
-| `disabled` | `boolean` | `false` | Disabled state |
-| `fullWidth` | `boolean` | `false` | Full width |
-| `icon` | `ReactNode` | `undefined` | Icon element |
-
-#### SmallIconButton
-
-Icon-only button with tooltip.
-
-```typescript
-import SmallIconButton from "@/components/atoms/buttons/SmallIconButton";
-import DeleteIcon from "@mui/icons-material/Delete";
-
-<SmallIconButton
-  icon={<DeleteIcon />}
-  onAction={handleDelete}
-  title="Delete item"
-  placement="top"
-/>
-```
-
-### Input Components
-
-**Location:** `src/components/atoms/`
-
-#### GeneralInput
-
-Styled text input with label.
-
-```typescript
-import GeneralInput from "@/components/atoms/GeneralInput";
-
-<GeneralInput
-  label="Email"
-  value={email}
-  onChange={setEmail}
-  type="email"
-  placeholder="Enter your email"
-  required
-/>
-```
-
-### Dropdown Components
-
-**Location:** `src/components/atoms/dropdowns/`
-
-#### ThemeDropdown
-
-Theme switcher (light/dark/system).
-
-```typescript
-import ThemeDropdown from "@/components/atoms/dropdowns/ThemeDropdown";
-
-<ThemeDropdown />
-```
-
-#### LanguageDropdown
-
-Language selector (EN/DE).
-
-```typescript
-import LanguageDropdown from "@/components/atoms/dropdowns/LanguageDropdown";
-
-<LanguageDropdown />
-```
-
-### Status Components
-
-**Location:** `src/components/atoms/status/`
-
-#### ClassStatus
-
-Displays class status with colored chip.
-
-```typescript
-import ClassStatus from "@/components/atoms/status/ClassStatus";
-
-<ClassStatus active={true} />
-```
-
-#### StudentStatus
-
-Displays student status (imported/invited/onboarded).
-
-```typescript
-import StudentStatus from "@/components/atoms/status/StudentStatus";
-
-<StudentStatus status="onboarded" />
-```
-
-### Display Components
-
-#### Logo
-
-Application logo component.
-
-```typescript
-import Logo from "@/components/atoms/Logo";
-
-<Logo width={150} height={50} />
-```
-
-#### ProfileAvatar
-
-User avatar with initials fallback.
-
-```typescript
-import ProfileAvatar from "@/components/atoms/ProfileAvatar";
-
-<ProfileAvatar
-  name="John Doe"
-  src="/avatar.jpg"
-  size="medium"
-/>
-```
-
----
-
-## Molecule
-
-### Header Components
-
-**Location:** `src/components/molecules/`
-
-#### AdminSettingsHeader
-
-Page header for admin section with title and actions.
-
-```typescript
-import AdminSettingsHeader from "@/components/molecules/AdminSettingsHeader";
-
-<AdminSettingsHeader title="Dashboard" onLoad={loading}>
-  <SmallIconButton
-    icon={<AddIcon />}
-    onAction={handleAdd}
-    title="Add new"
-  />
-</AdminSettingsHeader>
-```
-
-**Props:**
-| Prop | Type | Description |
-|------|------|-------------|
-| `title` | `string` | Page title |
-| `onLoad` | `boolean` | Loading state |
-| `children` | `ReactNode` | Action buttons |
-
-### Dashboard Components
-
-**Location:** `src/components/molecules/dashboard/`
-
-#### StatCard
-
-Displays a statistic with icon and label.
-
-```typescript
-import StatCard from "@/components/atoms/dashboard/StatCard";
-
-<StatCard
-  title="Total Students"
-  value={150}
-  icon={<PeopleIcon />}
-  color="primary"
-  trend={+12}
-/>
-```
-
-#### SystemHealthWidget
-
-Displays system health indicators.
-
-```typescript
-import SystemHealthWidget from "@/components/molecules/dashboard/SystemHealthWidget";
-
-<SystemHealthWidget health={healthData} />
-```
-
----
-
-## Organism
-
-### Table Components
-
-**Location:** `src/components/organisms/tables/`
-
-#### DataTable
-
-Comprehensive data table with sorting, filtering, pagination.
-
-```typescript
-import DataTable from "@/components/organisms/tables/DataTable";
-
-<DataTable
-  columns={columns}
-  rows={rows}
-  onSort={handleSort}
-  onFilter={handleFilter}
-  onPageChange={handlePageChange}
-  selectable
-  onRowSelect={handleRowSelect}
-/>
-```
-
-**Features:**
-
-- Sorting by column
-- Multi-column filtering
-- Row selection (single/multiple)
-- Pagination
-- Custom cell renderers
-- Responsive design
-
-### Form Components
-
-**Location:** `src/components/organisms/forms/`
-
-#### Onboarding Forms
-
-Ten specialized form components for student onboarding:
-
-1. **WelcomeForm** - Introduction
-2. **GeneralForm** - Basic info
-3. **OriginForm** - Nationality
-4. **AddressForm** - Residence
-5. **ParentsForm** - Guardians
-6. **PreEducationForm** - Previous school
-7. **TrainingForm** - Program selection
-8. **CompanyContactForm** - Employer (conditional)
-9. **SummaryForm** - Review
-10. **FormCompletion** - Confirmation
-
-**Example Usage:**
-
-```typescript
-import GeneralForm from "@/components/organisms/forms/GeneralForm";
-
-<GeneralForm
-  initialValues={studentData}
-  onSubmit={handleSubmit}
-  onBack={handleBack}
-/>
-```
-
-### Modal Components
-
-**Location:** `src/components/organisms/modals/`
-
-#### GeneralModal
-
-Base modal component.
-
-```typescript
-import GeneralModal from "@/components/organisms/modals/GeneralModal";
-
-<GeneralModal
-  open={isOpen}
-  onClose={handleClose}
-  title="Confirm Action"
-  maxWidth="sm"
->
-  <Box p={2}>
-    Modal content here
-  </Box>
-</GeneralModal>
-```
-
-#### AddClassModal
-
-Modal for adding new classes.
-
-```typescript
-import AddClassModal from "@/components/organisms/modals/AddClassModal";
-
-<AddClassModal
-  open={isOpen}
-  onClose={handleClose}
-  onSubmit={handleAddClass}
-/>
-```
-
-### Navigation Components
-
-**Location:** `src/components/organisms/`
-
-#### LeftNavigation
-
-Collapsible sidebar navigation for admin section.
-
-```typescript
-import LeftNavigation from "@/components/organisms/LeftNavigation";
-
-<LeftNavigation
-  routes={routesConfig}
-  currentPath={pathname}
-/>
-```
-
-**Features:**
-
-- Collapsible menu
-- Nested routes
-- Active state highlighting
-- Search functionality
-- Responsive (drawer on mobile)
-
----
-
-## Creating New Components
-
-### Step-by-Step Guide
-
-#### 1. Determine Component Type
-
-Ask yourself:
-
-- Can it be broken down? → Molecule or Organism
-- Is it a single element? → Atom
-- Does it combine multiple atoms? → Molecule
-- Is it a complete feature? → Organism
-
-#### 2. Create Component Directory
-
-```bash
-# For atom
-mkdir -p src/components/atoms/MyAtom
-
-# For molecule
-mkdir -p src/components/molecules/MyMolecule
-
-# For organism
-mkdir -p src/components/organisms/MyOrganism
-```
-
-#### 3. Create Component File
-
-```typescript
-// src/components/atoms/MyAtom/index.tsx
-import { FC } from "react";
-import { styled, Box } from "@mui/material";
-
-interface MyAtomProps {
-  // Define props
-}
-
-const StyledContainer = styled(Box)(({ theme }) => ({
-  // Styles
-}));
-
-const MyAtom: FC<MyAtomProps> = (props) => {
-  return (
-    <StyledContainer>
-      {/* Component JSX */}
-    </StyledContainer>
-  );
-};
-
-export default MyAtom;
-```
-
-#### 4. Create Test File
-
-```typescript
-// src/components/atoms/MyAtom/MyAtom.test.tsx
-import { describe, it, expect } from "vitest";
-import { screen } from "@testing-library/react";
-import { renderWithProviders } from "../../../tests/utils/test-utils";
-import MyAtom from "./index";
-
-describe("MyAtom", () => {
-  it("should render correctly", () => {
-    renderWithProviders(<MyAtom />);
-    expect(screen.getByTestId("my-atom")).toBeInTheDocument();
-  });
-});
-```
-
-#### 5. Use Component
-
-```typescript
-import MyAtom from "@/components/atoms/MyAtom";
-
-function ParentComponent() {
-  return <MyAtom />;
-}
-```
-
----
-
-## Component Best Practices
-
-### 1. Use TypeScript
-
-Define explicit props interfaces:
-
-```typescript
-interface ComponentProps {
+interface MyComponentProps {
   title: string;
-  count: number;
-  onAction: (id: string) => void;
-  optional?: boolean;
+  onClick?: () => void;
 }
-```
 
-### 2. Use Functional Components
-
-Always use functional components with hooks:
-
-```typescript
-const Component: FC<ComponentProps> = ({ title }) => {
-  const [state, setState] = useState(0);
-
-  useEffect(() => {
-    // Effects
-  }, []);
-
-  return <div>{title}</div>;
-};
-```
-
-### 3. Use Styled Components
-
-Use MUI's `styled()` API:
-
-```typescript
-const StyledBox = styled(Box)(({ theme }) => ({
+const StyledWrapper = styled('div')(({ theme }) => ({
   padding: theme.spacing(2),
   backgroundColor: theme.palette.background.paper,
 
-  [theme.breakpoints.down("md")]: {
+  // Responsive
+  [theme.breakpoints.down('md')]: {
     padding: theme.spacing(1),
   },
+
+  // Dark mode
+  ...(theme.palette.mode === 'dark' && {
+    border: `1px solid ${theme.palette.divider}`,
+  }),
 }));
-```
 
-### 4. Prevent Prop Forwarding
-
-Prevent invalid DOM props:
-
-```typescript
-const StyledBox = styled(Box, {
-  shouldForwardProp: (prop) => prop !== "isActive",
-})<{ isActive: boolean }>(({ theme, isActive }) => ({
-  color: isActive ? theme.palette.primary.main : "inherit",
-}));
-```
-
-### 5. Use Memoization
-
-Optimize performance with `memo`, `useMemo`, `useCallback`:
-
-```typescript
-import { memo, useMemo, useCallback } from "react";
-
-const ExpensiveComponent = memo(({ data }) => {
-  const processedData = useMemo(() => {
-    return data.map(/* expensive operation */);
-  }, [data]);
-
-  const handleClick = useCallback(() => {
-    // Handler
-  }, []);
-
-  return <div>{processedData}</div>;
-});
-```
-
-### 6. Accessibility
-
-Always include ARIA attributes:
-
-```typescript
-<button
-  aria-label="Close dialog"
-  aria-pressed={isActive}
-  tabIndex={0}
-  role="button"
->
-  Close
-</button>
-```
-
-### 7. Loading States
-
-Handle loading gracefully:
-
-```typescript
-if (loading) {
-  return <CircularProgress />;
+export default function MyComponent({ title, onClick }: MyComponentProps) {
+  return (
+    <StyledWrapper onClick={onClick}>
+      {title}
+    </StyledWrapper>
+  );
 }
-
-if (error) {
-  return <ErrorMessage error={error} />;
-}
-
-return <Content data={data} />;
 ```
 
-### 8. Error Boundaries
-
-Wrap components in error boundaries for production:
+### 2. Test File
 
 ```typescript
-<ErrorBoundary fallback={<ErrorFallback />}>
-  <MyComponent />
-</ErrorBoundary>
-```
+// src/components/atoms/MyComponent/MyComponent.test.tsx
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { renderWithProviders } from '@/tests/utils/test-utils';
+import MyComponent from './index';
 
----
-
-## Testing Components
-
-### Unit Test Pattern
-
-```typescript
-import { describe, it, expect, vi } from "vitest";
-import { screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import { renderWithProviders } from "../../../tests/utils/test-utils";
-import MyComponent from "./index";
-
-describe("MyComponent", () => {
-  it("should render with props", () => {
-    renderWithProviders(<MyComponent title="Test" />);
-    expect(screen.getByText("Test")).toBeInTheDocument();
+describe('MyComponent', () => {
+  it('renders title', () => {
+    render(<MyComponent title="Test" />);
+    expect(screen.getByText('Test')).toBeInTheDocument();
   });
 
-  it("should handle click events", async () => {
+  it('calls onClick when clicked', async () => {
+    const onClick = vi.fn();
     const user = userEvent.setup();
-    const handleClick = vi.fn();
 
-    renderWithProviders(<MyComponent onClick={handleClick} />);
+    render(<MyComponent title="Test" onClick={onClick} />);
+    await user.click(screen.getByText('Test'));
 
-    await user.click(screen.getByRole("button"));
-
-    expect(handleClick).toHaveBeenCalledTimes(1);
+    expect(onClick).toHaveBeenCalledTimes(1);
   });
 });
 ```
 
-### Test Coverage Goals
+### 3. Export from Index
 
-| Component Type | Target Coverage |
-| -------------- | --------------- |
-| Atoms          | 75%+            |
-| Molecules      | 70%+            |
-| Organisms      | 65%+            |
-
----
-
-## Component Checklist
-
-Before marking a component complete:
-
-- [ ] TypeScript props interface defined
-- [ ] Component renders correctly
-- [ ] Responsive design implemented
-- [ ] Accessibility attributes added
-- [ ] Loading/error states handled
-- [ ] Unit tests written (>70% coverage)
-- [ ] Documented in this guide
-- [ ] Exported from index file
-- [ ] Used in at least one place
+```typescript
+// src/components/atoms/index.ts
+export { default as MyComponent } from "./MyComponent";
+export { default as GeneralButton } from "./GeneralButton";
+// ...
+```
 
 ---
 
-## Next Steps
+## Best Practices
 
-- Read [FORMS.md](./FORMS.md) for form component patterns
-- Read [STYLING.md](./STYLING.md) for theming details
-- Read [STATE-MANAGEMENT.md](./STATE-MANAGEMENT.md) for Redux integration
+### Component Guidelines
+
+✅ **Use TypeScript** - Always define prop interfaces
+✅ **Use `'use client'`** - When using hooks/state/events
+✅ **Use Material-UI** - Leverage theme system
+✅ **Responsive Design** - Use `theme.breakpoints`
+✅ **Dark Mode** - Support both themes
+✅ **Accessibility** - Proper ARIA labels, semantic HTML
+✅ **Test Coverage** - Write tests for all components
+
+❌ **Don't use `any`** - Use proper types
+❌ **Don't hardcode colors** - Use theme
+❌ **Don't use inline styles** - Use `styled()` or `sx` prop
+❌ **Don't forget cleanup** - Clean up effects/listeners
+
+### Styling Patterns
+
+**Styled Components:**
+
+```typescript
+const StyledButton = styled(Button)(({ theme }) => ({
+  padding: theme.spacing(1, 2),
+  backgroundColor: theme.palette.primary.main,
+}));
+```
+
+**sx Prop (one-off styles):**
+
+```typescript
+<Box sx={{ padding: 2, backgroundColor: 'background.paper' }}>
+  Content
+</Box>
+```
+
+**Conditional Styling:**
+
+```typescript
+const StyledCard = styled(Card)(({ theme }) => ({
+  ...(theme.palette.mode === "dark" && {
+    backgroundColor: theme.palette.grey[900],
+  }),
+}));
+```
+
+---
+
+## Common Patterns
+
+### Forms
+
+```typescript
+import { Formik, Form } from 'formik';
+import * as Yup from 'yup';
+import { TextField } from 'formik-mui';
+
+const validationSchema = Yup.object({
+  name: Yup.string().required('Required'),
+  email: Yup.string().email('Invalid email').required('Required'),
+});
+
+export default function MyForm() {
+  return (
+    <Formik
+      initialValues={{ name: '', email: '' }}
+      validationSchema={validationSchema}
+      onSubmit={(values) => console.log(values)}
+    >
+      <Form>
+        <TextField name="name" label="Name" fullWidth />
+        <TextField name="email" label="Email" fullWidth />
+        <Button type="submit">Submit</Button>
+      </Form>
+    </Formik>
+  );
+}
+```
+
+### Modals
+
+```typescript
+import { Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+
+interface ModalProps {
+  open: boolean;
+  onClose: () => void;
+}
+
+export default function MyModal({ open, onClose }: ModalProps) {
+  return (
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>Title</DialogTitle>
+      <DialogContent>Content</DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button variant="contained">Confirm</Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
+```
+
+### Tables
+
+```typescript
+import { DataGrid } from '@mui/x-data-grid';
+
+const columns = [
+  { field: 'id', headerName: 'ID', width: 90 },
+  { field: 'name', headerName: 'Name', flex: 1 },
+];
+
+export default function MyTable({ rows }) {
+  return (
+    <DataGrid
+      rows={rows}
+      columns={columns}
+      pageSize={20}
+      autoHeight
+    />
+  );
+}
+```
+
+---
+
+## Theme Access
+
+```typescript
+import { useTheme } from '@mui/material';
+
+export default function MyComponent() {
+  const theme = useTheme();
+
+  return (
+    <div style={{ color: theme.palette.primary.main }}>
+      Themed content
+    </div>
+  );
+}
+```
+
+---
+
+## Internationalization
+
+```typescript
+import { useTranslation } from 'react-i18next';
+
+export default function MyComponent() {
+  const { t } = useTranslation();
+
+  return <div>{t('common.welcome')}</div>;
+}
+```
+
+---
+
+## Testing
+
+### With Providers
+
+```typescript
+import { renderWithProviders } from '@/tests/utils/test-utils';
+import { screen } from '@testing-library/react';
+import MyComponent from './index';
+
+it('renders with Redux/Theme/Router', () => {
+  renderWithProviders(<MyComponent />);
+  expect(screen.getByText('Content')).toBeInTheDocument();
+});
+```
+
+### User Events
+
+```typescript
+import userEvent from '@testing-library/user-event';
+
+it('handles click', async () => {
+  const user = userEvent.setup();
+  const onClick = vi.fn();
+
+  render(<Button onClick={onClick}>Click</Button>);
+  await user.click(screen.getByText('Click'));
+
+  expect(onClick).toHaveBeenCalled();
+});
+```
+
+### Custom Hooks
+
+```typescript
+import { renderHook } from "@testing-library/react";
+
+import { useMyHook } from "./useMyHook";
+
+it("returns correct value", () => {
+  const { result } = renderHook(() => useMyHook());
+  expect(result.current).toBe(expected);
+});
+```
+
+---
+
+## Component Examples
+
+### Button Component
+
+```typescript
+// src/components/atoms/GeneralButton/index.tsx
+'use client';
+
+import { Button, ButtonProps, styled } from '@mui/material';
+
+interface GeneralButtonProps extends ButtonProps {
+  loading?: boolean;
+}
+
+const StyledButton = styled(Button)<{ loading?: boolean }>(({ theme, loading }) => ({
+  position: 'relative',
+  opacity: loading ? 0.7 : 1,
+  pointerEvents: loading ? 'none' : 'auto',
+}));
+
+export default function GeneralButton({
+  children,
+  loading,
+  ...props
+}: GeneralButtonProps) {
+  return (
+    <StyledButton loading={loading} {...props}>
+      {loading ? 'Loading...' : children}
+    </StyledButton>
+  );
+}
+```
+
+### Data Table Component
+
+```typescript
+// src/components/organisms/DataTable/index.tsx
+'use client';
+
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+
+interface DataTableProps {
+  rows: any[];
+  columns: GridColDef[];
+  loading?: boolean;
+  onRowClick?: (row: any) => void;
+}
+
+export default function DataTable({
+  rows,
+  columns,
+  loading,
+  onRowClick
+}: DataTableProps) {
+  return (
+    <DataGrid
+      rows={rows}
+      columns={columns}
+      loading={loading}
+      onRowClick={onRowClick}
+      pageSize={20}
+      pageSizeOptions={[20, 50, 100]}
+      autoHeight
+      disableRowSelectionOnClick
+    />
+  );
+}
+```
+
+---
+
+## Additional Resources
+
+- [Material-UI Docs](https://mui.com/)
+- [Atomic Design Methodology](https://atomicdesign.bradfrost.com/)
+- [React Testing Library](https://testing-library.com/react)
+- [ARCHITECTURE.md](ARCHITECTURE.md) - System architecture

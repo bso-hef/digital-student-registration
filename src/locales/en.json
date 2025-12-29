@@ -29,6 +29,7 @@
     "No": "No",
     "Inactive": "Inactive",
     "Active": "Active",
+    "Incomplete": "Incomplete",
     "All": "All",
     "generatePassword": "Generate secure password",
     "of": "of",
@@ -184,6 +185,13 @@
       "importingStudents": "Importing students...",
       "pleaseWait": "This may take a moment for large datasets",
       "importing": "Importing...",
+      "progress": {
+        "parsing": "Parsing CSV file...",
+        "checkingClasses": "Checking classes...",
+        "creatingClasses": "Creating classes...",
+        "importingStudents": "Importing students...",
+        "refreshing": "Refreshing data..."
+      },
       "firstNameRequired": "First name is required",
       "lastNameRequired": "Last name is required",
       "dateOfBirthRequired": "Date of birth is required",
@@ -487,6 +495,8 @@
   "dashboard": {
     "title": "Dashboard",
     "resetLayout": "Reset Layout",
+    "lockLayout": "Lock Layout",
+    "unlockLayout": "Unlock Layout",
     "actions": {
       "refresh": "Refresh"
     },
@@ -503,7 +513,8 @@
       "classDistribution": "Classes by Grade",
       "systemMetrics": "System Metrics",
       "gradeLabel": "Grade {{grade}}",
-      "noGrade": "No Grade"
+      "noGrade": "No Grade",
+      "noData": "No data to display"
     },
     "status": {
       "imported": "Created",
@@ -536,7 +547,15 @@
       "serverInfo": "Server Information",
       "service": "Service",
       "version": "Version",
-      "architecture": "Architecture"
+      "architecture": "Architecture",
+      "redis": "Redis",
+      "cores": "cores",
+      "uptimeDay": "day",
+      "uptimeDays": "days",
+      "uptimeHour": "hour",
+      "uptimeHours": "hours",
+      "uptimeMinute": "minute",
+      "uptimeMinutes": "minutes"
     },
     "recentActivity": {
       "title": "Recent Activity",

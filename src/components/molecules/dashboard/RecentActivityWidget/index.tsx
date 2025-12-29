@@ -21,22 +21,28 @@ import {
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
-const StyledCard = styled(Card)(({ theme }) => ({
+const StyledCard = styled(Card, {
+  shouldForwardProp: (prop) => prop !== "isLocked",
+})<{ isLocked?: boolean }>(({ theme, isLocked }) => ({
   background: theme.palette.surface.interface.base,
   border: `1px solid ${theme.palette.border.seperator}`,
   borderRadius: theme.spacing(1.5),
   boxShadow: "rgba(0, 0, 0, 0.05) 0px 2px 8px",
   height: "100%",
   position: "relative",
-  cursor: "grab",
+  cursor: isLocked ? "default" : "grab",
   transition: "all 0.3s ease-in-out",
   "&:active": {
-    cursor: "grabbing",
+    cursor: isLocked ? "default" : "grabbing",
   },
   "&:hover": {
-    border: `2px dashed ${theme.palette.border.hover}`,
-    boxShadow: "rgba(0, 0, 0, 0.15) 0px 6px 20px",
-    transform: "scale(1.01)",
+    border: isLocked
+      ? `1px solid ${theme.palette.border.seperator}`
+      : `2px dashed ${theme.palette.border.hover}`,
+    boxShadow: isLocked
+      ? "rgba(0, 0, 0, 0.05) 0px 2px 8px"
+      : "rgba(0, 0, 0, 0.15) 0px 6px 20px",
+    transform: isLocked ? "none" : "scale(1.01)",
   },
 }));
 
@@ -99,19 +105,21 @@ const EmptyState = styled(Box)(({ theme }) => ({
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
-  height: 200,
+  height: "100%",
   color: theme.palette.text.secondary,
-  gap: theme.spacing(1),
+  gap: theme.spacing(2),
 }));
 
 interface RecentActivityWidgetProps {
   activities: RecentActivityItem[];
   loading?: boolean;
+  isLocked?: boolean;
 }
 
 const RecentActivityWidget: React.FC<RecentActivityWidgetProps> = ({
   activities,
   loading = false,
+  isLocked = false,
 }) => {
   const { t } = useTranslation();
 
@@ -173,10 +181,12 @@ const RecentActivityWidget: React.FC<RecentActivityWidgetProps> = ({
   };
 
   return (
-    <StyledCard>
-      <DragHandle className="drag-handle">
-        <DragIndicatorRoundedIcon sx={{ fontSize: 24 }} />
-      </DragHandle>
+    <StyledCard isLocked={isLocked}>
+      {!isLocked && (
+        <DragHandle className="drag-handle">
+          <DragIndicatorRoundedIcon sx={{ fontSize: 24 }} />
+        </DragHandle>
+      )}
       <StyledCardContent>
         <Title>{t("dashboard.recentActivity.title")}</Title>
         <Box sx={{ flex: 1, minHeight: 0 }}>
@@ -188,8 +198,8 @@ const RecentActivityWidget: React.FC<RecentActivityWidgetProps> = ({
             />
           ) : activities.length === 0 ? (
             <EmptyState>
-              <InboxRoundedIcon sx={{ fontSize: 48, opacity: 0.5 }} />
-              <Typography variant="body2">
+              <InboxRoundedIcon sx={{ fontSize: 64, opacity: 0.3 }} />
+              <Typography variant="body1">
                 {t("dashboard.recentActivity.noActivity")}
               </Typography>
             </EmptyState>

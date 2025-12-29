@@ -202,7 +202,12 @@ const ClassManagementPage = () => {
           </Link>
         ),
         isVocational: c.isVocational ? t("general.Yes") : t("general.No"),
-        status: <ClassStatus active={Boolean(c.active)} />,
+        status: (
+          <ClassStatus
+            active={Boolean(c.active)}
+            incomplete={Boolean(c.incomplete)}
+          />
+        ),
       };
     });
   }, [classes, dispatch, searchString, t]);

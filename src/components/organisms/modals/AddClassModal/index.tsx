@@ -93,6 +93,7 @@ const createEmptyClass = (): ParsedClass => {
     isVocational: false,
     requiresEmployerInfo: false,
     active: true,
+    incomplete: true,
     isValid: false,
     validationErrors: ["Name is required"],
   };

@@ -4,32 +4,38 @@ import DragIndicatorRoundedIcon from "@mui/icons-material/DragIndicatorRounded";
 import { Box, Card, CardContent, Typography, styled } from "@mui/material";
 
 const StyledCard = styled(Card, {
-  shouldForwardProp: (prop) => prop !== "gradient",
-})<{ gradient?: string }>(({ theme, gradient }) => ({
-  background: gradient || theme.palette.surface.interface.base,
-  border: `1px solid ${theme.palette.border.seperator}`,
-  borderRadius: theme.spacing(1.5),
-  boxShadow: "rgba(0, 0, 0, 0.1) 0px 2px 8px",
-  transition: "all 0.3s ease-in-out",
-  height: "100%",
-  position: "relative",
-  overflow: "hidden",
-  cursor: "grab",
-  "&:active": {
-    cursor: "grabbing",
-  },
-  "&:hover": {
-    border: `2px dashed ${gradient ? "rgba(255,255,255,0.6)" : theme.palette.border.hover}`,
-    boxShadow: "rgba(0, 0, 0, 0.2) 0px 8px 24px",
-    transform: "scale(1.02)",
-  },
-  ...(gradient && {
-    color: "#ffffff",
-    "& .MuiTypography-root": {
-      color: "#ffffff",
+  shouldForwardProp: (prop) => prop !== "gradient" && prop !== "isLocked",
+})<{ gradient?: string; isLocked?: boolean }>(
+  ({ theme, gradient, isLocked }) => ({
+    background: gradient || theme.palette.surface.interface.base,
+    border: `1px solid ${theme.palette.border.seperator}`,
+    borderRadius: theme.spacing(1.5),
+    boxShadow: "rgba(0, 0, 0, 0.1) 0px 2px 8px",
+    transition: "all 0.3s ease-in-out",
+    height: "100%",
+    position: "relative",
+    overflow: "hidden",
+    cursor: isLocked ? "default" : "grab",
+    "&:active": {
+      cursor: isLocked ? "default" : "grabbing",
     },
+    "&:hover": {
+      border: isLocked
+        ? `1px solid ${theme.palette.border.seperator}`
+        : `2px dashed ${gradient ? "rgba(255,255,255,0.6)" : theme.palette.border.hover}`,
+      boxShadow: isLocked
+        ? "rgba(0, 0, 0, 0.1) 0px 2px 8px"
+        : "rgba(0, 0, 0, 0.2) 0px 8px 24px",
+      transform: isLocked ? "none" : "scale(1.02)",
+    },
+    ...(gradient && {
+      color: "#ffffff",
+      "& .MuiTypography-root": {
+        color: "#ffffff",
+      },
+    }),
   }),
-}));
+);
 
 const StyledCardContent = styled(CardContent)(({ theme }) => ({
   padding: theme.spacing(3),
@@ -98,6 +104,7 @@ interface StatCardProps {
   icon?: React.ReactNode;
   gradient?: string;
   id?: string;
+  isLocked?: boolean;
 }
 
 const StatCard: React.FC<StatCardProps> = ({
@@ -106,16 +113,19 @@ const StatCard: React.FC<StatCardProps> = ({
   icon,
   gradient,
   id,
+  isLocked = false,
 }) => {
   return (
-    <StyledCard gradient={gradient} id={id}>
-      <DragHandle className="drag-handle">
-        <DragIndicatorRoundedIcon
-          sx={{
-            fontSize: 24,
-          }}
-        />
-      </DragHandle>
+    <StyledCard gradient={gradient} id={id} isLocked={isLocked}>
+      {!isLocked && (
+        <DragHandle className="drag-handle">
+          <DragIndicatorRoundedIcon
+            sx={{
+              fontSize: 24,
+            }}
+          />
+        </DragHandle>
+      )}
       <StyledCardContent>
         {icon && <IconWrapper hasGradient={!!gradient}>{icon}</IconWrapper>}
         <ValueText hasGradient={!!gradient}>{value}</ValueText>

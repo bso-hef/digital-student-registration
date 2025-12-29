@@ -38,16 +38,19 @@ interface DraggableChartGridProps {
   activityLoading: boolean;
   order: string[];
   onReorder: (newOrder: string[]) => void;
+  isLocked?: boolean;
 }
 
 interface SortableChartWrapperProps {
   id: string;
   children: React.ReactNode;
+  isLocked?: boolean;
 }
 
 const SortableChartWrapper: React.FC<SortableChartWrapperProps> = ({
   id,
   children,
+  isLocked = false,
 }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
@@ -58,7 +61,12 @@ const SortableChartWrapper: React.FC<SortableChartWrapperProps> = ({
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...(!isLocked ? listeners : {})}
+    >
       {children}
     </div>
   );
@@ -71,6 +79,7 @@ const DraggableChartGrid: React.FC<DraggableChartGridProps> = ({
   activityLoading,
   order,
   onReorder,
+  isLocked = false,
 }) => {
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -99,6 +108,7 @@ const DraggableChartGrid: React.FC<DraggableChartGridProps> = ({
       <RegistrationTrendChart
         data={stats?.registrationTrend || ([] as RegistrationTrendItem[])}
         loading={loading}
+        isLocked={isLocked}
       />
     ),
     studentStatus: (
@@ -113,18 +123,21 @@ const DraggableChartGrid: React.FC<DraggableChartGridProps> = ({
           } as StudentStatusBreakdown)
         }
         loading={loading}
+        isLocked={isLocked}
       />
     ),
     classDistribution: (
       <ClassDistributionChart
         data={stats?.gradeDistribution || ([] as GradeDistribution[])}
         loading={loading}
+        isLocked={isLocked}
       />
     ),
     recentActivity: (
       <RecentActivityWidget
         activities={recentActivity}
         loading={activityLoading}
+        isLocked={isLocked}
       />
     ),
   };
@@ -150,7 +163,7 @@ const DraggableChartGrid: React.FC<DraggableChartGridProps> = ({
             const component = chartComponents[id];
             if (!component) return null;
             return (
-              <SortableChartWrapper key={id} id={id}>
+              <SortableChartWrapper key={id} id={id} isLocked={isLocked}>
                 {component}
               </SortableChartWrapper>
             );
