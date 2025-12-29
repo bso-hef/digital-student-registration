@@ -27,27 +27,24 @@ COPY . .
 # Build-time arguments for NEXT_PUBLIC variables
 ARG NEXT_PUBLIC_APP_URL
 ARG NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_VERSION=1.0.0
+ARG NEXT_PUBLIC_NAME=Digital Student Registration
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_VERSION=$NEXT_PUBLIC_VERSION
+ENV NEXT_PUBLIC_NAME=$NEXT_PUBLIC_NAME
 
 # Validate and display build configuration
-# This helps debug port configuration issues in Docker deployments
 RUN echo "========================================" && \
     echo "Build Configuration:" && \
     echo "  NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}" && \
     echo "  NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}" && \
-    echo "========================================" && \
-    if [ -z "$NEXT_PUBLIC_APP_URL" ]; then \
-      echo "WARNING: NEXT_PUBLIC_APP_URL is not set. Using relative URLs for API calls." && \
-      echo "This is acceptable since the app uses relative URLs for same-origin API calls."; \
-    fi && \
-    if [ -z "$NEXT_PUBLIC_API_URL" ]; then \
-      echo "WARNING: NEXT_PUBLIC_API_URL is not set. Using relative URLs for API calls." && \
-      echo "This is acceptable since the app uses relative URLs for same-origin API calls."; \
-    fi
+    echo "  NEXT_PUBLIC_VERSION=${NEXT_PUBLIC_VERSION}" && \
+    echo "  NEXT_PUBLIC_NAME=${NEXT_PUBLIC_NAME}" && \
+    echo "========================================"
 
 RUN NODE_OPTIONS="--max-old-space-size=4096" yarn build && \
     find .next -name "*.map" -type f -delete && \
@@ -58,8 +55,9 @@ FROM node:22.20.0-alpine AS runner
 
 WORKDIR /app
 
-# Accept port as build argument
+# Accept port and version as build arguments
 ARG APP_PORT=3000
+ARG APP_VERSION=latest
 
 RUN apk add --no-cache wget dumb-init && \
     addgroup --system --gid 1001 nodejs && \
@@ -88,4 +86,4 @@ CMD ["node", "server.js"]
 
 LABEL maintainer="Digital Student Registration Team"
 LABEL description="Production Docker image for Digital Student Registration"
-LABEL version="1.0.0"
+LABEL version="${APP_VERSION}"

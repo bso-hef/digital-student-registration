@@ -56,14 +56,21 @@ export interface MongoCheckInfo {
   error?: string;
 }
 
+export interface RedisCheckInfo {
+  status: "up" | "down";
+  error?: string;
+}
+
 export interface HealthReport {
   status: "up" | "down";
   checks: {
     mongo: MongoCheckInfo;
+    redis?: RedisCheckInfo;
   };
   meta: {
     service: string;
     version: string;
+    environment?: string;
     now: string;
     uptimeSec: number;
     node: string;
@@ -74,6 +81,7 @@ export interface HealthReport {
 export interface DashboardLayout {
   quickStats: string[];
   charts: string[];
+  isLocked: boolean;
 }
 
 export interface RecentActivityItem {

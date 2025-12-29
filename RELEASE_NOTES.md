@@ -1,3 +1,134 @@
+# Digital Student Registration - Version 2.1.0
+
+**Veröffentlichungsdatum:** 29. Dezember 2025
+
+Wir freuen uns, Version 2.1.0 der **Digitalen Schülerverwaltung** anzukündigen - ein Update mit Fokus auf verbesserte Deployment-Prozesse, Dashboard-Verbesserungen und Bugfixes.
+
+---
+
+## Neu in Version 2.1.0
+
+### Für Administratoren
+
+#### 🔒 Dashboard Layout-Sperre
+
+- Neuer Toggle zum Sperren/Entsperren des Dashboard-Layouts
+- Verhindert versehentliches Verschieben von Widgets
+- Layout-Status wird gespeichert
+
+#### 📊 Verbesserte Chart-Darstellung
+
+- Alle Charts zeigen "Keine Daten verfügbar" bei leeren Datensätzen
+- Verbesserte visuelle Icons für leere Zustände
+- Optimierte Empty-States im RecentActivityWidget
+
+#### ⚠️ Klassen Incomplete-Status
+
+- Neues Statusfeld für unvollständige Klassen
+- Automatische Erkennung von Klassen ohne Jahrgangsstufe
+- Warning-Icon (gelb) für unvollständige Klassen
+- Status-Priorität: Unvollständig → Aktiv → Inaktiv
+
+#### 📥 Verbesserter CSV-Import
+
+- Neue Fortschrittsanzeige mit Progress-Bar
+- Schrittweise Statusmeldungen während des Imports
+- Automatische Klassen-Aktualisierung nach Schüler-Import
+- Verbesserte Fehlerbehandlung beim Schließen des Modals
+
+#### 🔗 Verbesserte Schüler-Navigation
+
+- Vorname und Nachname sind jetzt klickbare Links
+- Direkte Navigation zur Schüler-Detailseite
+
+---
+
+## Technische Verbesserungen
+
+### Docker & Deployment
+
+- **Neue Build-Skripte**: `docker-build.sh` (Linux) und `docker-build.ps1` (Windows)
+- **Automatische Versionierung**: Version wird aus `package.json` gelesen
+- **Vereinfachte Docker-Konfiguration**: Nur noch eine `docker-compose.yml` (Prod-Datei integriert)
+- **Pre-built Images**: Build vor dem Deployment statt während des Starts
+- **Security-Härtung**: `no-new-privileges` Flag für Container
+- **Verbesserte Health-Checks**: Mit Service-Dependency-Conditions
+
+### Infrastruktur
+
+- **SSR-sicherer Storage**: Neuer redux-persist Storage für Server-Side Rendering
+- **Automatische App-Version**: Version und Name werden aus package.json injiziert
+- **Verbesserte Fehlerbehandlung**: Graceful Degradation beim System-Setup Check
+
+### Qualität & Tests
+
+- Neue Unit-Tests für ClassStatus Incomplete-Status
+
+---
+
+## Fehlerbehebungen
+
+### CSV-Import
+
+- Loading-States werden beim Schließen des Modals zurückgesetzt
+- Klassen werden nach Student-Import korrekt aktualisiert
+
+### Dashboard
+
+- Leere Daten werden jetzt korrekt dargestellt
+- Layout-Status wird persistent gespeichert
+
+### Infrastruktur
+
+- localStorage-Fehler bei Server-Side Rendering behoben
+- System-Setup Check mit Fallback bei Datenbankfehlern
+
+---
+
+## Aktualisierte Übersetzungen
+
+- 15+ neue Übersetzungsschlüssel
+- Neue Begriffe: "Unvollständig", "Layout sperren/entsperren", "Keine Daten verfügbar"
+- Import-Fortschritt Übersetzungen für alle Schritte
+
+---
+
+## Entfernte Komponenten
+
+- **Root-Page**: `/` Seite wurde entfernt (Redirect zu Admin)
+- **docker-compose.prod.yml**: In docker-compose.yml integriert
+
+---
+
+## Migration von Version 2.0.0
+
+### Automatische Migration
+
+Die meisten Änderungen sind abwärtskompatibel. Beim Update:
+
+1. Backup der Datenbank erstellen
+2. Docker-Image mit neuem Build-Skript erstellen:
+   - Linux: `./scripts/docker-build.sh`
+   - Windows: `.\scripts\docker-build.ps1`
+3. Container starten mit `docker compose --profile linux up -d`
+
+### Manuelle Schritte
+
+- Keine manuellen Migrationsschritte erforderlich
+- Dashboard-Layout wird automatisch mit Sperre migriert
+- Bestehende Klassen erhalten automatisch den Incomplete-Status
+
+---
+
+## Versionsinformationen
+
+- **Version**: 2.1.0
+- **Veröffentlichungsdatum**: 29. Dezember 2025
+- **Codename**: Deployment
+- **Status**: Produktionsbereit
+
+---
+
 # Digital Student Registration - Version 2.0.0
 
 **Veröffentlichungsdatum:** 21. Dezember 2025
@@ -234,13 +365,12 @@ Folgende Features sind für zukünftige Versionen geplant:
 
 ## Ausblick
 
-### Geplant für v2.1.0
+### Geplant für v2.2.0
 
 - E-Mail-Benachrichtigungssystem aktivieren
 - Erweiterte Berichte und Analysen
-- Weitere CSV-Import Verbesserungen
 
-### Geplant für v2.2.0
+### Geplant für v2.3.0
 
 - Echtzeit-Updates und Benachrichtigungen
 - Dokumenten-Upload für Schüler

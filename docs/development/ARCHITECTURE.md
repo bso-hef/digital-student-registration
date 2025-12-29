@@ -1,32 +1,14 @@
 # System Architecture
 
-Complete system architecture documentation for the Digital Student Registration application.
-
-## Table of Contents
-
-- [Overview](#overview)
-- [Tech Stack](#tech-stack)
-- [Application Structure](#application-structure)
-- [Frontend Architecture](#frontend-architecture)
-- [Backend Architecture](#backend-architecture)
-- [State Management](#state-management)
-- [Data Flow](#data-flow)
-- [Component Hierarchy](#component-hierarchy)
-- [Routing Structure](#routing-structure)
-- [Security Considerations](#security-considerations)
-
----
+Architecture overview for Digital Student Registration.
 
 ## Overview
 
-Digital Student Registration is a **monolithic Next.js application** using the App Router pattern. It combines frontend and backend in a single codebase, with MongoDB for data persistence.
-
-### Architecture Type
-
-- **Monolithic** - Single deployable unit
-- **Full-Stack** - Next.js API Routes + React frontend
-- **Server-Side Rendered** - SSR with React Server Components
-- **Client-Side State** - Redux for client state management
+**Type:** Monolithic Next.js application (App Router)
+**Frontend:** React 19 + Material-UI v7 + Redux
+**Backend:** Next.js API Routes
+**Database:** MongoDB 8.18 + Redis 7
+**Testing:** Vitest (964+ tests) + Playwright (98+ E2E)
 
 ---
 
@@ -34,377 +16,94 @@ Digital Student Registration is a **monolithic Next.js application** using the A
 
 ### Frontend
 
-```text
-React 19.1.0
-├── Next.js 15.4.2 (App Router)
-├── TypeScript 5
-├── Material-UI v7
-│   ├── @emotion/react
-│   └── @emotion/styled
-├── Redux Toolkit
-│   └── Redux Persist
-├── Formik + Yup
-├── i18next
-└── Sonner (toasts)
-```
+- **Next.js** 15.4.2 (App Router, SSR)
+- **React** 19.1.0
+- **TypeScript** 5
+- **Material-UI** v7 (@emotion/styled)
+- **Redux Toolkit** + Redux Persist
+- **Formik + Yup** (forms/validation)
+- **i18next** (English/German)
+- **Sonner** (notifications)
 
 ### Backend
 
-```text
-Next.js API Routes
-├── MongoDB
-│   └── Mongoose 8.18.0
-│       └── mongoose-paginate-v2
-├── Winston (logging)
-└── Socket.IO Client (ready for integration)
-```
+- **Next.js API Routes** (serverless)
+- **Mongoose** 8.18.0 + mongoose-paginate-v2
+- **NextAuth.js** v5 (authentication)
+- **Yup** (server-side validation)
 
-### Development & Testing
+### Infrastructure
 
-```text
-Development
-├── TypeScript 5
-├── ESLint
-├── Prettier
-└── Turbopack (dev server)
-
-Testing
-├── Vitest (unit/integration)
-├── Playwright (E2E)
-├── React Testing Library
-└── MSW (API mocking)
-```
+- **MongoDB** 7.0 (persistence)
+- **Redis** 7 (session storage, caching)
+- **Docker** (containerized deployment)
 
 ---
 
-## Application Structure
+## Project Structure
 
-### Directory Layout
-
-```text
-digital-student-registration/
-├── src/
-│   ├── app/                     # Next.js App Router
-│   │   ├── (home)/             # Route group (admin + student)
-│   │   │   ├── admin/          # Admin section
-│   │   │   │   ├── dashboard/
-│   │   │   │   ├── management/
-│   │   │   │   │   ├── classes/
-│   │   │   │   │   └── students/
-│   │   │   │   └── settings/
-│   │   │   └── student/        # Student onboarding
-│   │   │       └── [studentId]/
-│   │   ├── api/                # Backend API routes
-│   │   │   ├── classes/
-│   │   │   ├── students/
-│   │   │   ├── dashboard/
-│   │   │   └── health/
-│   │   ├── layout.tsx          # Root layout (server)
-│   │   ├── ClientLayout.tsx    # Client wrapper
-│   │   └── Providers.tsx       # Context providers
-│   ├── components/
-│   │   ├── atoms/              # Basic UI elements
-│   │   ├── molecules/          # Composed components
-│   │   └── organisms/          # Complex features
-│   ├── store/                  # Redux
-│   │   ├── actions/
-│   │   ├── reducers/
-│   │   └── store.ts
-│   ├── models/                 # Mongoose schemas
-│   ├── lib/
-│   │   ├── config/             # Configuration
-│   │   ├── services/           # API wrappers
-│   │   └── validate/           # Validation
-│   ├── theme/                  # MUI theme
-│   ├── locales/                # i18n translations
-│   ├── constants/              # App constants
-│   ├── types/                  # TypeScript types
-│   └── utils/                  # Utility functions
-├── tests/                      # Test suites
-│   ├── e2e/
-│   ├── unit/
-│   ├── integration/
-│   └── utils/
-├── docs/                       # Documentation
-└── public/                     # Static assets
 ```
-
-### Key Directories
-
-| Directory         | Purpose                           |
-| ----------------- | --------------------------------- |
-| `src/app/(home)/` | Main application routes (grouped) |
-| `src/app/api/`    | Backend API endpoints             |
-| `src/components/` | React components (atomic design)  |
-| `src/store/`      | Redux state management            |
-| `src/models/`     | MongoDB schemas                   |
-| `src/lib/`        | Shared libraries and utilities    |
-| `src/theme/`      | Material-UI theme configuration   |
-
----
-
-## Frontend Architecture
-
-### Next.js App Router
-
-The application uses Next.js 15's App Router with **React Server Components** (RSC).
-
-#### Layout Hierarchy
-
-```text
-app/layout.tsx (Root Layout - Server Component)
-└── ClientLayout.tsx (Client Boundary)
-    └── Providers.tsx (Redux, Theme, i18n, MUI)
-        └── (home)/layout.tsx (Route Group Layout)
-            ├── admin/layout.tsx (Admin Layout)
-            │   ├── LeftNavigation
-            │   └── dashboard/page.tsx
-            │       management/page.tsx
-            │       settings/page.tsx
-            └── student/layout.tsx (Student Layout)
-                └── [studentId]/page.tsx
-```
-
-#### Server vs Client Components
-
-**Server Components:**
-
-- `app/layout.tsx` - Root layout
-- `app/(home)/layout.tsx` - Route group layout
-- Metadata and SEO configuration
-
-**Client Components:**
-
-- All interactive components (`"use client"`)
-- Redux-connected components
-- MUI components
-- Form components
-
-### Component Architecture
-
-Uses **Atomic Design Pattern**:
-
-```text
-Atoms (Basic UI)
-├── Buttons (GeneralButton, SmallIconButton)
-├── Inputs (GeneralInput, HeaderSearchInput)
-├── Dropdowns (ThemeDropdown, LanguageDropdown)
-├── Status (ClassStatus, StudentStatus)
-└── Display (Logo, ProfileAvatar, CustomTitle)
-
-Molecules (Composed)
-├── Headers (AdminSettingsHeader, AdminSubPageHeader)
-├── Menus (AccessibilityMenu)
-└── Dashboard (StatCard, ChartContainer, HealthIndicator)
-
-Organisms (Complex Features)
-├── Navigation (LeftNavigation)
-├── Tables (DataTable, EnhancedTableHead, Pagination)
-├── Forms (10 onboarding forms)
-├── Modals (AddClassModal, AddStudentModal, GeneralModal)
-└── Charts (RegistrationTrendChart, ClassDistributionChart)
-```
-
-### Styling Approach
-
-**Material-UI v7** with **Emotion** styled components:
-
-```typescript
-import { Box, styled } from "@mui/material";
-
-const StyledBox = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(3),
-  backgroundColor: theme.palette.background.paper,
-  [theme.breakpoints.down("md")]: {
-    padding: theme.spacing(2),
-  },
-}));
-```
-
----
-
-## Backend Architecture
-
-### Next.js API Routes
-
-Backend implemented as API Routes in `src/app/api/`.
-
-#### API Structure
-
-```text
-api/
-├── classes/
-│   ├── route.ts                 # GET, POST, DELETE (list)
-│   └── [classId]/
-│       ├── route.ts             # GET, PATCH, DELETE (single)
-│       └── students/
-│           └── route.ts         # GET (class students)
-├── students/
-│   └── route.ts                 # GET, POST, DELETE
-├── dashboard/
-│   └── stats/
-│       └── route.ts             # GET (dashboard stats)
-└── health/
-    ├── live/
-    │   └── route.ts             # GET (liveness)
-    └── full/
-        └── route.ts             # GET (full health)
-```
-
-#### Route Handler Pattern
-
-```typescript
-// src/app/api/classes/route.ts
-import { dbConnect } from "@/lib/config/mongo";
-import Class from "@/models/Class";
-
-export async function GET(req: NextRequest) {
-  await dbConnect();
-
-  const { searchParams } = new URL(req.url);
-  const skip = Number(searchParams.get("skip")) || 0;
-  const limit = Number(searchParams.get("limit")) || 20;
-
-  const result = await Class.paginate({}, { skip, limit });
-
-  return NextResponse.json(result);
-}
-```
-
-### Database Layer
-
-**MongoDB** with **Mongoose ODM**:
-
-- **Connection Pooling** - Global caching for serverless
-- **Schema Validation** - Mongoose schemas with TypeScript
-- **Hooks** - Pre-save, pre-validate for business logic
-- **Pagination** - mongoose-paginate-v2 plugin
-
-#### Database Connection
-
-```typescript
-// src/lib/config/mongo.ts
-import mongoose from "mongoose";
-
-let cached = global.mongoose;
-
-if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
-}
-
-export async function dbConnect() {
-  if (cached.conn) {
-    return cached.conn;
-  }
-
-  cached.promise =
-    cached.promise ||
-    mongoose.connect(process.env.MONGODB_URI, {
-      bufferCommands: false,
-    });
-
-  cached.conn = await cached.promise;
-  return cached.conn;
-}
-```
-
----
-
-## State Management
-
-### Redux Architecture
-
-**Redux Toolkit** with **Redux Persist** for client state.
-
-#### Store Structure
-
-```typescript
-{
-  ui: {                          // UI preferences
-    theme: 'light' | 'dark',
-    locale: 'en' | 'de',
-    appTouched: boolean,
-    loading: boolean,
-    error: Error | null
-  },
-  student: {                     // Student onboarding
-    currentStep: number,
-    data: StudentFormData,
-    students: Student[],
-    loading: boolean,
-    error: Error | null
-  },
-  class: {                       // Class management
-    classes: Class[],
-    currentClass: {
-      data: Class | null,
-      loading: boolean,
-      error: Error | null,
-      success: boolean
-    },
-    byId: { [id: string]: Class },
-    loading: boolean,
-    error: string | null,
-    page: number,
-    limit: number,
-    total: number,
-    pages: number
-  },
-  dashboard: {                   // Dashboard data
-    stats: DashboardStats | null,
-    health: HealthStatus | null,
-    loading: boolean,
-    error: Error | null,
-    layout: DashboardLayout
-  },
-  appSettings: {                 // App settings
-    // Placeholder for future features
-  }
-}
-```
-
-#### Persistence
-
-Redux Persist saves state to `localStorage`:
-
-```typescript
-const persistConfig = {
-  key: "root",
-  storage,
-  whitelist: ["ui", "student", "class"], // Only persist these
-};
-```
-
-#### Thunk Actions
-
-Async actions use Redux Thunk:
-
-```typescript
-export const getClasses = (): AppThunk => async (dispatch) => {
-  dispatch({ type: GET_CLASSES_REQUEST });
-
-  try {
-    const { data } = await classService.getAll();
-    dispatch({ type: GET_CLASSES_SUCCESS, payload: data });
-  } catch (error) {
-    errorNotification(i18n.t("actions.classFetchFailed"));
-    dispatch({ type: GET_CLASSES_FAILURE, payload: toAppError(error) });
-  }
-};
+src/
+├── app/                         # Next.js App Router
+│   ├── (home)/                  # Shared layout group
+│   │   ├── admin/               # Admin dashboard
+│   │   │   ├── dashboard/       # Widgets, stats
+│   │   │   ├── management/      # Classes, students
+│   │   │   └── settings/        # App configuration
+│   │   └── student/             # 10-step onboarding
+│   │       └── [studentId]/     # Dynamic route
+│   ├── (auth)/                  # Auth pages (setup, login, reset)
+│   ├── api/                     # Backend API
+│   │   ├── classes/             # Class CRUD
+│   │   ├── students/            # Student CRUD
+│   │   ├── dashboard/           # Stats & analytics
+│   │   ├── auth/                # NextAuth endpoints
+│   │   └── health/              # Health checks
+│   ├── layout.tsx               # Root layout (server)
+│   ├── ClientLayout.tsx         # Client wrapper
+│   └── Providers.tsx            # Redux, Theme, i18n
+│
+├── components/                  # Atomic Design
+│   ├── atoms/                   # Buttons, inputs, badges
+│   ├── molecules/               # Headers, menus
+│   └── organisms/               # Forms, tables, modals
+│
+├── store/                       # Redux
+│   ├── actions/                 # Thunks (classActions, studentActions)
+│   └── reducers/                # Slices (ui, student, class, dashboard)
+│
+├── models/                      # Mongoose schemas
+│   ├── Class.ts
+│   ├── Student.ts
+│   ├── User.ts
+│   ├── AuditLog.ts
+│   └── AppSettings.ts
+│
+├── lib/
+│   ├── config/                  # MongoDB, i18n, app config
+│   ├── services/                # API wrappers (axios)
+│   ├── validate/                # Yup schemas
+│   └── auth/                    # NextAuth configuration
+│
+├── theme/                       # Material-UI theme
+├── locales/                     # i18n (en.json, de.json)
+├── constants/                   # App constants
+├── types/                       # TypeScript types
+└── utils/                       # Utility functions
 ```
 
 ---
 
 ## Data Flow
 
-### Request Flow
+### Client → Server
 
-```text
+```
 User Action
   ↓
-UI Component
+Component Handler
   ↓
-Redux Action (Thunk)
+Redux Action (thunk)
   ↓
 API Service (axios)
   ↓
@@ -413,362 +112,275 @@ Next.js API Route
 Mongoose Model
   ↓
 MongoDB
+```
+
+### Server → Client
+
+```
+MongoDB
   ↓
-Response → Reducer → Component → UI Update
-```
-
-### Example: Create Class Flow
-
-```text
-1. User clicks "Add Class" button
-   → AddClassModal opens
-
-2. User fills form and submits
-   → Formik validates with Yup schema
-
-3. onSubmit calls Redux action
-   → dispatch(createClass(classData))
-
-4. createClass thunk executes
-   → classService.create(classData)
-
-5. API call to POST /api/classes
-   → Next.js route handler
-
-6. Mongoose validates and saves
-   → Class.create(classData)
-
-7. Success response returns
-   → Dispatch success action
-
-8. Reducer updates state
-   → class.classes array updated
-
-9. Component re-renders
-   → DataTable shows new class
-
-10. Success notification
-    → Sonner toast displayed
+Mongoose Model
+  ↓
+Next.js API Route (JSON response)
+  ↓
+API Service
+  ↓
+Redux Action (dispatch SUCCESS)
+  ↓
+Redux Reducer (update state)
+  ↓
+Component Re-render
 ```
 
 ---
 
-## Component Hierarchy
+## State Management
 
-### Admin Section
-
-```text
-AdminLayout
-├── LeftNavigation (sidebar)
-│   ├── Logo
-│   ├── NavigationItems (collapsible)
-│   └── HeaderSearchInput
-└── Main Content
-    ├── DashboardPage
-    │   ├── AdminSettingsHeader
-    │   ├── DraggableStatsGrid
-    │   │   └── StatCard (x4)
-    │   └── DraggableChartGrid
-    │       ├── RegistrationTrendChart
-    │       ├── ClassDistributionChart
-    │       ├── StudentStatusChart
-    │       └── SystemHealthWidget
-    ├── ClassesManagementPage
-    │   ├── AdminSettingsHeader
-    │   │   ├── SmallIconButton (Add)
-    │   │   ├── SmallIconButton (Delete)
-    │   │   └── SmallIconButton (Export)
-    │   └── DataTable
-    │       ├── EnhancedTableHead
-    │       ├── TableBody (rows)
-    │       └── Pagination
-    └── StudentsManagementPage
-        └── (similar to classes)
-```
-
-### Student Onboarding Section
-
-```text
-StudentLayout
-└── [studentId]
-    ├── BackgroundStudyPattern (decorative)
-    ├── DynamicPageStepper
-    │   └── Stepper (10 steps)
-    └── StepForm
-        ├── WelcomeForm
-        ├── GeneralForm
-        ├── OriginForm
-        ├── AddressForm
-        ├── ParentsForm
-        ├── PreEducationForm
-        ├── TrainingForm
-        ├── CompanyContactForm
-        ├── SummaryForm
-        └── FormCompletion
-```
-
----
-
-## Routing Structure
-
-### Route Groups
-
-Next.js route groups `()` organize routes without affecting URL:
-
-```text
-app/
-├── (home)/                    # Route group (not in URL)
-│   ├── layout.tsx            # Shared layout for admin & student
-│   ├── admin/                # URL: /admin
-│   │   ├── dashboard/        # URL: /admin/dashboard
-│   │   ├── management/
-│   │   │   ├── classes/      # URL: /admin/management/classes
-│   │   │   └── students/     # URL: /admin/management/students
-│   │   └── settings/         # URL: /admin/settings
-│   └── student/              # URL: /student
-│       └── [studentId]/      # URL: /student/abc123
-└── api/                       # URL: /api/*
-```
-
-### Dynamic Routes
+### Redux Store Structure
 
 ```typescript
-// src/app/(home)/student/[studentId]/page.tsx
-export default function StudentOnboardingPage({
-  params,
-}: {
-  params: { studentId: string };
-}) {
-  const { studentId } = params;
-  // ...
+{
+  ui: {
+    theme: 'light' | 'dark',
+    locale: 'en' | 'de',
+    appTouched: boolean
+  },
+  student: {
+    currentStep: number,           // Onboarding wizard step (1-10)
+    data: StudentFormData,         // Form data across steps
+    students: Student[]
+  },
+  class: {
+    classes: Class[],
+    currentClass: Class | null,
+    page: number,
+    limit: number,
+    total: number
+  },
+  dashboard: {
+    stats: DashboardStats | null,
+    health: HealthStatus | null,
+    layout: DashboardLayout        // Widget positions
+  }
 }
 ```
 
-### Middleware
+### Redux Patterns
+
+**Actions:** All actions are thunks dispatching REQUEST/SUCCESS/FAILURE
+**Services:** API calls abstracted in `src/lib/services/api.ts`
+**Persistence:** Redux Persist stores state in localStorage
+
+Example:
 
 ```typescript
-// src/middleware.ts
-export function middleware(request: NextRequest) {
-  // Currently a placeholder for authentication
-  // Future: JWT verification, role-based access control
+export const getClasses = (): AppThunk => async (dispatch) => {
+  dispatch({ type: GET_CLASSES_REQUEST });
+  try {
+    const { data } = await classService.getAll();
+    dispatch({ type: GET_CLASSES_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({ type: GET_CLASSES_FAILURE, payload: toAppError(error) });
+  }
+};
+```
+
+---
+
+## Database Schema
+
+### Student Model
+
+```typescript
+{
+  firstName, lastName: String,
+  firstNameNorm, lastNameNorm: String,   // For collision detection
+  dateOfBirth: Date,
+  email: String (lowercase),
+  phone: String,
+  address: { street, city, state, zip, country, timezone },
+  collisionGroup: String,                // Name conflict handling
+  ordinal: Number,                       // Ordering students with same name
+  status: "imported" | "invited" | "onboarded",
+  currentClass: ObjectId,                // Reference to Class
+  classHistory: [{                       // Historical assignments
+    classId, schoolYear, startDate, endDate, note
+  }],
+  employer: {                            // For vocational students
+    companyName, address, contactName, contactEmail, verified
+  },
+  active: Boolean,
+  timestamps
+}
+```
+
+**Indexes:** `firstNameNorm`, `lastNameNorm`, `currentClass`, `collisionGroup`
+
+### Class Model
+
+```typescript
+{
+  schoolYearFrom: Date,                  // e.g., 2024-08-01
+  schoolYearTo: Date,                    // e.g., 2025-07-31
+  name: String,                          // e.g., "10A", "BG-23"
+  grade: Number,                         // 1-13, null for vocational
+  isVocational: Boolean,
+  requiresEmployerInfo: Boolean,
+  studentCount: Number,                  // Cached count
+  active: Boolean,
+  timestamps
+}
+```
+
+**Pre-validate hook:** Ensures `schoolYearTo > schoolYearFrom`
+
+---
+
+## API Architecture
+
+### Route Pattern
+
+All API routes in `src/app/api/` follow this pattern:
+
+```typescript
+export async function GET(req: NextRequest) {
+  // 1. Database connection
+  await dbConnect();
+
+  // 2. Authentication check
+  const session = await auth();
+  if (!session)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  // 3. Validation
+  const { searchParams } = new URL(req.url);
+  const skip = Number(searchParams.get("skip")) || 0;
+  const limit = Number(searchParams.get("limit")) || 20;
+
+  // 4. Database operation
+  const result = await Model.paginate({}, { skip, limit });
+
+  // 5. Response
+  return NextResponse.json(result);
+}
+```
+
+### Error Handling
+
+```typescript
+try {
+  // operation
+} catch (error) {
+  console.error("Error:", error);
+  return NextResponse.json(
+    { error: toErrorMessage(error) },
+    { status: 500 }
+  );
 }
 ```
 
 ---
 
-## Security Considerations
+## Authentication
 
-### Current Implementation
+**Provider:** NextAuth.js v5
+**Strategy:** Credentials (email + password)
+**Session:** JWT stored in HTTP-only cookies (24h)
+**Protection:** Middleware protects `/admin/*` routes
 
-1. **Input Validation**
-   - Yup schemas for forms
-   - Mongoose validation for database
-   - API route validation functions
+### Auth Flow
 
-2. **Data Sanitization**
-   - String trimming
-   - Email lowercasing
-   - Name normalization
-
-3. **Error Handling**
-   - Generic error messages to clients
-   - Detailed logging server-side
-
-### Future Enhancements
-
-1. **Authentication**
-   - JWT-based auth
-   - Secure cookie storage
-   - Refresh token rotation
-
-2. **Authorization**
-   - Role-based access control (RBAC)
-   - Admin vs Student permissions
-   - API endpoint protection
-
-3. **Rate Limiting**
-   - API request throttling
-   - DDoS protection
-
-4. **HTTPS**
-   - SSL/TLS in production
-   - Secure cookie flags
-   - HSTS headers
+1. **Setup** (`/setup`): Create admin account + recovery code
+2. **Login** (`/login`): Authenticate with email/password
+3. **Password Reset** (`/reset-password`): Email + recovery code + new password
 
 ---
 
-## Performance Optimizations
+## Student Onboarding Flow
 
-### Frontend Architectures
+10-step wizard at `/student/[studentId]`:
 
-1. **Code Splitting**
-   - Next.js automatic code splitting
-   - Dynamic imports for large components
+1. **Welcome** - Class selection
+2. **General** - Name, gender, DOB, religion
+3. **Origin** - Birthplace, nationality, language
+4. **Address** - Student address and contact
+5. **Parents/Guardians** - Contact persons
+6. **Pre-Education** - Previous school, qualifications
+7. **Training** - Vocational training (if applicable)
+8. **Company** - Employer info (if vocational)
+9. **Summary** - Review all data
+10. **Completion** - Success message
 
-2. **Image Optimization**
-   - Next.js Image component
-   - Lazy loading
-
-3. **Client-Side Caching**
-   - Redux Persist for state
-   - Browser localStorage
-
-### Backend Architectures
-
-1. **Database**
-   - Indexes on frequently queried fields
-   - Lean queries (plain objects)
-   - Pagination for large datasets
-
-2. **Connection Pooling**
-   - MongoDB connection caching
-   - Reuse connections in serverless
-
-3. **API Response Caching**
-   - (Future) Redis cache layer
-   - (Future) CDN for static assets
+**State:** Persisted in Redux (`student.data`, `student.currentStep`)
+**Validation:** Formik + Yup schemas
+**Submission:** Only on final step (step 10)
 
 ---
 
-## Deployment Architecture
+## Component Architecture
 
-### Development
+**Pattern:** Atomic Design
 
-```text
-Developer → yarn dev → Next.js Dev Server (Turbopack)
-                     → MongoDB (localhost:27017)
-                     → HTTPS (localhost:3000)
-```
+- **Atoms** (basic): GeneralButton, GeneralInput, ClassStatus
+- **Molecules** (composed): AdminSettingsHeader, StatCard
+- **Organisms** (complex): Forms, DataTable, Modals, Navigation
 
-### Production
-
-```text
-Build Process:
-  yarn build → Next.js Static Generation
-            → Optimized bundles
-
-Deployment:
-  Server → Next.js Production Server
-        → MongoDB (Production URI)
-        → Reverse Proxy (Nginx)
-        → SSL/TLS Certificate
-```
-
-### Environment Variables
-
-```env
-# Development
-NODE_ENV=development
-MONGODB_URI=mongodb://localhost:27017/digital-student-onboarding
-NEXT_PUBLIC_API_URL=https://localhost:3000
-
-# Production
-NODE_ENV=production
-MONGODB_URI=mongodb://prod-server:27017/prod-db
-NEXT_PUBLIC_API_URL=https://app.example.com
-```
+**Styling:** Material-UI `styled()` API with Emotion
+**Theme:** Light/Dark mode via Redux state
+**Responsive:** `theme.breakpoints` for mobile/tablet/desktop
 
 ---
 
-## Technology Choices
+## Internationalization
 
-### Why Next.js?
-
-- **Integrated Backend** - API routes eliminate need for separate Express server
-- **SSR + CSR** - Flexible rendering strategies
-- **TypeScript Support** - First-class TypeScript integration
-- **Production Ready** - Built-in optimizations
-
-### Why Redux?
-
-- **Complex State** - Multi-step forms, dashboard data, UI preferences
-- **Persistence** - Redux Persist for offline support
-- **DevTools** - Excellent debugging tools
-- **Established** - Mature ecosystem
-
-### Why Material-UI?
-
-- **Comprehensive** - Complete component library
-- **Themeable** - Dark mode, accessibility features
-- **Responsive** - Mobile-first design
-- **TypeScript** - Full type definitions
-
-### Why MongoDB?
-
-- **Flexible Schema** - Easy to evolve data models
-- **JSON-native** - Natural fit for JavaScript
-- **Scalable** - Horizontal scaling support
-- **Mongoose** - Excellent ODM with TypeScript
+- **Library:** i18next
+- **Languages:** English (en), German (de)
+- **Files:** `src/locales/en.json`, `src/locales/de.json`
+- **Detection:** Automatic from browser, persisted in Redux
+- **Usage:** `useTranslation()` hook or `t()` function
 
 ---
 
-## Scalability Considerations
+## Performance Considerations
 
-### Current Limits
-
-- **Monolithic** - Single deployment unit
-- **Vertical Scaling** - Scale up server resources
-- **Single Database** - MongoDB instance
-
-### Future Scaling Options
-
-1. **Horizontal Scaling**
-   - Multiple Next.js instances behind load balancer
-   - MongoDB replica set for read scaling
-
-2. **Microservices**
-   - Separate auth service
-   - Separate notification service
-   - Message queue (RabbitMQ, Kafka)
-
-3. **Caching Layer**
-   - Redis for session storage
-   - CDN for static assets
-
-4. **Database Optimization**
-   - Read replicas
-   - Sharding for large datasets
-   - Archive old data
+- **MongoDB:** Connection pooling via cached `dbConnect()`
+- **Pagination:** Always paginate (mongoose-paginate-v2)
+- **Indexes:** On frequently queried fields
+- **Code Splitting:** Automatic with Next.js
+- **SSR:** Server-side rendering for initial load
+- **Caching:** Redis for session storage
 
 ---
 
-## Monitoring & Logging
+## Security
 
-### Current Implementation Architectures
-
-**Winston Logger:**
-
-```typescript
-// src/lib/server-logger.ts
-const logger = new Logger("API");
-logger.info("Request received");
-logger.error("Database connection failed");
-```
-
-### Future Monitoring
-
-1. **Application Monitoring**
-   - Error tracking (Sentry)
-   - Performance monitoring (New Relic)
-
-2. **Infrastructure Monitoring**
-   - Server metrics (CPU, memory, disk)
-   - Database metrics (connections, queries)
-
-3. **Log Aggregation**
-   - Centralized logging (ELK Stack)
-   - Log analysis and alerts
+- **Authentication:** NextAuth.js with bcrypt hashing (12 rounds)
+- **Authorization:** Middleware protects admin routes
+- **Validation:** Yup schemas (client + server)
+- **SQL Injection:** Protected by Mongoose
+- **XSS:** React auto-escapes
+- **CSRF:** SameSite cookies
+- **Secrets:** Environment variables (never committed)
 
 ---
 
-## Summary
+## Deployment
 
-The Digital Student Registration application is a **modern full-stack monolithic application** built with:
+**Docker Compose** with profiles:
 
-- **Next.js 15** for unified frontend and backend
-- **React 19** with TypeScript for type safety
-- **Redux** for complex client state management
-- **MongoDB + Mongoose** for flexible data persistence
-- **Material-UI v7** for comprehensive UI components
+- `app-linux` / `app-windows`: Next.js application
+- `mongo`: MongoDB 7.0
+- `redis`: Redis 7
 
-The architecture prioritizes **developer experience**, **type safety**, and **maintainability** while remaining scalable for future growth.
+**Critical:** Set `NEXT_PUBLIC_APP_URL` to production domain before building (QR codes embed this URL).
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for details.
+
+---
+
+## Additional Resources
+
+- [COMPONENTS.md](COMPONENTS.md) - Component development
+- [API.md](API.md) - API endpoints documentation
+- [DATABASE.md](DATABASE.md) - Database schema details
+- [TESTING.md](TESTING.md) - Testing guide

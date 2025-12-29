@@ -10,7 +10,8 @@ import {
   errorNotification,
   successNotification,
 } from "@/utils/notification.utils";
-import { Box, TextField, styled } from "@mui/material";
+import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
+import { Box, InputAdornment, TextField, styled } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Dayjs } from "dayjs";
 import { Field, Form, Formik } from "formik";
@@ -241,6 +242,17 @@ const CreateStudentModal: React.FC<CreateStudentModalProps> = ({
                       helperText={touched.firstName && errors.firstName}
                       variant="outlined"
                       size="medium"
+                      style={{
+                        height: "50px",
+                        flexShrink: 0,
+                      }}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <PersonRoundedIcon />
+                          </InputAdornment>
+                        ),
+                      }}
                     />
                   </FieldWrapper>
 
@@ -258,6 +270,17 @@ const CreateStudentModal: React.FC<CreateStudentModalProps> = ({
                       helperText={touched.lastName && errors.lastName}
                       variant="outlined"
                       size="medium"
+                      style={{
+                        height: "50px",
+                        flexShrink: 0,
+                      }}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <PersonRoundedIcon />
+                          </InputAdornment>
+                        ),
+                      }}
                     />
                   </FieldWrapper>
 
@@ -271,6 +294,7 @@ const CreateStudentModal: React.FC<CreateStudentModalProps> = ({
                       }}
                       disabled={isCreating}
                       format="DD.MM.YYYY"
+                      disableFuture
                       slotProps={{
                         textField: {
                           fullWidth: true,

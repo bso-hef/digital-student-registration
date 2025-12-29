@@ -5,6 +5,135 @@ All notable changes to the Digital Student Registration project will be document
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2025-12-24
+
+### Added
+
+#### Dashboard Improvements
+
+- **Dashboard Layout Lock**
+  - New toggle button to lock/unlock dashboard layout
+  - Prevents accidental widget rearrangement
+  - `toggleDashboardLock` Redux action
+  - `isLocked` state in dashboard layout with auto-migration
+
+- **Empty Data State Display**
+  - All charts now display "No data available" for empty datasets
+  - Visual icons for empty states (BarChartIcon, ShowChartIcon, PieChartIcon)
+  - Improved RecentActivityWidget empty state
+
+#### Class Management
+
+- **Incomplete Status Field**
+  - New `incomplete` field on Class model
+  - Auto-calculated via pre-save hook (incomplete when grade is null)
+  - `ClassStatus` component shows warning icon for incomplete classes
+  - Status priority: Incomplete (warning) → Active (success) → Inactive (error)
+  - Backwards-compatible API responses
+
+#### CSV Import Improvements
+
+- **Import Progress Indicator**
+  - New `ImportProgressIndicator` component
+  - Step-by-step progress display with progress bar
+  - Import steps: parsing, checking_classes, creating_classes, importing_students, refreshing
+  - Percentage display during import
+
+- **Improved Import Workflow**
+  - Classes auto-refresh after student import
+  - Loading states reset properly on modal close
+
+#### Student Management
+
+- **Clickable Student Names**
+  - First name and last name are now links to student detail page
+  - Direct navigation to `/admin/management/students/[id]/general`
+
+#### Docker & Deployment
+
+- **New Build Scripts**
+  - `scripts/docker-build.sh` - Linux/Mac build script
+  - `scripts/docker-build.ps1` - Windows PowerShell build script
+  - Auto-extract version from package.json
+  - Support for `--no-cache` and `-LinuxImage` options
+
+- **Simplified Docker Configuration**
+  - Pre-built images instead of build-at-deploy
+  - Consolidated docker-compose.yml (prod config merged in)
+  - `NEXT_PUBLIC_VERSION` and `NEXT_PUBLIC_NAME` as build args
+  - Improved health checks with service dependency conditions
+  - Security hardening with `no-new-privileges`
+  - Increased log file retention (5 files)
+
+#### Infrastructure
+
+- **SSR-Safe Redux Storage**
+  - New `src/store/storage.ts` for redux-persist
+  - NoopStorage for server-side rendering
+  - Prevents localStorage errors during SSR
+
+- **Next.js Configuration**
+  - Auto-inject app name and version from package.json
+  - Graceful error handling for system setup check
+
+#### Testing
+
+- **ClassStatus Tests**
+  - New tests for incomplete status display
+  - Tests for status priority (incomplete > active > inactive)
+
+#### Translations
+
+- New translation keys:
+  - `general.Incomplete` - "Incomplete" / "Unvollständig"
+  - `dashboard.lockLayout` - "Lock Layout" / "Layout sperren"
+  - `dashboard.unlockLayout` - "Unlock Layout" / "Layout entsperren"
+  - `dashboard.charts.noData` - "No data to display" / "Keine Daten verfügbar"
+  - Import progress step translations
+
+### Changed
+
+- **Docker Deployment**
+  - Default version changed from 2.0.0 to 2.1.0
+  - docker-compose.yml now uses pre-built images by default
+  - Build process separated from deployment
+
+- **Dashboard Components**
+  - StatCard, ChartContainer, DraggableStatsGrid, DraggableChartGrid now support `isLocked` prop
+  - Drag handles hidden when layout is locked
+
+- **Class Model**
+  - Added `incomplete` field with index
+  - Pre-save hook auto-calculates incomplete status
+
+### Fixed
+
+- **CSV Import**
+  - Loading states now reset when closing AddStudentModal
+  - Classes refresh after student import to show updated data
+
+- **Dashboard**
+  - Empty data states now display properly with icons
+  - Layout lock state persists across sessions
+
+- **Redux Persist**
+  - Fixed localStorage errors during server-side rendering
+  - Added NoopStorage fallback for SSR
+
+- **System Setup**
+  - Added try-catch for database check in root layout
+  - Graceful fallback when database is unavailable
+
+### Removed
+
+- **Root Page**
+  - `src/app/page.tsx` removed (redirect to admin)
+
+- **Docker Files**
+  - `docker-compose.prod.yml` removed (merged into docker-compose.yml)
+
+---
+
 ## [2.0.0] - 2025-12-21
 
 ### Added
@@ -806,13 +935,26 @@ Each API route includes:
 - Advanced reporting and analytics
 - File upload support for student documents
 - SMS notifications
-- Batch import improvements
 - Multi-tenant support
 - Role-based access control (RBAC) for multiple admin levels
 
 ---
 
 ## Version History
+
+- **2.1.0** (2025-12-24) - Deployment & UX improvements
+  - Docker build scripts and simplified deployment
+  - Dashboard layout lock feature
+  - Class incomplete status
+  - CSV import progress indicator
+  - SSR-safe redux storage
+
+- **2.0.0** (2025-12-21) - Major feature release
+  - Student detail pages
+  - Profile management
+  - CSV import for classes
+  - Duplicate detection
+  - Recent activity widget
 
 - **1.0.0** (2025-11-11) - Initial production release
   - Complete student onboarding system

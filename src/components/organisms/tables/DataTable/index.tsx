@@ -90,7 +90,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
   "&:hover": {
     backgroundColor: "transparent",
-    color: theme.palette.text.link,
+    color: `${theme.palette.text.link} !important`,
   },
 }));
 
@@ -125,14 +125,11 @@ const StyledTableCell = styled(TableCell, {
 
 const StyledBox = styled(Box)(({ theme }) => ({
   color: theme.palette.text.default,
-  "&:hover": {
-    color: theme.palette.text.contrast,
-    cursor: "pointer",
-  },
   "& a": {
     color: theme.palette.text.default,
+    textDecoration: "none",
     "&:hover": {
-      color: `${theme.palette.text.primary}`,
+      color: theme.palette.text.link,
       cursor: "pointer",
     },
   },

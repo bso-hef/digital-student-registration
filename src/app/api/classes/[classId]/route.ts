@@ -15,6 +15,7 @@ interface ClassLean {
   requiresEmployerInfo?: boolean;
   studentCount?: number;
   active?: boolean;
+  incomplete?: boolean;
 }
 
 export const runtime = "nodejs";
@@ -36,13 +37,23 @@ export async function GET(
       );
     }
 
-    const classData = await Class.findById(classId).lean();
+    const classData = (await Class.findById(
+      classId,
+    ).lean()) as ClassLean | null;
 
     if (!classData) {
       return NextResponse.json({ message: "Class not found" }, { status: 404 });
     }
 
-    return NextResponse.json(classData, { status: 200 });
+    // Ensure incomplete field is computed (backwards compatibility)
+    const classWithIncomplete = {
+      ...classData,
+      incomplete:
+        classData.incomplete ??
+        (classData.grade === null || classData.grade === undefined),
+    };
+
+    return NextResponse.json(classWithIncomplete, { status: 200 });
   } catch (error) {
     logger.error(
       `Failed to retrieve Class ${params.classId}`,
@@ -72,7 +83,7 @@ export async function PATCH(
     }
 
     // Get old values for audit log
-    const oldClass = await Class.findById(classId).lean();
+    const oldClass = (await Class.findById(classId).lean()) as ClassLean | null;
 
     const updatedClass = (await Class.findByIdAndUpdate(classId, body, {
       new: true,
@@ -82,18 +93,26 @@ export async function PATCH(
       return NextResponse.json({ message: "Class not found" }, { status: 404 });
     }
 
+    // Ensure incomplete field is computed (backwards compatibility)
+    const classWithIncomplete = {
+      ...updatedClass,
+      incomplete:
+        updatedClass.incomplete ??
+        (updatedClass.grade === null || updatedClass.grade === undefined),
+    };
+
     // Log audit entry
     await createAuditLog(
       {
         action: "class.update",
         category: "class",
         description: tServer("audit.descriptions.updatedClass", {
-          name: updatedClass.name,
+          name: classWithIncomplete.name,
         }),
         status: "success",
         metadata: {
           classId: classId,
-          className: updatedClass.name,
+          className: classWithIncomplete.name,
           changedFields: Object.keys(body),
           oldValues: oldClass,
           newValues: body,
@@ -103,7 +122,7 @@ export async function PATCH(
     );
 
     logger.info(`Class ${classId} updated successfully`);
-    return NextResponse.json(updatedClass, { status: 200 });
+    return NextResponse.json(classWithIncomplete, { status: 200 });
   } catch (error) {
     logger.error(
       `Failed to update Class ${params.classId}`,

@@ -9,6 +9,7 @@ export interface ClassInterface {
   isVocational: boolean;
   requiresEmployerInfo: boolean;
   active: boolean;
+  incomplete: boolean;
   studentCount?: number;
   students: Student[];
 }
@@ -21,6 +22,7 @@ export interface ClassCreateInput {
   isVocational: boolean;
   requiresEmployerInfo: boolean;
   active: boolean;
+  incomplete: boolean;
 }
 
 export type ClassCreateInputFormRow = {
@@ -31,6 +33,7 @@ export type ClassCreateInputFormRow = {
   isVocational: boolean;
   requiresEmployerInfo?: boolean;
   active?: boolean;
+  incomplete?: boolean;
   touched?: boolean;
   isValid?: boolean;
 };

@@ -54,6 +54,59 @@ describe("ClassStatus", () => {
     });
   });
 
+  describe("Incomplete Status", () => {
+    it("should render incomplete icon when incomplete is true", () => {
+      renderWithProviders(<ClassStatus active={false} incomplete={true} />);
+
+      // WarningAmberRoundedIcon should be present
+      const svg = document.querySelector(
+        'svg[data-testid="WarningAmberRoundedIcon"]',
+      );
+      expect(svg).toBeInTheDocument();
+    });
+
+    it('should render "Incomplete" label when incomplete is true', () => {
+      renderWithProviders(<ClassStatus active={false} incomplete={true} />);
+
+      // Should show "Incomplete" text (or translated version)
+      expect(screen.getByText(/Incomplete/i)).toBeInTheDocument();
+    });
+
+    it("should prioritize incomplete over active status", () => {
+      renderWithProviders(<ClassStatus active={true} incomplete={true} />);
+
+      // Should show incomplete status even though active is true
+      expect(screen.getByText(/Incomplete/i)).toBeInTheDocument();
+      expect(screen.queryByText(/Active/i)).not.toBeInTheDocument();
+
+      const svg = document.querySelector(
+        'svg[data-testid="WarningAmberRoundedIcon"]',
+      );
+      expect(svg).toBeInTheDocument();
+    });
+
+    it("should prioritize incomplete over inactive status", () => {
+      renderWithProviders(<ClassStatus active={false} incomplete={true} />);
+
+      // Should show incomplete status even though active is false
+      expect(screen.getByText(/Incomplete/i)).toBeInTheDocument();
+      expect(screen.queryByText(/Inactive/i)).not.toBeInTheDocument();
+
+      const svg = document.querySelector(
+        'svg[data-testid="WarningAmberRoundedIcon"]',
+      );
+      expect(svg).toBeInTheDocument();
+    });
+
+    it("should show active status when incomplete is false", () => {
+      renderWithProviders(<ClassStatus active={true} incomplete={false} />);
+
+      // Should show active status when not incomplete
+      expect(screen.getByText(/Active/i)).toBeInTheDocument();
+      expect(screen.queryByText(/Incomplete/i)).not.toBeInTheDocument();
+    });
+  });
+
   describe("Label Display", () => {
     it("should show label when showLabel is true", () => {
       renderWithProviders(<ClassStatus active={true} showLabel={true} />);

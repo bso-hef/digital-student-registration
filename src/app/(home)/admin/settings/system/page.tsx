@@ -72,14 +72,47 @@ const MetricCard = styled(Box)(({ theme }) => ({
   border: `1px solid ${theme.palette.border.seperator}`,
 }));
 
-const formatUptime = (seconds: number): string => {
+const formatUptime = (seconds: number, t: (key: string) => string): string => {
   const days = Math.floor(seconds / 86400);
   const hours = Math.floor((seconds % 86400) / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
 
-  if (days > 0) return `${days}d ${hours}h ${minutes}m`;
-  if (hours > 0) return `${hours}h ${minutes}m`;
-  return `${minutes}m`;
+  const parts: string[] = [];
+  if (days > 0) {
+    const dayLabel =
+      days === 1
+        ? t("dashboard.health.uptimeDay")
+        : t("dashboard.health.uptimeDays");
+    parts.push(`${days} ${dayLabel}`);
+  }
+  if (hours > 0) {
+    const hourLabel =
+      hours === 1
+        ? t("dashboard.health.uptimeHour")
+        : t("dashboard.health.uptimeHours");
+    parts.push(`${hours} ${hourLabel}`);
+  }
+  if (minutes > 0 || parts.length === 0) {
+    const minuteLabel =
+      minutes === 1
+        ? t("dashboard.health.uptimeMinute")
+        : t("dashboard.health.uptimeMinutes");
+    parts.push(`${minutes} ${minuteLabel}`);
+  }
+
+  return parts.join(", ");
+};
+
+const formatPlatform = (platform: string): string => {
+  const platformMap: Record<string, string> = {
+    darwin: "macOS",
+    linux: "Linux",
+    win32: "Windows",
+  };
+  return (
+    platformMap[platform] ||
+    platform.charAt(0).toUpperCase() + platform.slice(1)
+  );
 };
 
 const defaultWlanSettings: WlanSettings = {
@@ -405,6 +438,40 @@ const AdminSystemPage = () => {
                 {health.checks.mongo.error}
               </Typography>
             )}
+
+            {/* Redis Status */}
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
+              sx={{
+                p: 1.5,
+                bgcolor: "action.hover",
+                borderRadius: 1,
+                mt: 1,
+              }}
+            >
+              <Box display="flex" alignItems="center" gap={1}>
+                <StorageRoundedIcon fontSize="small" color="action" />
+                <Typography variant="body2">
+                  {t("dashboard.health.redis")}
+                </Typography>
+              </Box>
+              {health && (
+                <HealthIndicator
+                  status={health.checks.redis?.status || "down"}
+                />
+              )}
+            </Box>
+            {health?.checks.redis?.error && (
+              <Typography
+                variant="body2"
+                color="error"
+                sx={{ mt: 1, fontSize: "0.875rem" }}
+              >
+                {health.checks.redis.error}
+              </Typography>
+            )}
           </EnhancedCollapse>
 
           {/* System Metrics */}
@@ -417,13 +484,17 @@ const AdminSystemPage = () => {
               <MetricCard>
                 <MetricLabel
                   label={t("dashboard.health.uptime")}
-                  value={health ? formatUptime(health.meta.uptimeSec) : "-"}
+                  value={health ? formatUptime(health.meta.uptimeSec, t) : "-"}
                 />
               </MetricCard>
               <MetricCard>
                 <MetricLabel
                   label={t("dashboard.health.cpu")}
-                  value={health ? `${health.meta.system.cpus} cores` : "-"}
+                  value={
+                    health
+                      ? `${health.meta.system.cpus} ${t("dashboard.health.cores")}`
+                      : "-"
+                  }
                 />
               </MetricCard>
               <MetricCard>
@@ -447,7 +518,9 @@ const AdminSystemPage = () => {
               <MetricCard>
                 <MetricLabel
                   label={t("dashboard.health.platform")}
-                  value={health?.meta.system.platform || "-"}
+                  value={
+                    health ? formatPlatform(health.meta.system.platform) : "-"
+                  }
                 />
               </MetricCard>
             </MetricsGrid>

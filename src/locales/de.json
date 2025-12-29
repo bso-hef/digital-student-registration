@@ -29,6 +29,7 @@
     "No": "Nein",
     "Inactive": "Inaktiv",
     "Active": "Aktiv",
+    "Incomplete": "Unvollständig",
     "All": "Alle",
     "generatePassword": "Sicheres Passwort generieren",
     "of": "von",
@@ -184,6 +185,13 @@
       "importingStudents": "Schüler werden importiert...",
       "pleaseWait": "Dies kann bei großen Datenmengen einen Moment dauern",
       "importing": "Importiere...",
+      "progress": {
+        "parsing": "CSV-Datei wird verarbeitet...",
+        "checkingClasses": "Klassen werden überprüft...",
+        "creatingClasses": "Klassen werden erstellt...",
+        "importingStudents": "Schüler werden importiert...",
+        "refreshing": "Daten werden aktualisiert..."
+      },
       "firstNameRequired": "Vorname ist erforderlich",
       "lastNameRequired": "Nachname ist erforderlich",
       "dateOfBirthRequired": "Geburtsdatum ist erforderlich",
@@ -487,6 +495,8 @@
   "dashboard": {
     "title": "Dashboard",
     "resetLayout": "Layout zurücksetzen",
+    "lockLayout": "Layout sperren",
+    "unlockLayout": "Layout entsperren",
     "actions": {
       "refresh": "Aktualisieren"
     },
@@ -503,7 +513,8 @@
       "classDistribution": "Klassen nach Jahrgang",
       "systemMetrics": "Systemmetriken",
       "gradeLabel": "Klasse {{grade}}",
-      "noGrade": "Keine Klasse"
+      "noGrade": "Keine Klasse",
+      "noData": "Keine Daten verfügbar"
     },
     "status": {
       "imported": "Angelegt",
@@ -536,7 +547,15 @@
       "serverInfo": "Serverinformationen",
       "service": "Dienst",
       "version": "Version",
-      "architecture": "Architektur"
+      "architecture": "Architektur",
+      "redis": "Redis",
+      "cores": "Kerne",
+      "uptimeDay": "Tag",
+      "uptimeDays": "Tage",
+      "uptimeHour": "Stunde",
+      "uptimeHours": "Stunden",
+      "uptimeMinute": "Minute",
+      "uptimeMinutes": "Minuten"
     },
     "recentActivity": {
       "title": "Letzte Aktivitäten",

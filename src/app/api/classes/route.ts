@@ -128,8 +128,20 @@ export async function GET(request: NextRequest) {
       Class.countDocuments({}),
     ]);
 
+    // Ensure incomplete field is computed for all classes (backwards compatibility)
+    const classesWithIncomplete = classes.map((c) => ({
+      ...c,
+      incomplete: c.incomplete ?? (c.grade === null || c.grade === undefined),
+    }));
+
     return NextResponse.json(
-      { classes, page, limit, total, pages: Math.ceil(total / limit) },
+      {
+        classes: classesWithIncomplete,
+        page,
+        limit,
+        total,
+        pages: Math.ceil(total / limit),
+      },
       { status: 200 },
     );
   } catch (error) {
@@ -174,7 +186,14 @@ export async function POST(request: NextRequest) {
 
     const docs = prepared
       .filter((p): p is ShapedValid => p.ok)
-      .map((p) => p.doc);
+      .map((p) => {
+        // Calculate incomplete field based on grade (same logic as pre-save hook)
+        const doc = p.doc;
+        return {
+          ...doc,
+          incomplete: doc.grade === null || doc.grade === undefined,
+        };
+      });
 
     if (docs.length === 0) {
       return NextResponse.json(
