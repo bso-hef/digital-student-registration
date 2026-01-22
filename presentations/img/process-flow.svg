@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 150">
+  <!-- IST Section -->
+  <text x="10" y="22" fill="#FF6B6B" font-family="Inter, sans-serif" font-size="14" font-weight="700">IST :</text>
+
+  <rect x="10" y="32" width="120" height="38" rx="4" fill="#FAFAFA" stroke="#FF6B6B" stroke-width="2"/>
+  <text x="70" y="50" fill="#515053" font-family="Inter, sans-serif" font-size="9" font-weight="600" text-anchor="middle">Schlechter</text>
+  <text x="70" y="62" fill="#515053" font-family="Inter, sans-serif" font-size="9" font-weight="600" text-anchor="middle">Mobile-Support</text>
+
+  <rect x="138" y="32" width="120" height="38" rx="4" fill="#FAFAFA" stroke="#FF6B6B" stroke-width="2"/>
+  <text x="198" y="56" fill="#515053" font-family="Inter, sans-serif" font-size="9" font-weight="600" text-anchor="middle">Dateninkonsistenz</text>
+
+  <rect x="266" y="32" width="120" height="38" rx="4" fill="#FAFAFA" stroke="#FF6B6B" stroke-width="2"/>
+  <text x="326" y="50" fill="#515053" font-family="Inter, sans-serif" font-size="9" font-weight="600" text-anchor="middle">Fehlende</text>
+  <text x="326" y="62" fill="#515053" font-family="Inter, sans-serif" font-size="9" font-weight="600" text-anchor="middle">Normalisierung</text>
+
+  <rect x="394" y="32" width="120" height="38" rx="4" fill="#FAFAFA" stroke="#FF6B6B" stroke-width="2"/>
+  <text x="454" y="50" fill="#515053" font-family="Inter, sans-serif" font-size="9" font-weight="600" text-anchor="middle">Veraltete</text>
+  <text x="454" y="62" fill="#515053" font-family="Inter, sans-serif" font-size="9" font-weight="600" text-anchor="middle">Technologien</text>
+
+  <!-- SOLL Section -->
+  <text x="10" y="97" fill="#27AE60" font-family="Inter, sans-serif" font-size="14" font-weight="700">SOLL :</text>
+
+  <rect x="10" y="107" width="120" height="38" rx="4" fill="#FAFAFA" stroke="#27AE60" stroke-width="2"/>
+  <text x="70" y="131" fill="#515053" font-family="Inter, sans-serif" font-size="9" font-weight="600" text-anchor="middle">Geräteunabhängigkeit</text>
+
+  <rect x="138" y="107" width="120" height="38" rx="4" fill="#FAFAFA" stroke="#27AE60" stroke-width="2"/>
+  <text x="198" y="125" fill="#515053" font-family="Inter, sans-serif" font-size="9" font-weight="600" text-anchor="middle">Dynamische</text>
+  <text x="198" y="137" fill="#515053" font-family="Inter, sans-serif" font-size="9" font-weight="600" text-anchor="middle">Datenerfassung</text>
+
+  <rect x="266" y="107" width="120" height="38" rx="4" fill="#FAFAFA" stroke="#27AE60" stroke-width="2"/>
+  <text x="326" y="125" fill="#515053" font-family="Inter, sans-serif" font-size="9" font-weight="600" text-anchor="middle">Erweiterte</text>
+  <text x="326" y="137" fill="#515053" font-family="Inter, sans-serif" font-size="9" font-weight="600" text-anchor="middle">Kontaktverwaltung</text>
+
+  <rect x="394" y="107" width="120" height="38" rx="4" fill="#FAFAFA" stroke="#27AE60" stroke-width="2"/>
+  <text x="454" y="125" fill="#515053" font-family="Inter, sans-serif" font-size="9" font-weight="600" text-anchor="middle">Datenintegrität</text>
+  <text x="454" y="137" fill="#515053" font-family="Inter, sans-serif" font-size="9" font-weight="600" text-anchor="middle">beim Import</text>
+</svg>

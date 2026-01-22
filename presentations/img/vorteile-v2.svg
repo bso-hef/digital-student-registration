@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 125">
+  <!-- Zeitersparnis Column -->
+  <rect x="10" y="10" width="215" height="105" rx="6" fill="#D1F3F4" stroke="#4DBFC3" stroke-width="2"/>
+  <text x="117" y="32" fill="#4DBFC3" font-family="Inter, sans-serif" font-size="13" text-anchor="middle" font-weight="700">ZEITERSPARNIS</text>
+
+  <text x="25" y="55" fill="#515053" font-family="Inter, sans-serif" font-size="11" font-weight="600">- Self-Service</text>
+  <text x="25" y="73" fill="#515053" font-family="Inter, sans-serif" font-size="11" font-weight="600">- CSV Import/Export</text>
+  <text x="25" y="91" fill="#515053" font-family="Inter, sans-serif" font-size="11" font-weight="600">- Auto-Validierung</text>
+  <text x="25" y="109" fill="#515053" font-family="Inter, sans-serif" font-size="11" font-weight="600">- Echtzeit-Dashboard</text>
+
+  <!-- Qualitaet Column -->
+  <rect x="235" y="10" width="215" height="105" rx="6" fill="#E8F8F5" stroke="#27AE60" stroke-width="2"/>
+  <text x="342" y="32" fill="#27AE60" font-family="Inter, sans-serif" font-size="13" text-anchor="middle" font-weight="700">QUALITAET</text>
+
+  <text x="250" y="55" fill="#515053" font-family="Inter, sans-serif" font-size="11" font-weight="600">- 964 Unit-Tests</text>
+  <text x="250" y="73" fill="#515053" font-family="Inter, sans-serif" font-size="11" font-weight="600">- TypeScript</text>
+  <text x="250" y="91" fill="#515053" font-family="Inter, sans-serif" font-size="11" font-weight="600">- Yup Validation</text>
+  <text x="250" y="109" fill="#515053" font-family="Inter, sans-serif" font-size="11" font-weight="600">- Audit-Logging</text>
+</svg>

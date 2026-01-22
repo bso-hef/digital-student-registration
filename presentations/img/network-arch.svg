@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 450 170">
+  <defs>
+    <marker id="arrow-net" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 z" fill="#515053"/>
+    </marker>
+  </defs>
+
+  <!-- Browser -->
+  <rect x="10" y="60" width="80" height="45" rx="6" fill="#FFFFFF" stroke="#D8DFE0" stroke-width="2"/>
+  <text x="50" y="88" fill="#515053" font-family="Inter, sans-serif" font-size="12" font-weight="600" text-anchor="middle">Browser</text>
+
+  <line x1="90" y1="82" x2="135" y2="82" stroke="#515053" stroke-width="2" marker-end="url(#arrow-net)"/>
+
+  <!-- Port 3000 -->
+  <rect x="143" y="60" width="55" height="45" rx="6" fill="#D1F3F4" stroke="#4DBFC3" stroke-width="2"/>
+  <text x="170" y="88" fill="#4DBFC3" font-family="Inter, sans-serif" font-size="12" text-anchor="middle" font-weight="700">:3000</text>
+
+  <line x1="198" y1="82" x2="243" y2="82" stroke="#515053" stroke-width="2" marker-end="url(#arrow-net)"/>
+
+  <!-- Next.js App -->
+  <rect x="251" y="50" width="110" height="65" rx="6" fill="#4DBFC3"/>
+  <text x="306" y="78" fill="#fff" font-family="Inter, sans-serif" font-size="12" text-anchor="middle" font-weight="700">Next.js App</text>
+  <text x="306" y="98" fill="#D1F3F4" font-family="Inter, sans-serif" font-size="10" text-anchor="middle" font-weight="600">API + SSR</text>
+
+  <!-- Connection lines to databases -->
+  <line x1="306" y1="115" x2="306" y2="125" stroke="#515053" stroke-width="2"/>
+  <line x1="180" y1="125" x2="400" y2="125" stroke="#515053" stroke-width="2"/>
+  <line x1="180" y1="125" x2="180" y2="135" stroke="#515053" stroke-width="2"/>
+  <line x1="400" y1="125" x2="400" y2="135" stroke="#515053" stroke-width="2"/>
+
+  <!-- MongoDB -->
+  <rect x="115" y="135" width="130" height="35" rx="6" fill="#27AE60"/>
+  <text x="180" y="155" fill="#fff" font-family="Inter, sans-serif" font-size="11" text-anchor="middle" font-weight="700">MongoDB 7.0</text>
+  <text x="180" y="166" fill="#D5F5E3" font-family="Inter, sans-serif" font-size="9" text-anchor="middle" font-weight="600">:27017 (Datenbank)</text>
+
+  <!-- Redis -->
+  <rect x="335" y="135" width="130" height="35" rx="6" fill="#E74C3C"/>
+  <text x="400" y="155" fill="#fff" font-family="Inter, sans-serif" font-size="11" text-anchor="middle" font-weight="700">Redis 7</text>
+  <text x="400" y="166" fill="#FADBD8" font-family="Inter, sans-serif" font-size="9" text-anchor="middle" font-weight="600">:6379 (Sessions)</text>
+
+  <!-- Labels -->
+  <text x="50" y="50" fill="#515053" font-family="Inter, sans-serif" font-size="10" font-weight="600" text-anchor="middle">Client</text>
+  <text x="306" y="40" fill="#515053" font-family="Inter, sans-serif" font-size="10" font-weight="600" text-anchor="middle">Server</text>
+</svg>

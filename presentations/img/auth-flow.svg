@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 510 135">
+  <defs>
+    <marker id="arrow-auth" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 z" fill="#4DBFC3"/>
+    </marker>
+    <marker id="arrow-orange" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 z" fill="#F39C12"/>
+    </marker>
+  </defs>
+
+  <!-- ADMIN Row -->
+  <text x="10" y="38" fill="#4DBFC3" font-family="Inter, sans-serif" font-size="13" font-weight="700">ADMIN:</text>
+
+  <rect x="85" y="15" width="65" height="40" rx="4" fill="#4DBFC3"/>
+  <text x="117" y="40" fill="#fff" font-family="Inter, sans-serif" font-size="11" font-weight="600" text-anchor="middle">Login</text>
+
+  <line x1="150" y1="35" x2="185" y2="35" stroke="#4DBFC3" stroke-width="2" marker-end="url(#arrow-auth)"/>
+
+  <rect x="193" y="15" width="85" height="40" rx="4" fill="#5AA5A7"/>
+  <text x="235" y="40" fill="#fff" font-family="Inter, sans-serif" font-size="11" font-weight="600" text-anchor="middle">Credentials</text>
+
+  <line x1="278" y1="35" x2="313" y2="35" stroke="#4DBFC3" stroke-width="2" marker-end="url(#arrow-auth)"/>
+
+  <rect x="321" y="15" width="60" height="40" rx="4" fill="#82D7DA"/>
+  <text x="351" y="40" fill="#282829" font-family="Inter, sans-serif" font-size="11" font-weight="600" text-anchor="middle">JWT</text>
+
+  <line x1="381" y1="35" x2="416" y2="35" stroke="#4DBFC3" stroke-width="2" marker-end="url(#arrow-auth)"/>
+
+  <rect x="424" y="15" width="80" height="40" rx="4" fill="#27AE60"/>
+  <text x="464" y="40" fill="#fff" font-family="Inter, sans-serif" font-size="11" font-weight="600" text-anchor="middle">Dashboard</text>
+
+  <!-- bcrypt note -->
+  <line x1="235" y1="55" x2="235" y2="65" stroke="#515053" stroke-width="1"/>
+  <text x="235" y="78" fill="#515053" font-family="Inter, sans-serif" font-size="10" font-weight="600" text-anchor="middle">bcrypt (Salt: 12)</text>
+
+  <!-- SCHUELER Row -->
+  <text x="10" y="110" fill="#F39C12" font-family="Inter, sans-serif" font-size="13" font-weight="700">SCHUELER:</text>
+
+  <rect x="105" y="90" width="65" height="40" rx="4" fill="#F39C12"/>
+  <text x="137" y="115" fill="#fff" font-family="Inter, sans-serif" font-size="11" font-weight="600" text-anchor="middle">QR-Code</text>
+
+  <line x1="170" y1="110" x2="205" y2="110" stroke="#F39C12" stroke-width="2" marker-end="url(#arrow-orange)"/>
+
+  <rect x="213" y="90" width="85" height="40" rx="4" fill="#FEF5E7" stroke="#F39C12" stroke-width="2"/>
+  <text x="255" y="115" fill="#F39C12" font-family="Inter, sans-serif" font-size="11" font-weight="600" text-anchor="middle">6-digit Code</text>
+
+  <line x1="298" y1="110" x2="333" y2="110" stroke="#F39C12" stroke-width="2" marker-end="url(#arrow-orange)"/>
+
+  <rect x="341" y="90" width="60" height="40" rx="4" fill="#FEF5E7" stroke="#F39C12" stroke-width="2"/>
+  <text x="371" y="115" fill="#F39C12" font-family="Inter, sans-serif" font-size="11" font-weight="600" text-anchor="middle">Wizard</text>
+
+  <line x1="401" y1="110" x2="436" y2="110" stroke="#F39C12" stroke-width="2" marker-end="url(#arrow-orange)"/>
+
+  <rect x="444" y="90" width="60" height="40" rx="4" fill="#27AE60"/>
+  <text x="474" y="115" fill="#fff" font-family="Inter, sans-serif" font-size="11" font-weight="600" text-anchor="middle">Done</text>
+
+  <!-- No auth note -->
+  <text x="137" y="135" fill="#515053" font-family="Inter, sans-serif" font-size="9" font-weight="600" text-anchor="middle">(keine Auth)</text>
+</svg>

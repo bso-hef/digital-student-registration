@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 120">
+  <!-- Main branch -->
+  <line x1="50" y1="25" x2="450" y2="25" stroke="#27AE60" stroke-width="4"/>
+  <text x="20" y="30" fill="#27AE60" font-family="Inter, sans-serif" font-size="12" font-weight="700">main</text>
+  <circle cx="120" cy="25" r="7" fill="#27AE60"/>
+  <circle cx="380" cy="25" r="7" fill="#27AE60"/>
+
+  <!-- Develop branch -->
+  <line x1="50" y1="60" x2="450" y2="60" stroke="#4DBFC3" stroke-width="4"/>
+  <text x="20" y="65" fill="#4DBFC3" font-family="Inter, sans-serif" font-size="12" font-weight="700">develop</text>
+  <circle cx="120" cy="60" r="7" fill="#4DBFC3"/>
+  <circle cx="200" cy="60" r="7" fill="#4DBFC3"/>
+  <circle cx="300" cy="60" r="7" fill="#4DBFC3"/>
+  <circle cx="380" cy="60" r="7" fill="#4DBFC3"/>
+
+  <!-- Feature branch -->
+  <line x1="200" y1="60" x2="200" y2="95" stroke="#F39C12" stroke-width="4"/>
+  <line x1="200" y1="95" x2="300" y2="95" stroke="#F39C12" stroke-width="4"/>
+  <line x1="300" y1="95" x2="300" y2="60" stroke="#F39C12" stroke-width="4"/>
+  <text x="20" y="100" fill="#F39C12" font-family="Inter, sans-serif" font-size="12" font-weight="700">feature</text>
+  <circle cx="220" cy="95" r="7" fill="#F39C12"/>
+  <circle cx="260" cy="95" r="7" fill="#F39C12"/>
+
+  <!-- Merge lines -->
+  <line x1="120" y1="60" x2="120" y2="25" stroke="#515053" stroke-width="2" stroke-dasharray="5"/>
+  <line x1="380" y1="60" x2="380" y2="25" stroke="#515053" stroke-width="2" stroke-dasharray="5"/>
+
+  <!-- Labels -->
+  <text x="115" y="15" fill="#515053" font-family="Inter, sans-serif" font-size="10" font-weight="600" text-anchor="middle">release</text>
+  <text x="380" y="15" fill="#515053" font-family="Inter, sans-serif" font-size="10" font-weight="600" text-anchor="middle">merge</text>
+  <text x="250" y="115" fill="#515053" font-family="Inter, sans-serif" font-size="10" font-weight="600" text-anchor="middle">feature/*</text>
+</svg>

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 165">
+  <!-- Pages (top) -->
+  <rect x="160" y="10" width="100" height="32" rx="4" fill="#4DBFC3"/>
+  <text x="210" y="31" fill="#fff" font-family="Inter, sans-serif" font-size="12" font-weight="600" text-anchor="middle">Pages</text>
+  <text x="290" y="31" fill="#515053" font-family="Inter, sans-serif" font-size="10" font-weight="600">(Admin, Student)</text>
+
+  <!-- Organisms -->
+  <rect x="130" y="52" width="160" height="32" rx="4" fill="#5AA5A7"/>
+  <text x="210" y="73" fill="#fff" font-family="Inter, sans-serif" font-size="12" font-weight="600" text-anchor="middle">Organisms</text>
+  <text x="310" y="73" fill="#515053" font-family="Inter, sans-serif" font-size="10" font-weight="600">(DataTable, Forms)</text>
+
+  <!-- Molecules -->
+  <rect x="100" y="94" width="220" height="32" rx="4" fill="#82D7DA"/>
+  <text x="210" y="115" fill="#282829" font-family="Inter, sans-serif" font-size="12" font-weight="600" text-anchor="middle">Molecules</text>
+  <text x="340" y="115" fill="#515053" font-family="Inter, sans-serif" font-size="10" font-weight="600">(Header, Menu)</text>
+
+  <!-- Atoms (bottom) -->
+  <rect x="70" y="136" width="280" height="32" rx="4" fill="#D1F3F4" stroke="#4DBFC3" stroke-width="2"/>
+  <text x="210" y="157" fill="#4DBFC3" font-family="Inter, sans-serif" font-size="12" font-weight="700" text-anchor="middle">Atoms</text>
+  <text x="370" y="157" fill="#515053" font-family="Inter, sans-serif" font-size="10" font-weight="600">(Button, Input)</text>
+
+  <!-- Connecting lines -->
+  <line x1="210" y1="42" x2="210" y2="52" stroke="#515053" stroke-width="2"/>
+  <line x1="210" y1="84" x2="210" y2="94" stroke="#515053" stroke-width="2"/>
+  <line x1="210" y1="126" x2="210" y2="136" stroke="#515053" stroke-width="2"/>
+</svg>

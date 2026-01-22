@@ -24,7 +24,10 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "dep-graph": "madge --image dependency-graph.svg --extensions ts,tsx --ts-config tsconfig.json src/",
-    "dep-graph:circular": "madge --circular --extensions ts,tsx --ts-config tsconfig.json src/"
+    "dep-graph:circular": "madge --circular --extensions ts,tsx --ts-config tsconfig.json src/",
+    "marp:pdf": "marp presentations/presentation.marp.md --pdf -o presentations/presentation.pdf --allow-local-files",
+    "marp:pptx": "marp presentations/presentation.marp.md --pptx -o presentations/presentation.pptx --allow-local-files",
+    "marp:html": "marp presentations/presentation.marp.md --html -o presentations/presentation.html --allow-local-files"
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^3.11.1",
