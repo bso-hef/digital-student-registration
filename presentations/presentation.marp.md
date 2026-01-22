@@ -40,7 +40,8 @@ style: |
     font-size: 11px;
     display: flex;
     flex-direction: column;
-    min-height: 420px;
+    height: 676px;
+    box-sizing: border-box;
   }
 
   /* Avatar Section */
@@ -147,7 +148,8 @@ style: |
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    min-height: 420px;
+    height: 100%;
+    box-sizing: border-box;
   }
 
   /* Content Header (AdminSettingsHeader) */
@@ -206,9 +208,13 @@ style: |
   th { background: #4DBFC3; color: #fff; padding: 5px 8px; text-align: left; font-size: 10px; }
   td { background: #FAFAFA; padding: 4px 8px; border-bottom: 1px solid #D8DFE0; font-size: 10px; }
 
-  /* Mid Table - Zwischengröße */
-  .mid-table th { font-size: 14px; padding: 8px 12px; font-weight: 700; }
-  .mid-table td { font-size: 13px; padding: 6px 12px; }
+  /* Small Table */
+  .small-table th { font-size: 14px; padding: 8px 12px; font-weight: 700; }
+  .small-table td { font-size: 13px; padding: 6px 12px; }
+
+  /* Medium Table - Zwischen Mid und Large */
+  .medium-table th { font-size: 18px; padding: 10px 16px; font-weight: 700; }
+  .medium-table td { font-size: 16px; padding: 8px 16px; }
 
   /* Large Table for Einleitung */
   .large-table th { font-size: 22px; padding: 14px 20px; font-weight: 800; }
@@ -269,11 +275,11 @@ style: |
 
 <!-- _class: title -->
 
-# Digital Student Registration
+# Digitale Schulanmeldung
 
 v2.1.0 - Next.js 15 - React 19 - MongoDB - Docker
 
-Philipp - Constantin - Valentin - Alex - David
+Philipp - Constantin - Valentin - Alex - David - Manuel
 
 ---
 
@@ -295,12 +301,13 @@ Philipp - Constantin - Valentin - Alex - David
     <div class="nav-item">6. Deployment</div>
     <div class="nav-item">7. Infrastruktur</div>
     <div class="nav-item">8. Dashboard</div>
-    <div class="nav-item">9. Rechte</div>
+    <div class="nav-item">9. Sicherheit</div>
     <div class="nav-item">10. Fazit</div>
+    <div class="nav-item">11. Quellen</div>
   </div>
   <div class="nav-footer">
     <img src="./img/logo.svg" alt="BSO Logo" />
-    <div class="nav-version">Digital Student Registration v2.1.0</div>
+    <div class="nav-version">Digitale Schulanmeldung v2.1.0</div>
   </div>
 </div>
 
@@ -346,12 +353,13 @@ Philipp - Constantin - Valentin - Alex - David
     <div class="nav-item">6. Deployment</div>
     <div class="nav-item">7. Infrastruktur</div>
     <div class="nav-item">8. Dashboard</div>
-    <div class="nav-item">9. Rechte</div>
+    <div class="nav-item">9. Sicherheit</div>
     <div class="nav-item">10. Fazit</div>
+    <div class="nav-item">11. Quellen</div>
   </div>
   <div class="nav-footer">
     <img src="./img/logo.svg" alt="BSO Logo" />
-    <div class="nav-version">Digital Student Registration v2.1.0</div>
+    <div class="nav-version">Digitale Schulanmeldung v2.1.0</div>
   </div>
 </div>
 
@@ -365,13 +373,14 @@ Philipp - Constantin - Valentin - Alex - David
   </div>
   <div class="content-body">
 
-  <table class="large-table">
+  <table class="medium-table">
   <tr><th>Person</th><th>Verantwortlichkeit</th></tr>
   <tr><td><strong>Philipp</strong></td><td>Projektleitung, Fazit</td></tr>
   <tr><td><strong>Constantin</strong></td><td>Design, UX</td></tr>
   <tr><td><strong>Valentin</strong></td><td>Anmeldung, Architektur</td></tr>
   <tr><td><strong>Alex</strong></td><td>Deployment, Infrastruktur</td></tr>
   <tr><td><strong>David</strong></td><td>Admin, Sicherheit</td></tr>
+  <tr><td><strong>Manuel</strong></td><td>Unterstützung</td></tr>
   </table>
 
 <img src="./img/git-flow.svg" alt="Git-Flow" style="width: 100%; max-width: 520px;" />
@@ -399,12 +408,13 @@ Philipp - Constantin - Valentin - Alex - David
     <div class="nav-item">6. Deployment</div>
     <div class="nav-item">7. Infrastruktur</div>
     <div class="nav-item">8. Dashboard</div>
-    <div class="nav-item">9. Rechte</div>
+    <div class="nav-item">9. Sicherheit</div>
     <div class="nav-item">10. Fazit</div>
+    <div class="nav-item">11. Quellen</div>
   </div>
   <div class="nav-footer">
     <img src="./img/logo.svg" alt="BSO Logo" />
-    <div class="nav-version">Digital Student Registration v2.1.0</div>
+    <div class="nav-version">Digitale Schulanmeldung v2.1.0</div>
   </div>
 </div>
 
@@ -451,12 +461,13 @@ Philipp - Constantin - Valentin - Alex - David
     <div class="nav-item">6. Deployment</div>
     <div class="nav-item">7. Infrastruktur</div>
     <div class="nav-item">8. Dashboard</div>
-    <div class="nav-item">9. Rechte</div>
+    <div class="nav-item">9. Sicherheit</div>
     <div class="nav-item">10. Fazit</div>
+    <div class="nav-item">11. Quellen</div>
   </div>
   <div class="nav-footer">
     <img src="./img/logo.svg" alt="BSO Logo" />
-    <div class="nav-version">Digital Student Registration v2.1.0</div>
+    <div class="nav-version">Digitale Schulanmeldung v2.1.0</div>
   </div>
 </div>
 
@@ -470,7 +481,7 @@ Philipp - Constantin - Valentin - Alex - David
   </div>
   <div class="content-body">
 
-<table class="mid-table">
+<table class="medium-table">
   <tr><th>Schritt</th><th>Optional</th><th>Bedingung</th></tr>
   <tr><td>0: Willkommen</td><td>Nein</td><td>-</td></tr>
   <tr><td>1: Allgemein</td><td>Nein</td><td>-</td></tr>
@@ -504,12 +515,13 @@ Philipp - Constantin - Valentin - Alex - David
     <div class="nav-item">6. Deployment</div>
     <div class="nav-item">7. Infrastruktur</div>
     <div class="nav-item">8. Dashboard</div>
-    <div class="nav-item">9. Rechte</div>
+    <div class="nav-item">9. Sicherheit</div>
     <div class="nav-item">10. Fazit</div>
+    <div class="nav-item">11. Quellen</div>
   </div>
   <div class="nav-footer">
     <img src="./img/logo.svg" alt="BSO Logo" />
-    <div class="nav-version">Digital Student Registration v2.1.0</div>
+    <div class="nav-version">Digitale Schulanmeldung v2.1.0</div>
   </div>
 </div>
 
@@ -523,7 +535,7 @@ Philipp - Constantin - Valentin - Alex - David
   </div>
   <div class="content-body">
 
-<table class="mid-table">
+<table class="small-table">
   <tr><th>Technologie</th><th>Zweck</th><th>Beschreibung</th></tr>
   <tr><td>Next.js 15</td><td>App Router, SSR</td><td>React-Framework für Server-Side Rendering</td></tr>
   <tr><td>React 19</td><td>JS Framework</td><td>Komponentenbasierte UI-Bibliothek</td></tr>
@@ -559,12 +571,13 @@ Philipp - Constantin - Valentin - Alex - David
     <div class="nav-item active">6. Deployment</div>
     <div class="nav-item">7. Infrastruktur</div>
     <div class="nav-item">8. Dashboard</div>
-    <div class="nav-item">9. Rechte</div>
+    <div class="nav-item">9. Sicherheit</div>
     <div class="nav-item">10. Fazit</div>
+    <div class="nav-item">11. Quellen</div>
   </div>
   <div class="nav-footer">
     <img src="./img/logo.svg" alt="BSO Logo" />
-    <div class="nav-version">Digital Student Registration v2.1.0</div>
+    <div class="nav-version">Digitale Schulanmeldung v2.1.0</div>
   </div>
 </div>
 
@@ -612,12 +625,13 @@ Philipp - Constantin - Valentin - Alex - David
     <div class="nav-item">6. Deployment</div>
     <div class="nav-item active">7. Infrastruktur</div>
     <div class="nav-item">8. Dashboard</div>
-    <div class="nav-item">9. Rechte</div>
+    <div class="nav-item">9. Sicherheit</div>
     <div class="nav-item">10. Fazit</div>
+    <div class="nav-item">11. Quellen</div>
   </div>
   <div class="nav-footer">
     <img src="./img/logo.svg" alt="BSO Logo" />
-    <div class="nav-version">Digital Student Registration v2.1.0</div>
+    <div class="nav-version">Digitale Schulanmeldung v2.1.0</div>
   </div>
 </div>
 
@@ -663,12 +677,13 @@ Philipp - Constantin - Valentin - Alex - David
     <div class="nav-item">6. Deployment</div>
     <div class="nav-item">7. Infrastruktur</div>
     <div class="nav-item active">8. Dashboard</div>
-    <div class="nav-item">9. Rechte</div>
+    <div class="nav-item">9. Sicherheit</div>
     <div class="nav-item">10. Fazit</div>
+    <div class="nav-item">11. Quellen</div>
   </div>
   <div class="nav-footer">
     <img src="./img/logo.svg" alt="BSO Logo" />
-    <div class="nav-version">Digital Student Registration v2.1.0</div>
+    <div class="nav-version">Digitale Schulanmeldung v2.1.0</div>
   </div>
 </div>
 
@@ -731,18 +746,18 @@ Philipp - Constantin - Valentin - Alex - David
     <div class="nav-item">6. Deployment</div>
     <div class="nav-item">7. Infrastruktur</div>
     <div class="nav-item">8. Dashboard</div>
-    <div class="nav-item active">9. Rechte</div>
+    <div class="nav-item active">9. Sicherheit</div>
     <div class="nav-item">10. Fazit</div>
   </div>
   <div class="nav-footer">
     <img src="./img/logo.svg" alt="BSO Logo" />
-    <div class="nav-version">Digital Student Registration v2.1.0</div>
+    <div class="nav-version">Digitale Schulanmeldung v2.1.0</div>
   </div>
 </div>
 
 <div class="content">
   <div class="content-header">
-    <h2 class="content-title">Rechte</h2>
+    <h2 class="content-title">Sicherheit</h2>
     <div class="content-actions">
       <div class="action-search">Suchen...</div>
       <div class="action-btn">Speichern</div>
@@ -750,7 +765,7 @@ Philipp - Constantin - Valentin - Alex - David
   </div>
   <div class="content-body">
 
-<table class="mid-table">
+<table class="small-table">
   <tr><th>Merkmal</th><th>Admin</th><th>Schüler</th></tr>
   <tr><td><strong>Authentifizierung</strong></td><td>JWT via NextAuth.js</td><td>6-stelliger Code (QR)</td></tr>
   <tr><td><strong>Passwort</strong></td><td>bcrypt (Salt: 12)</td><td>Nicht erforderlich</td></tr>
@@ -784,12 +799,12 @@ Philipp - Constantin - Valentin - Alex - David
     <div class="nav-item">6. Deployment</div>
     <div class="nav-item">7. Infrastruktur</div>
     <div class="nav-item">8. Dashboard</div>
-    <div class="nav-item">9. Rechte</div>
+    <div class="nav-item">9. Sicherheit</div>
     <div class="nav-item active">10. Fazit</div>
   </div>
   <div class="nav-footer">
     <img src="./img/logo.svg" alt="BSO Logo" />
-    <div class="nav-version">Digital Student Registration v2.1.0</div>
+    <div class="nav-version">Digitale Schulanmeldung v2.1.0</div>
   </div>
 </div>
 
@@ -836,12 +851,13 @@ Philipp - Constantin - Valentin - Alex - David
     <div class="nav-item">6. Deployment</div>
     <div class="nav-item">7. Infrastruktur</div>
     <div class="nav-item">8. Dashboard</div>
-    <div class="nav-item">9. Rechte</div>
+    <div class="nav-item">9. Sicherheit</div>
     <div class="nav-item">10. Fazit</div>
+    <div class="nav-item active">11. Quellen</div>
   </div>
   <div class="nav-footer">
     <img src="./img/logo.svg" alt="BSO Logo" />
-    <div class="nav-version">Digital Student Registration v2.1.0</div>
+    <div class="nav-version">Digitale Schulanmeldung v2.1.0</div>
   </div>
 </div>
 
@@ -870,6 +886,6 @@ Philipp - Constantin - Valentin - Alex - David
 
 # Fragen?
 
-Digital Student Registration v2.1.0
+Digitale Schulanmeldung v2.1.0
 
 Next.js 15 - React 19 - MongoDB - Docker
