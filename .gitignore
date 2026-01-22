@@ -156,3 +156,8 @@ AGENTS.md
 storybook-static
 
 .DS_Store
+
+# Presentation files
+presentations/*.pptx
+presentations/*.key
+presentations/*.pdf

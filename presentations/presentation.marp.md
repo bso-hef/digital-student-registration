@@ -27,8 +27,8 @@ style: |
     color: #fff;
     text-align: center;
   }
-  section.title h1 { color: #fff; font-size: 2.4em; margin-bottom: 0.2em; }
-  section.title p { color: #D1F3F4; font-size: 1.1em; margin: 0.2em 0; }
+  section.title h1 { color: #fff; font-size: 3.2em; font-weight: 800; margin-bottom: 0.3em; }
+  section.title p { color: #D1F3F4; font-size: 1.4em; font-weight: 600; margin: 0.3em 0; }
 
   /* Navigation Panel */
   .nav {
@@ -226,6 +226,45 @@ style: |
   li { margin: 2px 0; font-size: 11px; }
 
   strong { color: #4DBFC3; }
+
+  /* Dashboard Cards */
+  .dash-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .dash-card {
+    border-radius: 10px;
+    padding: 20px 12px;
+    color: #fff;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .dash-card.blue { background: linear-gradient(135deg, #667eea 0%, #4fc3f7 100%); }
+  .dash-card.purple { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+  .dash-card.pink { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+  .dash-card.green { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+  .dash-card h3 { font-size: 32px; margin: 0 0 6px 0; font-weight: 800; }
+  .dash-card p { font-size: 11px; margin: 0; opacity: 0.95; letter-spacing: 0.5px; text-transform: uppercase; font-weight: 600; }
+
+  /* Chart Grid */
+  .chart-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .chart-box {
+    background: #fff;
+    border: 1px solid #D8DFE0;
+    border-radius: 8px;
+    padding: 8px;
+  }
+  .chart-box h4 { font-size: 11px; margin: 0 0 6px 0; color: #515053; font-weight: 600; }
 ---
 
 <!-- _class: title -->
@@ -255,9 +294,9 @@ Philipp - Constantin - Valentin - Alex - David
     <div class="nav-item">5. Architektur</div>
     <div class="nav-item">6. Deployment</div>
     <div class="nav-item">7. Infrastruktur</div>
-    <div class="nav-item">8. Admin</div>
+    <div class="nav-item">8. Dashboard</div>
     <div class="nav-item">9. Rechte</div>
-    <div class="nav-item">10. Wirtschaftlichkeit</div>
+    <div class="nav-item">10. Fazit</div>
   </div>
   <div class="nav-footer">
     <img src="./img/logo.svg" alt="BSO Logo" />
@@ -279,7 +318,7 @@ Philipp - Constantin - Valentin - Alex - David
 <tr><th>Aspekt</th><th>v1 (Alt)</th><th>v2 (Neu)</th></tr>
 <tr><td><strong>Technologie</strong></td><td>Veraltet</td><td>Next.js 15, React 19</td></tr>
 <tr><td><strong>UX</strong></td><td>Schlecht</td><td>Modern, Self-Service</td></tr>
-<tr><td><strong>Wartbarkeit</strong></td><td>Schwierig</td><td>964 Unit-Tests</td></tr>
+<tr><td><strong>Wartbarkeit</strong></td><td>Schwierig</td><td>Modular + Testbar</td></tr>
 <tr><td><strong>Status</strong></td><td>Unübersichtlich</td><td>Echtzeit-Dashboard</td></tr>
 </table>
 
@@ -306,9 +345,9 @@ Philipp - Constantin - Valentin - Alex - David
     <div class="nav-item">5. Architektur</div>
     <div class="nav-item">6. Deployment</div>
     <div class="nav-item">7. Infrastruktur</div>
-    <div class="nav-item">8. Admin</div>
+    <div class="nav-item">8. Dashboard</div>
     <div class="nav-item">9. Rechte</div>
-    <div class="nav-item">10. Wirtschaftlichkeit</div>
+    <div class="nav-item">10. Fazit</div>
   </div>
   <div class="nav-footer">
     <img src="./img/logo.svg" alt="BSO Logo" />
@@ -328,7 +367,7 @@ Philipp - Constantin - Valentin - Alex - David
 
   <table class="large-table">
   <tr><th>Person</th><th>Verantwortlichkeit</th></tr>
-  <tr><td><strong>Philipp</strong></td><td>Projektleitung, Wirtschaftlichkeit</td></tr>
+  <tr><td><strong>Philipp</strong></td><td>Projektleitung, Fazit</td></tr>
   <tr><td><strong>Constantin</strong></td><td>Design, UX</td></tr>
   <tr><td><strong>Valentin</strong></td><td>Anmeldung, Architektur</td></tr>
   <tr><td><strong>Alex</strong></td><td>Deployment, Infrastruktur</td></tr>
@@ -359,9 +398,9 @@ Philipp - Constantin - Valentin - Alex - David
     <div class="nav-item">5. Architektur</div>
     <div class="nav-item">6. Deployment</div>
     <div class="nav-item">7. Infrastruktur</div>
-    <div class="nav-item">8. Admin</div>
+    <div class="nav-item">8. Dashboard</div>
     <div class="nav-item">9. Rechte</div>
-    <div class="nav-item">10. Wirtschaftlichkeit</div>
+    <div class="nav-item">10. Fazit</div>
   </div>
   <div class="nav-footer">
     <img src="./img/logo.svg" alt="BSO Logo" />
@@ -411,9 +450,9 @@ Philipp - Constantin - Valentin - Alex - David
     <div class="nav-item">5. Architektur</div>
     <div class="nav-item">6. Deployment</div>
     <div class="nav-item">7. Infrastruktur</div>
-    <div class="nav-item">8. Admin</div>
+    <div class="nav-item">8. Dashboard</div>
     <div class="nav-item">9. Rechte</div>
-    <div class="nav-item">10. Wirtschaftlichkeit</div>
+    <div class="nav-item">10. Fazit</div>
   </div>
   <div class="nav-footer">
     <img src="./img/logo.svg" alt="BSO Logo" />
@@ -464,9 +503,9 @@ Philipp - Constantin - Valentin - Alex - David
     <div class="nav-item active">5. Architektur</div>
     <div class="nav-item">6. Deployment</div>
     <div class="nav-item">7. Infrastruktur</div>
-    <div class="nav-item">8. Admin</div>
+    <div class="nav-item">8. Dashboard</div>
     <div class="nav-item">9. Rechte</div>
-    <div class="nav-item">10. Wirtschaftlichkeit</div>
+    <div class="nav-item">10. Fazit</div>
   </div>
   <div class="nav-footer">
     <img src="./img/logo.svg" alt="BSO Logo" />
@@ -519,9 +558,9 @@ Philipp - Constantin - Valentin - Alex - David
     <div class="nav-item">5. Architektur</div>
     <div class="nav-item active">6. Deployment</div>
     <div class="nav-item">7. Infrastruktur</div>
-    <div class="nav-item">8. Admin</div>
+    <div class="nav-item">8. Dashboard</div>
     <div class="nav-item">9. Rechte</div>
-    <div class="nav-item">10. Wirtschaftlichkeit</div>
+    <div class="nav-item">10. Fazit</div>
   </div>
   <div class="nav-footer">
     <img src="./img/logo.svg" alt="BSO Logo" />
@@ -572,9 +611,9 @@ Philipp - Constantin - Valentin - Alex - David
     <div class="nav-item">5. Architektur</div>
     <div class="nav-item">6. Deployment</div>
     <div class="nav-item active">7. Infrastruktur</div>
-    <div class="nav-item">8. Admin</div>
+    <div class="nav-item">8. Dashboard</div>
     <div class="nav-item">9. Rechte</div>
-    <div class="nav-item">10. Wirtschaftlichkeit</div>
+    <div class="nav-item">10. Fazit</div>
   </div>
   <div class="nav-footer">
     <img src="./img/logo.svg" alt="BSO Logo" />
@@ -623,9 +662,9 @@ Philipp - Constantin - Valentin - Alex - David
     <div class="nav-item">5. Architektur</div>
     <div class="nav-item">6. Deployment</div>
     <div class="nav-item">7. Infrastruktur</div>
-    <div class="nav-item active">8. Admin</div>
+    <div class="nav-item active">8. Dashboard</div>
     <div class="nav-item">9. Rechte</div>
-    <div class="nav-item">10. Wirtschaftlichkeit</div>
+    <div class="nav-item">10. Fazit</div>
   </div>
   <div class="nav-footer">
     <img src="./img/logo.svg" alt="BSO Logo" />
@@ -635,24 +674,39 @@ Philipp - Constantin - Valentin - Alex - David
 
 <div class="content">
   <div class="content-header">
-    <h2 class="content-title">Admin</h2>
-    <div class="content-actions">
-      <div class="action-search">Suchen...</div>
-      <div class="action-btn">Speichern</div>
-    </div>
+    <h2 class="content-title">Dashboard</h2>
   </div>
   <div class="content-body">
 
-<table class="mid-table">
-  <tr><th>Bereich</th><th>Features</th></tr>
-  <tr><td>Klassen</td><td>DataTable, CSV-Import/Export, QR-Codes</td></tr>
-  <tr><td>Schüler</td><td>Filter, Inline-Assignment, Detailansicht</td></tr>
-  <tr><td>Dashboard</td><td>Status-Übersicht, Statistiken</td></tr>
-</table>
+<div class="dash-grid">
+  <div class="dash-card purple">
+    <h3>1.234</h3>
+    <p>Schüler gesamt</p>
+  </div>
+  <div class="dash-card blue">
+    <h3>42</h3>
+    <p>Klassen gesamt</p>
+  </div>
+  <div class="dash-card pink">
+    <h3>3</h3>
+    <p>Nicht zugeordnete Schüler</p>
+  </div>
+  <div class="dash-card green">
+    <h3>87%</h3>
+    <p>Onboarding-Fortschritt</p>
+  </div>
+</div>
 
-**Dashboard Layout:**
-
-<img src="./img/dashboard-layout.svg" alt="Dashboard Layout" style="width: 100%; max-width: 520px;" />
+<div class="chart-grid">
+  <div class="chart-box">
+    <h4>Schülerstatus</h4>
+    <img src="./img/chart-status.svg" alt="Status" style="width: 100%;" />
+  </div>
+  <div class="chart-box">
+    <h4>Klassenverteilung</h4>
+    <img src="./img/chart-classes.svg" alt="Klassen" style="width: 100%;" />
+  </div>
+</div>
 
   </div>
 </div>
@@ -676,9 +730,9 @@ Philipp - Constantin - Valentin - Alex - David
     <div class="nav-item">5. Architektur</div>
     <div class="nav-item">6. Deployment</div>
     <div class="nav-item">7. Infrastruktur</div>
-    <div class="nav-item">8. Admin</div>
+    <div class="nav-item">8. Dashboard</div>
     <div class="nav-item active">9. Rechte</div>
-    <div class="nav-item">10. Wirtschaftlichkeit</div>
+    <div class="nav-item">10. Fazit</div>
   </div>
   <div class="nav-footer">
     <img src="./img/logo.svg" alt="BSO Logo" />
@@ -697,16 +751,15 @@ Philipp - Constantin - Valentin - Alex - David
   <div class="content-body">
 
 <table class="mid-table">
-  <tr><th>Rolle</th><th>Zugriff</th></tr>
-  <tr><td>Admin</td><td>Vollzugriff (JWT via NextAuth.js)</td></tr>
-  <tr><td>Schüler</td><td>Unauthentifiziert (6-stelliger Code)</td></tr>
+  <tr><th>Merkmal</th><th>Admin</th><th>Schüler</th></tr>
+  <tr><td><strong>Authentifizierung</strong></td><td>JWT via NextAuth.js</td><td>6-stelliger Code (QR)</td></tr>
+  <tr><td><strong>Passwort</strong></td><td>bcrypt (Salt: 12)</td><td>Nicht erforderlich</td></tr>
+  <tr><td><strong>Sessions</strong></td><td>Redis (TTL: 24h)</td><td>Temporär (nur Wizard)</td></tr>
+  <tr><td><strong>Audit-Logging</strong></td><td>90 Tage Aufbewahrung</td><td>-</td></tr>
+  <tr><td><strong>Recovery</strong></td><td>Recovery-Codes</td><td>Neuer QR-Code</td></tr>
 </table>
 
-**Authentifizierungs-Flow:**
-
-<img src="./img/auth-flow.svg" alt="Auth-Flow" style="width: 100%; max-width: 520px;" />
-
-**Sicherheit:** Audit-Logging (90d) + Recovery-Codes + Redis Sessions
+<img src="./img/auth-flow.svg" alt="Auth-Flow" style="width: 100%; max-width: 560px;" />
 
   </div>
 </div>
@@ -730,9 +783,9 @@ Philipp - Constantin - Valentin - Alex - David
     <div class="nav-item">5. Architektur</div>
     <div class="nav-item">6. Deployment</div>
     <div class="nav-item">7. Infrastruktur</div>
-    <div class="nav-item">8. Admin</div>
+    <div class="nav-item">8. Dashboard</div>
     <div class="nav-item">9. Rechte</div>
-    <div class="nav-item active">10. Wirtschaftlichkeit</div>
+    <div class="nav-item active">10. Fazit</div>
   </div>
   <div class="nav-footer">
     <img src="./img/logo.svg" alt="BSO Logo" />
@@ -742,7 +795,7 @@ Philipp - Constantin - Valentin - Alex - David
 
 <div class="content">
   <div class="content-header">
-    <h2 class="content-title">Wirtschaftlichkeit</h2>
+    <h2 class="content-title">Fazit</h2>
     <div class="content-actions">
       <div class="action-search">Suchen...</div>
       <div class="action-btn">Speichern</div>
@@ -750,17 +803,63 @@ Philipp - Constantin - Valentin - Alex - David
   </div>
   <div class="content-body">
 
-<table class="mid-table">
+<table class="large-table">
   <tr><th>Bereich</th><th>v1 (Alt)</th><th>v2 (Neu)</th></tr>
   <tr><td>Dateneingabe</td><td>Umständlich</td><td>Self-Service + CSV</td></tr>
   <tr><td>Fehlerquote</td><td>Hoch</td><td>Auto-Validierung</td></tr>
-  <tr><td>Wartbarkeit</td><td>Schwierig</td><td><strong>964 Tests</strong></td></tr>
-  <tr><td>Lizenzkosten</td><td>Unbekannt</td><td><strong>0 EUR</strong> (OSS)</td></tr>
+  <tr><td>Wartbarkeit</td><td>Schwierig</td><td>Modular + Testbar</td></tr>
+  <tr><td>Design</td><td>Veraltet</td><td><strong>Responsive</strong> + Modern</td></tr>
 </table>
 
-**Vorteile v2:**
+<img src="./img/advantages.svg" alt="Vorteile v2" style="width: 100%; max-width: 520px;" />
 
-<img src="./img/vorteile-v2.svg" alt="Vorteile v2" style="width: 100%; max-width: 520px;" />
+  </div>
+</div>
+
+---
+
+<div class="nav">
+  <div class="nav-avatar">
+    <div class="avatar-circle">AU</div>
+    <p class="welcome-text">Willkommen</p>
+    <p class="name-text">Admin User</p>
+    <p class="job-text">Schulverwaltung</p>
+  </div>
+  <div class="nav-divider"></div>
+  <div class="nav-search">Einstellungen durchsuchen</div>
+  <div class="nav-items">
+    <div class="nav-item">1. Einleitung</div>
+    <div class="nav-item">2. Projektmanagement</div>
+    <div class="nav-item">3. Design - UI / UX</div>
+    <div class="nav-item">4. Anmeldung</div>
+    <div class="nav-item">5. Architektur</div>
+    <div class="nav-item">6. Deployment</div>
+    <div class="nav-item">7. Infrastruktur</div>
+    <div class="nav-item">8. Dashboard</div>
+    <div class="nav-item">9. Rechte</div>
+    <div class="nav-item">10. Fazit</div>
+  </div>
+  <div class="nav-footer">
+    <img src="./img/logo.svg" alt="BSO Logo" />
+    <div class="nav-version">Digital Student Registration v2.1.0</div>
+  </div>
+</div>
+
+<div class="content">
+  <div class="content-header">
+    <h2 class="content-title">Quellen</h2>
+  </div>
+  <div class="content-body">
+
+<table class="large-table">
+  <tr><th>Interne Dokumente</th><th>Externe Quellen</th><th>Präsentation</th></tr>
+  <tr><td>Lastenheft</td><td><a href="https://nextjs.org/docs">Next.js Docs</a></td><td><a href="https://claude.ai">Claude AI</a></td></tr>
+  <tr><td>Pflichtenheft</td><td><a href="https://react.dev">React Docs</a></td><td><a href="https://marp.app">Marp</a></td></tr>
+  <tr><td>Projektdokumentation</td><td><a href="https://mui.com">Material-UI Docs</a></td><td>SVG-Grafiken</td></tr>
+  <tr><td>Projektplanung</td><td><a href="https://mongodb.com/docs">MongoDB Docs</a></td><td>-</td></tr>
+  <tr><td>-</td><td><a href="https://docker.com/docs">Docker Docs</a></td><td>-</td></tr>
+  <tr><td>-</td><td><a href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYxkrIt20aCdN8RD6-7ILWHaQNx-ZK4MgcLg&s">Logo BSO</a></td><td>-</td></tr>
+</table>
 
   </div>
 </div>

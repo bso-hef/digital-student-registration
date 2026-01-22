@@ -1,59 +1,97 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 510 135">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 185">
   <defs>
-    <marker id="arrow-auth" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-      <path d="M0,0 L8,3 L0,6 z" fill="#4DBFC3"/>
+    <marker id="arrow-teal" markerWidth="5" markerHeight="4" refX="0" refY="2" orient="auto">
+      <path d="M0,0 L5,2 L0,4 z" fill="#4DBFC3"/>
     </marker>
-    <marker id="arrow-orange" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-      <path d="M0,0 L8,3 L0,6 z" fill="#F39C12"/>
+    <marker id="arrow-orange" markerWidth="5" markerHeight="4" refX="0" refY="2" orient="auto">
+      <path d="M0,0 L5,2 L0,4 z" fill="#F39C12"/>
     </marker>
   </defs>
 
-  <!-- ADMIN Row -->
-  <text x="10" y="38" fill="#4DBFC3" font-family="Inter, sans-serif" font-size="13" font-weight="700">ADMIN:</text>
+  <!-- Labels -->
+  <text x="40" y="18" fill="#515053" font-family="Inter, sans-serif" font-size="10" font-weight="600" text-anchor="middle">Admin</text>
+  <text x="40" y="78" fill="#515053" font-family="Inter, sans-serif" font-size="10" font-weight="600" text-anchor="middle">Schüler</text>
 
-  <rect x="85" y="15" width="65" height="40" rx="4" fill="#4DBFC3"/>
-  <text x="117" y="40" fill="#fff" font-family="Inter, sans-serif" font-size="11" font-weight="600" text-anchor="middle">Login</text>
+  <!-- ADMIN Flow -->
+  <rect x="10" y="28" width="60" height="30" rx="4" fill="#4DBFC3"/>
+  <text x="40" y="47" fill="#fff" font-family="Inter, sans-serif" font-size="10" font-weight="600" text-anchor="middle">Login</text>
 
-  <line x1="150" y1="35" x2="185" y2="35" stroke="#4DBFC3" stroke-width="2" marker-end="url(#arrow-auth)"/>
+  <line x1="70" y1="43" x2="95" y2="43" stroke="#4DBFC3" stroke-width="1.5" marker-end="url(#arrow-teal)"/>
 
-  <rect x="193" y="15" width="85" height="40" rx="4" fill="#5AA5A7"/>
-  <text x="235" y="40" fill="#fff" font-family="Inter, sans-serif" font-size="11" font-weight="600" text-anchor="middle">Credentials</text>
+  <rect x="100" y="28" width="80" height="30" rx="4" fill="#5AA5A7"/>
+  <text x="140" y="47" fill="#fff" font-family="Inter, sans-serif" font-size="10" font-weight="600" text-anchor="middle">Credentials</text>
 
-  <line x1="278" y1="35" x2="313" y2="35" stroke="#4DBFC3" stroke-width="2" marker-end="url(#arrow-auth)"/>
+  <line x1="180" y1="43" x2="205" y2="43" stroke="#4DBFC3" stroke-width="1.5" marker-end="url(#arrow-teal)"/>
 
-  <rect x="321" y="15" width="60" height="40" rx="4" fill="#82D7DA"/>
-  <text x="351" y="40" fill="#282829" font-family="Inter, sans-serif" font-size="11" font-weight="600" text-anchor="middle">JWT</text>
+  <rect x="210" y="28" width="50" height="30" rx="4" fill="#f093fb"/>
+  <text x="235" y="47" fill="#fff" font-family="Inter, sans-serif" font-size="10" font-weight="600" text-anchor="middle">JWT</text>
 
-  <line x1="381" y1="35" x2="416" y2="35" stroke="#4DBFC3" stroke-width="2" marker-end="url(#arrow-auth)"/>
+  <line x1="260" y1="43" x2="285" y2="43" stroke="#4DBFC3" stroke-width="1.5" marker-end="url(#arrow-teal)"/>
 
-  <rect x="424" y="15" width="80" height="40" rx="4" fill="#27AE60"/>
-  <text x="464" y="40" fill="#fff" font-family="Inter, sans-serif" font-size="11" font-weight="600" text-anchor="middle">Dashboard</text>
+  <rect x="290" y="28" width="70" height="30" rx="4" fill="#27AE60"/>
+  <text x="325" y="47" fill="#fff" font-family="Inter, sans-serif" font-size="10" font-weight="600" text-anchor="middle">Dashboard</text>
 
   <!-- bcrypt note -->
-  <line x1="235" y1="55" x2="235" y2="65" stroke="#515053" stroke-width="1"/>
-  <text x="235" y="78" fill="#515053" font-family="Inter, sans-serif" font-size="10" font-weight="600" text-anchor="middle">bcrypt (Salt: 12)</text>
+  <line x1="140" y1="58" x2="140" y2="65" stroke="#515053" stroke-width="1"/>
+  <text x="140" y="73" fill="#515053" font-family="Inter, sans-serif" font-size="8" font-weight="600" text-anchor="middle">bcrypt (Salt: 12)</text>
 
-  <!-- SCHUELER Row -->
-  <text x="10" y="110" fill="#F39C12" font-family="Inter, sans-serif" font-size="13" font-weight="700">SCHUELER:</text>
+  <!-- SCHÜLER Flow 1: QR-Code -->
+  <rect x="10" y="88" width="60" height="25" rx="4" fill="#F39C12"/>
+  <text x="40" y="105" fill="#fff" font-family="Inter, sans-serif" font-size="9" font-weight="600" text-anchor="middle">QR-Code</text>
 
-  <rect x="105" y="90" width="65" height="40" rx="4" fill="#F39C12"/>
-  <text x="137" y="115" fill="#fff" font-family="Inter, sans-serif" font-size="11" font-weight="600" text-anchor="middle">QR-Code</text>
+  <line x1="70" y1="100" x2="205" y2="100" stroke="#F39C12" stroke-width="1.5" marker-end="url(#arrow-orange)"/>
 
-  <line x1="170" y1="110" x2="205" y2="110" stroke="#F39C12" stroke-width="2" marker-end="url(#arrow-orange)"/>
+  <!-- SCHÜLER Flow 2: Manual Entry -->
+  <rect x="10" y="118" width="60" height="25" rx="4" fill="#F39C12"/>
+  <text x="40" y="135" fill="#fff" font-family="Inter, sans-serif" font-size="9" font-weight="600" text-anchor="middle">/student</text>
 
-  <rect x="213" y="90" width="85" height="40" rx="4" fill="#FEF5E7" stroke="#F39C12" stroke-width="2"/>
-  <text x="255" y="115" fill="#F39C12" font-family="Inter, sans-serif" font-size="11" font-weight="600" text-anchor="middle">6-digit Code</text>
+  <line x1="70" y1="130" x2="95" y2="130" stroke="#F39C12" stroke-width="1.5" marker-end="url(#arrow-orange)"/>
 
-  <line x1="298" y1="110" x2="333" y2="110" stroke="#F39C12" stroke-width="2" marker-end="url(#arrow-orange)"/>
+  <rect x="100" y="118" width="100" height="25" rx="4" fill="#FEF5E7" stroke="#F39C12" stroke-width="1.5"/>
+  <text x="150" y="135" fill="#F39C12" font-family="Inter, sans-serif" font-size="9" font-weight="600" text-anchor="middle">Name + 6-stellig</text>
 
-  <rect x="341" y="90" width="60" height="40" rx="4" fill="#FEF5E7" stroke="#F39C12" stroke-width="2"/>
-  <text x="371" y="115" fill="#F39C12" font-family="Inter, sans-serif" font-size="11" font-weight="600" text-anchor="middle">Wizard</text>
+  <line x1="200" y1="130" x2="205" y2="130" stroke="#F39C12" stroke-width="1.5"/>
+  <line x1="205" y1="130" x2="205" y2="100" stroke="#F39C12" stroke-width="1.5"/>
 
-  <line x1="401" y1="110" x2="436" y2="110" stroke="#F39C12" stroke-width="2" marker-end="url(#arrow-orange)"/>
+  <!-- SCHÜLER Flow 3: New Registration -->
+  <rect x="10" y="148" width="60" height="25" rx="4" fill="#F39C12"/>
+  <text x="40" y="165" fill="#fff" font-family="Inter, sans-serif" font-size="9" font-weight="600" text-anchor="middle">/student</text>
 
-  <rect x="444" y="90" width="60" height="40" rx="4" fill="#27AE60"/>
-  <text x="474" y="115" fill="#fff" font-family="Inter, sans-serif" font-size="11" font-weight="600" text-anchor="middle">Done</text>
+  <line x1="70" y1="160" x2="95" y2="160" stroke="#F39C12" stroke-width="1.5" marker-end="url(#arrow-orange)"/>
 
-  <!-- No auth note -->
-  <text x="137" y="135" fill="#515053" font-family="Inter, sans-serif" font-size="9" font-weight="600" text-anchor="middle">(keine Auth)</text>
+  <rect x="100" y="148" width="100" height="25" rx="4" fill="#FEF5E7" stroke="#F39C12" stroke-width="1.5"/>
+  <text x="150" y="165" fill="#F39C12" font-family="Inter, sans-serif" font-size="9" font-weight="600" text-anchor="middle">Neu registrieren</text>
+
+  <line x1="200" y1="160" x2="205" y2="160" stroke="#F39C12" stroke-width="1.5"/>
+  <line x1="205" y1="160" x2="205" y2="130" stroke="#F39C12" stroke-width="1.5"/>
+
+  <!-- Shared Wizard + Fertig -->
+  <rect x="210" y="88" width="55" height="25" rx="4" fill="#FEF5E7" stroke="#F39C12" stroke-width="1.5"/>
+  <text x="237" y="105" fill="#F39C12" font-family="Inter, sans-serif" font-size="9" font-weight="600" text-anchor="middle">Wizard</text>
+
+  <line x1="265" y1="100" x2="285" y2="100" stroke="#F39C12" stroke-width="1.5" marker-end="url(#arrow-orange)"/>
+
+  <rect x="290" y="88" width="55" height="25" rx="4" fill="#27AE60"/>
+  <text x="317" y="105" fill="#fff" font-family="Inter, sans-serif" font-size="9" font-weight="600" text-anchor="middle">Fertig</text>
+
+  <!-- Legende -->
+  <g transform="translate(400, 28)">
+    <rect x="0" y="0" width="12" height="12" rx="2" fill="#4DBFC3"/>
+    <text x="18" y="10" fill="#515053" font-family="Inter, sans-serif" font-size="9" font-weight="600">JWT Auth</text>
+
+    <rect x="0" y="18" width="12" height="12" rx="2" fill="#F39C12"/>
+    <text x="18" y="28" fill="#515053" font-family="Inter, sans-serif" font-size="9" font-weight="600">Keine Auth</text>
+
+    <rect x="0" y="36" width="12" height="12" rx="2" fill="#f093fb"/>
+    <text x="18" y="46" fill="#515053" font-family="Inter, sans-serif" font-size="9" font-weight="600">Token</text>
+
+    <rect x="0" y="54" width="12" height="12" rx="2" fill="#5AA5A7"/>
+    <text x="18" y="64" fill="#515053" font-family="Inter, sans-serif" font-size="9" font-weight="600">Validierung</text>
+
+    <rect x="0" y="72" width="12" height="12" rx="2" fill="#FEF5E7" stroke="#F39C12" stroke-width="1"/>
+    <text x="18" y="82" fill="#515053" font-family="Inter, sans-serif" font-size="9" font-weight="600">Eingabe</text>
+
+    <rect x="0" y="90" width="12" height="12" rx="2" fill="#27AE60"/>
+    <text x="18" y="100" fill="#515053" font-family="Inter, sans-serif" font-size="9" font-weight="600">Abgeschlossen</text>
+  </g>
 </svg>

@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 145">
+  <!-- Column 1: Self-Service -->
+  <g transform="translate(10, 8)">
+    <rect x="0" y="0" width="170" height="130" rx="8" fill="#fff" stroke="#D8DFE0" stroke-width="1.5"/>
+    <text x="85" y="24" fill="#4DBFC3" font-family="Inter, sans-serif" font-size="12" font-weight="700" text-anchor="middle">SELBSTBEDIENUNG</text>
+
+    <path d="M18 46 L22 50 L30 40" stroke="#27AE60" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="38" y="48" fill="#515053" font-family="Inter, sans-serif" font-size="10" font-weight="600">QR-Code Anmeldung</text>
+
+    <path d="M18 70 L22 74 L30 64" stroke="#27AE60" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="38" y="72" fill="#515053" font-family="Inter, sans-serif" font-size="10" font-weight="600">Mehrstufiger Assistent</text>
+
+    <path d="M18 94 L22 98 L30 88" stroke="#27AE60" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="38" y="96" fill="#515053" font-family="Inter, sans-serif" font-size="10" font-weight="600">CSV Import/Export</text>
+
+    <path d="M18 118 L22 122 L30 112" stroke="#27AE60" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="38" y="120" fill="#515053" font-family="Inter, sans-serif" font-size="10" font-weight="600">Auto-Validierung</text>
+  </g>
+
+  <!-- Column 2: Admin -->
+  <g transform="translate(195, 8)">
+    <rect x="0" y="0" width="170" height="130" rx="8" fill="#fff" stroke="#D8DFE0" stroke-width="1.5"/>
+    <text x="85" y="24" fill="#F39C12" font-family="Inter, sans-serif" font-size="12" font-weight="700" text-anchor="middle">ADMIN-BEREICH</text>
+
+    <path d="M18 46 L22 50 L30 40" stroke="#27AE60" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="38" y="48" fill="#515053" font-family="Inter, sans-serif" font-size="10" font-weight="600">Echtzeit-Dashboard</text>
+
+    <path d="M18 70 L22 74 L30 64" stroke="#27AE60" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="38" y="72" fill="#515053" font-family="Inter, sans-serif" font-size="10" font-weight="600">Klassenverwaltung</text>
+
+    <path d="M18 94 L22 98 L30 88" stroke="#27AE60" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="38" y="96" fill="#515053" font-family="Inter, sans-serif" font-size="10" font-weight="600">JWT Authentifizierung</text>
+
+    <path d="M18 118 L22 122 L30 112" stroke="#27AE60" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="38" y="120" fill="#515053" font-family="Inter, sans-serif" font-size="10" font-weight="600">Audit-Protokollierung</text>
+  </g>
+
+  <!-- Column 3: Technik -->
+  <g transform="translate(380, 8)">
+    <rect x="0" y="0" width="170" height="130" rx="8" fill="#fff" stroke="#D8DFE0" stroke-width="1.5"/>
+    <text x="85" y="24" fill="#5AA5A7" font-family="Inter, sans-serif" font-size="12" font-weight="700" text-anchor="middle">TECHNIK</text>
+
+    <path d="M18 46 L22 50 L30 40" stroke="#27AE60" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="38" y="48" fill="#515053" font-family="Inter, sans-serif" font-size="10" font-weight="600">Next.js 15 + React 19</text>
+
+    <path d="M18 70 L22 74 L30 64" stroke="#27AE60" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="38" y="72" fill="#515053" font-family="Inter, sans-serif" font-size="10" font-weight="600">TypeScript + Tests</text>
+
+    <path d="M18 94 L22 98 L30 88" stroke="#27AE60" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="38" y="96" fill="#515053" font-family="Inter, sans-serif" font-size="10" font-weight="600">Docker Bereitstellung</text>
+
+    <path d="M18 118 L22 122 L30 112" stroke="#27AE60" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="38" y="120" fill="#515053" font-family="Inter, sans-serif" font-size="10" font-weight="600">Open Source (MIT)</text>
+  </g>
+</svg>
