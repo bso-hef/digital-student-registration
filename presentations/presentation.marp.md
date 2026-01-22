@@ -110,10 +110,15 @@ style: |
     border-radius: 8px;
     margin: 2px 0;
     color: #515053;
+    font-size: 14px;
+    line-height: 18px;
+    font-weight: 500;
   }
   .nav-item.active {
     background: #F3F5F7;
     color: #4DBFC3;
+    font-size: 14px;
+    line-height: 18px;
     font-weight: 600;
   }
 
@@ -201,6 +206,10 @@ style: |
   th { background: #4DBFC3; color: #fff; padding: 5px 8px; text-align: left; font-size: 10px; }
   td { background: #FAFAFA; padding: 4px 8px; border-bottom: 1px solid #D8DFE0; font-size: 10px; }
 
+  /* Mid Table - Zwischengröße */
+  .mid-table th { font-size: 14px; padding: 8px 12px; font-weight: 700; }
+  .mid-table td { font-size: 13px; padding: 6px 12px; }
+
   /* Large Table for Einleitung */
   .large-table th { font-size: 22px; padding: 14px 20px; font-weight: 800; }
   .large-table td { font-size: 20px; padding: 12px 20px; }
@@ -241,9 +250,9 @@ Philipp - Constantin - Valentin - Alex - David
   <div class="nav-items">
     <div class="nav-item active">1. Einleitung</div>
     <div class="nav-item">2. Projektmanagement</div>
-    <div class="nav-item">3. Design/UX</div>
+    <div class="nav-item">3. Design - UI / UX</div>
     <div class="nav-item">4. Anmeldung</div>
-    <div class="nav-item">5. Frontend</div>
+    <div class="nav-item">5. Architektur</div>
     <div class="nav-item">6. Deployment</div>
     <div class="nav-item">7. Infrastruktur</div>
     <div class="nav-item">8. Admin</div>
@@ -292,9 +301,9 @@ Philipp - Constantin - Valentin - Alex - David
   <div class="nav-items">
     <div class="nav-item">1. Einleitung</div>
     <div class="nav-item active">2. Projektmanagement</div>
-    <div class="nav-item">3. Design/UX</div>
+    <div class="nav-item">3. Design - UI / UX</div>
     <div class="nav-item">4. Anmeldung</div>
-    <div class="nav-item">5. Frontend</div>
+    <div class="nav-item">5. Architektur</div>
     <div class="nav-item">6. Deployment</div>
     <div class="nav-item">7. Infrastruktur</div>
     <div class="nav-item">8. Admin</div>
@@ -317,19 +326,16 @@ Philipp - Constantin - Valentin - Alex - David
   </div>
   <div class="content-body">
 
-| Person     | Verantwortlichkeit                 |
-| ---------- | ---------------------------------- |
-| Philipp    | Projektleitung, Wirtschaftlichkeit |
-| Constantin | Design, UX                         |
-| Valentin   | Anmeldung, Frontend                |
-| Alex       | Deployment, Infrastruktur          |
-| David      | Admin, Sicherheit                  |
+  <table class="large-table">
+  <tr><th>Person</th><th>Verantwortlichkeit</th></tr>
+  <tr><td><strong>Philipp</strong></td><td>Projektleitung, Wirtschaftlichkeit</td></tr>
+  <tr><td><strong>Constantin</strong></td><td>Design, UX</td></tr>
+  <tr><td><strong>Valentin</strong></td><td>Anmeldung, Architektur</td></tr>
+  <tr><td><strong>Alex</strong></td><td>Deployment, Infrastruktur</td></tr>
+  <tr><td><strong>David</strong></td><td>Admin, Sicherheit</td></tr>
+  </table>
 
-**Git-Flow:**
-
-![Git-Flow](./img/git-flow.svg)
-
-**Tools:** GitHub Issues - Pull Requests - Actions - Code Reviews
+<img src="./img/git-flow.svg" alt="Git-Flow" style="width: 100%; max-width: 520px;" />
 
   </div>
 </div>
@@ -348,9 +354,9 @@ Philipp - Constantin - Valentin - Alex - David
   <div class="nav-items">
     <div class="nav-item">1. Einleitung</div>
     <div class="nav-item">2. Projektmanagement</div>
-    <div class="nav-item active">3. Design/UX</div>
+    <div class="nav-item active">3. Design - UI / UX</div>
     <div class="nav-item">4. Anmeldung</div>
-    <div class="nav-item">5. Frontend</div>
+    <div class="nav-item">5. Architektur</div>
     <div class="nav-item">6. Deployment</div>
     <div class="nav-item">7. Infrastruktur</div>
     <div class="nav-item">8. Admin</div>
@@ -365,7 +371,7 @@ Philipp - Constantin - Valentin - Alex - David
 
 <div class="content">
   <div class="content-header">
-    <h2 class="content-title">Design/UX</h2>
+    <h2 class="content-title">Design - UI / UX</h2>
     <div class="content-actions">
       <div class="action-search">Suchen...</div>
       <div class="action-btn">Speichern</div>
@@ -373,18 +379,15 @@ Philipp - Constantin - Valentin - Alex - David
   </div>
   <div class="content-body">
 
-| Feature             | Beschreibung                        |
-| ------------------- | ----------------------------------- |
-| Legasthenie-Schrift | OpenDyslexic Font                   |
-| High Contrast       | Erhöhter Kontrast für Sehbehinderte |
-| i18n                | Deutsch / Englisch                  |
-| Theme Toggle        | Light und Dark Mode                 |
+<table class="large-table">
+<tr><th>Feature</th><th>Beschreibung</th></tr>
+<tr><td><strong>Legasthenie-Schrift</strong></td><td>OpenDyslexic Font</td></tr>
+<tr><td><strong>High Contrast</strong></td><td>Erhöhter Kontrast für Sehbehinderte</td></tr>
+<tr><td><strong>i18n</strong></td><td>Deutsch / Englisch</td></tr>
+<tr><td><strong>Theme Toggle</strong></td><td>Light und Dark Mode</td></tr>
+</table>
 
-**Atomic Design Pattern:**
-
-![Atomic Design](./img/atomic-design.svg)
-
-**Farben:** Primary `#4DBFC3` - Text `#515053` - Background `#F3F5F7`
+<div style="max-width: 50%; width: 50%;"> <img src="./img/atomic-design.svg" alt="atomic-design" style="height: 200px; width: 200px;" /> </div>
 
   </div>
 </div>
@@ -403,9 +406,9 @@ Philipp - Constantin - Valentin - Alex - David
   <div class="nav-items">
     <div class="nav-item">1. Einleitung</div>
     <div class="nav-item">2. Projektmanagement</div>
-    <div class="nav-item">3. Design/UX</div>
+    <div class="nav-item">3. Design - UI / UX</div>
     <div class="nav-item active">4. Anmeldung</div>
-    <div class="nav-item">5. Frontend</div>
+    <div class="nav-item">5. Architektur</div>
     <div class="nav-item">6. Deployment</div>
     <div class="nav-item">7. Infrastruktur</div>
     <div class="nav-item">8. Admin</div>
@@ -428,20 +431,17 @@ Philipp - Constantin - Valentin - Alex - David
   </div>
   <div class="content-body">
 
-**Wizard: 11 Schritte, 3 optional**
+<table class="mid-table">
+  <tr><th>Schritt</th><th>Optional</th><th>Bedingung</th></tr>
+  <tr><td>0: Willkommen</td><td>Nein</td><td>-</td></tr>
+  <tr><td>1: Allgemein</td><td>Nein</td><td>-</td></tr>
+  <tr><td><strong>2: Herkunft</strong></td><td><strong>Ja</strong></td><td>Geburtsland ≠ DE</td></tr>
+  <tr><td>3-5: Adresse, Eltern, Bildung</td><td>Nein</td><td>-</td></tr>
+  <tr><td><strong>6-7: Ausbildung, Betrieb</strong></td><td><strong>Ja</strong></td><td>Berufsausbildung</td></tr>
+  <tr><td>8-10: Vereinbarungen, Übersicht, Fertig</td><td>Nein</td><td>-</td></tr>
+</table>
 
-| Schritte                         | Optional? | Bedingung         |
-| -------------------------------- | --------- | ----------------- |
-| 0-1: Welcome, General            | Nein      | -                 |
-| **2: Origin**                    | **Ja**    | Geburtsland != DE |
-| 3-5: Address, Parents, Education | Nein      | -                 |
-| **6-7: Training, Company**       | **Ja**    | Berufsausbildung  |
-| 8-10: Agreements, Summary, Done  | Nein      | -                 |
-
-**Wizard-Flow:**
-
-![Wizard-Flow](./img/wizard-flow.svg)
-
+<img src="./img/wizard-flow.svg" alt="wizard-flow" style="width: 100%; max-width: 520px; margin-top: 15px;" />
   </div>
 </div>
 
@@ -459,9 +459,9 @@ Philipp - Constantin - Valentin - Alex - David
   <div class="nav-items">
     <div class="nav-item">1. Einleitung</div>
     <div class="nav-item">2. Projektmanagement</div>
-    <div class="nav-item">3. Design/UX</div>
+    <div class="nav-item">3. Design - UI / UX</div>
     <div class="nav-item">4. Anmeldung</div>
-    <div class="nav-item active">5. Frontend</div>
+    <div class="nav-item active">5. Architektur</div>
     <div class="nav-item">6. Deployment</div>
     <div class="nav-item">7. Infrastruktur</div>
     <div class="nav-item">8. Admin</div>
@@ -476,7 +476,7 @@ Philipp - Constantin - Valentin - Alex - David
 
 <div class="content">
   <div class="content-header">
-    <h2 class="content-title">Frontend</h2>
+    <h2 class="content-title">Architektur</h2>
     <div class="content-actions">
       <div class="action-search">Suchen...</div>
       <div class="action-btn">Speichern</div>
@@ -484,17 +484,18 @@ Philipp - Constantin - Valentin - Alex - David
   </div>
   <div class="content-body">
 
-| Technologie   | Zweck                   |
-| ------------- | ----------------------- |
-| Next.js 15    | App Router, SSR         |
-| React 19      | UI Framework            |
-| TypeScript 5  | Type Safety             |
-| Redux Toolkit | State Management        |
-| Formik + Yup  | Formulare + Validierung |
+<table class="mid-table">
+  <tr><th>Technologie</th><th>Zweck</th><th>Beschreibung</th></tr>
+  <tr><td>Next.js 15</td><td>App Router, SSR</td><td>React-Framework für Server-Side Rendering</td></tr>
+  <tr><td>React 19</td><td>JS Framework</td><td>Komponentenbasierte UI-Bibliothek</td></tr>
+  <tr><td>TypeScript 5</td><td>Typsicherheit</td><td>Statische Typprüfung für JavaScript</td></tr>
+  <tr><td>Redux Toolkit</td><td>State Management</td><td>Zentraler Anwendungszustand</td></tr>
+  <tr><td>Formik + Yup</td><td>Formulare</td><td>Formularhandling mit Validierung</td></tr>
+  <tr><td>i18n</td><td>Internationalisierung</td><td>Mehrsprachigkeit (DE/EN)</td></tr>
+  <tr><td>Sonner</td><td>Benachrichtigungen</td><td>Toast-Meldungen für Benutzer</td></tr>
+</table>
 
-**Projektstruktur:**
-
-![Projektstruktur](./img/project-structure.svg)
+<img src="./img/project-structure.svg" alt="Projektstruktur" style="width: 100%; max-width: 560px;" />
 
   </div>
 </div>
@@ -513,9 +514,9 @@ Philipp - Constantin - Valentin - Alex - David
   <div class="nav-items">
     <div class="nav-item">1. Einleitung</div>
     <div class="nav-item">2. Projektmanagement</div>
-    <div class="nav-item">3. Design/UX</div>
+    <div class="nav-item">3. Design - UI / UX</div>
     <div class="nav-item">4. Anmeldung</div>
-    <div class="nav-item">5. Frontend</div>
+    <div class="nav-item">5. Architektur</div>
     <div class="nav-item active">6. Deployment</div>
     <div class="nav-item">7. Infrastruktur</div>
     <div class="nav-item">8. Admin</div>
@@ -538,18 +539,16 @@ Philipp - Constantin - Valentin - Alex - David
   </div>
   <div class="content-body">
 
-| Feature    | Beschreibung                |
-| ---------- | --------------------------- |
-| Konsistent | Dev = Prod Environment      |
-| Schnell    | unter 5 Min Deployment      |
-| Sicher     | Non-root, no-new-privileges |
-| Plattform  | Linux + Windows Support     |
+<table class="large-table">
+  <tr><th>Merkmal</th><th>Beschreibung</th></tr>
+  <tr><td>Konsistent</td><td>Entwicklungs- und Produktionsumgebung identisch</td></tr>
+  <tr><td>Schnell</td><td>Vollständiges Deployment in unter 5 Minuten</td></tr>
+  <tr><td>Sicher</td><td>Rootless Container, keine Privilegien-Eskalation</td></tr>
+  <tr><td>Plattform</td><td>Unterstützung für Linux und Windows</td></tr>
+  <tr><td>Versioniert</td><td>Images werden mit Tags versioniert</td></tr>
+</table>
 
-**Docker Multi-Stage Build:**
-
-![Docker Stages](./img/docker-stages.svg)
-
-**Befehle:** `./scripts/docker-build.sh` + `docker compose up`
+<img src="./img/docker-stages.svg" alt="Deployment Workflow" style="width: 100%; max-width: 560px;" />
 
   </div>
 </div>
@@ -568,9 +567,9 @@ Philipp - Constantin - Valentin - Alex - David
   <div class="nav-items">
     <div class="nav-item">1. Einleitung</div>
     <div class="nav-item">2. Projektmanagement</div>
-    <div class="nav-item">3. Design/UX</div>
+    <div class="nav-item">3. Design - UI / UX</div>
     <div class="nav-item">4. Anmeldung</div>
-    <div class="nav-item">5. Frontend</div>
+    <div class="nav-item">5. Architektur</div>
     <div class="nav-item">6. Deployment</div>
     <div class="nav-item active">7. Infrastruktur</div>
     <div class="nav-item">8. Admin</div>
@@ -593,17 +592,14 @@ Philipp - Constantin - Valentin - Alex - David
   </div>
   <div class="content-body">
 
-| Service | Port  | Healthcheck        |
-| ------- | ----- | ------------------ |
-| App     | 3000  | `/api/health/live` |
-| MongoDB | 27017 | `mongosh ping`     |
-| Redis   | 6379  | `redis-cli ping`   |
+<table class="large-table">
+  <tr><th>Service</th><th>Port</th><th>Beschreibung</th><th>Healthcheck</th></tr>
+  <tr><td>App</td><td>3000</td><td>Next.js Anwendung</td><td><code>/api/health/live</code></td></tr>
+  <tr><td>MongoDB</td><td>27017</td><td>Datenbank</td><td><code>mongosh ping</code></td></tr>
+  <tr><td>Redis</td><td>6379</td><td>Session-Speicher</td><td><code>redis-cli ping</code></td></tr>
+</table>
 
-**Netzwerk-Architektur:**
-
-![Netzwerk-Architektur](./img/network-arch.svg)
-
-**Volumes:** `mongo-data` + `redis-data` (persistente Daten)
+<img src="./img/network-arch.svg" alt="Netzwerk-Architektur" style="width: 100%; max-width: 560px;" />
 
   </div>
 </div>
@@ -622,9 +618,9 @@ Philipp - Constantin - Valentin - Alex - David
   <div class="nav-items">
     <div class="nav-item">1. Einleitung</div>
     <div class="nav-item">2. Projektmanagement</div>
-    <div class="nav-item">3. Design/UX</div>
+    <div class="nav-item">3. Design - UI / UX</div>
     <div class="nav-item">4. Anmeldung</div>
-    <div class="nav-item">5. Frontend</div>
+    <div class="nav-item">5. Architektur</div>
     <div class="nav-item">6. Deployment</div>
     <div class="nav-item">7. Infrastruktur</div>
     <div class="nav-item active">8. Admin</div>
@@ -647,15 +643,16 @@ Philipp - Constantin - Valentin - Alex - David
   </div>
   <div class="content-body">
 
-| Bereich   | Features                                 |
-| --------- | ---------------------------------------- |
-| Klassen   | DataTable, CSV-Import/Export, QR-Codes   |
-| Schüler   | Filter, Inline-Assignment, Detailansicht |
-| Dashboard | Status-Übersicht, Statistiken            |
+<table class="mid-table">
+  <tr><th>Bereich</th><th>Features</th></tr>
+  <tr><td>Klassen</td><td>DataTable, CSV-Import/Export, QR-Codes</td></tr>
+  <tr><td>Schüler</td><td>Filter, Inline-Assignment, Detailansicht</td></tr>
+  <tr><td>Dashboard</td><td>Status-Übersicht, Statistiken</td></tr>
+</table>
 
 **Dashboard Layout:**
 
-![Dashboard Layout](./img/dashboard-layout.svg)
+<img src="./img/dashboard-layout.svg" alt="Dashboard Layout" style="width: 100%; max-width: 520px;" />
 
   </div>
 </div>
@@ -674,9 +671,9 @@ Philipp - Constantin - Valentin - Alex - David
   <div class="nav-items">
     <div class="nav-item">1. Einleitung</div>
     <div class="nav-item">2. Projektmanagement</div>
-    <div class="nav-item">3. Design/UX</div>
+    <div class="nav-item">3. Design - UI / UX</div>
     <div class="nav-item">4. Anmeldung</div>
-    <div class="nav-item">5. Frontend</div>
+    <div class="nav-item">5. Architektur</div>
     <div class="nav-item">6. Deployment</div>
     <div class="nav-item">7. Infrastruktur</div>
     <div class="nav-item">8. Admin</div>
@@ -699,14 +696,15 @@ Philipp - Constantin - Valentin - Alex - David
   </div>
   <div class="content-body">
 
-| Rolle   | Zugriff                              |
-| ------- | ------------------------------------ |
-| Admin   | Vollzugriff (JWT via NextAuth.js)    |
-| Schüler | Unauthentifiziert (6-stelliger Code) |
+<table class="mid-table">
+  <tr><th>Rolle</th><th>Zugriff</th></tr>
+  <tr><td>Admin</td><td>Vollzugriff (JWT via NextAuth.js)</td></tr>
+  <tr><td>Schüler</td><td>Unauthentifiziert (6-stelliger Code)</td></tr>
+</table>
 
 **Authentifizierungs-Flow:**
 
-![Auth-Flow](./img/auth-flow.svg)
+<img src="./img/auth-flow.svg" alt="Auth-Flow" style="width: 100%; max-width: 520px;" />
 
 **Sicherheit:** Audit-Logging (90d) + Recovery-Codes + Redis Sessions
 
@@ -727,9 +725,9 @@ Philipp - Constantin - Valentin - Alex - David
   <div class="nav-items">
     <div class="nav-item">1. Einleitung</div>
     <div class="nav-item">2. Projektmanagement</div>
-    <div class="nav-item">3. Design/UX</div>
+    <div class="nav-item">3. Design - UI / UX</div>
     <div class="nav-item">4. Anmeldung</div>
-    <div class="nav-item">5. Frontend</div>
+    <div class="nav-item">5. Architektur</div>
     <div class="nav-item">6. Deployment</div>
     <div class="nav-item">7. Infrastruktur</div>
     <div class="nav-item">8. Admin</div>
@@ -752,16 +750,17 @@ Philipp - Constantin - Valentin - Alex - David
   </div>
   <div class="content-body">
 
-| Bereich      | v1 (Alt)    | v2 (Neu)           |
-| ------------ | ----------- | ------------------ |
-| Dateneingabe | Umständlich | Self-Service + CSV |
-| Fehlerquote  | Hoch        | Auto-Validierung   |
-| Wartbarkeit  | Schwierig   | **964 Tests**      |
-| Lizenzkosten | Unbekannt   | **0 EUR** (OSS)    |
+<table class="mid-table">
+  <tr><th>Bereich</th><th>v1 (Alt)</th><th>v2 (Neu)</th></tr>
+  <tr><td>Dateneingabe</td><td>Umständlich</td><td>Self-Service + CSV</td></tr>
+  <tr><td>Fehlerquote</td><td>Hoch</td><td>Auto-Validierung</td></tr>
+  <tr><td>Wartbarkeit</td><td>Schwierig</td><td><strong>964 Tests</strong></td></tr>
+  <tr><td>Lizenzkosten</td><td>Unbekannt</td><td><strong>0 EUR</strong> (OSS)</td></tr>
+</table>
 
 **Vorteile v2:**
 
-![Vorteile v2](./img/vorteile-v2.svg)
+<img src="./img/vorteile-v2.svg" alt="Vorteile v2" style="width: 100%; max-width: 520px;" />
 
   </div>
 </div>

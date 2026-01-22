@@ -1,41 +1,40 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 550 110">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 100">
   <defs>
-    <marker id="arrow-docker" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-      <path d="M0,0 L8,3 L0,6 z" fill="#4DBFC3"/>
+    <marker id="arrow-deploy" markerWidth="5" markerHeight="4" refX="0" refY="2" orient="auto">
+      <path d="M0,0 L5,2 L0,4 z" fill="#515053"/>
     </marker>
   </defs>
 
-  <!-- Stage 1: BASE -->
-  <rect x="10" y="15" width="100" height="50" rx="6" fill="#FFFFFF" stroke="#D8DFE0" stroke-width="2"/>
-  <text x="60" y="38" fill="#4DBFC3" font-family="Inter, sans-serif" font-size="12" text-anchor="middle" font-weight="700">1: BASE</text>
-  <text x="60" y="53" fill="#515053" font-family="Inter, sans-serif" font-size="10" text-anchor="middle" font-weight="600">node:alpine</text>
-  <text x="60" y="78" fill="#27AE60" font-family="Inter, sans-serif" font-size="11" text-anchor="middle" font-weight="700">22MB</text>
+  <!-- Step 1: .env -->
+  <rect x="10" y="25" width="90" height="50" rx="4" fill="#F39C12"/>
+  <text x="55" y="45" fill="#fff" font-family="monospace" font-size="11" font-weight="700" text-anchor="middle">.env</text>
+  <text x="55" y="62" fill="#FEF5E7" font-family="Inter, sans-serif" font-size="9" font-weight="600" text-anchor="middle">Konfiguration</text>
 
-  <line x1="110" y1="40" x2="150" y2="40" stroke="#4DBFC3" stroke-width="2" marker-end="url(#arrow-docker)"/>
+  <line x1="100" y1="50" x2="115" y2="50" stroke="#515053" stroke-width="1.5" marker-end="url(#arrow-deploy)"/>
 
-  <!-- Stage 2: DEPS -->
-  <rect x="158" y="15" width="100" height="50" rx="6" fill="#FFFFFF" stroke="#D8DFE0" stroke-width="2"/>
-  <text x="208" y="38" fill="#4DBFC3" font-family="Inter, sans-serif" font-size="12" text-anchor="middle" font-weight="700">2: DEPS</text>
-  <text x="208" y="53" fill="#515053" font-family="Inter, sans-serif" font-size="10" text-anchor="middle" font-weight="600">yarn install</text>
-  <text x="208" y="78" fill="#F39C12" font-family="Inter, sans-serif" font-size="11" text-anchor="middle" font-weight="700">800MB</text>
+  <!-- Step 2: script.sh -->
+  <rect x="120" y="25" width="90" height="50" rx="4" fill="#515053"/>
+  <text x="165" y="45" fill="#fff" font-family="monospace" font-size="11" font-weight="700" text-anchor="middle">script.sh</text>
+  <text x="165" y="62" fill="#D8DFE0" font-family="Inter, sans-serif" font-size="9" font-weight="600" text-anchor="middle">Build starten</text>
 
-  <line x1="258" y1="40" x2="298" y2="40" stroke="#4DBFC3" stroke-width="2" marker-end="url(#arrow-docker)"/>
+  <line x1="210" y1="50" x2="225" y2="50" stroke="#515053" stroke-width="1.5" marker-end="url(#arrow-deploy)"/>
 
-  <!-- Stage 3: BUILD -->
-  <rect x="306" y="15" width="100" height="50" rx="6" fill="#FFFFFF" stroke="#D8DFE0" stroke-width="2"/>
-  <text x="356" y="38" fill="#4DBFC3" font-family="Inter, sans-serif" font-size="12" text-anchor="middle" font-weight="700">3: BUILD</text>
-  <text x="356" y="53" fill="#515053" font-family="Inter, sans-serif" font-size="10" text-anchor="middle" font-weight="600">yarn build</text>
-  <text x="356" y="78" fill="#E74C3C" font-family="Inter, sans-serif" font-size="11" text-anchor="middle" font-weight="700">1.2GB</text>
+  <!-- Step 3: Dockerfile -->
+  <rect x="230" y="25" width="90" height="50" rx="4" fill="#4DBFC3"/>
+  <text x="275" y="45" fill="#fff" font-family="monospace" font-size="11" font-weight="700" text-anchor="middle">Dockerfile</text>
+  <text x="275" y="62" fill="#D1F3F4" font-family="Inter, sans-serif" font-size="9" font-weight="600" text-anchor="middle">Image bauen</text>
 
-  <line x1="406" y1="40" x2="446" y2="40" stroke="#4DBFC3" stroke-width="2" marker-end="url(#arrow-docker)"/>
+  <line x1="320" y1="50" x2="335" y2="50" stroke="#515053" stroke-width="1.5" marker-end="url(#arrow-deploy)"/>
 
-  <!-- Stage 4: RUNNER -->
-  <rect x="454" y="15" width="86" height="50" rx="6" fill="#D1F3F4" stroke="#4DBFC3" stroke-width="2"/>
-  <text x="497" y="38" fill="#4DBFC3" font-family="Inter, sans-serif" font-size="12" text-anchor="middle" font-weight="700">4: RUNNER</text>
-  <text x="497" y="53" fill="#515053" font-family="Inter, sans-serif" font-size="9" text-anchor="middle" font-weight="600">node server.js</text>
-  <text x="497" y="78" fill="#27AE60" font-family="Inter, sans-serif" font-size="11" text-anchor="middle" font-weight="700">150MB</text>
+  <!-- Step 4: Image -->
+  <rect x="340" y="25" width="90" height="50" rx="4" fill="#5AA5A7"/>
+  <text x="385" y="45" fill="#fff" font-family="monospace" font-size="11" font-weight="700" text-anchor="middle">Image</text>
+  <text x="385" y="62" fill="#D1F3F4" font-family="Inter, sans-serif" font-size="9" font-weight="600" text-anchor="middle">Artefakt</text>
 
-  <!-- Reduction badge -->
-  <rect x="454" y="90" width="86" height="18" rx="4" fill="#27AE60"/>
-  <text x="497" y="102" fill="#fff" font-family="Inter, sans-serif" font-size="10" text-anchor="middle" font-weight="700">90% kleiner!</text>
+  <line x1="430" y1="50" x2="445" y2="50" stroke="#515053" stroke-width="1.5" marker-end="url(#arrow-deploy)"/>
+
+  <!-- Step 5: Compose -->
+  <rect x="450" y="25" width="100" height="50" rx="4" fill="#27AE60"/>
+  <text x="500" y="45" fill="#fff" font-family="monospace" font-size="11" font-weight="700" text-anchor="middle">compose up</text>
+  <text x="500" y="62" fill="#D5F5E3" font-family="Inter, sans-serif" font-size="9" font-weight="600" text-anchor="middle">Läuft</text>
 </svg>

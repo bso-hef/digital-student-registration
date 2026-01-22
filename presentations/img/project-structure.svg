@@ -1,32 +1,30 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 185">
-  <!-- src folder -->
-  <text x="20" y="22" fill="#4DBFC3" font-family="monospace" font-size="13" font-weight="700">src/</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 120">
+  <!-- src/ Header -->
+  <text x="10" y="18" fill="#4DBFC3" font-family="monospace" font-size="14" font-weight="700">src/</text>
 
-  <!-- app folder -->
-  <text x="40" y="50" fill="#515053" font-family="monospace" font-size="12" font-weight="600">+-- app/</text>
-  <rect x="130" y="36" width="210" height="22" rx="3" fill="#D1F3F4"/>
-  <text x="140" y="52" fill="#4DBFC3" font-family="Inter, sans-serif" font-size="11" font-weight="600">Next.js Pages + API Routes</text>
+  <!-- Row 1: app, components, store -->
+  <rect x="10" y="28" width="170" height="38" rx="4" fill="#4DBFC3"/>
+  <text x="95" y="44" fill="#fff" font-family="monospace" font-size="11" font-weight="700" text-anchor="middle">app/</text>
+  <text x="95" y="58" fill="#D1F3F4" font-family="Inter, sans-serif" font-size="9" font-weight="600" text-anchor="middle">Pages + API Routes</text>
 
-  <!-- components folder -->
-  <text x="40" y="78" fill="#515053" font-family="monospace" font-size="12" font-weight="600">+-- components/</text>
-  <rect x="175" y="64" width="165" height="22" rx="3" fill="#D1F3F4"/>
-  <text x="185" y="80" fill="#4DBFC3" font-family="Inter, sans-serif" font-size="11" font-weight="600">atoms/, molecules/, organisms/</text>
+  <rect x="195" y="28" width="170" height="38" rx="4" fill="#5AA5A7"/>
+  <text x="280" y="44" fill="#fff" font-family="monospace" font-size="11" font-weight="700" text-anchor="middle">components/</text>
+  <text x="280" y="58" fill="#D1F3F4" font-family="Inter, sans-serif" font-size="9" font-weight="600" text-anchor="middle">Atomic Design</text>
 
-  <!-- store folder -->
-  <text x="40" y="106" fill="#515053" font-family="monospace" font-size="12" font-weight="600">+-- store/</text>
-  <rect x="130" y="92" width="190" height="22" rx="3" fill="#D1F3F4"/>
-  <text x="140" y="108" fill="#4DBFC3" font-family="Inter, sans-serif" font-size="11" font-weight="600">Redux: actions/, reducers/</text>
+  <rect x="380" y="28" width="170" height="38" rx="4" fill="#82D7DA"/>
+  <text x="465" y="44" fill="#282829" font-family="monospace" font-size="11" font-weight="700" text-anchor="middle">store/</text>
+  <text x="465" y="58" fill="#515053" font-family="Inter, sans-serif" font-size="9" font-weight="600" text-anchor="middle">Redux Toolkit</text>
 
-  <!-- models folder -->
-  <text x="40" y="134" fill="#515053" font-family="monospace" font-size="12" font-weight="600">+-- models/</text>
-  <rect x="145" y="120" width="190" height="22" rx="3" fill="#D1F3F4"/>
-  <text x="155" y="136" fill="#4DBFC3" font-family="Inter, sans-serif" font-size="11" font-weight="600">Mongoose: Student, Class</text>
+  <!-- Row 2: models, lib, theme -->
+  <rect x="10" y="76" width="170" height="38" rx="4" fill="#F39C12"/>
+  <text x="95" y="92" fill="#fff" font-family="monospace" font-size="11" font-weight="700" text-anchor="middle">models/</text>
+  <text x="95" y="106" fill="#FEF5E7" font-family="Inter, sans-serif" font-size="9" font-weight="600" text-anchor="middle">Mongoose Schemas</text>
 
-  <!-- lib folder -->
-  <text x="40" y="162" fill="#515053" font-family="monospace" font-size="12" font-weight="600">+-- lib/</text>
-  <rect x="110" y="148" width="230" height="22" rx="3" fill="#D1F3F4"/>
-  <text x="120" y="164" fill="#4DBFC3" font-family="Inter, sans-serif" font-size="11" font-weight="600">services/, config/, validate/</text>
+  <rect x="195" y="76" width="170" height="38" rx="4" fill="#27AE60"/>
+  <text x="280" y="92" fill="#fff" font-family="monospace" font-size="11" font-weight="700" text-anchor="middle">lib/</text>
+  <text x="280" y="106" fill="#D5F5E3" font-family="Inter, sans-serif" font-size="9" font-weight="600" text-anchor="middle">Services + Config</text>
 
-  <!-- theme folder -->
-  <text x="40" y="185" fill="#515053" font-family="monospace" font-size="12" font-weight="600">+-- theme/</text>
+  <rect x="380" y="76" width="170" height="38" rx="4" fill="#515053"/>
+  <text x="465" y="92" fill="#fff" font-family="monospace" font-size="11" font-weight="700" text-anchor="middle">theme/</text>
+  <text x="465" y="106" fill="#D8DFE0" font-family="Inter, sans-serif" font-size="9" font-weight="600" text-anchor="middle">MUI Light/Dark</text>
 </svg>

@@ -1,32 +1,42 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 120">
-  <!-- Main branch -->
-  <line x1="50" y1="25" x2="450" y2="25" stroke="#27AE60" stroke-width="4"/>
-  <text x="20" y="30" fill="#27AE60" font-family="Inter, sans-serif" font-size="12" font-weight="700">main</text>
-  <circle cx="120" cy="25" r="7" fill="#27AE60"/>
-  <circle cx="380" cy="25" r="7" fill="#27AE60"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 100">
+  <defs>
+    <marker id="arrow-merge" markerWidth="5" markerHeight="4" refX="5" refY="2" orient="auto">
+      <path d="M0,0 L5,2 L0,4 z" fill="#515053"/>
+    </marker>
+  </defs>
 
-  <!-- Develop branch -->
-  <line x1="50" y1="60" x2="450" y2="60" stroke="#4DBFC3" stroke-width="4"/>
-  <text x="20" y="65" fill="#4DBFC3" font-family="Inter, sans-serif" font-size="12" font-weight="700">develop</text>
-  <circle cx="120" cy="60" r="7" fill="#4DBFC3"/>
-  <circle cx="200" cy="60" r="7" fill="#4DBFC3"/>
-  <circle cx="300" cy="60" r="7" fill="#4DBFC3"/>
-  <circle cx="380" cy="60" r="7" fill="#4DBFC3"/>
+  <!-- Main branch -->
+  <line x1="80" y1="20" x2="480" y2="20" stroke="#27AE60" stroke-width="4"/>
+  <text x="10" y="25" fill="#27AE60" font-family="Inter, sans-serif" font-size="13" font-weight="700">main</text>
+  <circle cx="150" cy="20" r="6" fill="#27AE60"/>
+  <circle cx="400" cy="20" r="6" fill="#27AE60"/>
 
   <!-- Feature branch -->
-  <line x1="200" y1="60" x2="200" y2="95" stroke="#F39C12" stroke-width="4"/>
-  <line x1="200" y1="95" x2="300" y2="95" stroke="#F39C12" stroke-width="4"/>
-  <line x1="300" y1="95" x2="300" y2="60" stroke="#F39C12" stroke-width="4"/>
-  <text x="20" y="100" fill="#F39C12" font-family="Inter, sans-serif" font-size="12" font-weight="700">feature</text>
-  <circle cx="220" cy="95" r="7" fill="#F39C12"/>
-  <circle cx="260" cy="95" r="7" fill="#F39C12"/>
+  <line x1="220" y1="50" x2="220" y2="82" stroke="#F39C12" stroke-width="4"/>
+  <line x1="220" y1="80" x2="320" y2="80" stroke="#F39C12" stroke-width="4"/>
+  <line x1="320" y1="82" x2="320" y2="50" stroke="#F39C12" stroke-width="4"/>
+  <text x="10" y="85" fill="#F39C12" font-family="Inter, sans-serif" font-size="13" font-weight="700">feature</text>
+  <circle cx="250" cy="80" r="6" fill="#F39C12"/>
+  <circle cx="290" cy="80" r="6" fill="#F39C12"/>
 
-  <!-- Merge lines -->
-  <line x1="120" y1="60" x2="120" y2="25" stroke="#515053" stroke-width="2" stroke-dasharray="5"/>
-  <line x1="380" y1="60" x2="380" y2="25" stroke="#515053" stroke-width="2" stroke-dasharray="5"/>
+  <!-- Develop branch -->
+  <line x1="80" y1="50" x2="480" y2="50" stroke="#4DBFC3" stroke-width="4"/>
+  <text x="10" y="55" fill="#4DBFC3" font-family="Inter, sans-serif" font-size="13" font-weight="700">develop</text>
+  <circle cx="150" cy="50" r="6" fill="#4DBFC3"/>
+  <circle cx="220" cy="50" r="6" fill="#4DBFC3"/>
+  <circle cx="320" cy="50" r="6" fill="#4DBFC3"/>
+  <circle cx="400" cy="50" r="6" fill="#4DBFC3"/>
 
-  <!-- Labels -->
-  <text x="115" y="15" fill="#515053" font-family="Inter, sans-serif" font-size="10" font-weight="600" text-anchor="middle">release</text>
-  <text x="380" y="15" fill="#515053" font-family="Inter, sans-serif" font-size="10" font-weight="600" text-anchor="middle">merge</text>
-  <text x="250" y="115" fill="#515053" font-family="Inter, sans-serif" font-size="10" font-weight="600" text-anchor="middle">feature/*</text>
+
+
+  <!-- Merge lines with small arrows -->
+  <line x1="150" y1="44" x2="150" y2="26" stroke="#515053" stroke-width="1.5" marker-end="url(#arrow-merge)"/>
+  <line x1="400" y1="44" x2="400" y2="26" stroke="#515053" stroke-width="1.5" marker-end="url(#arrow-merge)"/>
+
+  <!-- Labels above merge points -->
+  <text x="150" y="10" fill="#515053" font-family="Inter, sans-serif" font-size="10" font-weight="600" text-anchor="middle">release</text>
+  <text x="400" y="10" fill="#515053" font-family="Inter, sans-serif" font-size="10" font-weight="600" text-anchor="middle">merge</text>
+
+  <!-- Feature label -->
+  <text x="270" y="95" fill="#F39C12" font-family="Inter, sans-serif" font-size="10" font-weight="600" text-anchor="middle">feature/*</text>
 </svg>
