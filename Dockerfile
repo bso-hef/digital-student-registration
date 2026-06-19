@@ -14,7 +14,8 @@ FROM base AS deps
 
 COPY package.json yarn.lock ./
 
-RUN yarn install --frozen-lockfile --production=false
+RUN yarn config set network-timeout 300000 && \
+    yarn install --frozen-lockfile --production=false
 
 # Stage 3: Build the application
 FROM base AS builder
