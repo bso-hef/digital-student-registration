@@ -1,4 +1,5 @@
-import { describe, expect, it, vi, beforeEach } from "vitest";
+import { buildZip } from "@/utils/zip.utils";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Use vi.hoisted to ensure mocks are available before vi.mock runs
 const { mockFile, mockGenerateAsync } = vi.hoisted(() => {
@@ -16,8 +17,6 @@ vi.mock("jszip", () => {
     },
   };
 });
-
-import { buildZip } from "@/utils/zip.utils";
 
 /**
  * Tests for zip utility functions
@@ -50,8 +49,12 @@ describe("zip.utils", () => {
       await buildZip(files);
 
       expect(mockGenerateAsync).toHaveBeenCalledWith(
-        { type: "blob", compression: "DEFLATE", compressionOptions: { level: 6 } },
-        expect.any(Function)
+        {
+          type: "blob",
+          compression: "DEFLATE",
+          compressionOptions: { level: 6 },
+        },
+        expect.any(Function),
       );
     });
 

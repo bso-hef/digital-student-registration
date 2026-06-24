@@ -4,8 +4,9 @@ import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import { InputAdornment, TextField } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
-interface HeaderSearchInputProps
-  extends React.ComponentProps<typeof TextField> {
+interface HeaderSearchInputProps extends React.ComponentProps<
+  typeof TextField
+> {
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
   placeholder?: string;
 }

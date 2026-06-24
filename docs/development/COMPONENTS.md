@@ -15,9 +15,18 @@ Component development using Atomic Design pattern.
 
 ```
 src/components/
-├── atoms/          # Basic UI elements (buttons, inputs, badges)
+├── atoms/          # Basic UI elements, grouped into categorized subfolders
+│   ├── buttons/    # GeneralButton, SmallIconButton
+│   ├── inputs/     # Text/number/date inputs
+│   ├── status/     # ClassStatus, StudentStatus, AuditStatus
+│   ├── dashboard/  # StatCard, MetricLabel, HealthIndicator
+│   ├── dropdowns/  # Dropdown/select atoms
+│   ├── menus/      # Menu atoms
+│   ├── auth/       # Auth-related atoms
+│   └── ...         # Plus top-level atoms (GeneralInput, Logo, CustomTitle, etc.)
 ├── molecules/      # Composed components (headers, menus)
 └── organisms/      # Complex features (forms, tables, modals)
+    └── forms/      # Onboarding step forms (WelcomeForm, GeneralForm, etc.)
 ```
 
 **Naming:** PascalCase (`GeneralButton`, `DataTable`)
@@ -33,10 +42,11 @@ Basic building blocks. Cannot be broken down further.
 
 **Examples:**
 
-- `GeneralButton` - Reusable button with variants
-- `GeneralInput` - Text input with error states
-- `ClassStatus` - Status badge
-- `Logo` - Application logo
+- `GeneralButton` (`atoms/buttons/GeneralButton`) - Reusable button with variants
+- `GeneralInput` (`atoms/GeneralInput`) - Text input with error states
+- `ClassStatus` (`atoms/status/ClassStatus`) - Status badge
+- `StatCard` (`atoms/dashboard/StatCard`) - Dashboard statistic card
+- `Logo` (`atoms/Logo`) - Application logo
 
 ### Molecules
 
@@ -45,7 +55,6 @@ Composed of atoms. Still relatively simple.
 **Examples:**
 
 - `AdminSettingsHeader` - Header with title + actions
-- `StatCard` - Dashboard statistic card
 - `AccessibilityMenu` - Accessibility settings menu
 
 ### Organisms
@@ -54,7 +63,7 @@ Complex features combining atoms and molecules.
 
 **Examples:**
 
-- **Forms** - 10 onboarding forms (WelcomeForm, GeneralForm, etc.)
+- **Forms** - 11 onboarding step forms rendered by `StepForm` (WelcomeForm, GeneralForm, OriginForm, AddressForm, ParentsForm, PreEducationForm, TrainingForm, CompanyContactForm, AgreementsForm, SummaryForm, FormCompletion); form components live under `organisms/forms/`
 - **Tables** - DataTable with sorting, filtering, pagination
 - **Modals** - GeneralModal, AddClassModal, AddStudentModal
 - **Navigation** - LeftNavigation with collapsible sections
@@ -66,7 +75,7 @@ Complex features combining atoms and molecules.
 ### 1. Basic Component
 
 ```typescript
-// src/components/atoms/MyComponent/index.tsx
+// src/components/atoms/buttons/MyComponent/index.tsx
 'use client';  // If using hooks/state
 
 import { styled } from '@mui/material';
@@ -103,10 +112,12 @@ export default function MyComponent({ title, onClick }: MyComponentProps) {
 ### 2. Test File
 
 ```typescript
-// src/components/atoms/MyComponent/MyComponent.test.tsx
+// src/components/atoms/buttons/MyComponent/MyComponent.test.tsx
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '@/tests/utils/test-utils';
+// test-utils lives at the project root (tests/utils/test-utils.tsx).
+// Import it via a relative path (depth depends on the component's location).
+import { renderWithProviders } from '../../../../../tests/utils/test-utils';
 import MyComponent from './index';
 
 describe('MyComponent', () => {
@@ -127,13 +138,15 @@ describe('MyComponent', () => {
 });
 ```
 
-### 3. Export from Index
+### 3. Import the Component
+
+There is no flat `atoms` barrel file. Each component is exported as the
+default export of its own `index.tsx` and imported directly by its full path:
 
 ```typescript
-// src/components/atoms/index.ts
-export { default as MyComponent } from "./MyComponent";
-export { default as GeneralButton } from "./GeneralButton";
-// ...
+import GeneralButton from "@/components/atoms/buttons/GeneralButton";
+import StatCard from "@/components/atoms/dashboard/StatCard";
+import DataTable from "@/components/organisms/tables/DataTable";
 ```
 
 ---
@@ -243,21 +256,29 @@ export default function MyModal({ open, onClose }: ModalProps) {
 
 ### Tables
 
-```typescript
-import { DataGrid } from '@mui/x-data-grid';
+Tables are built on the MUI core `Table` primitives (not `@mui/x-data-grid`,
+which is not a dependency). Use the existing `DataTable` organism: pass a
+`headers` array and a `data` array of row records.
 
-const columns = [
-  { field: 'id', headerName: 'ID', width: 90 },
-  { field: 'name', headerName: 'Name', flex: 1 },
+```typescript
+import DataTable from '@/components/organisms/tables/DataTable';
+
+const headers = [
+  { id: 'name', label: 'Name', align: 'left', clickable: true },
+  { id: 'status', label: 'Status', align: 'center' },
 ];
 
-export default function MyTable({ rows }) {
+const data = [
+  { id: 1, name: 'Alice', status: 'Active' },
+  { id: 2, name: 'Bob', status: 'Inactive' },
+];
+
+export default function MyTable() {
   return (
-    <DataGrid
-      rows={rows}
-      columns={columns}
-      pageSize={20}
-      autoHeight
+    <DataTable
+      headers={headers}
+      data={data}
+      onClickRowItem={(id) => console.log('row', id)}
     />
   );
 }
@@ -302,7 +323,9 @@ export default function MyComponent() {
 ### With Providers
 
 ```typescript
-import { renderWithProviders } from '@/tests/utils/test-utils';
+// test-utils lives at the project root (tests/utils/test-utils.tsx),
+// imported via a relative path from the test file.
+import { renderWithProviders } from '../../../../../tests/utils/test-utils';
 import { screen } from '@testing-library/react';
 import MyComponent from './index';
 
@@ -348,68 +371,122 @@ it("returns correct value", () => {
 ### Button Component
 
 ```typescript
-// src/components/atoms/GeneralButton/index.tsx
-'use client';
+// src/components/atoms/buttons/GeneralButton/index.tsx
+import React from "react";
 
-import { Button, ButtonProps, styled } from '@mui/material';
+import { Button, ButtonProps, Typography, styled } from "@mui/material";
+import { useDeviceTypeDetection } from "device-type-detection";
 
-interface GeneralButtonProps extends ButtonProps {
-  loading?: boolean;
+import ActionsTooltip from "../../ActionsTooltip";
+
+// The real GeneralButton does NOT extend ButtonProps and has no `loading`
+// prop or `children`. It renders its text via the `label` prop and exposes
+// an `onAction` handler (so it can support both click and touch events).
+interface GeneralButtonProps {
+  onAction?: (
+    e: React.MouseEvent<HTMLElement> | React.TouchEvent<HTMLElement>,
+  ) => void;
+  disabled?: boolean;
+  isPrimary?: boolean; // true => primary styling, false => outlined
+  fullWidth?: boolean;
+  fullHeight?: boolean;
+  label?: string; // button text
+  startIcon?: React.ReactNode;
+  endIcon?: React.ReactNode;
+  withTooltip?: boolean; // wraps the button in <ActionsTooltip>
+  tooltipLabel?: React.ReactNode;
+  type?: "button" | "submit" | "reset";
+  // ...plus font/spacing and other styling props
 }
 
-const StyledButton = styled(Button)<{ loading?: boolean }>(({ theme, loading }) => ({
-  position: 'relative',
-  opacity: loading ? 0.7 : 1,
-  pointerEvents: loading ? 'none' : 'auto',
-}));
+const GeneralButton: React.FC<GeneralButtonProps> = ({
+  onAction,
+  disabled = false,
+  isPrimary = true,
+  label = "",
+  startIcon,
+  endIcon,
+  withTooltip = false,
+  tooltipLabel,
+  ...otherProps
+}) => {
+  // ...uses useDeviceTypeDetection() to wire up click vs. touch handlers,
+  // renders {startIcon}<ButtonLabel>{label}</ButtonLabel>{endIcon}, and
+  // optionally wraps the result in <ActionsTooltip>.
+};
 
-export default function GeneralButton({
-  children,
-  loading,
-  ...props
-}: GeneralButtonProps) {
-  return (
-    <StyledButton loading={loading} {...props}>
-      {loading ? 'Loading...' : children}
-    </StyledButton>
-  );
-}
+export default GeneralButton;
+```
+
+Usage:
+
+```typescript
+<GeneralButton
+  label={t('general.Next')}
+  isPrimary
+  endIcon={<KeyboardArrowRightRoundedIcon />}
+  onAction={handleNextClick}
+/>
 ```
 
 ### Data Table Component
 
 ```typescript
-// src/components/organisms/DataTable/index.tsx
+// src/components/organisms/tables/DataTable/index.tsx
 'use client';
 
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import {
+  Box,
+  Checkbox,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  styled,
+} from '@mui/material';
+
+import { EnhancedTableHead } from '../EnhancedTableHead';
+import { EnhancedTablePaginationRow } from '../Pagination';
+
+interface TableHeader {
+  id: string;
+  label: string;
+  align?: 'left' | 'right' | 'center';
+  width?: string | number;
+  clickable?: boolean;
+}
 
 interface DataTableProps {
-  rows: any[];
-  columns: GridColDef[];
+  headers: TableHeader[];
+  data: Array<Record<string, unknown>>;
+  setSelectedItems?: (items: (string | number)[]) => void;
+  onClickRowItem?: (id: string | number) => void;
+  onClickActionCell?: (id: string | number) => void;
+  dataSelection?: boolean;   // show selection checkboxes (default true)
   loading?: boolean;
-  onRowClick?: (row: any) => void;
+  notFoundTitle?: string;
+  notFoundDescription?: string;
 }
 
-export default function DataTable({
-  rows,
-  columns,
-  loading,
-  onRowClick
-}: DataTableProps) {
+// Built on MUI core <Table> primitives. Composes <EnhancedTableHead> for
+// the header/sorting and <EnhancedTablePaginationRow> for pagination, plus
+// styled TableContainer/Table/TableRow/TableCell wrappers. Sorting state
+// (order/orderBy) and selection state are managed internally.
+const DataTable: React.FC<DataTableProps> = ({ headers, data, ...props }) => {
   return (
-    <DataGrid
-      rows={rows}
-      columns={columns}
-      loading={loading}
-      onRowClick={onRowClick}
-      pageSize={20}
-      pageSizeOptions={[20, 50, 100]}
-      autoHeight
-      disableRowSelectionOnClick
-    />
+    <TableContainer>
+      <Table size="small" aria-label="enhanced table">
+        <EnhancedTableHead headers={headers} /* ...sort/select props */ />
+        <TableBody>
+          {/* rows rendered from `data`, sorted via stableSort/getComparator */}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
-}
+};
+
+export default DataTable;
 ```
 
 ---

@@ -1,10 +1,10 @@
-import { describe, it, expect, vi } from "vitest";
 import {
+  StepDef,
   getActiveSteps,
   getStudentSteps,
-  StepDef,
 } from "@/constants/studentSteps.constants";
 import { ClassInterface } from "@/types/class.d";
+import { describe, expect, it, vi } from "vitest";
 
 // Mock translation function
 const mockT = (key: string) => key;
@@ -104,12 +104,8 @@ describe("getActiveSteps", () => {
         currentClass,
       );
 
-      expect(
-        activeStepsLower.some((step) => step.id === 2),
-      ).toBe(false);
-      expect(
-        activeStepsUpper.some((step) => step.id === 2),
-      ).toBe(false);
+      expect(activeStepsLower.some((step) => step.id === 2)).toBe(false);
+      expect(activeStepsUpper.some((step) => step.id === 2)).toBe(false);
     });
   });
 
@@ -183,7 +179,9 @@ describe("getActiveSteps", () => {
       expect(trainingStepExists).toBe(true);
 
       // CompanyContactForm (step 7) should be in active steps
-      const companyContactStepExists = activeSteps.some((step) => step.id === 7);
+      const companyContactStepExists = activeSteps.some(
+        (step) => step.id === 7,
+      );
       expect(companyContactStepExists).toBe(true);
     });
 
@@ -209,7 +207,9 @@ describe("getActiveSteps", () => {
       expect(trainingStepExists).toBe(false);
 
       // CompanyContactForm (step 7) should NOT be in active steps
-      const companyContactStepExists = activeSteps.some((step) => step.id === 7);
+      const companyContactStepExists = activeSteps.some(
+        (step) => step.id === 7,
+      );
       expect(companyContactStepExists).toBe(false);
     });
 
@@ -231,7 +231,9 @@ describe("getActiveSteps", () => {
       const activeSteps = getActiveSteps(allSteps, studentData, currentClass);
 
       const trainingStepExists = activeSteps.some((step) => step.id === 6);
-      const companyContactStepExists = activeSteps.some((step) => step.id === 7);
+      const companyContactStepExists = activeSteps.some(
+        (step) => step.id === 7,
+      );
 
       expect(trainingStepExists).toBe(false);
       expect(companyContactStepExists).toBe(false);

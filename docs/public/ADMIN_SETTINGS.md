@@ -778,9 +778,14 @@ Konfigurieren Sie WLAN-Zugangsdaten für QR-Codes:
 
 Überwachen Sie den Systemzustand:
 
-**Datenbankstatus:**
+**Datenbankstatus (MongoDB):**
 
 - Grüner Indikator: MongoDB verbunden
+- Roter Indikator: Verbindungsproblem
+
+**Cache-Status (Redis):**
+
+- Grüner Indikator: Redis verbunden
 - Roter Indikator: Verbindungsproblem
 
 **System-Metriken:**
@@ -896,8 +901,8 @@ Die Seitenleiste bietet Zugriff auf alle Bereiche:
 
 - **Dashboard** - Startseite mit Übersicht
 - **Verwaltung**
-  - Klassen
   - Schüler
+  - Klassen
 - **Einstellungen**
   - Profil
   - Onboarding

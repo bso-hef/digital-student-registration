@@ -1,5 +1,3 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-
 import {
   delay,
   downloadBlob,
@@ -12,14 +10,14 @@ import {
   getFileName,
   isValidURL,
   linkify,
-  toLowerCase,
   msToTime,
   removeCookie,
   setCookie,
   toAppError,
+  toLowerCase,
 } from "@/utils/general.utils";
-
 import type { FileResponse, UserDocument } from "@/utils/general.utils";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 /**
  * Tests for general utility functions
@@ -389,10 +387,13 @@ describe("general.utils", () => {
     });
 
     it("should convert Response to AppError with JSON", async () => {
-      const response = new Response(JSON.stringify({ detail: "Error detail" }), {
-        status: 404,
-        statusText: "Not Found",
-      });
+      const response = new Response(
+        JSON.stringify({ detail: "Error detail" }),
+        {
+          status: 404,
+          statusText: "Not Found",
+        },
+      );
       const result = await toAppError(response);
       expect(result.message).toBe("Not Found");
       expect(result.statusCode).toBe(404);

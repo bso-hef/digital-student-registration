@@ -1,4 +1,4 @@
-import type { ClassInterface } from '@/types/class';
+import type { ClassInterface } from "@/types/class";
 
 /**
  * Test data factories for generating mock entities
@@ -23,7 +23,7 @@ export function resetFactoryCounters() {
  */
 export function createMockObjectId(counter?: number): string {
   const count = counter || Math.floor(Math.random() * 1000000);
-  return count.toString(16).padStart(24, '0');
+  return count.toString(16).padStart(24, "0");
 }
 
 /**
@@ -36,7 +36,7 @@ interface CreateMockStudentOptions {
   dateOfBirth?: Date;
   email?: string;
   phone?: string;
-  status?: 'imported' | 'invited' | 'onboarded';
+  status?: "imported" | "invited" | "onboarded";
   currentClass?: string | null;
   active?: boolean;
   address?: {
@@ -56,9 +56,7 @@ interface CreateMockStudentOptions {
   };
 }
 
-export function createMockStudent(
-  options: CreateMockStudentOptions = {}
-): any {
+export function createMockStudent(options: CreateMockStudentOptions = {}): any {
   const id = studentIdCounter++;
   const firstName = options.firstName || `FirstName${id}`;
   const lastName = options.lastName || `LastName${id}`;
@@ -67,22 +65,22 @@ export function createMockStudent(
     _id: options._id || createMockObjectId(id),
     firstName,
     lastName,
-    dateOfBirth: options.dateOfBirth || new Date('2005-01-15'),
+    dateOfBirth: options.dateOfBirth || new Date("2005-01-15"),
     firstNameNorm: firstName.toLowerCase(),
     lastNameNorm: lastName.toLowerCase(),
     email: options.email || `student${id}@test.com`,
-    phone: options.phone || `+49123456${id.toString().padStart(4, '0')}`,
+    phone: options.phone || `+49123456${id.toString().padStart(4, "0")}`,
     address: options.address || {
-      street: 'Test Street',
-      city: 'Test City',
-      state: 'Test State',
-      zip: '12345',
-      country: 'DE',
-      timezone: 'Europe/Berlin',
+      street: "Test Street",
+      city: "Test City",
+      state: "Test State",
+      zip: "12345",
+      country: "DE",
+      timezone: "Europe/Berlin",
     },
     collisionGroup: null,
     ordinal: 1,
-    status: options.status || 'imported',
+    status: options.status || "imported",
     currentClass: options.currentClass || null,
     classHistory: [],
     employer: options.employer || undefined,
@@ -97,14 +95,14 @@ export function createMockStudent(
  */
 export function createMockStudents(
   count: number,
-  baseOptions: CreateMockStudentOptions = {}
+  baseOptions: CreateMockStudentOptions = {},
 ): any[] {
   return Array.from({ length: count }, (_, index) =>
     createMockStudent({
       ...baseOptions,
       firstName: baseOptions.firstName || `Student${index + 1}`,
       lastName: baseOptions.lastName || `Last${index + 1}`,
-    })
+    }),
   );
 }
 
@@ -125,7 +123,7 @@ interface CreateMockClassOptions {
 }
 
 export function createMockClass(
-  options: CreateMockClassOptions = {}
+  options: CreateMockClassOptions = {},
 ): ClassInterface {
   const id = classIdCounter++;
   const currentYear = new Date().getFullYear();
@@ -149,14 +147,14 @@ export function createMockClass(
  */
 export function createMockClasses(
   count: number,
-  baseOptions: CreateMockClassOptions = {}
+  baseOptions: CreateMockClassOptions = {},
 ): ClassInterface[] {
   return Array.from({ length: count }, (_, index) =>
     createMockClass({
       ...baseOptions,
       name: baseOptions.name || `Class ${index + 1}A`,
       grade: baseOptions.grade !== undefined ? baseOptions.grade : index + 1,
-    })
+    }),
   );
 }
 
@@ -176,27 +174,27 @@ export function createMockDashboardStats() {
     regularClasses: 8,
     averageClassSize: 12.5,
     studentsByGrade: {
-      '1': 15,
-      '2': 14,
-      '3': 13,
-      '4': 12,
-      '5': 11,
-      '6': 10,
-      '7': 10,
-      '8': 12,
-      '9': 13,
-      '10': 14,
-      '11': 13,
-      '12': 8,
-      '13': 5,
+      "1": 15,
+      "2": 14,
+      "3": 13,
+      "4": 12,
+      "5": 11,
+      "6": 10,
+      "7": 10,
+      "8": 12,
+      "9": 13,
+      "10": 14,
+      "11": 13,
+      "12": 8,
+      "13": 5,
     },
     registrationTrend: [
-      { date: '2025-01-01', count: 10 },
-      { date: '2025-02-01', count: 15 },
-      { date: '2025-03-01', count: 20 },
-      { date: '2025-04-01', count: 25 },
-      { date: '2025-05-01', count: 22 },
-      { date: '2025-06-01', count: 18 },
+      { date: "2025-01-01", count: 10 },
+      { date: "2025-02-01", count: 15 },
+      { date: "2025-03-01", count: 20 },
+      { date: "2025-04-01", count: 25 },
+      { date: "2025-05-01", count: 22 },
+      { date: "2025-06-01", count: 18 },
     ],
   };
 }
@@ -206,7 +204,7 @@ export function createMockDashboardStats() {
  */
 export function createMockDashboardHealth(healthy = true) {
   return {
-    status: healthy ? 'healthy' : 'unhealthy',
+    status: healthy ? "healthy" : "unhealthy",
     database: {
       connected: healthy,
       latency: healthy ? 15 : 5000,
@@ -225,53 +223,53 @@ export function createMockDashboardHealth(healthy = true) {
  */
 export function createMockStudentData(overrides: Partial<any> = {}): any {
   return {
-    klassenname: 'Test Class',
-    vorname: 'John',
-    nachname: 'Doe',
-    geburtsname: 'Doe',
-    straße: 'Main Street',
-    hausNr: '123',
-    postleitzahl: '12345',
-    ort: 'Berlin',
-    geburtsort: 'Berlin',
-    geburtsland: 'Germany',
-    zuzugsjahr: '2000',
-    mobil: '+491234567890',
-    telefon1: '+491234567891',
-    email: 'john.doe@test.com',
-    religion: 'None',
-    familiensprache: 'German',
-    geburtsdatum: '2005-01-15',
-    geschlecht: 'male',
-    staatsangehoerigkeit1: 'German',
-    staatsangehoerigkeit2: '',
-    beruf: '',
-    eintrittschule: '2025-09-01',
-    abschlüsse: 'High School',
-    vorhergehendeSchule: 'Previous School',
-    vorhergehendeSchulform: 'Gymnasium',
-    vorhergehendeStufe: '10',
-    betriebApAnrede: '',
-    betriebApVorname: '',
-    betriebApNachname: '',
-    betriebApTelefon1: '',
-    betriebEintritt: '',
-    betriebName: '',
-    betriebStraße: '',
-    betriebHausNr: '',
-    betriebPlz: '',
-    betriebOrt: '',
-    betriebTelefon1: '',
-    betriebEmail: '',
-    ansprechpartner1Art: 'Mother',
-    ansprechpartner1Vorname: 'Jane',
-    ansprechpartner1Nachname: 'Doe',
-    ansprechpartner1Straße: 'Main Street',
-    ansprechpartner1HausNr: '123',
-    ansprechpartner1Plz: '12345',
-    ansprechpartner1Ort: 'Berlin',
-    ansprechpartner1Mobil: '+491234567892',
-    ansprechpartner1Telefon1: '+491234567893',
+    klassenname: "Test Class",
+    vorname: "John",
+    nachname: "Doe",
+    geburtsname: "Doe",
+    straße: "Main Street",
+    hausNr: "123",
+    postleitzahl: "12345",
+    ort: "Berlin",
+    geburtsort: "Berlin",
+    geburtsland: "Germany",
+    zuzugsjahr: "2000",
+    mobil: "+491234567890",
+    telefon1: "+491234567891",
+    email: "john.doe@test.com",
+    religion: "None",
+    familiensprache: "German",
+    geburtsdatum: "2005-01-15",
+    geschlecht: "male",
+    staatsangehoerigkeit1: "German",
+    staatsangehoerigkeit2: "",
+    beruf: "",
+    eintrittschule: "2025-09-01",
+    abschlüsse: "High School",
+    vorhergehendeSchule: "Previous School",
+    vorhergehendeSchulform: "Gymnasium",
+    vorhergehendeStufe: "10",
+    betriebApAnrede: "",
+    betriebApVorname: "",
+    betriebApNachname: "",
+    betriebApTelefon1: "",
+    betriebEintritt: "",
+    betriebName: "",
+    betriebStraße: "",
+    betriebHausNr: "",
+    betriebPlz: "",
+    betriebOrt: "",
+    betriebTelefon1: "",
+    betriebEmail: "",
+    ansprechpartner1Art: "Mother",
+    ansprechpartner1Vorname: "Jane",
+    ansprechpartner1Nachname: "Doe",
+    ansprechpartner1Straße: "Main Street",
+    ansprechpartner1HausNr: "123",
+    ansprechpartner1Plz: "12345",
+    ansprechpartner1Ort: "Berlin",
+    ansprechpartner1Mobil: "+491234567892",
+    ansprechpartner1Telefon1: "+491234567893",
     datenschutz: true,
     teilnahmeunterricht: true,
     schulordnung: true,
@@ -290,7 +288,7 @@ export function createMockPaginationResponse<T>(
     page?: number;
     limit?: number;
     totalDocs?: number;
-  } = {}
+  } = {},
 ) {
   const page = options.page || 1;
   const limit = options.limit || 10;
@@ -315,13 +313,13 @@ export function createMockPaginationResponse<T>(
  * Create mock API error response
  */
 export function createMockApiError(
-  message = 'An error occurred',
-  statusCode = 500
+  message = "An error occurred",
+  statusCode = 500,
 ) {
   return {
     message,
     statusCode,
-    error: 'Internal Server Error',
+    error: "Internal Server Error",
     timestamp: new Date().toISOString(),
   };
 }

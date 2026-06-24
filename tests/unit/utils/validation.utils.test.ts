@@ -1,14 +1,13 @@
-import { describe, expect, it } from "vitest";
-
 import {
   EMAIL_REGEX,
   PASSWORD_REGEX,
   RECOVERY_CODE_REGEX,
-  isValidEmail,
-  validatePasswordStrength,
-  isValidRecoveryCode,
   calculatePasswordStrength,
+  isValidEmail,
+  isValidRecoveryCode,
+  validatePasswordStrength,
 } from "@/utils/validation.utils";
+import { describe, expect, it } from "vitest";
 
 /**
  * Tests for validation utility functions
@@ -284,7 +283,9 @@ describe("validation.utils", () => {
 
     it("should cap at 100", () => {
       const veryStrongPassword = "VeryStrongP@ssw0rd!!123";
-      expect(calculatePasswordStrength(veryStrongPassword)).toBeLessThanOrEqual(100);
+      expect(calculatePasswordStrength(veryStrongPassword)).toBeLessThanOrEqual(
+        100,
+      );
     });
 
     it("should return 100 for perfect password", () => {

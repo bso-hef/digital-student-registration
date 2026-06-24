@@ -1,5 +1,5 @@
-import type { NextConfig } from "next";
 import { readFileSync } from "fs";
+import type { NextConfig } from "next";
 import { join } from "path";
 
 // Read package.json to get app name and version

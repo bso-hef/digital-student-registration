@@ -67,8 +67,10 @@ export const StyledDialogActions = styled(DialogActions)(({ theme }) => ({
   width: "100%",
 }));
 
-export interface GeneralModalProps
-  extends Omit<DialogProps, "onClose" | "open" | "title"> {
+export interface GeneralModalProps extends Omit<
+  DialogProps,
+  "onClose" | "open" | "title"
+> {
   open: boolean;
   modalWidth?: number | string;
   modalHeight?: number | string;

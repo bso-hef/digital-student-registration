@@ -22,10 +22,18 @@ PORT=3001 yarn dev
 
 ### SSL Certificate Error
 
-**Problem:** `Error: unable to verify certificate`
+**Problem:** `Error: unable to verify certificate` when running the HTTPS dev server.
+
+The dev server runs `next dev --turbopack --experimental-https`, which
+auto-generates a self-signed certificate on first run (no `certificates/`
+directory is committed to the repo).
 
 ```bash
-yarn dev  # Uses ./certificates/
+# The browser warns about the self-signed cert in development — accept it to proceed.
+
+# To force regeneration, delete Next.js' generated certificate cache and restart:
+rm -rf node_modules/.next/cache
+yarn dev
 ```
 
 ### Module Not Found
@@ -201,18 +209,11 @@ const persistConfig = {
 // vitest.config.ts
 export default defineConfig({
   test: {
-    environment: "happy-dom",
+    environment: "jsdom",
     globals: true,
     setupFiles: ["./tests/setup.ts"],
   },
 });
-```
-
-### Playwright Browser Not Found
-
-```bash
-yarn playwright:install
-npx playwright install chromium
 ```
 
 ### Test Timeouts
@@ -228,13 +229,17 @@ export default defineConfig({
 
 ### MSW Not Working
 
+MSW is **not** started for unit tests. `tests/setup.ts` mocks `fetch` directly
+because the MSW node server only runs in the Node environment used by
+integration tests. The MSW server lifecycle lives in `tests/integration.setup.ts`:
+
 ```typescript
-// tests/setup.ts
-import { afterAll, afterEach, beforeAll } from "vitest";
+// tests/integration.setup.ts
+import { afterAll, afterEach, beforeAll, vi } from "vitest";
 
 import { server } from "./mocks/server";
 
-beforeAll(() => server.listen());
+beforeAll(() => server.listen({ onUnhandledRequest: "warn" }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 ```
@@ -256,8 +261,11 @@ import Image from "next/image";
 ### High Memory Usage
 
 ```bash
-pm2 monit
-NODE_OPTIONS="--max-old-space-size=4096" yarn start
+# Inspect container resource usage (Docker deployment)
+docker stats
+
+# Raise the Node heap limit at build time if the build itself runs out of memory
+NODE_OPTIONS="--max-old-space-size=4096" yarn build
 ```
 
 ### Slow Database Queries
@@ -295,48 +303,56 @@ rm -rf node_modules .next
 yarn install && yarn build
 ```
 
+> The application is deployed with Docker only (see `docker-compose.yml`,
+> `Dockerfile`). There is no PM2, systemd, or nginx configuration in this repo,
+> so the commands below use the Docker Compose deployment described in
+> [DEPLOYMENT.md](./DEPLOYMENT.md).
+
 ### Application Crashes on Start
 
 ```bash
-# Check logs
-pm2 logs digital-student-registration
-journalctl -u digital-student-registration -n 100
+# Check container logs
+docker compose logs --tail=100 app
+docker compose logs -f app
+
+# Confirm environment is wired up
+docker compose config | grep environment
 
 # Common causes:
-# - Missing env variables
-# - MongoDB not accessible
-# - Port in use
+# - Missing env variables (NEXT_PUBLIC_APP_URL, NEXTAUTH_SECRET, etc.)
+# - URLs still contain "localhost" (build fails validation in v2.1.0+)
+# - MongoDB / Redis containers not healthy
+# - Port (APP_PORT) already in use
 ```
 
-### Nginx 502 Bad Gateway
+### Container Unhealthy or Not Reachable
 
 ```bash
-# Check app status
-pm2 status
-systemctl status digital-student-registration
+# Check status — app should report "healthy" after ~60s
+docker compose ps
 
-# Check nginx
-sudo nginx -t
-tail -f /var/log/nginx/error.log
+# Run the in-container health check
+docker compose exec app sh scripts/docker-healthcheck.sh
 
-# Restart
-pm2 restart digital-student-registration
+# Restart the app service
+docker compose restart app
+
+# Full recreate
+docker compose down && docker compose --profile linux up -d
 ```
 
-### SSL Certificate Issues
+### QR Codes / URLs Show localhost
+
+`NEXT_PUBLIC_*` URLs are embedded at **build time**. Changing them requires a
+rebuild — restarting the container is not enough.
 
 ```bash
-# Verify certificates
-ls -la /etc/letsencrypt/live/your-domain.com/
+export NEXT_PUBLIC_APP_URL=https://your-domain.com
+export NEXT_PUBLIC_API_URL=https://your-domain.com
 
-# Renew
-sudo certbot renew
-
-# Check expiration
-openssl x509 -in cert.pem -noout -dates
-
-# Restart nginx
-sudo systemctl restart nginx
+# Rebuild the image, then redeploy
+./scripts/docker-build.sh --no-cache
+docker compose down && docker compose --profile linux up -d
 ```
 
 ---
@@ -373,8 +389,8 @@ const name = user.profile.name;
 
 ### Check Logs
 
-- Application: `pm2 logs` or `journalctl -u service-name`
-- Nginx: `/var/log/nginx/error.log`
+- Application (Docker): `docker compose logs -f app`
+- MongoDB / Redis containers: `docker compose logs mongo` / `docker compose logs redis`
 - Browser: F12 → Console
 
 ### Documentation
@@ -402,8 +418,7 @@ yarn outdated
 yarn upgrade-interactive
 
 # Test before deploying
-yarn test
-yarn test:e2e
+yarn test:unit
 yarn build
 ```
 

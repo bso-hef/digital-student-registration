@@ -1,6 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import classService from "@/lib/services/classService";
 import http from "@/lib/services/api";
+import classService from "@/lib/services/classService";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock the http client
 vi.mock("@/lib/services/api", () => ({
@@ -164,9 +164,7 @@ describe("classService", () => {
       const classId = "class123";
       const mockResponse = {
         data: {
-          students: [
-            { _id: "student1", firstName: "John", lastName: "Doe" },
-          ],
+          students: [{ _id: "student1", firstName: "John", lastName: "Doe" }],
         },
       };
       vi.mocked(http.get).mockResolvedValue(mockResponse);

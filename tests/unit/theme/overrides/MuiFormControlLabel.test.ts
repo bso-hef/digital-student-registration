@@ -1,8 +1,7 @@
+import type { Theme } from "@mui/material";
 import { describe, expect, it } from "vitest";
 
 import MuiFormControlLabelOverride from "@/theme/overrides/MuiFormControlLabel";
-
-import type { Theme } from "@mui/material";
 
 /**
  * Tests for MuiFormControlLabel theme overrides

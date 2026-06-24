@@ -1,10 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-
 import studentService from "@/lib/services/studentService";
-import * as TYPES from "@/store/types";
-import * as notificationUtils from "@/utils/notification.utils";
-import * as studentDataMapper from "@/utils/studentDataMapper";
-
 import {
   addStudents,
   clearCurrentStudent,
@@ -23,6 +17,10 @@ import {
   updateStudentOnboardingData,
   verifyStudent,
 } from "@/store/actions/studentActions";
+import * as TYPES from "@/store/types";
+import * as notificationUtils from "@/utils/notification.utils";
+import * as studentDataMapper from "@/utils/studentDataMapper";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock dependencies
 vi.mock("@/lib/services/studentService", () => ({
@@ -392,7 +390,9 @@ describe("studentActions", () => {
     });
 
     it("should dispatch failure on save error", async () => {
-      const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+      const consoleSpy = vi
+        .spyOn(console, "error")
+        .mockImplementation(() => {});
       vi.mocked(studentService.updateOnboarding).mockRejectedValue(
         new Error("Save failed"),
       );

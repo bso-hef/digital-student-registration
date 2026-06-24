@@ -1,12 +1,11 @@
-import { describe, expect, it, vi } from "vitest";
-
+import type { Student } from "@/types/db";
+import type { StudentData } from "@/types/student.d";
 import {
   mapFormDataToModel,
   mapModelToFormData,
   validateOnboardingData,
 } from "@/utils/studentDataMapper";
-import type { Student } from "@/types/db";
-import type { StudentData } from "@/types/student.d";
+import { describe, expect, it, vi } from "vitest";
 
 // Mock date utils
 vi.mock("@/utils/date.utils", () => ({
@@ -108,7 +107,9 @@ describe("studentDataMapper", () => {
     });
 
     it("should map immigration year as number", () => {
-      const result = mapFormDataToModel({ zuzugsjahr: 2015 as unknown as string });
+      const result = mapFormDataToModel({
+        zuzugsjahr: 2015 as unknown as string,
+      });
       expect(result.immigrationYear).toBe(2015);
     });
 
@@ -346,7 +347,9 @@ describe("studentDataMapper", () => {
   });
 
   describe("mapModelToFormData", () => {
-    const createMockStudent = (overrides: Partial<Student> = {}): Partial<Student> => ({
+    const createMockStudent = (
+      overrides: Partial<Student> = {},
+    ): Partial<Student> => ({
       firstName: "Max",
       lastName: "Mustermann",
       birthName: "Schmidt",
@@ -638,9 +641,27 @@ describe("studentDataMapper", () => {
     it("should respect maxContactPersons parameter", () => {
       const student = createMockStudent({
         contactPersons: [
-          { type: "mother", firstName: "Maria", lastName: "M", phone: "", mobile: "" },
-          { type: "father", firstName: "Peter", lastName: "M", phone: "", mobile: "" },
-          { type: "guardian", firstName: "Anna", lastName: "M", phone: "", mobile: "" },
+          {
+            type: "mother",
+            firstName: "Maria",
+            lastName: "M",
+            phone: "",
+            mobile: "",
+          },
+          {
+            type: "father",
+            firstName: "Peter",
+            lastName: "M",
+            phone: "",
+            mobile: "",
+          },
+          {
+            type: "guardian",
+            firstName: "Anna",
+            lastName: "M",
+            phone: "",
+            mobile: "",
+          },
         ],
       });
 

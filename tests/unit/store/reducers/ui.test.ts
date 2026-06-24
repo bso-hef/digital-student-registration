@@ -1,7 +1,7 @@
+import * as TYPES from "@/store/types";
 import { describe, expect, it } from "vitest";
 
 import uiReducer from "@/store/reducers/ui";
-import * as TYPES from "@/store/types";
 
 /**
  * Tests for UI reducer

@@ -1,11 +1,10 @@
-import { Theme } from "@mui/material";
-import { describe, expect, it } from "vitest";
-
 import { THEME } from "@/constants/general.constants";
 import {
   applicationScrollbar,
   capitalizeFirstLetter,
 } from "@/utils/styling.utils";
+import { Theme } from "@mui/material";
+import { describe, expect, it } from "vitest";
 
 /**
  * Tests for styling utility functions
@@ -118,9 +117,9 @@ describe("styling.utils", () => {
       const darkStyles = applicationScrollbar(darkTheme);
       const lightStyles = applicationScrollbar(lightTheme);
 
-      expect(
-        darkStyles["&::-webkit-scrollbar-track"].backgroundColor,
-      ).not.toBe(lightStyles["&::-webkit-scrollbar-track"].backgroundColor);
+      expect(darkStyles["&::-webkit-scrollbar-track"].backgroundColor).not.toBe(
+        lightStyles["&::-webkit-scrollbar-track"].backgroundColor,
+      );
     });
   });
 

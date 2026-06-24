@@ -1,9 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-
 import dashboardService from "@/lib/services/dashboardService";
-import * as TYPES from "@/store/types";
-import * as notificationUtils from "@/utils/notification.utils";
-
 import {
   getDashboardActivity,
   getDashboardHealth,
@@ -12,6 +7,9 @@ import {
   resetDashboardLayout,
   setDashboardLayout,
 } from "@/store/actions/dashboardActions";
+import * as TYPES from "@/store/types";
+import * as notificationUtils from "@/utils/notification.utils";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock dependencies
 vi.mock("@/lib/services/dashboardService", () => ({
@@ -143,7 +141,11 @@ describe("dashboardActions", () => {
   describe("getDashboardActivity", () => {
     it("should dispatch request and success actions on successful fetch", async () => {
       const mockActivities = [
-        { id: "1", type: "student_created", timestamp: new Date().toISOString() },
+        {
+          id: "1",
+          type: "student_created",
+          timestamp: new Date().toISOString(),
+        },
       ];
       vi.mocked(dashboardService.getRecentActivity).mockResolvedValue({
         data: { activities: mockActivities },
@@ -178,7 +180,9 @@ describe("dashboardActions", () => {
 
     it("should handle silent mode on failure", async () => {
       const mockError = new Error("Activity fetch failed");
-      const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+      const consoleSpy = vi
+        .spyOn(console, "error")
+        .mockImplementation(() => {});
       vi.mocked(dashboardService.getRecentActivity).mockRejectedValue(
         mockError,
       );
@@ -286,7 +290,9 @@ describe("dashboardActions", () => {
 
     it("should handle invalid JSON in localStorage", () => {
       localStorage.setItem("dashboard_layout", "invalid-json");
-      const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+      const consoleSpy = vi
+        .spyOn(console, "error")
+        .mockImplementation(() => {});
 
       loadDashboardLayout()(dispatch, getState, undefined);
 

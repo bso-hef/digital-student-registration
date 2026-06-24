@@ -1,5 +1,3 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-
 import {
   copyText,
   getName,
@@ -8,6 +6,7 @@ import {
   userInitials,
   uuid_v4,
 } from "@/utils/string.utils";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 /**
  * Tests for string utility functions
@@ -180,9 +179,7 @@ describe("string.utils", () => {
 
     it("should handle clipboard write error", async () => {
       const error = new Error("Write failed");
-      global.navigator.clipboard.writeText = vi.fn(() =>
-        Promise.reject(error),
-      );
+      global.navigator.clipboard.writeText = vi.fn(() => Promise.reject(error));
 
       await copyText("test");
 

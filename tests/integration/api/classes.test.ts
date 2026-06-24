@@ -1,13 +1,14 @@
-import { describe, it, expect, beforeAll, afterAll, beforeEach } from "vitest";
-import { GET, POST, DELETE } from "../../../src/app/api/classes/route";
+import { dbConnect } from "@/lib/config/mongo";
+import Class from "@/models/Class";
+import mongoose from "mongoose";
+import { NextRequest } from "next/server";
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
+
 import {
   GET as GETById,
   PATCH,
 } from "../../../src/app/api/classes/[classId]/route";
-import { NextRequest } from "next/server";
-import mongoose from "mongoose";
-import Class from "@/models/Class";
-import { dbConnect } from "@/lib/config/mongo";
+import { DELETE, GET, POST } from "../../../src/app/api/classes/route";
 
 describe("Classes API Routes", () => {
   beforeAll(async () => {

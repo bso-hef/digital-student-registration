@@ -1,11 +1,10 @@
-import { describe, expect, it, vi } from "vitest";
-
 import {
+  generateUniqueVerificationCode,
   generateVerificationCode,
   isValidVerificationCode,
   normalizeVerificationCode,
-  generateUniqueVerificationCode,
 } from "@/utils/verification.utils";
+import { describe, expect, it, vi } from "vitest";
 
 /**
  * Tests for verification utility functions
@@ -61,7 +60,9 @@ describe("verification.utils", () => {
 
     it("should return false for null or undefined", () => {
       expect(isValidVerificationCode(null as unknown as string)).toBe(false);
-      expect(isValidVerificationCode(undefined as unknown as string)).toBe(false);
+      expect(isValidVerificationCode(undefined as unknown as string)).toBe(
+        false,
+      );
     });
 
     it("should return false for non-string values", () => {
@@ -98,7 +99,8 @@ describe("verification.utils", () => {
     });
 
     it("should retry if code already exists", async () => {
-      const checkExists = vi.fn()
+      const checkExists = vi
+        .fn()
         .mockResolvedValueOnce(true)
         .mockResolvedValueOnce(true)
         .mockResolvedValueOnce(false);
@@ -113,8 +115,10 @@ describe("verification.utils", () => {
       const checkExists = vi.fn().mockResolvedValue(true);
 
       await expect(
-        generateUniqueVerificationCode(checkExists, 5)
-      ).rejects.toThrow("Failed to generate unique verification code after 5 attempts");
+        generateUniqueVerificationCode(checkExists, 5),
+      ).rejects.toThrow(
+        "Failed to generate unique verification code after 5 attempts",
+      );
 
       expect(checkExists).toHaveBeenCalledTimes(5);
     });
@@ -123,8 +127,10 @@ describe("verification.utils", () => {
       const checkExists = vi.fn().mockResolvedValue(true);
 
       await expect(
-        generateUniqueVerificationCode(checkExists, 3)
-      ).rejects.toThrow("Failed to generate unique verification code after 3 attempts");
+        generateUniqueVerificationCode(checkExists, 3),
+      ).rejects.toThrow(
+        "Failed to generate unique verification code after 3 attempts",
+      );
 
       expect(checkExists).toHaveBeenCalledTimes(3);
     });
@@ -132,9 +138,9 @@ describe("verification.utils", () => {
     it("should use default maxAttempts of 10", async () => {
       const checkExists = vi.fn().mockResolvedValue(true);
 
-      await expect(
-        generateUniqueVerificationCode(checkExists)
-      ).rejects.toThrow("Failed to generate unique verification code after 10 attempts");
+      await expect(generateUniqueVerificationCode(checkExists)).rejects.toThrow(
+        "Failed to generate unique verification code after 10 attempts",
+      );
 
       expect(checkExists).toHaveBeenCalledTimes(10);
     });

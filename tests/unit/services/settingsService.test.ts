@@ -1,6 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import settingsService from "@/lib/services/settingsService";
 import http from "@/lib/services/api";
+import settingsService from "@/lib/services/settingsService";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock the http client
 vi.mock("@/lib/services/api", () => ({

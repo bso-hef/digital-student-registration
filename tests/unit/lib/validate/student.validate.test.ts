@@ -1,5 +1,3 @@
-import { describe, expect, it } from "vitest";
-
 import {
   createCountryValidation,
   createGenderValidation,
@@ -8,6 +6,7 @@ import {
   validateGeneralStudentData,
   validateVerificationForm,
 } from "@/lib/validate/student.validate";
+import { describe, expect, it } from "vitest";
 
 /**
  * Tests for student validation schemas

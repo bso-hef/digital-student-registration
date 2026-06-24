@@ -1,3 +1,4 @@
+import * as TYPES from "@/store/types";
 import { describe, expect, it } from "vitest";
 
 import auditLogReducer, {
@@ -5,7 +6,6 @@ import auditLogReducer, {
   AuditLogFilters,
   AuditLogStats,
 } from "@/store/reducers/auditLog";
-import * as TYPES from "@/store/types";
 
 /**
  * Tests for auditLog reducer

@@ -1,6 +1,5 @@
-import { describe, expect, it } from "vitest";
-
 import { SCHEMA } from "@/constants/db.constants";
+import { describe, expect, it } from "vitest";
 
 /**
  * Tests for database schema constants

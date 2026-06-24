@@ -1,18 +1,16 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-
 import auditLogService from "@/lib/services/auditLogService";
-import * as TYPES from "@/store/types";
-import * as notificationUtils from "@/utils/notification.utils";
-
 import {
   clearAuditLogs,
   deleteSelectedAuditLogs,
   exportAuditLogs,
-  getAuditLogs,
   getAuditLogStats,
+  getAuditLogs,
   setAuditLogFilters,
   setAuditLogPage,
 } from "@/store/actions/auditLogActions";
+import * as TYPES from "@/store/types";
+import * as notificationUtils from "@/utils/notification.utils";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock dependencies
 vi.mock("@/lib/services/auditLogService", () => ({
@@ -119,7 +117,9 @@ describe("auditLogActions", () => {
         todayLogs: 10,
         actionCounts: { create: 50, update: 30, delete: 20 },
       };
-      vi.mocked(auditLogService.getStats).mockResolvedValue({ data: mockStats });
+      vi.mocked(auditLogService.getStats).mockResolvedValue({
+        data: mockStats,
+      });
 
       await getAuditLogStats()(dispatch, getState, undefined);
 
