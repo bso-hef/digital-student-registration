@@ -105,13 +105,11 @@ const CreateStudentModal: React.FC<CreateStudentModalProps> = ({
       setProgress(60);
       setProgressLabel(t("modals.createStudent.creatingStudent"));
 
-      const { data } = await studentService.create([
-        {
-          firstName: values.firstName.trim(),
-          lastName: values.lastName.trim(),
-          dateOfBirth: values.dateOfBirth?.toDate() || null,
-        },
-      ]);
+      const { data } = await studentService.createPublic({
+        firstName: values.firstName.trim(),
+        lastName: values.lastName.trim(),
+        dateOfBirth: values.dateOfBirth?.toDate() || null,
+      });
 
       if (!data || !data.created || data.created.length === 0) {
         throw new Error("Failed to create student");

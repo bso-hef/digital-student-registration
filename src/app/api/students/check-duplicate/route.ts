@@ -1,4 +1,3 @@
-import { auth } from "@/lib/auth/auth";
 import { dbConnect } from "@/lib/config/mongo";
 import { norm } from "@/lib/config/norm";
 import Logger from "@/lib/server-logger";
@@ -25,12 +24,6 @@ const daysBetween = (date1: Date, date2: Date): number => {
  */
 export async function GET(request: NextRequest) {
   try {
-    // Check authentication
-    const session = await auth();
-    if (!session) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    }
-
     await dbConnect();
 
     const { searchParams } = new URL(request.url);

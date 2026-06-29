@@ -33,6 +33,9 @@ const studentService = {
   create: (students: CreateStudentInput[]) => {
     return http.post("/api/students", { students });
   },
+  createPublic: (student: CreateStudentInput) => {
+    return http.post("/api/students/public", { student });
+  },
   delete: (ids: string[]) => {
     return http.delete("/api/students", { data: { ids } });
   },
