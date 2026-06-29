@@ -580,6 +580,7 @@
   },
   "onboarding": {
     "general": {
+      "onboardingIntoClass":  "Einschulung in die Klasse",
       "title": "Allgemeine Daten",
       "schoolEntry": "Eintritt Schule",
       "schoolEntryDate": "Schuleintritt",
