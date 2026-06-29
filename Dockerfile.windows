@@ -30,7 +30,7 @@ RUN Set-ExecutionPolicy Bypass -Scope Process -Force; `
     iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 
 # Install Node.js 22.x via Chocolatey
-RUN choco install nodejs --version=22.20.0 -y
+RUN choco install nodejs --version=22.22.3 -y
 
 # Verify Node.js installation
 RUN node --version; `
