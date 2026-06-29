@@ -121,8 +121,11 @@ const ExportStudentDataModal: React.FC<ExportStudentDataModalProps> = ({
   const isPortrait = orientation === "portrait";
 
   const getClassName = (s: StudentType): string => {
-    // Use cached class name if available, otherwise use class ID
-    return s.currentClassName || s.currentClass || "";
+    if (s.currentClassName) return s.currentClassName;
+    if (!s.currentClass) return "";
+    return typeof s.currentClass === "string"
+      ? s.currentClass
+      : s.currentClass.name;
   };
 
   const resolveFilename = (s: StudentType, format: "pdf" | "json" | "csv") => {

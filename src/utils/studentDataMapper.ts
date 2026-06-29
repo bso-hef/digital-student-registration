@@ -70,6 +70,7 @@ export function mapFormDataToModel(
     const parsed = parseDate(formData.eintrittschule);
     if (parsed) mapped.schoolEntryDate = parsed;
   }
+  if (formData.currentClass) mapped.currentClass = formData.currentClass;
   if (formData.klassenname) mapped.currentClassName = formData.klassenname;
 
   if (formData.vorhergehendeSchule)
@@ -267,7 +268,18 @@ export function mapModelToFormData(
   if (student.schoolEntryDate) {
     mapped.eintrittschule = formatGermanDate(student.schoolEntryDate);
   }
-  if (student.currentClassName) mapped.klassenname = student.currentClassName;
+  if (student.currentClass) {
+    if (typeof student.currentClass === "string") {
+      mapped.currentClass = student.currentClass;
+    } else {
+      mapped.currentClass = student.currentClass._id;
+      mapped.currentClassData = student.currentClass;
+      mapped.klassenname = student.currentClass.name;
+    }
+  }
+  if (student.currentClassName && !mapped.klassenname) {
+    mapped.klassenname = student.currentClassName;
+  }
 
   if (student.previousSchool)
     mapped.vorhergehendeSchule = student.previousSchool;

@@ -8,6 +8,9 @@ const classService = {
   getAll: () => {
     return http.get("/api/classes");
   },
+  getPublic: () => {
+    return http.get("/api/classes/public");
+  },
   get: (id: string) => {
     return http.get(`/api/classes/${id}`);
   },

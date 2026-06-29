@@ -123,6 +123,15 @@ export const updateStudentOnboardingData =
     });
   };
 
+export const setStudentOnboardingClass =
+  (currentClass: StudentData["currentClassData"]): AppThunk =>
+  (dispatch) => {
+    dispatch({
+      type: TYPES.SET_STUDENT_ONBOARDING_CLASS,
+      payload: currentClass,
+    });
+  };
+
 export const clearStudentOnboardingData = (): AppThunk => (dispatch) => {
   dispatch({ type: TYPES.CLEAR_STUDENT_ONBOARDING_DATA });
 };

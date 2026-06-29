@@ -67,7 +67,7 @@ export interface Student {
   };
 
   class?: string;
-  currentClass?: string;
+  currentClass?: string | import("./class").ClassInterface | null;
   currentClassName?: string;
   schoolEntryDate?: Date;
 

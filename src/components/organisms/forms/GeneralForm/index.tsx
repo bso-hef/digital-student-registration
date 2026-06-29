@@ -1,14 +1,19 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import { useOnboardingSettings } from "@/hooks/useOnboardingSettings";
+import classService from "@/lib/services/classService";
 import {
   createValidateGeneralStudentData,
   validateGeneralStudentData,
 } from "@/lib/validate/student.validate";
-import { updateStudentOnboardingData } from "@/store/actions/studentActions";
+import {
+  setStudentOnboardingClass,
+  updateStudentOnboardingData,
+} from "@/store/actions/studentActions";
 import { useAppDispatch, useAppSelector } from "@/store/store";
+import { ClassInterface } from "@/types/class";
 import {
   Autocomplete,
   Box,
@@ -46,6 +51,7 @@ const FormSection = styled(Box)(({ theme }) => ({
 }));
 
 interface FormValues {
+  currentClass: string;
   eintrittschule: dayjs.Dayjs | null;
   klassenname: string;
   vorname: string;
@@ -90,7 +96,10 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const studentData = useAppSelector((state) => state.student.data);
+  const currentClass = useAppSelector((state) => state.student.currentClass);
   const previousCountryRef = useRef<string>(studentData.geburtsland || "DE");
+  const [classes, setClasses] = useState<ClassInterface[]>([]);
+  const [classesLoading, setClassesLoading] = useState(false);
   const {
     genderOptions,
     religionOptions,
@@ -110,9 +119,42 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Run once on mount to set initial country
 
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadClasses = async () => {
+      setClassesLoading(true);
+      try {
+        const { data } = await classService.getPublic();
+        if (isMounted) {
+          setClasses(data.classes || []);
+        }
+      } catch (error) {
+        console.error("Failed to load public classes:", error);
+      } finally {
+        if (isMounted) {
+          setClassesLoading(false);
+        }
+      }
+    };
+
+    loadClasses();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const classOptions = useMemo(() => {
+    if (!currentClass) return classes;
+    const currentClassExists = classes.some((item) => item._id === currentClass._id);
+    return currentClassExists ? classes : [currentClass, ...classes];
+  }, [classes, currentClass]);
+
   const initialValues: FormValues = {
+    currentClass: studentData.currentClass || currentClass?._id || "",
     eintrittschule: null,
-    klassenname: "",
+    klassenname: studentData.klassenname || currentClass?.name || "",
     vorname: studentData.vorname || "",
     nachname: studentData.nachname || "",
     geburtsname: studentData.geburtsname || "",
@@ -205,6 +247,58 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
             <Typography variant="h6" gutterBottom>
               {t("onboarding.general.title")}
             </Typography>
+
+            <Autocomplete
+              options={classOptions}
+              loading={classesLoading}
+              getOptionLabel={(option) => option.name}
+              isOptionEqualToValue={(option, value) =>
+                option._id === value._id
+              }
+              value={
+                classOptions.find((option) => option._id === values.currentClass) ||
+                null
+              }
+              onChange={(_, newValue) => {
+                setFieldValue("currentClass", newValue?._id || "");
+                setFieldValue("klassenname", newValue?.name || "");
+                dispatch(setStudentOnboardingClass(newValue || null));
+                dispatch(
+                  updateStudentOnboardingData({
+                    currentClass: newValue?._id || "",
+                    currentClassData: newValue || null,
+                    klassenname: newValue?.name || "",
+                  }),
+                );
+              }}
+              onBlur={() => setFieldTouched("currentClass", true)}
+              fullWidth
+              renderInput={(params) => (
+                <MUITextField
+                  {...params}
+                  label="Einschulung in die Klasse"
+                  variant="outlined"
+                  fullWidth
+                  slotProps={{
+                    input: {
+                      ...params.InputProps,
+                      endAdornment: (
+                        <>
+                          {classesLoading ? (
+                            <Skeleton
+                              variant="circular"
+                              width={20}
+                              height={20}
+                            />
+                          ) : null}
+                          {params.InputProps.endAdornment}
+                        </>
+                      ),
+                    },
+                  }}
+                />
+              )}
+            />
 
             <Typography variant="subtitle1" sx={{ mt: 2 }}>
               {t("onboarding.general.personalInfo")}
