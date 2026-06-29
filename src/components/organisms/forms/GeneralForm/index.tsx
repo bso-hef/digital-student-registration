@@ -4,25 +4,11 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import { useOnboardingSettings } from "@/hooks/useOnboardingSettings";
 import classService from "@/lib/services/classService";
-import {
-  createValidateGeneralStudentData,
-  validateGeneralStudentData,
-} from "@/lib/validate/student.validate";
-import {
-  setStudentOnboardingClass,
-  updateStudentOnboardingData,
-} from "@/store/actions/studentActions";
+import { createValidateGeneralStudentData, validateGeneralStudentData, } from "@/lib/validate/student.validate";
+import { setStudentOnboardingClass, updateStudentOnboardingData, } from "@/store/actions/studentActions";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { ClassInterface } from "@/types/class";
-import {
-  Autocomplete,
-  Box,
-  TextField as MUITextField,
-  MenuItem,
-  Skeleton,
-  Typography,
-  styled,
-} from "@mui/material";
+import { Autocomplete, Box, MenuItem, Skeleton, styled, TextField as MUITextField, Typography, } from "@mui/material";
 import dayjs from "dayjs";
 import { Field, Form, Formik, FormikProps } from "formik";
 import { Select, TextField } from "formik-mui";
@@ -276,7 +262,7 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
               renderInput={(params) => (
                 <MUITextField
                   {...params}
-                  label="Einschulung in die Klasse"
+                  label={t("onboarding.general.onboardingIntoClass")}
                   variant="outlined"
                   fullWidth
                   slotProps={{
