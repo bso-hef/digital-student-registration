@@ -39,11 +39,7 @@ export async function listInitOptions(req: {
   const page = parseInt(req.query?.page as string, 10) || 1;
   const limit = parseInt(req.query?.limit as string, 10) || 5;
   let populate = req.query?.populate as
-    | string
-    | string[]
-    | PopulateOptions
-    | PopulateOptions[]
-    | undefined;
+    string | string[] | PopulateOptions | PopulateOptions[] | undefined;
 
   if (typeof populate === "string") {
     if (populate.trim() === "") {
