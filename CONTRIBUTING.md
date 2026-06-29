@@ -5,7 +5,7 @@ development environment running, the conventions we follow, and how to get your
 changes merged.
 
 By participating you agree to abide by our [Code of Conduct](./CODE_OF_CONDUCT.md).
-Report violations to <roehlevalentin@gmail.com>.
+Report violations to <roehlevalentin@gmail.com> or <se.schmitt@bso-hef.de>.
 
 ---
 

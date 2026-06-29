@@ -47,11 +47,17 @@ export default defineConfig({
         "src/middleware.ts",
       ],
       thresholds: {
-        autoUpdate: true,
-        branches: 27.63,
-        functions: 24.75,
-        lines: 29.09,
-        statements: 28.74,
+        // autoUpdate must stay false: with it enabled, vitest compares coverage
+        // at full float precision against the rounded stored values, treats the
+        // tiny delta as an "improvement", rewrites the same rounded value and
+        // exits non-zero — so the pre-push hook / CI could never pass. Fixed
+        // thresholds set slightly below the current baseline absorb run-to-run
+        // variance; bump them deliberately when coverage rises.
+        autoUpdate: false,
+        branches: 27,
+        functions: 24,
+        lines: 28,
+        statements: 28,
       },
       enabled: true,
       reportOnFailure: true,

@@ -260,7 +260,7 @@ process. By participating you agree to our
 
 ## License
 
-MIT License - Copyright (c) 2025 Beruflichen Schulen Obersberg
+MIT License - Copyright (c) 2025 Berufliche Schulen Obersberg, Sebastian Schmitt, and Valentin Röhle
 
 ---
 
