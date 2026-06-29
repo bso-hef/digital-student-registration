@@ -252,7 +252,13 @@ const AgreementsManager: React.FC<AgreementsManagerProps> = ({
 
                         {/* Icon Display */}
                         {agreement.icon && (
-                          <Box display="flex" alignItems="center" pr={1}>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              pr: 1,
+                            }}
+                          >
                             <DynamicMuiIcon
                               iconName={agreement.icon}
                               fontSize="medium"
@@ -308,7 +314,13 @@ const AgreementsManager: React.FC<AgreementsManagerProps> = ({
                         </LabelSection>
 
                         <ActionsSection>
-                          <Box display="flex" alignItems="center" gap={1}>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 1,
+                            }}
+                          >
                             <SwitchLabel>{t("general.Active")}</SwitchLabel>
                             <AppleSwitch
                               checked={agreement.enabled}

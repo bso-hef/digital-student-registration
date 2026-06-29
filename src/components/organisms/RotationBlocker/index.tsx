@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import { SCREEN_BLOCKER_TYPES } from "@/constants/general.constants";
+import { useDeviceTypeDetection } from "@/hooks/useDeviceTypeDetection";
 import ScreenRotationRoundedIcon from "@mui/icons-material/ScreenRotationRounded";
 import { Box, Fade, Typography, styled } from "@mui/material";
-import { useDeviceTypeDetection } from "device-type-detection";
 import { useTranslation } from "react-i18next";
 
 const Wrapper = styled(Box)(({ theme }) => ({
@@ -49,39 +49,21 @@ const RotationBlocker = ({
     isTabletVertical,
     isTabletHorizontal,
   } = useDeviceTypeDetection();
-  const [isBlocked, setIsBlocked] = useState(false);
 
   const isBlockedLandscape = blockerType === SCREEN_BLOCKER_TYPES.LANDSCAPE;
   const isBlockedPortrait = blockerType === SCREEN_BLOCKER_TYPES.PORTRAIT;
 
-  useEffect(() => {
-    let shouldBlock = false;
-
-    if (isBlockedLandscape) {
-      if (
-        (isMobile && isMobileHorizontal) ||
-        (isTablet && isTabletHorizontal)
-      ) {
-        shouldBlock = true;
-      }
-    } else if (isBlockedPortrait) {
-      if ((isMobile && isMobileVertical) || (isTablet && isTabletVertical)) {
-        shouldBlock = true;
-      }
+  // Derive blocked state during render from the current device flags
+  let isBlocked = false;
+  if (isBlockedLandscape) {
+    if ((isMobile && isMobileHorizontal) || (isTablet && isTabletHorizontal)) {
+      isBlocked = true;
     }
-
-    setIsBlocked(shouldBlock);
-  }, [
-    blockerType,
-    isMobile,
-    isTablet,
-    isMobileHorizontal,
-    isMobileVertical,
-    isTabletHorizontal,
-    isTabletVertical,
-    isBlockedLandscape,
-    isBlockedPortrait,
-  ]);
+  } else if (isBlockedPortrait) {
+    if ((isMobile && isMobileVertical) || (isTablet && isTabletVertical)) {
+      isBlocked = true;
+    }
+  }
 
   useEffect(() => {
     if (typeof onBlocked === "function") {

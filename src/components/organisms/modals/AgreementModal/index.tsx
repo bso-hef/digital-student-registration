@@ -75,6 +75,7 @@ const AgreementModal: React.FC<Props> = ({
   useEffect(() => {
     if (open && agreement) {
       // Edit mode - populate with existing data
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- one-shot form initialization synced to modal open/agreement change; fields are user-editable afterwards, so this cannot be derived during render
       setKey(agreement.key);
       setLabelEn(agreement.labels.en);
       setLabelDe(agreement.labels.de);
@@ -109,6 +110,7 @@ const AgreementModal: React.FC<Props> = ({
   useEffect(() => {
     if (!isEditMode && labelEn && !touched.key) {
       const generatedKey = generateKey(labelEn);
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- auto-fills the user-editable key field from the label until the user touches it; key is independently editable so it cannot be a pure derived value
       setKey(generatedKey);
     }
   }, [labelEn, isEditMode, touched.key, generateKey]);

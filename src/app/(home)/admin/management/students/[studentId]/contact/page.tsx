@@ -110,7 +110,9 @@ const ContactStudentSettingsTab = () => {
               <Fragment>
                 <StyledHalfBox>
                   <Form>
-                    <Box display="flex" flexDirection="column" gap={2}>
+                    <Box
+                      sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+                    >
                       <Field
                         component={TextField}
                         name="email"
@@ -134,7 +136,9 @@ const ContactStudentSettingsTab = () => {
                 </StyledHalfBox>
                 <StyledHalfBox>
                   <Form>
-                    <Box display="flex" flexDirection="column" gap={2}>
+                    <Box
+                      sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+                    >
                       <Field
                         component={TextField}
                         name="street"

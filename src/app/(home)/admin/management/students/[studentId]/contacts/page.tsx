@@ -138,7 +138,7 @@ const ContactsStudentSettingsTab = () => {
       city: cp.address?.city || "",
       zip: cp.address?.zip || "",
     }));
-  }, [currentStudent?.contactPersons]);
+  }, [currentStudent]);
 
   const initialValues = {
     contactPersons: mapContactPersonsToForm(),
@@ -203,11 +203,16 @@ const ContactsStudentSettingsTab = () => {
               <Form>
                 <FieldArray name="contactPersons">
                   {({ push, remove }) => (
-                    <Box display="flex" flexDirection="column" gap={2}>
+                    <Box
+                      sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+                    >
                       {values.contactPersons.map((_, index) => (
                         <ContactPersonCard key={index}>
                           <ContactPersonHeader>
-                            <Typography variant="subtitle1" fontWeight={600}>
+                            <Typography
+                              variant="subtitle1"
+                              sx={{ fontWeight: 600 }}
+                            >
                               {t("settings.manageStudent.contactPerson")} #
                               {index + 1}
                             </Typography>
@@ -292,7 +297,10 @@ const ContactsStudentSettingsTab = () => {
 
                           <Divider />
 
-                          <Typography variant="body2" color="text.secondary">
+                          <Typography
+                            variant="body2"
+                            sx={{ color: "text.secondary" }}
+                          >
                             {t("settings.manageStudent.address")}
                           </Typography>
 

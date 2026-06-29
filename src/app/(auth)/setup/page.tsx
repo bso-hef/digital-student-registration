@@ -463,7 +463,10 @@ export default function SetupPage() {
                     <Typography variant="h5" gutterBottom>
                       {t("auth.setup.email.title")}
                     </Typography>
-                    <Typography variant="body1" color="text.information">
+                    <Typography
+                      variant="body1"
+                      sx={{ color: "text.information" }}
+                    >
                       {t("auth.setup.email.description")}
                     </Typography>
                     <br />
@@ -514,7 +517,7 @@ export default function SetupPage() {
                     <Typography variant="h5" gutterBottom>
                       {t("auth.setup.password.title")}
                     </Typography>
-                    <Typography variant="body1" paragraph>
+                    <Typography variant="body1" sx={{ mb: 2 }}>
                       {t("auth.setup.password.description")}
                     </Typography>
                     <PasswordInput
@@ -580,7 +583,7 @@ export default function SetupPage() {
                       {t("auth.setup.recovery.warning")}
                     </StyledAlertError>
 
-                    <Typography variant="body1" paragraph>
+                    <Typography variant="body1" sx={{ mb: 2 }}>
                       {t("auth.setup.recovery.codeLabel")}
                     </Typography>
 
@@ -632,7 +635,7 @@ export default function SetupPage() {
                     <Typography variant="h5" gutterBottom>
                       {t("auth.setup.confirmation.title")}
                     </Typography>
-                    <Typography variant="body1" paragraph>
+                    <Typography variant="body1" sx={{ mb: 2 }}>
                       {t("auth.setup.confirmation.description")}
                     </Typography>
 
@@ -653,9 +656,9 @@ export default function SetupPage() {
                     />
                     {touched.recoveryCodeSaved && errors.recoveryCodeSaved && (
                       <Typography
-                        color="error"
                         variant="caption"
-                        display="block"
+                        color="error"
+                        sx={{ display: "block" }}
                       >
                         {errors.recoveryCodeSaved}
                       </Typography>

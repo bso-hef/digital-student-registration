@@ -104,7 +104,6 @@ const AddStudentModal: React.FC<AddStudentModalProps> = ({
   const dispatch: AppDispatch = useDispatch();
   const [state, setState] = useState<StudentFormRow[]>([]);
   const [editableCsvData, setEditableCsvData] = useState<ParsedStudent[]>([]);
-  const [isFormValid, setIsFormValid] = useState(false);
   const [missingClassesModalOpen, setMissingClassesModalOpen] = useState(false);
   const [missingClasses, setMissingClasses] = useState<string[]>([]);
   const [isCheckingClasses, setIsCheckingClasses] = useState(false);
@@ -118,6 +117,7 @@ const AddStudentModal: React.FC<AddStudentModalProps> = ({
   // Update progress step based on current loading state
   useEffect(() => {
     if (isParsingCSV) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- sticky progress step synced from loading flags; retains last step when all flags are false, so not derivable
       setCurrentProgressStep("parsing");
     } else if (isCheckingClasses) {
       setCurrentProgressStep("checking_classes");
@@ -143,6 +143,7 @@ const AddStudentModal: React.FC<AddStudentModalProps> = ({
   // Initialize editable CSV data when csvData changes
   useEffect(() => {
     if (csvData.length > 0 && isComprehensiveCSV) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- seeds editable working copy from csvData prop; user then mutates it independently, so it can't be derived
       setEditableCsvData([...csvData]);
     }
   }, [csvData, isComprehensiveCSV]);
@@ -215,6 +216,7 @@ const AddStudentModal: React.FC<AddStudentModalProps> = ({
   );
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- seeds an initial empty editable form row on mount
     setState([
       ...state,
       {
@@ -231,6 +233,7 @@ const AddStudentModal: React.FC<AddStudentModalProps> = ({
 
   useEffect(() => {
     if (!open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- resets editable form state when the modal closes/opens (open prop flip)
       setState([]);
       setEditableCsvData([]);
       return;
@@ -259,12 +262,13 @@ const AddStudentModal: React.FC<AddStudentModalProps> = ({
         touched: true,
       }));
 
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- seeds editable form rows from csvData prop; rows are edited independently afterwards, so not derivable
       setState(mappedData);
     }
   }, [csvData]);
 
-  useEffect(() => {
-    // Check if all students are valid
+  // Check if all students are valid (derived from form state during render)
+  const isFormValid = useMemo(() => {
     if (isComprehensiveCSV && editableCsvData.length > 0) {
       // For comprehensive CSV, check editable data
       const allValid = editableCsvData.every(
@@ -273,17 +277,15 @@ const AddStudentModal: React.FC<AddStudentModalProps> = ({
           student.lastName?.trim() !== "" &&
           student.dateOfBirth?.trim() !== "",
       );
-      setIsFormValid(allValid && editableCsvData.length > 0);
-    } else {
-      // For simple form, check state
-      const allValid = state.every(
-        (student) =>
-          student.firstName.trim() !== "" &&
-          student.lastName.trim() !== "" &&
-          student.dateOfBirth !== null,
-      );
-      setIsFormValid(allValid);
+      return allValid && editableCsvData.length > 0;
     }
+    // For simple form, check state
+    return state.every(
+      (student) =>
+        student.firstName.trim() !== "" &&
+        student.lastName.trim() !== "" &&
+        student.dateOfBirth !== null,
+    );
   }, [state, editableCsvData, isComprehensiveCSV]);
 
   // Actually perform the import
@@ -455,14 +457,17 @@ const AddStudentModal: React.FC<AddStudentModalProps> = ({
             variant="outlined"
           />
         )}
-        <Typography variant="body2" color="text.secondary" sx={{ ml: "auto" }}>
+        <Typography
+          variant="body2"
+          sx={{ color: "text.secondary", ml: "auto" }}
+        >
           {t("modals.addStudent.totalStudents", {
             count: validationSummary.total,
           })}
         </Typography>
       </StyledSummaryBox>
 
-      <Typography variant="caption" color="text.secondary">
+      <Typography variant="caption" sx={{ color: "text.secondary" }}>
         {t("modals.addStudent.clickToExpand")}
       </Typography>
 
@@ -534,7 +539,7 @@ const AddStudentModal: React.FC<AddStudentModalProps> = ({
               slotProps={{
                 textField: {
                   sx: { height: 50 },
-                  InputProps: { sx: { height: 50 } },
+                  slotProps: { input: { sx: { height: 50 } } },
                   size: "small",
                   error: item.touched && !item.dateOfBirth,
                 },

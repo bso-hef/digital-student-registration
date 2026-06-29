@@ -1,4 +1,3 @@
-import { THEME } from "@/constants/general.constants";
 import type { Theme } from "@mui/material";
 import { describe, expect, it, vi } from "vitest";
 

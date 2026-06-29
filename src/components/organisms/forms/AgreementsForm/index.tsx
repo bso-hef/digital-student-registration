@@ -132,12 +132,12 @@ const AgreementsForm: React.FC<AgreementsFormProps> = ({
       };
       validateAndNotify();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps, react-hooks/refs -- intentionally re-run validation when Formik's values change; reading formikRef.current.values here is the existing, behavior-correct trigger
   }, [formikRef?.current?.values, enabledAgreements, onValidationChange]);
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" padding={4}>
+      <Box sx={{ display: "flex", justifyContent: "center", padding: 4 }}>
         <Typography variant="body2" color="text.secondary">
           {t("general.loading")}
         </Typography>
@@ -147,7 +147,7 @@ const AgreementsForm: React.FC<AgreementsFormProps> = ({
 
   if (enabledAgreements.length === 0) {
     return (
-      <Box display="flex" justifyContent="center" padding={4}>
+      <Box sx={{ display: "flex", justifyContent: "center", padding: 4 }}>
         <Typography variant="body2" color="text.secondary">
           {t("onboarding.agreements.noAgreements")}
         </Typography>

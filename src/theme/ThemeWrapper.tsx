@@ -29,29 +29,36 @@ export default function ThemeWrapper({
   // Use Redux state directly - redux-persist handles persistence
   const userSelectedMode = currentTheme ?? THEME.LIGHT;
 
-  // Resolve the actual theme mode (converts "auto" to "light" or "dark")
-  const [resolvedMode, setResolvedMode] = useState<PaletteMode>(
-    () => resolveThemeMode(userSelectedMode) as PaletteMode,
-  );
+  // Resolve the base theme mode during render (converts "auto" to "light"/"dark")
+  const baseResolvedMode = resolveThemeMode(userSelectedMode) as PaletteMode;
+
+  // Tracks live system theme changes while in auto mode; null = use base
+  const [systemMode, setSystemMode] = useState<PaletteMode | null>(null);
 
   // Subscribe to system theme changes when in auto mode
   useEffect(() => {
-    // Update resolved mode when user selection changes
-    setResolvedMode(resolveThemeMode(userSelectedMode) as PaletteMode);
-
     // Only subscribe if user selected auto mode
     if (userSelectedMode !== THEME.AUTO) {
       return; // No cleanup needed
     }
 
-    // Subscribe to system theme changes
+    // Subscribe to system theme changes; reset on unmount/mode change so a
+    // stale system value can never leak into a non-auto render
     const unsubscribe = subscribeToThemeChanges((newTheme) => {
-      setResolvedMode(newTheme as PaletteMode);
+      setSystemMode(newTheme as PaletteMode);
     });
 
-    // Cleanup subscription on unmount or when theme changes
-    return unsubscribe;
+    return () => {
+      unsubscribe();
+      setSystemMode(null);
+    };
   }, [userSelectedMode]);
+
+  // While in auto mode, prefer the live system mode once observed
+  const resolvedMode =
+    userSelectedMode === THEME.AUTO && systemMode !== null
+      ? systemMode
+      : baseResolvedMode;
 
   // Get the theme with accessibility options
   const theme = getTheme(resolvedMode, { highContrast, dyslexiaFont });

@@ -25,7 +25,7 @@ vi.mock("@/store/actions/studentActions", () => ({
 }));
 
 // Mock device type detection
-vi.mock("device-type-detection", () => ({
+vi.mock("@/hooks/useDeviceTypeDetection", () => ({
   useDeviceTypeDetection: () => ({
     isMobile: false,
     isTabletVertical: false,

@@ -119,10 +119,12 @@ const SystemHealthWidget: React.FC<SystemHealthWidgetProps> = ({ health }) => {
       </DragHandle>
       <StyledCardContent>
         <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="space-between"
-          mb={2}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            mb: 2,
+          }}
         >
           <Title sx={{ mb: 0 }}>{t("dashboard.health.title")}</Title>
           <HealthIndicator
@@ -133,11 +135,13 @@ const SystemHealthWidget: React.FC<SystemHealthWidgetProps> = ({ health }) => {
 
         <Divider sx={{ my: 2 }} />
 
-        <Box mb={2}>
+        <Box sx={{ mb: 2 }}>
           <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="space-between"
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
           >
             <Typography variant="body2" color="text.secondary">
               {t("dashboard.health.database")}

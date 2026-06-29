@@ -193,6 +193,7 @@ const AdminProfilePage = () => {
   }, [t]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async data load that populates local form state from the profile API on mount
     fetchProfile();
   }, [fetchProfile]);
 
@@ -318,7 +319,7 @@ const AdminProfilePage = () => {
       <Wrapper>
         <AdminSettingsHeader title={t("settings.profile.title")} />
         <ContentWrapper>
-          <Box display="flex" justifyContent="center" py={4}>
+          <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
             <CircularProgress />
           </Box>
         </ContentWrapper>
@@ -360,7 +361,7 @@ const AdminProfilePage = () => {
                 expanded={profileExpanded}
                 onAction={() => setProfileExpanded(!profileExpanded)}
               >
-                <Box display="flex" flexDirection="column" gap={3}>
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
                   {/* Avatar Section */}
                   <Box>
                     <StyledTitle>
@@ -371,7 +372,7 @@ const AdminProfilePage = () => {
                         {!avatar && getInitials()}
                       </StyledAvatar>
                       <AvatarActions>
-                        <Box display="flex" gap={1}>
+                        <Box sx={{ display: "flex", gap: 1 }}>
                           <GeneralButton
                             label={
                               avatar
@@ -392,7 +393,10 @@ const AdminProfilePage = () => {
                             />
                           )}
                         </Box>
-                        <Typography variant="caption" color="text.secondary">
+                        <Typography
+                          variant="caption"
+                          sx={{ color: "text.secondary" }}
+                        >
                           {t("settings.profile.avatar.sizeLimit")}
                         </Typography>
                         <HiddenInput
@@ -543,7 +547,7 @@ const AdminProfilePage = () => {
                 expanded={securityExpanded}
                 onAction={() => setSecurityExpanded(!securityExpanded)}
               >
-                <Box display="flex" flexDirection="column" gap={2}>
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                   {/* Current Password */}
                   <TextField
                     name="currentPassword"
@@ -590,7 +594,9 @@ const AdminProfilePage = () => {
                     autoComplete="new-password"
                   />
 
-                  <Box display="flex" justifyContent="flex-end" mt={1}>
+                  <Box
+                    sx={{ display: "flex", justifyContent: "flex-end", mt: 1 }}
+                  >
                     <Button
                       type="submit"
                       variant="contained"

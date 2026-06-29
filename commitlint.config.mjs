@@ -10,7 +10,7 @@
  *   bugfix(classes): correct student count after deletion
  *   feature!: drop legacy onboarding endpoint   (breaking change)
  */
-export default {
+const config = {
   extends: ["@commitlint/config-conventional"],
   rules: {
     "type-enum": [
@@ -31,3 +31,5 @@ export default {
     "header-max-length": [2, "always", 120],
   },
 };
+
+export default config;

@@ -50,9 +50,11 @@ export default function NotFound() {
     <NotFoundContainer>
       <Stack
         spacing={3}
-        justifyContent="center"
-        alignItems="center"
-        textAlign="center"
+        sx={{
+          justifyContent: "center",
+          alignItems: "center",
+          textAlign: "center",
+        }}
       >
         <ErrorOutlineRoundedIcon sx={{ fontSize: 80, color: "error.main" }} />
         <StyledTitle>{`404 - ${t("error.Page not found")}`}</StyledTitle>

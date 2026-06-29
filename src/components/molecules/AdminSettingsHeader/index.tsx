@@ -78,9 +78,7 @@ const AdminSettingsHeader: React.FC<AdminSettingsHeaderProps> = ({
 
   return (
     <StyledHeader
-      mb={2}
-      px={3}
-      py={2}
+      sx={{ mb: 2, px: 3, py: 2 }}
       isSubHeader={isSubHeader}
       {...OtherProps}
     >

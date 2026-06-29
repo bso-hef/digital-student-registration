@@ -5,10 +5,10 @@ import {
 } from "@/server/utils/server.utils";
 import type {
   Document,
-  FilterQuery,
   Model,
   PaginateModel,
   PopulateOptions,
+  QueryFilter,
   UpdateQuery,
 } from "mongoose";
 import type { PaginateResult } from "mongoose";
@@ -78,7 +78,7 @@ export async function checkQueryString(query: {
 
 export async function getAllItems<T extends Document>(
   model: Model<T>,
-  query: FilterQuery<T>,
+  query: QueryFilter<T>,
 ): Promise<T[]> {
   try {
     return await model.find(query);
@@ -90,7 +90,7 @@ export async function getAllItems<T extends Document>(
 export async function getItems<T extends Document>(
   req: { query?: Record<string, unknown> },
   model: PaginateModel<T>,
-  query: FilterQuery<T>,
+  query: QueryFilter<T>,
 ) {
   const options = await listInitOptions(req);
   try {
@@ -160,7 +160,7 @@ export async function updateItem<T extends Document>(
 
 export async function updateOneItem<T extends Document>(
   model: Model<T>,
-  query: FilterQuery<T>,
+  query: QueryFilter<T>,
   updateData: UpdateQuery<T>,
   options: Record<string, unknown> = { upsert: false, new: true, multi: false },
 ) {
@@ -177,7 +177,7 @@ export async function updateOneItem<T extends Document>(
 
 export async function findOneAndUpdateItem<T extends Document>(
   model: Model<T>,
-  query: FilterQuery<T>,
+  query: QueryFilter<T>,
   updateData: UpdateQuery<T>,
   populateQuery?: string | PopulateOptions | (string | PopulateOptions)[],
   options: Record<string, unknown> = {
@@ -214,7 +214,7 @@ export async function findOneAndUpdateItem<T extends Document>(
 
 export async function updateManyItem<T extends Document>(
   model: Model<T>,
-  conditions: FilterQuery<T>,
+  conditions: QueryFilter<T>,
   updateData: UpdateQuery<T>,
 ) {
   try {
@@ -261,7 +261,7 @@ export async function softDeleteItem<T extends Document>(
 }
 
 export async function deleteManyItem<T extends Document>(
-  condition: FilterQuery<T>,
+  condition: QueryFilter<T>,
   model: Model<T>,
 ) {
   try {
@@ -277,7 +277,7 @@ export async function deleteManyItem<T extends Document>(
 
 export async function getItemsWithoutPaginate<T extends Document>(
   model: Model<T>,
-  query: FilterQuery<T>,
+  query: QueryFilter<T>,
   populateQuery?: string | PopulateOptions | (string | PopulateOptions)[],
 ): Promise<T[]> {
   try {
@@ -307,7 +307,7 @@ export async function getItemsWithoutPaginate<T extends Document>(
 
 export async function getOneItem<T extends Document>(
   model: Model<T>,
-  query: FilterQuery<T>,
+  query: QueryFilter<T>,
   projection: Record<string, unknown> | null = null,
 ): Promise<T | null> {
   try {

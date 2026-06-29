@@ -192,6 +192,7 @@ const DataTable: React.FC<DataTableProps> = ({
   // Handle clearing selection - only depends on clearSelected flag
   useEffect(() => {
     if (clearSelected) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- responds to a parent-driven clear command (clearSelected flag); imperative reset that also calls setClearSelected(false), not derivable in render
       setSelected([]);
       // Reset the flag after clearing
       setClearSelected?.(false);

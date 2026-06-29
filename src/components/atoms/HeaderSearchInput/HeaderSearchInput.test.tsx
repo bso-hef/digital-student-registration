@@ -275,7 +275,9 @@ describe("HeaderSearchInput", () => {
 
     it("should support aria-label", () => {
       renderWithProviders(
-        <HeaderSearchInput inputProps={{ "aria-label": "Search input" }} />,
+        <HeaderSearchInput
+          slotProps={{ htmlInput: { "aria-label": "Search input" } }}
+        />,
       );
 
       const input = screen.getByRole("textbox");
@@ -287,7 +289,7 @@ describe("HeaderSearchInput", () => {
         <div>
           <label id="search-label">Search</label>
           <HeaderSearchInput
-            inputProps={{ "aria-labelledby": "search-label" }}
+            slotProps={{ htmlInput: { "aria-labelledby": "search-label" } }}
           />
         </div>,
       );
@@ -448,9 +450,11 @@ describe("HeaderSearchInput", () => {
     it("should allow inputProps override", () => {
       renderWithProviders(
         <HeaderSearchInput
-          inputProps={{
-            style: { padding: "20px", fontSize: 16 },
-            maxLength: 50,
+          slotProps={{
+            htmlInput: {
+              style: { padding: "20px", fontSize: 16 },
+              maxLength: 50,
+            },
           }}
         />,
       );
@@ -462,8 +466,10 @@ describe("HeaderSearchInput", () => {
     it("should merge inputProps with defaults", () => {
       renderWithProviders(
         <HeaderSearchInput
-          inputProps={{
-            "data-testid": "custom-input",
+          slotProps={{
+            htmlInput: {
+              "data-testid": "custom-input",
+            },
           }}
         />,
       );
@@ -492,8 +498,10 @@ describe("HeaderSearchInput", () => {
     it("should allow end adornment via InputProps", () => {
       renderWithProviders(
         <HeaderSearchInput
-          InputProps={{
-            endAdornment: <span data-testid="end-adornment">X</span>,
+          slotProps={{
+            input: {
+              endAdornment: <span data-testid="end-adornment">X</span>,
+            },
           }}
         />,
       );

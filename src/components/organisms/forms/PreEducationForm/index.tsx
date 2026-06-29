@@ -233,16 +233,11 @@ const PreEducationForm: React.FC<PreEducationFormProps> = ({
               typeof option === "string" ? option : option.label
             }
             isOptionEqualToValue={(option, value) => {
-              if (typeof option === "string" && typeof value === "string") {
-                return option === value;
-              }
-              if (typeof option === "string" && typeof value !== "string") {
-                return option === value.value;
-              }
-              if (typeof option !== "string" && typeof value === "string") {
-                return option.value === value;
-              }
-              return option.value === value.value;
+              const optionValue =
+                typeof option === "string" ? option : option.value;
+              const compareValue =
+                typeof value === "string" ? value : value.value;
+              return optionValue === compareValue;
             }}
             value={
               getEnabledOptions(degreeOptions).find(

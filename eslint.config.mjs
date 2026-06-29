@@ -1,15 +1,7 @@
 // For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
-import { FlatCompat } from "@eslint/eslintrc";
+import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
+import nextTypescript from "eslint-config-next/typescript";
 import storybook from "eslint-plugin-storybook";
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
 
 const eslintConfig = [
   {
@@ -25,7 +17,10 @@ const eslintConfig = [
       "storybook-static/**",
     ],
   },
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  // eslint-config-next 16 ships native flat configs; import them directly
+  // instead of bridging the legacy shareable configs through FlatCompat.
+  ...nextCoreWebVitals,
+  ...nextTypescript,
   ...storybook.configs["flat/recommended"],
   {
     files: [
@@ -38,7 +33,12 @@ const eslintConfig = [
     ],
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
-      "@typescript-eslint/no-unused-vars": "warn",
+      // Tests use the `const { field, ...rest } = obj` idiom to omit a field;
+      // ignoreRestSiblings keeps those intentional bindings from being flagged.
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        { ignoreRestSiblings: true },
+      ],
     },
   },
   {
