@@ -47,14 +47,6 @@ interface FormValues {
 
 interface DuplicateData {
   exists: boolean;
-  student?: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    dateOfBirth: string;
-    updatedAt: string;
-    status: string;
-  };
   isRecentDuplicate: boolean;
   daysSinceUpdate?: number;
 }
@@ -105,13 +97,11 @@ const CreateStudentModal: React.FC<CreateStudentModalProps> = ({
       setProgress(60);
       setProgressLabel(t("modals.createStudent.creatingStudent"));
 
-      const { data } = await studentService.create([
-        {
-          firstName: values.firstName.trim(),
-          lastName: values.lastName.trim(),
-          dateOfBirth: values.dateOfBirth?.toDate() || null,
-        },
-      ]);
+      const { data } = await studentService.createPublic({
+        firstName: values.firstName.trim(),
+        lastName: values.lastName.trim(),
+        dateOfBirth: values.dateOfBirth?.toDate() || null,
+      });
 
       if (!data || !data.created || data.created.length === 0) {
         throw new Error("Failed to create student");
@@ -341,17 +331,16 @@ const CreateStudentModal: React.FC<CreateStudentModalProps> = ({
         )}
       </Formik>
 
-      {duplicateData && duplicateData.student && (
+      {duplicateData && pendingFormValues && (
         <DuplicateWarningModal
           open={duplicateWarningOpen}
           onClose={handleDuplicateCancel}
           onConfirm={handleDuplicateConfirm}
           studentData={{
-            firstName: duplicateData.student.firstName,
-            lastName: duplicateData.student.lastName,
-            dateOfBirth: duplicateData.student.dateOfBirth,
+            firstName: pendingFormValues.firstName,
+            lastName: pendingFormValues.lastName,
+            dateOfBirth: pendingFormValues.dateOfBirth?.toISOString() || "",
             daysSinceUpdate: duplicateData.daysSinceUpdate || 0,
-            status: duplicateData.student.status,
           }}
         />
       )}

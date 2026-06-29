@@ -1,6 +1,6 @@
-import { auth } from "@/lib/auth/auth";
 import { dbConnect } from "@/lib/config/mongo";
 import { norm } from "@/lib/config/norm";
+import { getClientIp, rateLimit } from "@/lib/rate-limit";
 import Logger from "@/lib/server-logger";
 import Student from "@/models/Student";
 import { parseDate } from "@/utils/date.utils";
@@ -9,6 +9,11 @@ import { NextRequest, NextResponse } from "next/server";
 export const runtime = "nodejs";
 
 const logger = new Logger("API <<==>> Students Check Duplicate");
+
+// This endpoint is public (no auth) and is an existence oracle, so throttle it
+// per IP to slow down enumeration.
+const RATE_LIMIT = 20;
+const RATE_WINDOW_SECONDS = 60;
 
 /**
  * Calculate days between two dates
@@ -21,14 +26,23 @@ const daysBetween = (date1: Date, date2: Date): number => {
 /**
  * GET /api/students/check-duplicate
  * Query params: firstName, lastName, dateOfBirth
- * Returns: { exists: boolean, student?: {...}, isRecentDuplicate: boolean }
+ * Public (unauthenticated). Returns only the minimum the warning UI needs:
+ * { exists: boolean, isRecentDuplicate: boolean, daysSinceUpdate?: number }.
+ * Never returns student identity, record id, or status (see PII note below).
  */
 export async function GET(request: NextRequest) {
   try {
-    // Check authentication
-    const session = await auth();
-    if (!session) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    const ip = getClientIp(request);
+    const limit = await rateLimit(
+      `students:check-duplicate:${ip}`,
+      RATE_LIMIT,
+      RATE_WINDOW_SECONDS,
+    );
+    if (!limit.allowed) {
+      return NextResponse.json(
+        { message: "Too many requests. Please try again later." },
+        { status: 429 },
+      );
     }
 
     await dbConnect();
@@ -62,20 +76,19 @@ export async function GET(request: NextRequest) {
     const firstNameNorm = norm(firstName.trim());
     const lastNameNorm = norm(lastName.trim());
 
-    // Query for existing students with same normalized names and DOB
+    // Query for existing students with same normalized names and DOB.
+    // This endpoint is public (no auth), so we only read the timestamp needed
+    // to decide recency — never the student's identity/status. See the trimmed
+    // response below.
     const existingStudent = await Student.findOne({
       firstNameNorm,
       lastNameNorm,
       dateOfBirth: dob,
     })
-      .select("_id firstName lastName dateOfBirth updatedAt status")
+      .select("_id updatedAt")
       .lean<{
         _id: unknown;
-        firstName: string;
-        lastName: string;
-        dateOfBirth: Date;
         updatedAt: Date;
-        status: string;
       }>();
 
     if (!existingStudent) {
@@ -101,17 +114,13 @@ export async function GET(request: NextRequest) {
       `Duplicate check: Found existing student (ID: ${existingStudent._id}), updated ${daysSinceUpdate} days ago`,
     );
 
+    // Public endpoint: return only the minimum the warning UI needs.
+    // Do NOT echo back the student's identity, record id, or status — the
+    // caller already knows the name/DOB they typed, and exposing existence +
+    // status to anonymous callers is a PII-enumeration risk (see SECURITY.md).
     return NextResponse.json(
       {
         exists: true,
-        student: {
-          id: existingStudent._id,
-          firstName: existingStudent.firstName,
-          lastName: existingStudent.lastName,
-          dateOfBirth: existingStudent.dateOfBirth,
-          updatedAt: existingStudent.updatedAt,
-          status: existingStudent.status,
-        },
         isRecentDuplicate,
         daysSinceUpdate,
       },
