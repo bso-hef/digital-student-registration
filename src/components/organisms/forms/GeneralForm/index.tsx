@@ -24,8 +24,7 @@ import {
   styled,
 } from "@mui/material";
 import dayjs from "dayjs";
-import { FormikProps } from "formik";
-import { Field, Form, Formik } from "formik";
+import { Field, Form, Formik, FormikProps } from "formik";
 import { Select, TextField } from "formik-mui";
 import { DatePicker } from "formik-mui-x-date-pickers";
 import { useTranslation } from "react-i18next";
@@ -147,7 +146,9 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
 
   const classOptions = useMemo(() => {
     if (!currentClass) return classes;
-    const currentClassExists = classes.some((item) => item._id === currentClass._id);
+    const currentClassExists = classes.some(
+      (item) => item._id === currentClass._id,
+    );
     return currentClassExists ? classes : [currentClass, ...classes];
   }, [classes, currentClass]);
 
@@ -252,12 +253,11 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
               options={classOptions}
               loading={classesLoading}
               getOptionLabel={(option) => option.name}
-              isOptionEqualToValue={(option, value) =>
-                option._id === value._id
-              }
+              isOptionEqualToValue={(option, value) => option._id === value._id}
               value={
-                classOptions.find((option) => option._id === values.currentClass) ||
-                null
+                classOptions.find(
+                  (option) => option._id === values.currentClass,
+                ) || null
               }
               onChange={(_, newValue) => {
                 setFieldValue("currentClass", newValue?._id || "");
