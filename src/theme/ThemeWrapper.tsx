@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useReducer } from "react";
 
 import { THEME } from "@/constants/general.constants";
 import { PaletteMode } from "@mui/material";
@@ -29,11 +29,14 @@ export default function ThemeWrapper({
   // Use Redux state directly - redux-persist handles persistence
   const userSelectedMode = currentTheme ?? THEME.LIGHT;
 
-  // Resolve the base theme mode during render (converts "auto" to "light"/"dark")
-  const baseResolvedMode = resolveThemeMode(userSelectedMode) as PaletteMode;
+  // Resolve the theme mode during render. For "auto" this reads the live system
+  // preference (getSystemTheme), so it is always current on every render.
+  const resolvedMode = resolveThemeMode(userSelectedMode) as PaletteMode;
 
-  // Tracks live system theme changes while in auto mode; null = use base
-  const [systemMode, setSystemMode] = useState<PaletteMode | null>(null);
+  // resolveThemeMode is not reactive on its own, so force a re-render when the
+  // OS theme changes while in auto mode. We only need a re-render trigger, not a
+  // stored value — which avoids any setState in the effect body or its cleanup.
+  const [, onSystemThemeChange] = useReducer((tick: number) => tick + 1, 0);
 
   // Subscribe to system theme changes when in auto mode
   useEffect(() => {
@@ -42,23 +45,8 @@ export default function ThemeWrapper({
       return; // No cleanup needed
     }
 
-    // Subscribe to system theme changes; reset on unmount/mode change so a
-    // stale system value can never leak into a non-auto render
-    const unsubscribe = subscribeToThemeChanges((newTheme) => {
-      setSystemMode(newTheme as PaletteMode);
-    });
-
-    return () => {
-      unsubscribe();
-      setSystemMode(null);
-    };
+    return subscribeToThemeChanges(() => onSystemThemeChange());
   }, [userSelectedMode]);
-
-  // While in auto mode, prefer the live system mode once observed
-  const resolvedMode =
-    userSelectedMode === THEME.AUTO && systemMode !== null
-      ? systemMode
-      : baseResolvedMode;
 
   // Get the theme with accessibility options
   const theme = getTheme(resolvedMode, { highContrast, dyslexiaFont });

@@ -30,6 +30,21 @@ const eslintConfig = [
   ...nextTypescript,
   ...storybook.configs["flat/recommended"],
   {
+    // Allow intentionally-unused arguments/variables prefixed with `_`
+    // (e.g. interface methods that must keep a parameter for signature
+    // compatibility, like the SSR noop redux-persist storage).
+    rules: {
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+        },
+      ],
+    },
+  },
+  {
     files: [
       "tests/**/*.ts",
       "tests/**/*.tsx",
