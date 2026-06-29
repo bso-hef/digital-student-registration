@@ -1,5 +1,6 @@
 import { dbConnect } from "@/lib/config/mongo";
 import { norm } from "@/lib/config/norm";
+import { getClientIp, rateLimit } from "@/lib/rate-limit";
 import Logger from "@/lib/server-logger";
 import Student from "@/models/Student";
 import { parseDate } from "@/utils/date.utils";
@@ -8,6 +9,11 @@ import { NextRequest, NextResponse } from "next/server";
 export const runtime = "nodejs";
 
 const logger = new Logger("API <<==>> Students Check Duplicate");
+
+// This endpoint is public (no auth) and is an existence oracle, so throttle it
+// per IP to slow down enumeration.
+const RATE_LIMIT = 20;
+const RATE_WINDOW_SECONDS = 60;
 
 /**
  * Calculate days between two dates
@@ -20,10 +26,25 @@ const daysBetween = (date1: Date, date2: Date): number => {
 /**
  * GET /api/students/check-duplicate
  * Query params: firstName, lastName, dateOfBirth
- * Returns: { exists: boolean, student?: {...}, isRecentDuplicate: boolean }
+ * Public (unauthenticated). Returns only the minimum the warning UI needs:
+ * { exists: boolean, isRecentDuplicate: boolean, daysSinceUpdate?: number }.
+ * Never returns student identity, record id, or status (see PII note below).
  */
 export async function GET(request: NextRequest) {
   try {
+    const ip = getClientIp(request);
+    const limit = await rateLimit(
+      `students:check-duplicate:${ip}`,
+      RATE_LIMIT,
+      RATE_WINDOW_SECONDS,
+    );
+    if (!limit.allowed) {
+      return NextResponse.json(
+        { message: "Too many requests. Please try again later." },
+        { status: 429 },
+      );
+    }
+
     await dbConnect();
 
     const { searchParams } = new URL(request.url);
