@@ -106,6 +106,43 @@ describe("studentReducer", () => {
       expect(state.data.nachname).toBe("Smith");
     });
 
+    it("should handle SET_STUDENT_ONBOARDING_CLASS", () => {
+      const action = {
+        type: TYPES.SET_STUDENT_ONBOARDING_CLASS,
+        payload: mockClass,
+      };
+
+      const state = studentReducer(initialState, action);
+
+      expect(state.currentClass).toEqual(mockClass);
+      expect(state.data.currentClass).toBe("class1");
+      expect(state.data.currentClassData).toEqual(mockClass);
+      expect(state.data.klassenname).toBe("Class A");
+    });
+
+    it("should clear class fields when SET_STUDENT_ONBOARDING_CLASS receives null", () => {
+      const existingState = {
+        ...initialState,
+        currentClass: mockClass,
+        data: {
+          currentClass: "class1",
+          currentClassData: mockClass,
+          klassenname: "Class A",
+        } as StudentData,
+      };
+      const action = {
+        type: TYPES.SET_STUDENT_ONBOARDING_CLASS,
+        payload: null,
+      };
+
+      const state = studentReducer(existingState, action);
+
+      expect(state.currentClass).toBe(null);
+      expect(state.data.currentClass).toBe("");
+      expect(state.data.currentClassData).toBe(null);
+      expect(state.data.klassenname).toBe("");
+    });
+
     it("should handle CLEAR_STUDENT_ONBOARDING_DATA", () => {
       const existingState = {
         ...initialState,
