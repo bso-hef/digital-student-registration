@@ -47,14 +47,6 @@ interface FormValues {
 
 interface DuplicateData {
   exists: boolean;
-  student?: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    dateOfBirth: string;
-    updatedAt: string;
-    status: string;
-  };
   isRecentDuplicate: boolean;
   daysSinceUpdate?: number;
 }
@@ -339,17 +331,16 @@ const CreateStudentModal: React.FC<CreateStudentModalProps> = ({
         )}
       </Formik>
 
-      {duplicateData && duplicateData.student && (
+      {duplicateData && pendingFormValues && (
         <DuplicateWarningModal
           open={duplicateWarningOpen}
           onClose={handleDuplicateCancel}
           onConfirm={handleDuplicateConfirm}
           studentData={{
-            firstName: duplicateData.student.firstName,
-            lastName: duplicateData.student.lastName,
-            dateOfBirth: duplicateData.student.dateOfBirth,
+            firstName: pendingFormValues.firstName,
+            lastName: pendingFormValues.lastName,
+            dateOfBirth: pendingFormValues.dateOfBirth?.toISOString() || "",
             daysSinceUpdate: duplicateData.daysSinceUpdate || 0,
-            status: duplicateData.student.status,
           }}
         />
       )}

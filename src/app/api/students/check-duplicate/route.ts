@@ -55,20 +55,19 @@ export async function GET(request: NextRequest) {
     const firstNameNorm = norm(firstName.trim());
     const lastNameNorm = norm(lastName.trim());
 
-    // Query for existing students with same normalized names and DOB
+    // Query for existing students with same normalized names and DOB.
+    // This endpoint is public (no auth), so we only read the timestamp needed
+    // to decide recency — never the student's identity/status. See the trimmed
+    // response below.
     const existingStudent = await Student.findOne({
       firstNameNorm,
       lastNameNorm,
       dateOfBirth: dob,
     })
-      .select("_id firstName lastName dateOfBirth updatedAt status")
+      .select("_id updatedAt")
       .lean<{
         _id: unknown;
-        firstName: string;
-        lastName: string;
-        dateOfBirth: Date;
         updatedAt: Date;
-        status: string;
       }>();
 
     if (!existingStudent) {
@@ -94,17 +93,13 @@ export async function GET(request: NextRequest) {
       `Duplicate check: Found existing student (ID: ${existingStudent._id}), updated ${daysSinceUpdate} days ago`,
     );
 
+    // Public endpoint: return only the minimum the warning UI needs.
+    // Do NOT echo back the student's identity, record id, or status — the
+    // caller already knows the name/DOB they typed, and exposing existence +
+    // status to anonymous callers is a PII-enumeration risk (see SECURITY.md).
     return NextResponse.json(
       {
         exists: true,
-        student: {
-          id: existingStudent._id,
-          firstName: existingStudent.firstName,
-          lastName: existingStudent.lastName,
-          dateOfBirth: existingStudent.dateOfBirth,
-          updatedAt: existingStudent.updatedAt,
-          status: existingStudent.status,
-        },
         isRecentDuplicate,
         daysSinceUpdate,
       },
