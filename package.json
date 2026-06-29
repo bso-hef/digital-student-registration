@@ -6,8 +6,17 @@
   "author": {
     "name": "Valentin Röhle"
   },
+  "contributors": [
+    {
+      "name": "Berufliche Schulen Obersberg"
+    },
+    {
+      "name": "Sebastian Schmitt",
+      "email": "se.schmitt@bso-hef.de"
+    }
+  ],
   "scripts": {
-    "dev": "next dev --turbopack --experimental-https",
+    "dev": "next dev --experimental-https",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

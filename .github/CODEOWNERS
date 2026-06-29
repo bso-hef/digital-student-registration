@@ -4,12 +4,12 @@
 # keep the fallback owner for full coverage.
 
 # Fallback owner for everything not matched below.
-*                       @EinfachValle
+*                       @EinfachValle @fdai2003
 
 # Backend / API routes and data models.
-/src/app/api/           @EinfachValle
-/src/models/            @EinfachValle
-/src/lib/               @EinfachValle
+/src/app/api/           @EinfachValle @fdai2003
+/src/models/            @EinfachValle @fdai2003
+/src/lib/               @EinfachValle @fdai2003
 
 # Repository governance: CI/CD, automation, and community health docs.
-/.github/               @EinfachValle
+/.github/               @EinfachValle @fdai2003
