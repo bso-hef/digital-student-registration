@@ -580,7 +580,7 @@
   },
   "onboarding": {
     "general": {
-      "onboardingIntoClass":  "Enrollment in the class",
+      "onboardingIntoClass": "Enrollment in the class",
       "title": "General Information",
       "schoolEntry": "School Entry Date",
       "schoolEntryDate": "School Entry Date",
