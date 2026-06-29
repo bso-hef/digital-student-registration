@@ -234,6 +234,7 @@ describe("dashboardActions", () => {
       const layout = {
         quickStats: ["totalStudents", "totalClasses", "onboardingProgress"],
         charts: ["registrationTrend", "recentActivity"],
+        isLocked: true,
       };
       localStorage.setItem("dashboard_layout", JSON.stringify(layout));
 

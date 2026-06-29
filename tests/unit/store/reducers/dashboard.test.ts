@@ -30,6 +30,7 @@ describe("dashboardReducer", () => {
         "classDistribution",
         "recentActivity",
       ],
+      isLocked: true,
     },
   };
 
