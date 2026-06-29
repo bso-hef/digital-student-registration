@@ -400,11 +400,13 @@ const LeftNavigation = () => {
                             selected={hasRoute(child.path)}
                             slotProps={{
                               primary: {
-                                fontSize: "16px !important",
-                                fontWeight: hasRoute(child.path) ? 500 : 400,
-                                color: hasRoute(child.path)
-                                  ? theme.palette.text.primary
-                                  : theme.palette.text.default,
+                                sx: {
+                                  fontSize: "16px !important",
+                                  fontWeight: hasRoute(child.path) ? 500 : 400,
+                                  color: hasRoute(child.path)
+                                    ? theme.palette.text.primary
+                                    : theme.palette.text.default,
+                                },
                               },
                             }}
                           />

@@ -159,9 +159,10 @@ globalThis.fetch = vi.fn();
 process.env.TZ = "UTC";
 
 /**
- * Mock device-type-detection package
- * This package uses lodash internally which causes CommonJS issues in Vitest
+ * Mock the local device-type-detection hook (wraps device-type-detection v2,
+ * which dropped its built-in React hook). Components import the hook from
+ * "@/hooks/useDeviceTypeDetection", so the mock must target that module.
  */
-vi.mock("device-type-detection", () => ({
+vi.mock("@/hooks/useDeviceTypeDetection", () => ({
   useDeviceTypeDetection: vi.fn(() => ({ isMobile: false })),
 }));

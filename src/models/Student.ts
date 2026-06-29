@@ -257,7 +257,7 @@ StudentSchema.pre(
     const classDoc = await ClassModel.findById(this.currentClass).lean<{
       requiresEmployerInfo?: boolean;
     } | null>();
-    if (classDoc && !Array.isArray(classDoc) && classDoc.requiresEmployerInfo) {
+    if (classDoc && classDoc.requiresEmployerInfo) {
       const e = (this.employer || {}) as Employer;
       const ok = e.companyName && e.contactName && e.contactEmail;
       if (!ok) {

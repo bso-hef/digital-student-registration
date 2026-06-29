@@ -96,7 +96,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
 
   // Calculate age from geburtsdatum
   const age = useMemo(() => {
-    if (!data?.geburtsdatum) return 0;
+    if (!data.geburtsdatum) return 0;
     return dayjs().diff(dayjs(data.geburtsdatum), "year");
   }, [data.geburtsdatum]);
 
