@@ -39,6 +39,29 @@ export const isValidRecoveryCode = (code: string): boolean => {
   return RECOVERY_CODE_REGEX.test(code);
 };
 
+export const STUDENT_NAME_MAX_LENGTH = 100;
+
+export const STUDENT_MIN_BIRTH_YEAR = 1900;
+
+/**
+ * A student name is valid when it is a non-empty string within the length cap.
+ * Pass the already-trimmed value.
+ */
+export const isValidStudentName = (name: string): boolean => {
+  return name.length > 0 && name.length <= STUDENT_NAME_MAX_LENGTH;
+};
+
+/**
+ * A birth date is valid when it is not in the future and not implausibly old.
+ * The UI date picker enforces `disableFuture`, but a direct API caller must not
+ * be trusted to — so this is enforced server-side too.
+ */
+export const isValidBirthDate = (date: Date): boolean => {
+  return (
+    date.getTime() <= Date.now() && date.getFullYear() >= STUDENT_MIN_BIRTH_YEAR
+  );
+};
+
 export const calculatePasswordStrength = (password: string): number => {
   const checks = validatePasswordStrength(password);
   let strength = 0;
