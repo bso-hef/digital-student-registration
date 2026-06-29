@@ -18,7 +18,7 @@ Instead, use one of the following private channels:
 
 1. **GitHub Security Advisories** (preferred) —
    [open a private advisory](https://github.com/bso-hef/digital-student-registration/security/advisories/new).
-2. **Email** — <roehlevalentin@gmail.com>.
+2. **Email** — <roehlevalentin@gmail.com> or <se.schmitt@bso-hef.de>.
 
 Please include as much of the following as you can:
 

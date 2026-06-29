@@ -34,21 +34,21 @@ const Root = styled(Box, {
   borderRadius: theme.spacing(2),
 }));
 
-const StyledDialog = styled(Dialog)<{ transparentBackdrop?: boolean }>(
-  ({ theme, transparentBackdrop }) => ({
-    "& .MuiBackdrop-root": transparentBackdrop
-      ? { backgroundColor: "transparent" }
-      : undefined,
-    "& .MuiDialog-paper": {
-      backgroundColor: theme.palette.surface.interface.base,
-      backgroundImage: "unset",
-      color: theme.palette.text.default,
-      borderRadius: theme.spacing(2),
-      margin: 0,
-      ...applicationScrollbar(theme),
-    },
-  }),
-);
+const StyledDialog = styled(Dialog, {
+  shouldForwardProp: (prop) => prop !== "transparentBackdrop",
+})<{ transparentBackdrop?: boolean }>(({ theme, transparentBackdrop }) => ({
+  "& .MuiBackdrop-root": transparentBackdrop
+    ? { backgroundColor: "transparent" }
+    : undefined,
+  "& .MuiDialog-paper": {
+    backgroundColor: theme.palette.surface.interface.base,
+    backgroundImage: "unset",
+    color: theme.palette.text.default,
+    borderRadius: theme.spacing(2),
+    margin: 0,
+    ...applicationScrollbar(theme),
+  },
+}));
 
 export const StyledDialogContent = styled(DialogContent)(({ theme }) => ({
   margin: 0,
