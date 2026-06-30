@@ -26,15 +26,33 @@ export const useAgreementSettings = () => {
       .sort((a: AgreementItem, b: AgreementItem) => a.order - b.order);
   };
 
+  /**
+   * Returns the label or description according to the language
+   *
+   * @param text
+   */
+  const getLocalizedAgreementText = (
+    text: AgreementItem["labels"] | AgreementItem["description"],
+  ): string => {
+    if (!text) return "";
+
+    const exactLanguage = i18n.resolvedLanguage || i18n.language;
+    const baseLanguage = exactLanguage?.split("-")[0];
+
+    return (
+      text[exactLanguage as keyof typeof text] ||
+      text[baseLanguage as keyof typeof text] ||
+      text.en ||
+      ""
+    );
+  };
+
   const getAgreementLabel = (agreement: AgreementItem): string => {
-    const lang = i18n.language as "en" | "de";
-    return agreement.labels[lang] || agreement.labels.en;
+    return getLocalizedAgreementText(agreement.labels);
   };
 
   const getAgreementDescription = (agreement: AgreementItem): string => {
-    if (!agreement.description) return "";
-    const lang = i18n.language as "en" | "de";
-    return agreement.description[lang] || agreement.description.en || "";
+    return getLocalizedAgreementText(agreement.description);
   };
 
   return {
