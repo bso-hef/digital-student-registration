@@ -4,7 +4,7 @@ import {
   getStudentSteps,
 } from "@/constants/studentSteps.constants";
 import { ClassInterface } from "@/types/class.d";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
 // Mock translation function
 const mockT = (key: string) => key;

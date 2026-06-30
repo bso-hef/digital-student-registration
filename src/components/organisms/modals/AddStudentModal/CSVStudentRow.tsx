@@ -181,7 +181,7 @@ const CSVStudentRow: React.FC<CSVStudentRowProps> = ({
         hasWarning={hasWarning}
         onClick={() => setExpanded(!expanded)}
       >
-        <Box display="flex" alignItems="center">
+        <Box sx={{ display: "flex", alignItems: "center" }}>
           {expanded ? (
             <KeyboardArrowUpRoundedIcon fontSize="small" />
           ) : (
@@ -192,8 +192,7 @@ const CSVStudentRow: React.FC<CSVStudentRowProps> = ({
         <StyledHeaderInfo>
           <StyledHeaderText
             variant="body2"
-            fontWeight={500}
-            sx={{ minWidth: 150 }}
+            sx={{ fontWeight: 500, minWidth: 150 }}
           >
             {summaryText}
           </StyledHeaderText>

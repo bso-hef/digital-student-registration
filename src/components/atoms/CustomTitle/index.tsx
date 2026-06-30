@@ -1,7 +1,7 @@
 import React from "react";
 
+import { useDeviceTypeDetection } from "@/hooks/useDeviceTypeDetection";
 import { Box, Typography, styled } from "@mui/material";
-import { useDeviceTypeDetection } from "device-type-detection";
 
 const TitleBox = styled(Box, {
   shouldForwardProp: (prop) => prop !== "showMobileView",

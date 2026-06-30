@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useReducer } from "react";
 
 import { THEME } from "@/constants/general.constants";
 import { PaletteMode } from "@mui/material";
@@ -29,28 +29,23 @@ export default function ThemeWrapper({
   // Use Redux state directly - redux-persist handles persistence
   const userSelectedMode = currentTheme ?? THEME.LIGHT;
 
-  // Resolve the actual theme mode (converts "auto" to "light" or "dark")
-  const [resolvedMode, setResolvedMode] = useState<PaletteMode>(
-    () => resolveThemeMode(userSelectedMode) as PaletteMode,
-  );
+  // Resolve the theme mode during render. For "auto" this reads the live system
+  // preference (getSystemTheme), so it is always current on every render.
+  const resolvedMode = resolveThemeMode(userSelectedMode) as PaletteMode;
+
+  // resolveThemeMode is not reactive on its own, so force a re-render when the
+  // OS theme changes while in auto mode. We only need a re-render trigger, not a
+  // stored value — which avoids any setState in the effect body or its cleanup.
+  const [, onSystemThemeChange] = useReducer((tick: number) => tick + 1, 0);
 
   // Subscribe to system theme changes when in auto mode
   useEffect(() => {
-    // Update resolved mode when user selection changes
-    setResolvedMode(resolveThemeMode(userSelectedMode) as PaletteMode);
-
     // Only subscribe if user selected auto mode
     if (userSelectedMode !== THEME.AUTO) {
       return; // No cleanup needed
     }
 
-    // Subscribe to system theme changes
-    const unsubscribe = subscribeToThemeChanges((newTheme) => {
-      setResolvedMode(newTheme as PaletteMode);
-    });
-
-    // Cleanup subscription on unmount or when theme changes
-    return unsubscribe;
+    return subscribeToThemeChanges(() => onSystemThemeChange());
   }, [userSelectedMode]);
 
   // Get the theme with accessibility options

@@ -462,7 +462,12 @@ export async function POST(request: Request) {
     }
 
     // Create students with verification codes
-    const result = await Student.create(docs);
+    const result = (await Student.create(docs)) as Array<{
+      _id: { toString(): string };
+      firstName: string;
+      lastName: string;
+      currentClass?: { toString(): string } | null;
+    }>;
 
     // Update class student counts for affected classes
     if (classMap.size > 0) {

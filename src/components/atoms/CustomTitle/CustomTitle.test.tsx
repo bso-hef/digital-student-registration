@@ -1,5 +1,5 @@
+import * as deviceTypeDetection from "@/hooks/useDeviceTypeDetection";
 import { screen } from "@testing-library/react";
-import * as deviceTypeDetection from "device-type-detection";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { renderWithProviders } from "../../../../tests/utils/test-utils";
@@ -11,7 +11,7 @@ import CustomTitle from "./index";
  */
 
 // Mock device-type-detection
-vi.mock("device-type-detection", () => ({
+vi.mock("@/hooks/useDeviceTypeDetection", () => ({
   useDeviceTypeDetection: vi.fn(),
 }));
 
@@ -25,7 +25,6 @@ describe("CustomTitle", () => {
       isTabletHorizontal: false,
       isDesktop: true,
       isLaptop: false,
-      isBigScreen: false,
     });
   });
 
@@ -86,7 +85,6 @@ describe("CustomTitle", () => {
         isTabletHorizontal: false,
         isDesktop: true,
         isLaptop: false,
-        isBigScreen: false,
       });
     });
 
@@ -132,7 +130,6 @@ describe("CustomTitle", () => {
         isTabletHorizontal: false,
         isDesktop: false,
         isLaptop: false,
-        isBigScreen: false,
       });
     });
 
@@ -174,7 +171,6 @@ describe("CustomTitle", () => {
         isTabletHorizontal: false,
         isDesktop: false,
         isLaptop: false,
-        isBigScreen: false,
       });
     });
 
@@ -349,7 +345,6 @@ describe("CustomTitle", () => {
         isTabletHorizontal: false,
         isDesktop: false,
         isLaptop: false,
-        isBigScreen: false,
       });
 
       rerender(<CustomTitle title="Responsive" />);
@@ -365,7 +360,6 @@ describe("CustomTitle", () => {
         isTabletHorizontal: false,
         isDesktop: true,
         isLaptop: false,
-        isBigScreen: false,
       });
 
       const { rerender } = renderWithProviders(
@@ -381,7 +375,6 @@ describe("CustomTitle", () => {
         isTabletHorizontal: false,
         isDesktop: false,
         isLaptop: false,
-        isBigScreen: false,
       });
 
       rerender(<CustomTitle title="Transition" />);

@@ -69,6 +69,7 @@ const AddStudentsToClassModal: React.FC<Props> = ({
   // Fetch all active students when modal opens
   useEffect(() => {
     if (!open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- resets the user-editable selection when the modal closes; this effect also triggers an async fetch on open, so it is genuine synchronization, not derived state
       setSelectedStudents([]);
       return;
     }
@@ -118,10 +119,12 @@ const AddStudentsToClassModal: React.FC<Props> = ({
     <FormWrap>
       {loading ? (
         <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          minHeight={200}
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            minHeight: 200,
+          }}
         >
           <CircularProgress />
         </Box>
@@ -178,10 +181,10 @@ const AddStudentsToClassModal: React.FC<Props> = ({
                 </li>
               );
             }}
-            renderTags={(value, getTagProps) =>
+            renderValue={(value, getItemProps) =>
               value.map((option, index) => (
                 <Chip
-                  {...getTagProps({ index })}
+                  {...getItemProps({ index })}
                   key={option._id}
                   label={`${option.firstName} ${option.lastName}`}
                   size="small"

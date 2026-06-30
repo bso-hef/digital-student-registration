@@ -13,7 +13,7 @@ Report violations to <roehlevalentin@gmail.com> or <se.schmitt@bso-hef.de>.
 
 | Tool    | Version    | Notes                          |
 | ------- | ---------- | ------------------------------ |
-| Node.js | `v22.20.0` | Pinned in [`.nvmrc`](./.nvmrc) |
+| Node.js | `v22.22.3` | Pinned in [`.nvmrc`](./.nvmrc) |
 | Yarn    | `1.22.22`  | Classic (v1) — not Berry       |
 | MongoDB | `7.0+`     | Local install or via Docker    |
 | Git     | Latest     |                                |

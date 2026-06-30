@@ -11,9 +11,9 @@ import {
   getActiveSteps,
   getStudentSteps,
 } from "@/constants/studentSteps.constants";
+import { useDeviceTypeDetection } from "@/hooks/useDeviceTypeDetection";
 import { applicationScrollbar } from "@/utils/styling.utils";
 import { Box, styled, useTheme } from "@mui/material";
-import { useDeviceTypeDetection } from "device-type-detection";
 import { usePathname } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";

@@ -158,7 +158,7 @@ const SummaryForm: React.FC<SummaryFormProps> = ({
     return (
       <DataRow>
         <StyledDataRowLabel>{label}:</StyledDataRowLabel>
-        <Box display="flex" alignItems="center" gap={1}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <CheckCircleRoundedIcon
             fontSize="small"
             sx={{

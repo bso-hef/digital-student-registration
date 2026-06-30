@@ -113,8 +113,17 @@ const AccessibilityMenu = () => {
       )}
 
       <StyledDrawer anchor="right" open={openMenu} onClose={handleToggleMenu}>
-        <Box display="flex" justifyContent="space-between" alignItems="center">
-          <Typography variant="h6" fontWeight="bold" color="text.default">
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Typography
+            variant="h6"
+            sx={{ fontWeight: "bold", color: "text.default" }}
+          >
             {t("general.Accessibility")}
           </Typography>
           <SmallIconButton
@@ -142,11 +151,13 @@ const AccessibilityMenu = () => {
             {/* High Contrast Mode */}
             <Box>
               <Box
-                display="flex"
-                alignItems="center"
-                justifyContent="space-between"
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
               >
-                <Box flex={1}>
+                <Box sx={{ flex: 1 }}>
                   <StyledButtonLabel sx={{ mb: 0.5 }}>
                     {t("accessibility.High Contrast Mode")}
                   </StyledButtonLabel>
@@ -157,8 +168,10 @@ const AccessibilityMenu = () => {
                 <AppleSwitch
                   checked={highContrast}
                   onChange={handleToggleHighContrast}
-                  inputProps={{
-                    "aria-label": t("accessibility.High Contrast Mode"),
+                  slotProps={{
+                    input: {
+                      "aria-label": t("accessibility.High Contrast Mode"),
+                    },
                   }}
                 />
               </Box>
@@ -167,11 +180,13 @@ const AccessibilityMenu = () => {
             {/* Dyslexia Font */}
             <Box>
               <Box
-                display="flex"
-                alignItems="center"
-                justifyContent="space-between"
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
               >
-                <Box flex={1}>
+                <Box sx={{ flex: 1 }}>
                   <StyledButtonLabel sx={{ mb: 0.5 }}>
                     {t("accessibility.Dyslexia Font")}
                   </StyledButtonLabel>
@@ -182,8 +197,10 @@ const AccessibilityMenu = () => {
                 <AppleSwitch
                   checked={dyslexiaFont}
                   onChange={handleToggleDyslexiaFont}
-                  inputProps={{
-                    "aria-label": t("accessibility.Dyslexia Font"),
+                  slotProps={{
+                    input: {
+                      "aria-label": t("accessibility.Dyslexia Font"),
+                    },
                   }}
                 />
               </Box>

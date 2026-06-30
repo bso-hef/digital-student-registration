@@ -220,43 +220,45 @@ const PasswordInput: React.FC<PasswordInputProps> = memo(
               },
             },
           }}
-          InputProps={{
-            startAdornment: showPasswordStartIcon ? (
-              <InputAdornment position="start">
-                <HttpsRoundedIcon
-                  sx={{ color: (theme) => theme.palette.text.secondary }}
-                />
-              </InputAdornment>
-            ) : undefined,
-            endAdornment: (
-              <InputAdornment position="end">
-                {showCubeIcon && (
-                  <IconButton
-                    onClick={generatePassword}
-                    edge={showEyeIcon ? false : "end"}
+          slotProps={{
+            input: {
+              startAdornment: showPasswordStartIcon ? (
+                <InputAdornment position="start">
+                  <HttpsRoundedIcon
                     sx={{ color: (theme) => theme.palette.text.secondary }}
-                    aria-label={t("general.generatePassword")}
-                  >
-                    <CasinoRoundedIcon />
-                  </IconButton>
-                )}
-                {showEyeIcon && (
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword}
-                    onMouseDown={handleMouseDownPassword}
-                    edge="end"
-                    sx={{ color: (theme) => theme.palette.text.secondary }}
-                  >
-                    {showPassword ? (
-                      <VisibilityOffRounded />
-                    ) : (
-                      <VisibilityRounded />
-                    )}
-                  </IconButton>
-                )}
-              </InputAdornment>
-            ),
+                  />
+                </InputAdornment>
+              ) : undefined,
+              endAdornment: (
+                <InputAdornment position="end">
+                  {showCubeIcon && (
+                    <IconButton
+                      onClick={generatePassword}
+                      edge={showEyeIcon ? false : "end"}
+                      sx={{ color: (theme) => theme.palette.text.secondary }}
+                      aria-label={t("general.generatePassword")}
+                    >
+                      <CasinoRoundedIcon />
+                    </IconButton>
+                  )}
+                  {showEyeIcon && (
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                      sx={{ color: (theme) => theme.palette.text.secondary }}
+                    >
+                      {showPassword ? (
+                        <VisibilityOffRounded />
+                      ) : (
+                        <VisibilityRounded />
+                      )}
+                    </IconButton>
+                  )}
+                </InputAdornment>
+              ),
+            },
           }}
         />
         {showProgressBar && (

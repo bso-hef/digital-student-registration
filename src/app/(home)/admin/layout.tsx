@@ -4,6 +4,7 @@ import { useEffect } from "react";
 
 import LeftNavigation from "@/components/organisms/LeftNavigation";
 import MobileBlocker from "@/components/organisms/MobileBlocker";
+import { useDeviceTypeDetection } from "@/hooks/useDeviceTypeDetection";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { useAuth } from "@/lib/auth/useAuth";
 import { fetchProfile } from "@/store/actions/authActions";
@@ -11,7 +12,6 @@ import { getSettings } from "@/store/actions/settingsActions";
 import { AppDispatch, RootState } from "@/store/store";
 import { applicationScrollbar } from "@/utils/styling.utils";
 import { Box, CircularProgress, styled } from "@mui/material";
-import { useDeviceTypeDetection } from "device-type-detection";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 

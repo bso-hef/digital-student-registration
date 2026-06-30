@@ -11,7 +11,7 @@ import GeneralButton from "./index";
  */
 
 // Mock device-type-detection
-vi.mock("device-type-detection", () => ({
+vi.mock("@/hooks/useDeviceTypeDetection", () => ({
   useDeviceTypeDetection: () => ({
     isMobile: false,
     isMobileHorizontal: false,

@@ -234,6 +234,7 @@ const LeftNavigation = () => {
     const newOpen = listedRoutes(t).map(
       (route) => hasRoute(route.path) || hasActiveChild(route, pathname),
     );
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- open is a state machine: synced from the active route here, then independently toggled by handleClick; deriving during render would discard the user's manual expand/collapse
     setOpen(newOpen);
   }, [hasActiveChild, hasRoute, listedRoutes, pathname, t]);
 
@@ -246,8 +247,10 @@ const LeftNavigation = () => {
   return (
     <StyledWrapper>
       <StyledNavigation>
-        <Box width="100%">
-          <Box display="flex" justifyContent="center" width="100%">
+        <Box sx={{ width: "100%" }}>
+          <Box
+            sx={{ display: "flex", justifyContent: "center", width: "100%" }}
+          >
             <ActionsTooltip title={t("navigation.openMenu")} placement="bottom">
               <Box
                 onClick={handleAvatarClick}
@@ -312,7 +315,7 @@ const LeftNavigation = () => {
           </WelcomeContainer>
           <Divider sx={{ my: 2 }} />
         </Box>
-        <Box mb={2} width="100%">
+        <Box sx={{ mb: 2, width: "100%" }}>
           <GeneralInput
             style={{
               width: "282px",
@@ -395,12 +398,16 @@ const LeftNavigation = () => {
                           <StyledListItemText
                             primary={child.displayValue}
                             selected={hasRoute(child.path)}
-                            primaryTypographyProps={{
-                              fontSize: "16px !important",
-                              fontWeight: hasRoute(child.path) ? 500 : 400,
-                              color: hasRoute(child.path)
-                                ? theme.palette.text.primary
-                                : theme.palette.text.default,
+                            slotProps={{
+                              primary: {
+                                sx: {
+                                  fontSize: "16px !important",
+                                  fontWeight: hasRoute(child.path) ? 500 : 400,
+                                  color: hasRoute(child.path)
+                                    ? theme.palette.text.primary
+                                    : theme.palette.text.default,
+                                },
+                              },
                             }}
                           />
                         </StyledListItem>

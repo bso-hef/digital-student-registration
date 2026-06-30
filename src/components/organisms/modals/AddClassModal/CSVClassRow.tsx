@@ -169,7 +169,7 @@ const CSVClassRow: React.FC<CSVClassRowProps> = ({
         hasWarning={hasWarning}
         onClick={() => setExpanded(!expanded)}
       >
-        <Box display="flex" alignItems="center">
+        <Box sx={{ display: "flex", alignItems: "center" }}>
           {expanded ? (
             <KeyboardArrowUpRoundedIcon fontSize="small" />
           ) : (
@@ -180,8 +180,7 @@ const CSVClassRow: React.FC<CSVClassRowProps> = ({
         <StyledHeaderInfo>
           <StyledHeaderText
             variant="body2"
-            fontWeight={500}
-            sx={{ minWidth: 120 }}
+            sx={{ fontWeight: 500, minWidth: 120 }}
           >
             {classData.name || t("modals.addClass.newClass")}
           </StyledHeaderText>
@@ -293,7 +292,7 @@ const CSVClassRow: React.FC<CSVClassRowProps> = ({
 
           <Box sx={{ mt: 2 }}>
             <StyledSwitchRow>
-              <Typography fontWeight={500}>
+              <Typography sx={{ fontWeight: 500 }}>
                 {t("modals.addClass.companyClass")}
               </Typography>
               <AppleSwitch
@@ -304,7 +303,7 @@ const CSVClassRow: React.FC<CSVClassRowProps> = ({
               />
             </StyledSwitchRow>
             <StyledSwitchRow>
-              <Typography fontWeight={500}>
+              <Typography sx={{ fontWeight: 500 }}>
                 {t("modals.addClass.requiresEmployerInfo")}
               </Typography>
               <AppleSwitch
@@ -315,7 +314,7 @@ const CSVClassRow: React.FC<CSVClassRowProps> = ({
               />
             </StyledSwitchRow>
             <StyledSwitchRow>
-              <Typography fontWeight={500}>
+              <Typography sx={{ fontWeight: 500 }}>
                 {t("modals.addClass.active")}
               </Typography>
               <AppleSwitch

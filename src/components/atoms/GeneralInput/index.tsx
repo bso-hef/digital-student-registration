@@ -89,15 +89,17 @@ const GeneralInput: React.FC<GeneralInputProps> = ({
       multiline={multiline}
       rows={rows}
       helperText={helperText}
-      inputProps={inputProps}
-      InputProps={{
-        startAdornment: (
-          <InputAdornment position="start">
-            {showEmailStartIcon && <EmailRoundedIcon />}
-            {showUserStartIcon && <AccountCircleRoundedIcon />}
-            {showSearchStartIcon && <SearchRoundedIcon />}
-          </InputAdornment>
-        ),
+      slotProps={{
+        input: {
+          startAdornment: (
+            <InputAdornment position="start">
+              {showEmailStartIcon && <EmailRoundedIcon />}
+              {showUserStartIcon && <AccountCircleRoundedIcon />}
+              {showSearchStartIcon && <SearchRoundedIcon />}
+            </InputAdornment>
+          ),
+        },
+        htmlInput: inputProps,
       }}
     />
   );

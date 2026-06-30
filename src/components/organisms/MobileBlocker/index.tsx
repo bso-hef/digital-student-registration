@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
+import { useDeviceTypeDetection } from "@/hooks/useDeviceTypeDetection";
 import DesktopWindowsRoundedIcon from "@mui/icons-material/DesktopWindowsRounded";
 import { Box, Fade, Typography, styled } from "@mui/material";
-import { useDeviceTypeDetection } from "device-type-detection";
 import { useTranslation } from "react-i18next";
 
 const Wrapper = styled(Box)(({ theme }) => ({
@@ -44,12 +44,7 @@ interface MobileBlockerProps {
 const MobileBlocker = ({ enabled = true, onBlocked }: MobileBlockerProps) => {
   const { t } = useTranslation();
   const { isMobile, isTablet } = useDeviceTypeDetection();
-  const [isBlocked, setIsBlocked] = useState(false);
-
-  useEffect(() => {
-    const shouldBlock = enabled && (isMobile || isTablet);
-    setIsBlocked(shouldBlock);
-  }, [enabled, isMobile, isTablet]);
+  const isBlocked = enabled && (isMobile || isTablet);
 
   useEffect(() => {
     if (typeof onBlocked === "function") {

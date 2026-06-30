@@ -56,9 +56,11 @@ export default function GlobalError({ error, reset }: ErrorProps) {
     <ErrorContainer>
       <Stack
         spacing={3}
-        justifyContent="center"
-        alignItems="center"
-        textAlign="center"
+        sx={{
+          justifyContent: "center",
+          alignItems: "center",
+          textAlign: "center",
+        }}
       >
         <ReportProblemRoundedIcon
           sx={{ fontSize: 80, color: "warning.main", mb: 2 }}

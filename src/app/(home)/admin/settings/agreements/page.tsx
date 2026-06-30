@@ -66,6 +66,7 @@ const AdminSettingsAgreementsPage = () => {
       agreementSettings?.agreements &&
       agreementSettings.agreements.length > 0
     ) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- initializes editable local form state from fetched/redux agreement settings
       setLocalAgreements(agreementSettings.agreements);
     }
   }, [agreementSettings]);

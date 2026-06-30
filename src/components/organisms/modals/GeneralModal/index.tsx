@@ -154,14 +154,20 @@ const GeneralModal = ({
     <StyledDialog
       aria-labelledby="customized-dialog-title"
       onClose={(event, reason) => {
-        if (reason === "backdropClick" || reason === "escapeKeyDown") {
+        // MUI v9 removed the `disableEscapeKeyDown` prop; we prevent closing on
+        // backdrop click / escape key here instead. `disableBackdropClick`
+        // additionally keeps the dialog open while a blocking action runs.
+        if (
+          disableBackdropClick ||
+          reason === "backdropClick" ||
+          reason === "escapeKeyDown"
+        ) {
           return;
         }
         handleClose();
       }}
       open={open}
       maxWidth={maxWidth}
-      disableEscapeKeyDown={disableBackdropClick}
       transparentBackdrop={transparentBackdrop}
       slotProps={{ backdrop: { ...backdropProps } }}
       {...transitionProps}

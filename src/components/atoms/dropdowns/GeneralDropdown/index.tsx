@@ -151,14 +151,20 @@ const GeneralDropdown: React.FC<GeneralDropdownProps> = ({
               </Box>
             );
           }
-          // Fall back to placeholder for empty/null values without a matching option
+          // Fall back to placeholder for empty/null values without a matching option.
+          // Rendered in the Select display area (not a MenuList), so it must not be a
+          // MenuItem — MUI v9 throws "MenuListContext is missing" for MenuItems outside
+          // a Menu/MenuList. Use a plain muted text node instead.
           if (selected === "" || selected == null) {
-            return (
-              placeholder && (
-                <MenuItem value="" disabled>
-                  {placeholder}
-                </MenuItem>
-              )
+            return placeholder ? (
+              <Box
+                component="span"
+                sx={{ color: "text.secondary", lineHeight: "24px" }}
+              >
+                {placeholder}
+              </Box>
+            ) : (
+              ""
             );
           }
           return "";
@@ -189,7 +195,7 @@ const GeneralDropdown: React.FC<GeneralDropdownProps> = ({
                 </StyledLeftIcon>
               )}
               <StyledMenuItemText>{opt.label}</StyledMenuItemText>
-              <Box flexGrow={1} />
+              <Box sx={{ flexGrow: 1 }} />
               {isSelected && (
                 <StyledCheckIcon>
                   <CheckRoundedIcon />

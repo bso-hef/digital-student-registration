@@ -21,23 +21,19 @@ const ClassSchema = new Schema(
 );
 
 // Auto-calculate incomplete field based on grade
-ClassSchema.pre("save", function (next) {
+ClassSchema.pre("save", function () {
   // Set incomplete to true if grade is null, otherwise false
   this.incomplete = this.grade === null || this.grade === undefined;
-  next();
 });
 
-ClassSchema.pre("validate", function (next) {
+ClassSchema.pre("validate", function () {
   const from = this.get("schoolYearFrom") as Date | undefined;
   const to = this.get("schoolYearTo") as Date | undefined;
 
   if (!from || !to)
-    return next(
-      new Error("schoolYearFrom und schoolYearTo sind erforderlich."),
-    );
+    throw new Error("schoolYearFrom und schoolYearTo sind erforderlich.");
   if (to <= from)
-    return next(new Error("schoolYearTo muss NACH schoolYearFrom liegen."));
-  next();
+    throw new Error("schoolYearTo muss NACH schoolYearFrom liegen.");
 });
 
 ClassSchema.index(
