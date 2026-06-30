@@ -1,12 +1,10 @@
 import { useEffect } from "react";
 
-
 import { getAgreementSettings } from "@/store/actions/settingsActions";
 import { AppDispatch, RootState } from "@/store/store";
 import { AgreementItem } from "@/types/settings.d";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-
 
 export const useAgreementSettings = () => {
   const dispatch = useDispatch<AppDispatch>();

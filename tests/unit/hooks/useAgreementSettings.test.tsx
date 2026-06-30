@@ -1,8 +1,10 @@
 import React from "react";
 
+
 import { useAgreementSettings } from "@/hooks/useAgreementSettings";
 import { AgreementItem } from "@/types/settings";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+
 
 import { AllProviders, createMockStore, mockI18n, renderHook, } from "../../utils/test-utils";
 
