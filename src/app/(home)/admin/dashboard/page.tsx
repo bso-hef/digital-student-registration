@@ -124,7 +124,7 @@ const DashboardPage = () => {
       <Wrapper>
         <AdminSettingsHeader title={t("dashboard.title")} />
         <ContentWrapper>
-          <Box textAlign="center" py={4}>
+          <Box sx={{ textAlign: "center", py: 4 }}>
             {t("dashboard.errors.loadFailed")}
           </Box>
         </ContentWrapper>
@@ -165,7 +165,7 @@ const DashboardPage = () => {
       </AdminSettingsHeader>
 
       <ContentWrapper>
-        <Box display="flex" flexDirection="column" gap={3}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
           {/* Quick Stats Section - Draggable */}
           {stats?.quickStats && layout?.quickStats && (
             <DraggableStatsGrid

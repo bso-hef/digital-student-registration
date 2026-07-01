@@ -126,6 +126,7 @@ const AddClassModal: React.FC<Props> = ({
   // Initialize with one empty row when modal opens
   useEffect(() => {
     if (open && csvData.length === 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- seeds one empty editable row when the modal opens (open prop flip); rows are mutated by the user afterwards
       setClassRows([createEmptyClass()]);
     }
   }, [open, csvData.length]);
@@ -133,6 +134,7 @@ const AddClassModal: React.FC<Props> = ({
   // Update rows when CSV data is provided
   useEffect(() => {
     if (csvData.length > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- seeds editable rows from csvData prop; user edits them independently, so it can't be derived
       setClassRows([...csvData]);
     }
   }, [csvData]);
@@ -140,6 +142,7 @@ const AddClassModal: React.FC<Props> = ({
   // Reset when modal closes
   useEffect(() => {
     if (!open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- resets editable rows when the modal closes (open prop flip)
       setClassRows([]);
     }
   }, [open]);

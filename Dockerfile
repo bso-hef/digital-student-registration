@@ -2,9 +2,9 @@
 # Multi-stage build optimized for production deployment
 
 # Stage 1: Base image with Node.js and Yarn
-FROM node:22.20.0-alpine AS base
+FROM node:22.22.3-alpine AS base
 
-# Yarn 1.22.22 is already pre-installed in node:22.20.0-alpine
+# Yarn 1.22.22 is already pre-installed in node:22.22.3-alpine
 # No need to install libc6-compat or yarn again
 
 WORKDIR /app
@@ -14,7 +14,8 @@ FROM base AS deps
 
 COPY package.json yarn.lock ./
 
-RUN yarn install --frozen-lockfile --production=false
+RUN yarn config set network-timeout 300000 && \
+    yarn install --frozen-lockfile --production=false
 
 # Stage 3: Build the application
 FROM base AS builder
@@ -51,7 +52,7 @@ RUN NODE_OPTIONS="--max-old-space-size=4096" yarn build && \
     rm -rf .next/cache
 
 # Stage 4: Production runtime
-FROM node:22.20.0-alpine AS runner
+FROM node:22.22.3-alpine AS runner
 
 WORKDIR /app
 

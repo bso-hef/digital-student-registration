@@ -1,0 +1,36 @@
+version: 2
+updates:
+  # npm dependencies (root package.json)
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 3
+    labels:
+      - dependencies
+    commit-message:
+      prefix: "dependabot"
+      prefix-development: "dependabot(dev)"
+    groups:
+      npm-all:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+      npm-majors:
+        patterns: ["*"]
+        update-types: ["major"]
+
+  # GitHub Actions pinned via `uses:`
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 1
+    labels:
+      - dependencies
+    commit-message:
+      prefix: "dependabot"
+    groups:
+      actions-all:
+        patterns: ["*"]

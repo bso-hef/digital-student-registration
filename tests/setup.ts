@@ -1,7 +1,8 @@
-import '@testing-library/jest-dom';
-import { cleanup } from '@testing-library/react';
-import { afterEach, vi } from 'vitest';
-import { resetFactoryCounters } from './utils/factories';
+import "@testing-library/jest-dom";
+import { cleanup } from "@testing-library/react";
+import { afterEach, vi } from "vitest";
+
+import { resetFactoryCounters } from "./utils/factories";
 
 /**
  * Global test setup for Vitest
@@ -9,7 +10,7 @@ import { resetFactoryCounters } from './utils/factories';
  */
 
 // Mock environment variables
-process.env.NEXT_PUBLIC_API_URL = 'http://localhost:3000';
+process.env.NEXT_PUBLIC_API_URL = "http://localhost:3000";
 
 /**
  * MSW Setup
@@ -30,7 +31,7 @@ afterEach(() => {
 /**
  * Mock window.matchMedia
  */
-Object.defineProperty(window, 'matchMedia', {
+Object.defineProperty(window, "matchMedia", {
   writable: true,
   value: vi.fn().mockImplementation((query) => ({
     matches: false,
@@ -99,7 +100,7 @@ const localStorageMock = (() => {
   };
 })();
 
-Object.defineProperty(window, 'localStorage', {
+Object.defineProperty(window, "localStorage", {
   value: localStorageMock,
 });
 
@@ -130,7 +131,7 @@ const sessionStorageMock = (() => {
   };
 })();
 
-Object.defineProperty(window, 'sessionStorage', {
+Object.defineProperty(window, "sessionStorage", {
   value: sessionStorageMock,
 });
 
@@ -155,12 +156,13 @@ globalThis.fetch = vi.fn();
 /**
  * Set up timezone for consistent date testing
  */
-process.env.TZ = 'UTC';
+process.env.TZ = "UTC";
 
 /**
- * Mock device-type-detection package
- * This package uses lodash internally which causes CommonJS issues in Vitest
+ * Mock the local device-type-detection hook (wraps device-type-detection v2,
+ * which dropped its built-in React hook). Components import the hook from
+ * "@/hooks/useDeviceTypeDetection", so the mock must target that module.
  */
-vi.mock('device-type-detection', () => ({
+vi.mock("@/hooks/useDeviceTypeDetection", () => ({
   useDeviceTypeDetection: vi.fn(() => ({ isMobile: false })),
 }));

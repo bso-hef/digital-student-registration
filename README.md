@@ -25,15 +25,19 @@
 
 ## 🚀 Quick Start for Testers
 
-**Want to test the application? Just run one command:**
+**Want to test the application with Docker?**
 
 ```bash
-docker compose up -d
+cp .env.example .env          # set MONGO_PASSWORD, REDIS_PASSWORD, NEXTAUTH_SECRET
+./scripts/docker-build.sh     # build the app image (Windows: scripts\docker-build.ps1)
+docker compose --profile linux up -d
 ```
 
-**That's it!** No configuration needed. Access the app at [https://localhost:3000](https://localhost:3000)
+Then open [http://localhost:3000](http://localhost:3000) and complete the
+one-time setup wizard to create your admin account.
 
-→ See **[QUICK-START.md](./QUICK-START.md)** for complete testing guide with credentials and scenarios.
+→ See **[QUICK-START.md](./QUICK-START.md)** for the complete testing guide
+(environment setup, first-run wizard, and test scenarios).
 
 **Requirements:** Docker 20.10+ and Docker Compose 2.0+ ([Install Docker](https://docs.docker.com/get-docker/))
 
@@ -43,7 +47,7 @@ docker compose up -d
 
 ### Frontend
 
-- **Next.js 15.4.2** (App Router) with React 19.1.0
+- **Next.js 15.4.10** (App Router) with React 19.1.0
 - **TypeScript 5** for type safety
 - **Material-UI v7** with Emotion styling
 - **Redux Toolkit** for state management with Redux Persist
@@ -58,9 +62,9 @@ docker compose up -d
 
 ### Testing
 
-- **Vitest** - 964+ unit and integration tests
+- **Vitest** - 2000+ unit tests across 76 test files (integration suite currently disabled — see `docs/development/TESTING.md`)
 - **React Testing Library** for component testing
-- **MSW** (Mock Service Worker) for API mocking
+- **MSW** (Mock Service Worker) for API mocking (integration tests)
 
 ### Additional Tools
 
@@ -75,9 +79,9 @@ docker compose up -d
 
 ### Prerequisites
 
-- Node.js v22.20.0
+- Node.js v22.20.0 (see `.nvmrc`)
 - Yarn 1.22.22
-- MongoDB 4.4+
+- MongoDB 7.0 (the Docker stack uses `mongo:7.0`)
 
 ### Development
 
@@ -104,39 +108,27 @@ Open [https://localhost:3000](https://localhost:3000)
 
 ### Docker (Recommended)
 
-**Quick Setup - Choose Your Mode:**
-
 ```bash
-# 1. Local Development (localhost with HTTPS)
-docker-compose up -d
-# → https://localhost:3000 (self-signed cert)
+# Copy and fill in the environment template
+cp .env.example .env
+# Set MONGO_USER, MONGO_PASSWORD, REDIS_PASSWORD, NEXTAUTH_SECRET (no defaults)
 
-# 2. Production (Linux Server with SSL)
-./scripts/start.sh
-# → https://your-domain.com
+# Build the app image (compose runs a pre-built image, it does not build on `up`)
+./scripts/docker-build.sh           # Windows: scripts\docker-build.ps1
 
-# 3. Windows Container (Windows Server/10/11 Pro)
-.\scripts\start-windows.ps1
-# → http://localhost:3000
+# Start the full stack — the app service is gated behind a profile
+docker compose --profile linux up -d   # Windows containers: --profile windows
+# → http://localhost:3000 (the container serves HTTP; TLS via reverse proxy in prod)
 ```
 
-**See [SETUP.md](./SETUP.md) for complete setup instructions** (all 3 modes in < 100 lines)
-
-**Or use legacy methods:**
-
-```bash
-# Testing (Zero Configuration)
-docker compose up -d
-
-# Production Deployment
-docker-compose up -d
-```
+On first launch, complete the setup wizard at `/setup` to create the initial
+admin account.
 
 **Full Documentation:**
 
-- **[SETUP.md](./SETUP.md)** - Quick setup guide (all modes)
-- **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Complete production deployment guide
-- **[QUICK-START.md](./QUICK-START.md)** - Testing guide with credentials
+- **[QUICK-START.md](./QUICK-START.md)** - Docker testing guide (setup wizard & scenarios)
+- **[docs/development/SETUP.md](./docs/development/SETUP.md)** - Development setup guide
+- **[docs/development/DEPLOYMENT.md](./docs/development/DEPLOYMENT.md)** - Production deployment guide
 - **[DOCKER.md](./DOCKER.md)** - Docker configuration details
 
 ---
@@ -156,11 +148,13 @@ yarn lint         # Run ESLint
 yarn format       # Format with Prettier
 
 # Testing
-yarn test                    # Run unit tests
-yarn test:watch             # Watch mode
-yarn test:coverage          # Coverage report
+yarn test                    # Vitest in watch mode
+yarn test:unit              # Single run with coverage
+yarn test:watch             # Watch mode (explicit)
+yarn test:coverage          # Coverage report (== test:unit)
 yarn test:ui                # Interactive UI
-yarn test:all               # Run all tests
+yarn test:all               # Alias of test:unit
+yarn test:ts                # TypeScript type check
 ```
 
 ### Project Structure
@@ -180,17 +174,26 @@ src/
 
 ### Commit Guidelines
 
+Commits follow [Conventional Commits](https://www.conventionalcommits.org/) and
+are enforced by a `commit-msg` git hook (commitlint):
+
 ```text
-feature/bugfix/patch: AUTHOR TICKET-NUMBER description
+<type>(<optional scope>): <summary>
 ```
 
 Example:
 
 ```text
-feature: Valentin Roehle #123 Add student export functionality
+feature: add student export functionality
+bugfix(classes): correct student count after deletion
 ```
 
+Allowed types: `feature`, `bugfix`, `patch`, `docs`, `test`, `ci`, `revert`,
+`release`, `hotfix`.
+
 **Important:** Never use `--no-verify` or `--force` flags.
+
+See **[CONTRIBUTING.md](./CONTRIBUTING.md)** for the full workflow.
 
 ---
 
@@ -242,9 +245,22 @@ yarn test:ui
 
 ---
 
+## Contributing
+
+Contributions are welcome! Please read **[CONTRIBUTING.md](./CONTRIBUTING.md)**
+for the development setup, branch and commit conventions, and the pull-request
+process. By participating you agree to our
+**[Code of Conduct](./CODE_OF_CONDUCT.md)**.
+
+- 🐛 **Found a bug?** Open a [bug report](./.github/ISSUE_TEMPLATE/bug_report.yml).
+- 💡 **Have an idea?** Open a [feature request](./.github/ISSUE_TEMPLATE/feature_request.yml).
+- 🔒 **Security issue?** Follow our [Security Policy](./SECURITY.md) — do not open a public issue.
+
+---
+
 ## License
 
-MIT License - Copyright (c) 2025 Beruflichen Schulen Obersberg
+MIT License - Copyright (c) 2025 Berufliche Schulen Obersberg, Sebastian Schmitt, and Valentin Röhle
 
 ---
 

@@ -1,6 +1,5 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-
 import ClientLogger from "@/lib/client-logger";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 /**
  * Tests for ClientLogger
@@ -120,12 +119,7 @@ describe("ClientLogger", () => {
     it("should handle multiple arguments", () => {
       const spy = vi.spyOn(console, "log");
       ClientLogger.log("message", 123, { key: "value" }, true);
-      expect(spy).toHaveBeenCalledWith(
-        "message",
-        123,
-        { key: "value" },
-        true,
-      );
+      expect(spy).toHaveBeenCalledWith("message", 123, { key: "value" }, true);
     });
   });
 

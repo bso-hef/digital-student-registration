@@ -1,7 +1,7 @@
+import * as TYPES from "@/store/types";
 import { describe, expect, it } from "vitest";
 
 import dashboardReducer from "@/store/reducers/dashboard";
-import * as TYPES from "@/store/types";
 
 /**
  * Tests for dashboard reducer
@@ -30,6 +30,7 @@ describe("dashboardReducer", () => {
         "classDistribution",
         "recentActivity",
       ],
+      isLocked: true,
     },
   };
 
@@ -230,8 +231,18 @@ describe("dashboardReducer", () => {
 
   describe("GET_DASHBOARD_ACTIVITY actions", () => {
     const mockActivity = [
-      { id: "1", type: "login", userId: "user1", timestamp: new Date().toISOString() },
-      { id: "2", type: "registration", userId: "user2", timestamp: new Date().toISOString() },
+      {
+        id: "1",
+        type: "login",
+        userId: "user1",
+        timestamp: new Date().toISOString(),
+      },
+      {
+        id: "2",
+        type: "registration",
+        userId: "user2",
+        timestamp: new Date().toISOString(),
+      },
     ];
 
     it("should handle GET_DASHBOARD_ACTIVITY_REQUEST", () => {

@@ -1,21 +1,19 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-
 import classService from "@/lib/services/classService";
-import * as TYPES from "@/store/types";
-import * as notificationUtils from "@/utils/notification.utils";
-
 import {
   addClass,
   addStudentsToClass,
   clearCurrentClass,
   deleteClasses,
   getClass,
-  getClasses,
   getClassStudents,
+  getClasses,
   removeStudentsFromClass,
   setCurrentClass,
   updateClass,
 } from "@/store/actions/classActions";
+import * as TYPES from "@/store/types";
+import * as notificationUtils from "@/utils/notification.utils";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock dependencies
 vi.mock("@/lib/services/classService", () => ({
@@ -109,7 +107,9 @@ describe("classActions", () => {
 
   describe("addClass", () => {
     it("should dispatch success on successful creation", async () => {
-      const newClasses = [{ name: "Class 3C", schoolYearFrom: 2024, schoolYearTo: 2025 }];
+      const newClasses = [
+        { name: "Class 3C", schoolYearFrom: 2024, schoolYearTo: 2025 },
+      ];
       const mockData = { classes: [{ _id: "3", name: "Class 3C" }] };
       vi.mocked(classService.create).mockResolvedValue({ data: mockData });
 
@@ -314,7 +314,11 @@ describe("classActions", () => {
         data: { students: [] },
       });
 
-      await addStudentsToClass("1", ["s1", "s2"])(dispatch, getState, undefined);
+      await addStudentsToClass("1", ["s1", "s2"])(
+        dispatch,
+        getState,
+        undefined,
+      );
 
       expect(dispatch).toHaveBeenCalledWith({
         type: TYPES.ADD_STUDENTS_TO_CLASS_REQUEST,

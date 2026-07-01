@@ -152,6 +152,7 @@ const AdminSystemPage = () => {
   // Sync local state when settings are loaded from server
   useEffect(() => {
     if (savedWlanSettings) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- syncs editable local WLAN form state when settings load from the server
       setLocalWlanSettings(savedWlanSettings);
     }
   }, [savedWlanSettings]);
@@ -240,7 +241,7 @@ const AdminSystemPage = () => {
       </AdminSettingsHeader>
 
       <ContentWrapper>
-        <Box display="flex" flexDirection="column" gap={2}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
           {/* Mobile Blocker Settings */}
           <EnhancedCollapse
             title={t("settings.system.mobileBlocker")}
@@ -248,7 +249,7 @@ const AdminSystemPage = () => {
             expanded={expandedSections.mobileBlocker}
             onAction={() => toggleSection("mobileBlocker")}
           >
-            <Box display="flex" justifyContent="flex-start">
+            <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
               <FormControlLabel
                 control={
                   <Switch
@@ -282,7 +283,7 @@ const AdminSystemPage = () => {
               />
             }
           >
-            <Box display="flex" justifyContent="flex-start" sx={{ mb: 2 }}>
+            <Box sx={{ display: "flex", justifyContent: "flex-start", mb: 2 }}>
               <FormControlLabel
                 control={
                   <Switch
@@ -299,7 +300,14 @@ const AdminSystemPage = () => {
             </Box>
 
             {localWlanSettings.enabled && (
-              <Box display="flex" flexDirection="column" gap={2.5} mt={1}>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 2.5,
+                  mt: 1,
+                }}
+              >
                 <TextField
                   label={t("settings.system.wlan.ssid")}
                   value={localWlanSettings.ssid}
@@ -358,7 +366,7 @@ const AdminSystemPage = () => {
                   </Select>
                 </FormControl>
 
-                <Box display="flex" justifyContent="flex-start">
+                <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
                   <FormControlLabel
                     control={
                       <Switch
@@ -377,8 +385,8 @@ const AdminSystemPage = () => {
 
                 <Typography
                   variant="caption"
-                  color="text.secondary"
                   sx={{
+                    color: "text.secondary",
                     mt: 1,
                     p: 1.5,
                     bgcolor: "action.hover",
@@ -412,16 +420,16 @@ const AdminSystemPage = () => {
           >
             {/* Database Status */}
             <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="space-between"
               sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
                 p: 1.5,
                 bgcolor: "action.hover",
                 borderRadius: 1,
               }}
             >
-              <Box display="flex" alignItems="center" gap={1}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <StorageRoundedIcon fontSize="small" color="action" />
                 <Typography variant="body2">MongoDB</Typography>
               </Box>
@@ -441,17 +449,17 @@ const AdminSystemPage = () => {
 
             {/* Redis Status */}
             <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="space-between"
               sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
                 p: 1.5,
                 bgcolor: "action.hover",
                 borderRadius: 1,
                 mt: 1,
               }}
             >
-              <Box display="flex" alignItems="center" gap={1}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <StorageRoundedIcon fontSize="small" color="action" />
                 <Typography variant="body2">
                   {t("dashboard.health.redis")}
@@ -532,13 +540,15 @@ const AdminSystemPage = () => {
             expanded={expandedSections.serverInfo}
             onAction={() => toggleSection("serverInfo")}
           >
-            <Box display="flex" flexDirection="column" gap={1.5}>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
               <Box
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
               >
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" sx={{ color: "text.secondary" }}>
                   {t("dashboard.health.service")}
                 </Typography>
                 <Typography variant="body2">
@@ -546,11 +556,13 @@ const AdminSystemPage = () => {
                 </Typography>
               </Box>
               <Box
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
               >
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" sx={{ color: "text.secondary" }}>
                   {t("dashboard.health.version")}
                 </Typography>
                 <Typography variant="body2">
@@ -558,11 +570,13 @@ const AdminSystemPage = () => {
                 </Typography>
               </Box>
               <Box
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
               >
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" sx={{ color: "text.secondary" }}>
                   {t("dashboard.health.hostname")}
                 </Typography>
                 <Typography variant="body2">
@@ -570,11 +584,13 @@ const AdminSystemPage = () => {
                 </Typography>
               </Box>
               <Box
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
               >
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" sx={{ color: "text.secondary" }}>
                   {t("dashboard.health.architecture")}
                 </Typography>
                 <Typography variant="body2">

@@ -1,26 +1,27 @@
-import React, { ReactElement } from 'react';
-import { render, RenderOptions, RenderResult } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import { I18nextProvider } from 'react-i18next';
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { configureStore, combineReducers } from '@reduxjs/toolkit';
-import type { RootState } from '@/store/store';
-import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
-import { vi } from 'vitest';
+import React, { ReactElement } from "react";
 
-// Import reducers
-import uiReducer from '@/store/reducers/ui';
-import studentReducer from '@/store/reducers/student';
-import classReducer from '@/store/reducers/class';
-import dashboardReducer from '@/store/reducers/dashboard';
-import appSettingsReducer from '@/store/reducers/appSettings';
-import authReducer from '@/store/reducers/auth';
-import auditLogReducer from '@/store/reducers/auditLog';
+import type { RootState } from "@/store/store";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import { RenderOptions, RenderResult, render } from "@testing-library/react";
+import i18n from "i18next";
+import { I18nextProvider } from "react-i18next";
+import { initReactI18next } from "react-i18next";
+import { Provider } from "react-redux";
+import { vi } from "vitest";
 
 // Import ThemeWrapper for proper theme context
-import ThemeWrapper from '@/theme/ThemeWrapper';
+import ThemeWrapper from "@/theme/ThemeWrapper";
+
+import appSettingsReducer from "@/store/reducers/appSettings";
+import auditLogReducer from "@/store/reducers/auditLog";
+import authReducer from "@/store/reducers/auth";
+import classReducer from "@/store/reducers/class";
+import dashboardReducer from "@/store/reducers/dashboard";
+import studentReducer from "@/store/reducers/student";
+// Import reducers
+import uiReducer from "@/store/reducers/ui";
 
 /**
  * Mock i18n instance for testing
@@ -28,87 +29,87 @@ import ThemeWrapper from '@/theme/ThemeWrapper';
 export const mockI18n = i18n.createInstance();
 
 mockI18n.use(initReactI18next).init({
-  lng: 'en',
-  fallbackLng: 'en',
-  ns: ['translation'],
-  defaultNS: 'translation',
+  lng: "en",
+  fallbackLng: "en",
+  ns: ["translation"],
+  defaultNS: "translation",
   resources: {
     en: {
       translation: {
         // Add minimal translations for testing
-        'actions.success': 'Success',
-        'actions.failed': 'Failed',
-        'actions.classAddSuccess': 'Class added successfully',
-        'actions.classFetchFailed': 'Failed to fetch classes',
-        'common.submit': 'Submit',
-        'common.cancel': 'Cancel',
-        'common.save': 'Save',
-        'common.delete': 'Delete',
+        "actions.success": "Success",
+        "actions.failed": "Failed",
+        "actions.classAddSuccess": "Class added successfully",
+        "actions.classFetchFailed": "Failed to fetch classes",
+        "common.submit": "Submit",
+        "common.cancel": "Cancel",
+        "common.save": "Save",
+        "common.delete": "Delete",
         // General translations
-        'general.Previous': 'general.Previous',
-        'general.Next': 'general.Next',
-        'general.Start': 'general.Start',
-        'general.Submit': 'general.Submit',
-        'general.Confirm': 'general.Confirm',
-        'general.Step': 'Step',
-        'general.of': 'of',
-        'general.Submitting': 'Submitting...',
-        'general.Edit': 'Edit',
+        "general.Previous": "general.Previous",
+        "general.Next": "general.Next",
+        "general.Start": "general.Start",
+        "general.Submit": "general.Submit",
+        "general.Confirm": "general.Confirm",
+        "general.Step": "Step",
+        "general.of": "of",
+        "general.Submitting": "Submitting...",
+        "general.Edit": "Edit",
         // Student steps translations
-        'student.steps.Welcome': 'Welcome',
-        'student.steps.General': 'General Information',
-        'student.steps.Origin': 'Origin',
-        'student.steps.Address': 'Address',
-        'student.steps.Parents': 'Parents',
-        'student.steps.Pre Education': 'Pre-Education',
-        'student.steps.Training': 'Training',
-        'student.steps.Company Contact': 'Company Contact',
-        'student.steps.Summary': 'Summary',
-        'student.steps.Completion': 'Completion',
+        "student.steps.Welcome": "Welcome",
+        "student.steps.General": "General Information",
+        "student.steps.Origin": "Origin",
+        "student.steps.Address": "Address",
+        "student.steps.Parents": "Parents",
+        "student.steps.Pre Education": "Pre-Education",
+        "student.steps.Training": "Training",
+        "student.steps.Company Contact": "Company Contact",
+        "student.steps.Summary": "Summary",
+        "student.steps.Completion": "Completion",
         // Navigation translations
-        'navigation.dashboard': 'Dashboard',
-        'navigation.management': 'Management',
-        'navigation.studentManagement': 'Students',
-        'navigation.classManagement': 'Classes',
-        'navigation.settings': 'Settings',
-        'navigation.onboardingSettings': 'Onboarding',
-        'navigation.welcomeLabel': 'Welcome',
-        'navigation.logoutButton': 'Logout',
-        'navigation.Browse settings': 'Browse settings',
-        'navigation.welcome': 'Welcome, {{name}}',
+        "navigation.dashboard": "Dashboard",
+        "navigation.management": "Management",
+        "navigation.studentManagement": "Students",
+        "navigation.classManagement": "Classes",
+        "navigation.settings": "Settings",
+        "navigation.onboardingSettings": "Onboarding",
+        "navigation.welcomeLabel": "Welcome",
+        "navigation.logoutButton": "Logout",
+        "navigation.Browse settings": "Browse settings",
+        "navigation.welcome": "Welcome, {{name}}",
       },
     },
     de: {
       translation: {
-        'actions.success': 'Erfolgreich',
-        'actions.failed': 'Fehlgeschlagen',
-        'actions.classAddSuccess': 'Klasse erfolgreich hinzugefügt',
-        'actions.classFetchFailed': 'Klassen konnten nicht abgerufen werden',
-        'common.submit': 'Absenden',
-        'common.cancel': 'Abbrechen',
-        'common.save': 'Speichern',
-        'common.delete': 'Löschen',
+        "actions.success": "Erfolgreich",
+        "actions.failed": "Fehlgeschlagen",
+        "actions.classAddSuccess": "Klasse erfolgreich hinzugefügt",
+        "actions.classFetchFailed": "Klassen konnten nicht abgerufen werden",
+        "common.submit": "Absenden",
+        "common.cancel": "Abbrechen",
+        "common.save": "Speichern",
+        "common.delete": "Löschen",
         // General translations
-        'general.Previous': 'general.Previous',
-        'general.Next': 'general.Next',
-        'general.Start': 'general.Start',
-        'general.Submit': 'general.Submit',
-        'general.Confirm': 'general.Confirm',
-        'general.Step': 'Schritt',
-        'general.of': 'von',
-        'general.Submitting': 'Wird übermittelt...',
-        'general.Edit': 'Bearbeiten',
+        "general.Previous": "general.Previous",
+        "general.Next": "general.Next",
+        "general.Start": "general.Start",
+        "general.Submit": "general.Submit",
+        "general.Confirm": "general.Confirm",
+        "general.Step": "Schritt",
+        "general.of": "von",
+        "general.Submitting": "Wird übermittelt...",
+        "general.Edit": "Bearbeiten",
         // Navigation translations
-        'navigation.dashboard': 'Dashboard',
-        'navigation.management': 'Verwaltung',
-        'navigation.studentManagement': 'Schüler',
-        'navigation.classManagement': 'Klassen',
-        'navigation.settings': 'Einstellungen',
-        'navigation.onboardingSettings': 'Onboarding',
-        'navigation.welcomeLabel': 'Willkommen',
-        'navigation.logoutButton': 'Abmelden',
-        'navigation.Browse settings': 'Einstellungen durchsuchen',
-        'navigation.welcome': 'Willkommen, {{name}}',
+        "navigation.dashboard": "Dashboard",
+        "navigation.management": "Verwaltung",
+        "navigation.studentManagement": "Schüler",
+        "navigation.classManagement": "Klassen",
+        "navigation.settings": "Einstellungen",
+        "navigation.onboardingSettings": "Onboarding",
+        "navigation.welcomeLabel": "Willkommen",
+        "navigation.logoutButton": "Abmelden",
+        "navigation.Browse settings": "Einstellungen durchsuchen",
+        "navigation.welcome": "Willkommen, {{name}}",
       },
     },
   },
@@ -155,11 +156,11 @@ export const mockRouter = {
   back: vi.fn(),
   forward: vi.fn(),
   refresh: vi.fn(),
-  pathname: '/',
+  pathname: "/",
   query: {},
-  asPath: '/',
-  route: '/',
-  basePath: '',
+  asPath: "/",
+  route: "/",
+  basePath: "",
   isLocaleDomain: false,
   isReady: true,
   isPreview: false,
@@ -168,7 +169,7 @@ export const mockRouter = {
 /**
  * Mock Next.js useRouter hook
  */
-vi.mock('next/navigation', () => ({
+vi.mock("next/navigation", () => ({
   useRouter: () => mockRouter,
   usePathname: () => mockRouter.pathname,
   useSearchParams: () => new URLSearchParams(),
@@ -179,7 +180,7 @@ vi.mock('next/navigation', () => ({
  * Mock window.matchMedia for responsive tests
  */
 export function mockMatchMedia(matches = false) {
-  Object.defineProperty(window, 'matchMedia', {
+  Object.defineProperty(window, "matchMedia", {
     writable: true,
     value: vi.fn().mockImplementation((query) => ({
       matches,
@@ -251,7 +252,7 @@ export function AllProviders({
 /**
  * Custom render function that includes all necessary providers
  */
-interface ExtendedRenderOptions extends Omit<RenderOptions, 'wrapper'> {
+interface ExtendedRenderOptions extends Omit<RenderOptions, "wrapper"> {
   preloadedState?: Partial<RootState>;
   store?: ReturnType<typeof createMockStore>;
   i18nInstance?: typeof mockI18n;
@@ -264,8 +265,11 @@ export function renderWithProviders(
     store: providedStore,
     i18nInstance = mockI18n,
     ...renderOptions
-  }: ExtendedRenderOptions = {}
-): RenderResult & { store: ReturnType<typeof createMockStore>; i18nInstance: typeof mockI18n } {
+  }: ExtendedRenderOptions = {},
+): RenderResult & {
+  store: ReturnType<typeof createMockStore>;
+  i18nInstance: typeof mockI18n;
+} {
   const store = providedStore || createMockStore(preloadedState);
 
   function Wrapper({ children }: { children: React.ReactNode }) {
@@ -292,5 +296,5 @@ export const waitForStateUpdate = () =>
 /**
  * Re-export everything from React Testing Library
  */
-export * from '@testing-library/react';
-export { userEvent } from '@testing-library/user-event';
+export * from "@testing-library/react";
+export { userEvent } from "@testing-library/user-event";

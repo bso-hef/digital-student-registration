@@ -1,6 +1,8 @@
 # API Reference
 
-Complete API documentation for Digital Student Registration.
+API documentation for Digital Student Registration. This document covers the
+most commonly used endpoints; see [Other Endpoints](#other-endpoints) for the
+full list of available routes.
 
 ## Overview
 
@@ -9,6 +11,9 @@ Next.js API Routes in `src/app/api/` as REST backend.
 **Base URL:** `http://localhost:3000/api`
 **Content-Type:** `application/json`
 
+Most endpoints require an authenticated session and return `401 Unauthorized`
+with `{ "message": "Unauthorized" }` when called without one.
+
 ---
 
 ## Classes API
@@ -16,8 +21,15 @@ Next.js API Routes in `src/app/api/` as REST backend.
 ### List Classes
 
 ```http
-GET /api/classes?skip=0&limit=20
+GET /api/classes?page=1&limit=25
 ```
+
+**Query Parameters:**
+
+| Param   | Type   | Default | Validation     |
+| ------- | ------ | ------- | -------------- |
+| `page`  | number | 1       | Min 1          |
+| `limit` | number | 25      | Min 1, max 200 |
 
 **Response:**
 
@@ -33,12 +45,14 @@ GET /api/classes?skip=0&limit=20
       "isVocational": false,
       "requiresEmployerInfo": false,
       "studentCount": 25,
-      "active": true
+      "active": true,
+      "incomplete": false
     }
   ],
-  "total": 42,
   "page": 1,
-  "pages": 3
+  "limit": 25,
+  "total": 42,
+  "pages": 2
 }
 ```
 
@@ -73,28 +87,34 @@ POST /api/classes
 | `schoolYearFrom`       | Date    | Yes      | Valid date             |
 | `schoolYearTo`         | Date    | Yes      | After `schoolYearFrom` |
 | `name`                 | string  | Yes      | Non-empty              |
-| `grade`                | number  | No       | 1-13 or null           |
+| `grade`                | number  | No       | Integer 1-14 or null   |
 | `isVocational`         | boolean | No       | Default: false         |
 | `requiresEmployerInfo` | boolean | No       | Default: false         |
+| `active`               | boolean | No       | Default: true          |
 
-**Response:**
+**Response:** `201 Created`
 
 ```json
 {
-  "created": [
-    {
-      /* class object */
-    }
-  ],
-  "failed": []
+  "classes": [{/* class object, same shape as List Classes */}],
+  "createdCount": 1,
+  "invalidCount": 0,
+  "errors": []
 }
 ```
+
+Invalid rows are counted in `invalidCount` and described in `errors`
+(`[{ "index": 0, "reason": "..." }]`); they are not inserted. If no rows are
+valid the endpoint returns `400` with `{ message, invalidCount, errors }`.
 
 ### Get Single Class
 
 ```http
 GET /api/classes/[classId]
 ```
+
+Returns the class object (including the computed `incomplete` field), or `404`
+with `{ "message": "Class not found" }`.
 
 ### Update Class
 
@@ -111,20 +131,7 @@ PATCH /api/classes/[classId]
 }
 ```
 
-### Delete Class
-
-```http
-DELETE /api/classes/[classId]
-```
-
-**Response:**
-
-```json
-{
-  "deleted": true,
-  "classId": "507f1f77bcf86cd799439011"
-}
-```
+Returns the updated class object.
 
 ### Delete Classes (Batch)
 
@@ -132,11 +139,21 @@ DELETE /api/classes/[classId]
 DELETE /api/classes
 ```
 
+There is no single-class delete endpoint; deletion is always done in batch.
+
 **Request:**
 
 ```json
 {
   "ids": ["507f1f77bcf86cd799439011", "507f1f77bcf86cd799439012"]
+}
+```
+
+**Response:**
+
+```json
+{
+  "deletedCount": 2
 }
 ```
 
@@ -153,8 +170,17 @@ GET /api/classes/[classId]/students
 ### List Students
 
 ```http
-GET /api/students?skip=0&limit=20
+GET /api/students?page=1&limit=25
 ```
+
+**Query Parameters:**
+
+| Param           | Type    | Default | Validation                       |
+| --------------- | ------- | ------- | -------------------------------- |
+| `page`          | number  | 1       | Min 1                            |
+| `limit`         | number  | 25      | Min 1, max 200                   |
+| `unassigned`    | boolean | false   | `true` = only unassigned/active  |
+| `forAssignment` | boolean | false   | `true` = all active, name-sorted |
 
 **Response:**
 
@@ -173,17 +199,17 @@ GET /api/students?skip=0&limit=20
       "address": {
         "street": "Hauptstraße 1",
         "city": "Berlin",
-        "zip": "10115",
-        "country": "DE"
+        "zip": "10115"
       },
-      "status": "onboarded",
+      "status": "imported",
       "currentClass": "507f1f77bcf86cd799439011",
-      "active": true
+      "verificationCode": "ABC123"
     }
   ],
-  "total": 150,
   "page": 1,
-  "pages": 8
+  "limit": 25,
+  "total": 150,
+  "pages": 6
 }
 ```
 
@@ -207,11 +233,9 @@ POST /api/students
       "address": {
         "street": "Hauptstraße 1",
         "city": "Berlin",
-        "zip": "10115",
-        "country": "DE"
+        "zip": "10115"
       },
-      "currentClass": "507f1f77bcf86cd799439011",
-      "status": "imported"
+      "className": "10A"
     }
   ]
 }
@@ -219,18 +243,21 @@ POST /api/students
 
 **Validation:**
 
-| Field          | Type     | Required    | Validation                         |
-| -------------- | -------- | ----------- | ---------------------------------- |
-| `firstName`    | string   | Yes         | Non-empty, trimmed                 |
-| `lastName`     | string   | Yes         | Non-empty, trimmed                 |
-| `dateOfBirth`  | Date     | Yes         | Valid date                         |
-| `email`        | string   | No          | Valid email, lowercase             |
-| `phone`        | string   | No          | Trimmed                            |
-| `currentClass` | ObjectId | No          | Valid class ID                     |
-| `status`       | string   | No          | `imported`, `invited`, `onboarded` |
-| `employer`     | object   | Conditional | Required if vocational class       |
+| Field         | Type   | Required | Validation                       |
+| ------------- | ------ | -------- | -------------------------------- |
+| `firstName`   | string | Yes      | Non-empty, trimmed               |
+| `lastName`    | string | Yes      | Non-empty, trimmed               |
+| `dateOfBirth` | Date   | Yes      | Valid date                       |
+| `email`       | string | No       | Lowercased                       |
+| `phone`       | string | No       | Trimmed (falls back to `mobile`) |
+| `className`   | string | No       | Linked to a class by name        |
+| `employer`    | object | No       | See below                        |
 
-**Employer Object (vocational students):**
+A new record is created with `status: "imported"` and a generated
+`verificationCode`. If a `className` matches an existing class, the student's
+`currentClass` is linked automatically.
+
+**Employer Object (optional):**
 
 ```json
 {
@@ -238,22 +265,28 @@ POST /api/students
   "address": "Industriestraße 10, 12345 Stadt",
   "contactName": "Dr. Schmidt",
   "contactEmail": "schmidt@techgmbh.de",
-  "verified": false
+  "contactPhone": "+49 123 456789",
+  "contactSalutation": "Herr"
 }
 ```
 
-**Response:**
+> **Note:** `employer` is not required by this import endpoint. Employer
+> details are only enforced (for vocational students) by the `Student`
+> model's pre-save hook when onboarding is completed.
+
+**Response:** `201 Created`
 
 ```json
 {
-  "created": [
-    {
-      /* student object */
-    }
-  ],
-  "failed": []
+  "created": [{/* student object */}],
+  "createdCount": 1,
+  "invalidCount": 0
 }
 ```
+
+Invalid rows are only counted in `invalidCount`; they are not returned with
+per-record error messages. If no rows are valid the endpoint returns `400`
+with `{ message, invalid }`.
 
 ### Delete Students (Batch)
 
@@ -266,6 +299,14 @@ DELETE /api/students
 ```json
 {
   "ids": ["507f191e810c19729de860ea", "507f191e810c19729de860eb"]
+}
+```
+
+**Response:**
+
+```json
+{
+  "deletedCount": 2
 }
 ```
 
@@ -285,25 +326,35 @@ GET /api/dashboard/stats
 {
   "quickStats": {
     "totalStudents": 150,
+    "totalClasses": 14,
+    "unassignedStudents": 8,
     "activeClasses": 12,
-    "pendingOnboarding": 8,
-    "completedThisMonth": 25
+    "onboardingProgress": {
+      "total": 150,
+      "onboarded": 137,
+      "percentage": 91
+    }
   },
-  "classDistribution": [
+  "studentStatusBreakdown": {
+    "imported": 8,
+    "invited": 5,
+    "onboarded": 137,
+    "other": 0
+  },
+  "gradeDistribution": [
     { "grade": 10, "count": 45 },
     { "grade": 11, "count": 38 }
   ],
-  "studentsByStatus": {
-    "imported": 8,
-    "invited": 5,
-    "onboarded": 137
-  },
   "registrationTrend": [
     { "date": "2024-09-01", "count": 5 },
     { "date": "2024-09-08", "count": 12 }
-  ]
+  ],
+  "timestamp": "2024-10-26T14:30:00.000Z"
 }
 ```
+
+`registrationTrend` always contains exactly 7 entries (one per day for the last
+7 days, zero-filled).
 
 ---
 
@@ -319,8 +370,7 @@ GET /api/health/live
 
 ```json
 {
-  "status": "ok",
-  "timestamp": "2024-10-26T14:30:00.000Z"
+  "status": "up"
 }
 ```
 
@@ -330,21 +380,41 @@ GET /api/health/live
 GET /api/health/full
 ```
 
+Requires authentication; returns `401` with `{ "error": "Unauthorized" }` when
+called without a session. Returns `200` when all critical checks are up,
+otherwise `503`.
+
 **Response:**
 
 ```json
 {
-  "status": "healthy",
-  "timestamp": "2024-10-26T14:30:00.000Z",
+  "status": "up",
   "checks": {
-    "database": {
-      "status": "connected",
-      "latency": "5ms"
-    },
-    "uptime": "3h 45m 22s"
+    "mongo": { "status": "up", "info": { "code": 1 } },
+    "redis": { "status": "up" }
+  },
+  "meta": {
+    "service": "digital-student-onboarding",
+    "version": "2.1.0",
+    "environment": "production",
+    "now": "2024-10-26T14:30:00.000Z",
+    "uptimeSec": 13522,
+    "node": "v20.11.0",
+    "system": {
+      "hostname": "app-01",
+      "platform": "linux",
+      "arch": "x64",
+      "cpus": 4,
+      "loadavg": [0.1, 0.2, 0.15],
+      "freemem": "2.1 GB",
+      "totalmem": "8 GB"
+    }
   }
 }
 ```
+
+`status` is `"up"` or `"down"`. In development only `mongo` is critical; in
+production both `mongo` and `redis` are critical.
 
 ---
 
@@ -352,11 +422,11 @@ GET /api/health/full
 
 ### Error Response Format
 
+Most endpoints return errors as a single `message` field:
+
 ```json
 {
-  "error": "Error message description",
-  "code": "ERROR_CODE",
-  "details": {}
+  "message": "Unauthorized"
 }
 ```
 
@@ -367,6 +437,7 @@ GET /api/health/full
 | 200  | OK                    | Request succeeded  |
 | 201  | Created               | Resource created   |
 | 400  | Bad Request           | Invalid parameters |
+| 401  | Unauthorized          | No/invalid session |
 | 404  | Not Found             | Resource not found |
 | 500  | Internal Server Error | Server error       |
 
@@ -374,11 +445,7 @@ GET /api/health/full
 
 ```json
 {
-  "error": "schoolYearTo must be after schoolYearFrom",
-  "code": "VALIDATION_ERROR",
-  "details": {
-    "field": "schoolYearTo"
-  }
+  "message": "schoolYearTo must be after schoolYearFrom"
 }
 ```
 
@@ -386,45 +453,67 @@ GET /api/health/full
 
 ## Pagination
 
-All list endpoints support `skip` and `limit`:
+The Classes and Students list endpoints use `page` and `limit` query params:
 
 ```http
-GET /api/students?skip=20&limit=10
+GET /api/students?page=3&limit=10
 ```
 
-Returns students 21-30.
+Returns the third page of 10 students each.
+
+- `page` defaults to `1` (minimum `1`).
+- `limit` defaults to `25` (minimum `1`, maximum `200`).
 
 **Response Format:**
 
 ```json
 {
   "students": [...],
-  "total": 150,
   "page": 3,
+  "limit": 10,
+  "total": 150,
   "pages": 15
 }
 ```
 
-**Calculation:**
-
-- `page = (skip / limit) + 1`
-- `pages = Math.ceil(total / limit)`
+`pages = Math.ceil(total / limit)`.
 
 ---
 
 ## Validation Patterns
 
-API uses validation functions returning structured results:
+The batch create endpoints use shaping functions that return a discriminated
+result and separate invalid rows before insertion:
 
 ```typescript
-type ValidationResult =
-  | { ok: true; doc: ValidatedDocument }
-  | { ok: false; reason: string };
+type ShapedResult =
+  { ok: true; doc: ValidatedDocument } | { ok: false; reason: string };
 ```
 
 Used in:
 
-- `shapeClass()` - src/app/api/classes/route.ts:49
-- `shapeStudent()` - src/app/api/students/route.ts:52
+- `shapeClass()` - `src/app/api/classes/route.ts`
+- `shapeStudent()` - `src/app/api/students/route.ts`
 
-Invalid records separated before insertion, returned in `failed` array with error messages.
+For classes, invalid rows are reported in the `errors` array
+(`{ index, reason }`). For students, invalid rows are only counted in
+`invalidCount`.
+
+---
+
+## Other Endpoints
+
+The following routes also exist and follow the same conventions (session auth,
+`{ message }` errors). They are not documented in detail here:
+
+- `GET` / `POST` / `DELETE` `/api/classes/[classId]/students` - manage students in a class
+- `/api/classes/check` - class existence/validation check
+- `/api/classes/recalculate-counts` - recompute `studentCount` for classes
+- `GET` / `PATCH` / `DELETE` `/api/students/[id]` - single student
+- `/api/students/[id]/onboarding` - student onboarding data
+- `/api/students/check-duplicate` - duplicate detection
+- `/api/students/verify` - verification-code lookup
+- `/api/dashboard/activity` - recent activity feed
+- `/api/settings` (+ `/agreements`, `/onboarding`) - application settings
+- `/api/audit-logs` (+ `/stats`, `/export`, `/delete`) - audit log access
+- `/api/auth/*` - authentication (`setup`, `profile`, `reset-password`, NextAuth handler)

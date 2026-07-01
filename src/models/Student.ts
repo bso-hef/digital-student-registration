@@ -254,8 +254,10 @@ StudentSchema.pre(
     if (!this.currentClass) return;
 
     const ClassModel = mongoose.model(SCHEMA.CLASS);
-    const classDoc = await ClassModel.findById(this.currentClass).lean();
-    if (classDoc && !Array.isArray(classDoc) && classDoc.requiresEmployerInfo) {
+    const classDoc = await ClassModel.findById(this.currentClass).lean<{
+      requiresEmployerInfo?: boolean;
+    } | null>();
+    if (classDoc && classDoc.requiresEmployerInfo) {
       const e = (this.employer || {}) as Employer;
       const ok = e.companyName && e.contactName && e.contactEmail;
       if (!ok) {

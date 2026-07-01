@@ -140,7 +140,7 @@ export async function isRedisAvailable(): Promise<boolean> {
 
     const result = await client.ping();
     return result === "PONG";
-  } catch (error) {
+  } catch {
     // Silently return false - don't log (health checks call this frequently)
     return false;
   }

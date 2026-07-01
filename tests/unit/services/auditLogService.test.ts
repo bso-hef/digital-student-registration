@@ -1,6 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import auditLogService from "@/lib/services/auditLogService";
 import http from "@/lib/services/api";
+import auditLogService from "@/lib/services/auditLogService";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock the http client
 vi.mock("@/lib/services/api", () => ({

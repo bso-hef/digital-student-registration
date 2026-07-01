@@ -103,21 +103,20 @@ const EnhancedCollapse: React.FC<EnhancedCollapseProps> = ({
           <StyledTitle>{title}</StyledTitle>
           {subtitle && <StyledSubTitle>{subtitle}</StyledSubTitle>}
         </Box>
-        <Box display="flex" alignItems="center" gap={1}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           {headerAction && (
             <Box
               onClick={(e) => {
                 e.stopPropagation();
                 onHeaderActionClick?.(e);
               }}
-              display="flex"
-              alignItems="center"
+              sx={{ display: "flex", alignItems: "center" }}
             >
               {headerAction}
             </Box>
           )}
           {withArrow && (
-            <Box display="flex" alignItems="center">
+            <Box sx={{ display: "flex", alignItems: "center" }}>
               {expanded ? (
                 <KeyboardArrowUpRoundedIcon />
               ) : (

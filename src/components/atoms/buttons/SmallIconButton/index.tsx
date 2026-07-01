@@ -1,7 +1,7 @@
 import React from "react";
 
+import { useDeviceTypeDetection } from "@/hooks/useDeviceTypeDetection";
 import { Box, styled } from "@mui/material";
-import { useDeviceTypeDetection } from "device-type-detection";
 
 import ActionsTooltip from "../../ActionsTooltip";
 

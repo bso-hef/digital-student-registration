@@ -98,7 +98,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
   const age = useMemo(() => {
     if (!data?.geburtsdatum) return 0;
     return dayjs().diff(dayjs(data.geburtsdatum), "year");
-  }, [data?.geburtsdatum]);
+  }, [data.geburtsdatum]);
 
   const isAdult = age >= 18;
 

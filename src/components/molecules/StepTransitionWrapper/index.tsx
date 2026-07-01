@@ -59,6 +59,7 @@ const StepTransitionWrapper: React.FC<StepTransitionWrapperProps> = ({
   useEffect(() => {
     if (isSaving && phase === "content") {
       wasEverSaving.current = true;
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- effect-driven transition state machine: starting the fade-out when a save begins cannot be derived during render
       setPhase("fading-out");
     }
   }, [isSaving, phase]);
@@ -113,6 +114,7 @@ const StepTransitionWrapper: React.FC<StepTransitionWrapperProps> = ({
   // Reset displayed step when not saving and step changes (for direct navigation)
   useEffect(() => {
     if (!isSaving && phase === "content" && currentStep !== displayedStep) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- syncs displayed step to currentStep only for direct navigation (not mid-transition); deriving would bypass the transition machine
       setDisplayedStep(currentStep);
     }
   }, [currentStep, displayedStep, isSaving, phase]);

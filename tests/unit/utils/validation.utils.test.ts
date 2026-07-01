@@ -1,14 +1,16 @@
-import { describe, expect, it } from "vitest";
-
 import {
   EMAIL_REGEX,
   PASSWORD_REGEX,
   RECOVERY_CODE_REGEX,
-  isValidEmail,
-  validatePasswordStrength,
-  isValidRecoveryCode,
+  STUDENT_NAME_MAX_LENGTH,
   calculatePasswordStrength,
+  isValidBirthDate,
+  isValidEmail,
+  isValidRecoveryCode,
+  isValidStudentName,
+  validatePasswordStrength,
 } from "@/utils/validation.utils";
+import { describe, expect, it } from "vitest";
 
 /**
  * Tests for validation utility functions
@@ -284,7 +286,9 @@ describe("validation.utils", () => {
 
     it("should cap at 100", () => {
       const veryStrongPassword = "VeryStrongP@ssw0rd!!123";
-      expect(calculatePasswordStrength(veryStrongPassword)).toBeLessThanOrEqual(100);
+      expect(calculatePasswordStrength(veryStrongPassword)).toBeLessThanOrEqual(
+        100,
+      );
     });
 
     it("should return 100 for perfect password", () => {
@@ -297,6 +301,44 @@ describe("validation.utils", () => {
       // Less than 8 chars, so no length bonus
       // Has mixed case (20), number (20), special (20) = 60
       expect(result).toBe(60);
+    });
+  });
+
+  describe("isValidStudentName", () => {
+    it("should accept a normal name", () => {
+      expect(isValidStudentName("Mara")).toBe(true);
+    });
+
+    it("should reject an empty string", () => {
+      expect(isValidStudentName("")).toBe(false);
+    });
+
+    it("should accept a name exactly at the length cap", () => {
+      expect(isValidStudentName("a".repeat(STUDENT_NAME_MAX_LENGTH))).toBe(
+        true,
+      );
+    });
+
+    it("should reject a name longer than the cap", () => {
+      expect(isValidStudentName("a".repeat(STUDENT_NAME_MAX_LENGTH + 1))).toBe(
+        false,
+      );
+    });
+  });
+
+  describe("isValidBirthDate", () => {
+    it("should accept a plausible past date", () => {
+      expect(isValidBirthDate(new Date("2005-05-05"))).toBe(true);
+    });
+
+    it("should reject a future date", () => {
+      const future = new Date();
+      future.setFullYear(future.getFullYear() + 1);
+      expect(isValidBirthDate(future)).toBe(false);
+    });
+
+    it("should reject an implausibly old date", () => {
+      expect(isValidBirthDate(new Date("1800-01-01"))).toBe(false);
     });
   });
 });

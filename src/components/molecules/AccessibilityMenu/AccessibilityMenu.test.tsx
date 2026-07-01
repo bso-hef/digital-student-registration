@@ -31,18 +31,18 @@ vi.mock("@/components/atoms/AppleSwitch", () => ({
   default: ({
     checked,
     onChange,
-    inputProps,
+    slotProps,
   }: {
     checked: boolean;
     onChange: () => void;
-    inputProps?: { "aria-label"?: string };
+    slotProps?: { input?: { "aria-label"?: string } };
   }) => (
     <input
       type="checkbox"
       data-testid="apple-switch"
       checked={checked}
       onChange={onChange}
-      aria-label={inputProps?.["aria-label"]}
+      aria-label={slotProps?.input?.["aria-label"]}
     />
   ),
 }));

@@ -1,5 +1,5 @@
-import type { NextConfig } from "next";
 import { readFileSync } from "fs";
+import type { NextConfig } from "next";
 import { join } from "path";
 
 // Read package.json to get app name and version
@@ -25,7 +25,7 @@ function parseAppUrl(urlString: string | undefined): {
       hostname: parsed.hostname,
       port: parsed.port || (parsed.protocol === "https:" ? "443" : "80"),
     };
-  } catch (error) {
+  } catch {
     console.warn(
       `Failed to parse NEXT_PUBLIC_APP_URL: ${url}. Using defaults.`,
     );

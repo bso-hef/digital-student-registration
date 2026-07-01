@@ -1,10 +1,9 @@
-import { describe, expect, it } from "vitest";
-
 import {
   descendingComparator,
   getComparator,
   stableSort,
 } from "@/utils/table.utils";
+import { describe, expect, it } from "vitest";
 
 /**
  * Tests for table utility functions

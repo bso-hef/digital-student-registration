@@ -40,7 +40,7 @@ const OnboardingVersion = () => {
         <Logo width={200} height={75} />
       </StyledLabel>
       {process.env.NEXT_PUBLIC_NAME && process.env.NEXT_PUBLIC_VERSION ? (
-        <StyledVersion variant="caption" display="block">
+        <StyledVersion variant="caption" sx={{ display: "block" }}>
           {process.env.NEXT_PUBLIC_NAME +
             " v" +
             process.env.NEXT_PUBLIC_VERSION}

@@ -1,10 +1,10 @@
-import { describe, expect, it } from "vitest";
-
-import studentReducer from "@/store/reducers/student";
 import * as TYPES from "@/store/types";
 import { ClassInterface } from "@/types/class.d";
 import { Student } from "@/types/db";
 import { StudentData } from "@/types/student";
+import { describe, expect, it } from "vitest";
+
+import studentReducer from "@/store/reducers/student";
 
 /**
  * Tests for student reducer
@@ -469,7 +469,10 @@ describe("studentReducer", () => {
     });
 
     it("should handle UPDATE_STUDENT_SUCCESS", () => {
-      const updatedStudent = { ...mockStudent, firstName: "Updated" } as Student;
+      const updatedStudent = {
+        ...mockStudent,
+        firstName: "Updated",
+      } as Student;
       const action = {
         type: TYPES.UPDATE_STUDENT_SUCCESS,
         payload: updatedStudent,

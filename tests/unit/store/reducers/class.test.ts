@@ -1,9 +1,9 @@
-import { describe, expect, it } from "vitest";
-
-import classReducer from "@/store/reducers/class";
 import * as TYPES from "@/store/types";
 import { ClassInterface } from "@/types/class";
 import { Student } from "@/types/db";
+import { describe, expect, it } from "vitest";
+
+import classReducer from "@/store/reducers/class";
 
 /**
  * Tests for class reducer
