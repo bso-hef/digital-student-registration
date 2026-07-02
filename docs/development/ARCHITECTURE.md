@@ -7,8 +7,8 @@ Architecture overview for Digital Student Registration.
 **Type:** Monolithic Next.js application (App Router)
 **Frontend:** React 19 + Material-UI v7 + Redux
 **Backend:** Next.js API Routes
-**Database:** MongoDB 8.18 + Redis 7
-**Testing:** Vitest (964+ tests) + Playwright (98+ E2E)
+**Database:** MongoDB 7.0 + Redis 7
+**Testing:** Vitest only (~2070 unit tests across 76 test files; 2 further integration files exist but are excluded from the run)
 
 ---
 
@@ -16,7 +16,7 @@ Architecture overview for Digital Student Registration.
 
 ### Frontend
 
-- **Next.js** 15.4.2 (App Router, SSR)
+- **Next.js** 15.4.10 (App Router, SSR)
 - **React** 19.1.0
 - **TypeScript** 5
 - **Material-UI** v7 (@emotion/styled)
@@ -50,7 +50,7 @@ src/
 │   │   │   ├── dashboard/       # Widgets, stats
 │   │   │   ├── management/      # Classes, students
 │   │   │   └── settings/        # App configuration
-│   │   └── student/             # 10-step onboarding
+│   │   └── student/             # 11-step onboarding (ids 0–10)
 │   │       └── [studentId]/     # Dynamic route
 │   ├── (auth)/                  # Auth pages (setup, login, reset)
 │   ├── api/                     # Backend API
@@ -70,7 +70,7 @@ src/
 │
 ├── store/                       # Redux
 │   ├── actions/                 # Thunks (classActions, studentActions)
-│   └── reducers/                # Slices (ui, student, class, dashboard)
+│   └── reducers/                # Slices (appSettings, auditLog, auth, class, dashboard, student, ui)
 │
 ├── models/                      # Mongoose schemas
 │   ├── Class.ts
@@ -138,28 +138,62 @@ Component Re-render
 
 ### Redux Store Structure
 
+The root reducer (`src/store/reducers/index.ts`) combines **seven** slices:
+
 ```typescript
 {
+  appSettings: { /* ... */ },      // Application settings
+  auditLog: { /* ... */ },         // Audit log entries
+  auth: { /* ... */ },             // Auth/session state
   ui: {
+    documnetDraggedOver: boolean,
+    appTouched: boolean,
     theme: 'light' | 'dark',
-    locale: 'en' | 'de',
-    appTouched: boolean
+    locale: string,                // defaults to German
+    loading: boolean,
+    error: Error | null,
+    highContrast: boolean,
+    dyslexiaFont: boolean
   },
   student: {
-    currentStep: number,           // Onboarding wizard step (1-10)
-    data: StudentFormData,         // Form data across steps
-    students: Student[]
+    currentStep: number,           // Onboarding wizard step, starts at 0 (steps 0–10)
+    previousStep: number | null,
+    editingFromSummary: boolean,
+    data: StudentData,             // Form data across steps
+    students: Student[],
+    currentClass: ClassInterface | null,
+    studentStatus: string | null,
+    currentStudentId: string | null,
+    currentStudent: Student | null,
+    loading: boolean,
+    error: Error | null,
+    currentStudentLoading: boolean
   },
   class: {
-    classes: Class[],
-    currentClass: Class | null,
+    classes: ClassInterface[],
+    currentClass: {                // Object, not Class | null
+      data: ClassInterface | null,
+      loading: boolean,
+      error: string | null,
+      success: boolean
+    },
+    currentClassStudents: { students: Student[], loading: boolean, error: string | null },
+    byId: Record<string, ClassInterface>,
+    loading: boolean,
+    error: string | null,
     page: number,
     limit: number,
-    total: number
+    total: number,
+    pages: number
   },
   dashboard: {
     stats: DashboardStats | null,
-    health: HealthStatus | null,
+    health: HealthReport | null,
+    recentActivity: RecentActivityItem[],
+    activityLoading: boolean,
+    loading: boolean,
+    error: string | null,
+    lastUpdated: string | null,
     layout: DashboardLayout        // Widget positions
   }
 }
@@ -193,28 +227,71 @@ export const getClasses = (): AppThunk => async (dispatch) => {
 
 ```typescript
 {
-  firstName, lastName: String,
-  firstNameNorm, lastNameNorm: String,   // For collision detection
-  dateOfBirth: Date,
-  email: String (lowercase),
+  // Identity
+  firstName, lastName: String (required, trimmed),
+  birthName: String,
+  dateOfBirth: Date (required),
+  gender: "male" | "female" | "diverse",
+  birthplace: String,
+  birthCountry: String,
+  religion: String,
+
+  // Nationality & language
+  nationality: String,
+  secondNationality: String,
+  familyLanguage: String,
+  immigrationYear: Number,
+
+  // Contact
+  email: String (lowercase, trimmed),
   phone: String,
   address: { street, city, state, zip, country, timezone },
-  collisionGroup: String,                // Name conflict handling
-  ordinal: Number,                       // Ordering students with same name
-  status: "imported" | "invited" | "onboarded",
-  currentClass: ObjectId,                // Reference to Class
+
+  // Class assignment
+  currentClass: ObjectId,                // Reference to Class (default null)
+  currentClassName: String,
+  schoolEntryDate: Date,
   classHistory: [{                       // Historical assignments
     classId, schoolYear, startDate, endDate, note
   }],
+
+  // Prior education
+  previousSchool: String,
+  previousSchoolType: String,
+  previousSchoolLevel: String,
+  degrees: String,
+
+  // Vocational
+  profession: String,
+  trainingStartDate: Date,
   employer: {                            // For vocational students
-    companyName, address, contactName, contactEmail, verified
+    companyName, address, contactName, contactEmail, contactPhone, contactSalutation,
+    contact2Name, contact2Email, contact2Phone, contact2Salutation, verified
   },
-  active: Boolean,
+
+  // Guardians / contacts
+  contactPersons: [{ type, firstName, lastName, phone, mobile, address }],
+
+  // Agreements (consent)
+  agreements: { dataProtection, classParticipation, schoolRules, imageRights, teamsUsage },
+
+  // Onboarding & collision handling
+  onboardingStep: Number,                // default 0
+  previousStep: Number | null,
+  firstNameNorm, lastNameNorm: String (required, indexed),  // For collision detection
+  collisionGroup: String,                // Name conflict handling
+  ordinal: Number,                       // Ordering students with same name (default 1)
+  status: "imported" | "invited" | "onboarded",   // default "imported"
+  verificationCode: String,              // Unique, sparse, 6-char [0-9A-Z], uppercased
+
+  active: Boolean,                       // default true
   timestamps
 }
 ```
 
-**Indexes:** `firstNameNorm`, `lastNameNorm`, `currentClass`, `collisionGroup`
+**Indexes:** `firstNameNorm`, `lastNameNorm`, `collisionGroup`, `ordinal`; `verificationCode` (unique + sparse); compound `{ firstNameNorm, lastNameNorm, dateOfBirth }`; partial `{ currentClass }` (only where `active: true`)
+
+**Pre-save hooks:** A unique `verificationCode` is generated for new documents; employer info is validated when a student's status changes to `onboarded` and the assigned class requires employer info.
 
 ### Class Model
 
@@ -228,11 +305,14 @@ export const getClasses = (): AppThunk => async (dispatch) => {
   requiresEmployerInfo: Boolean,
   studentCount: Number,                  // Cached count
   active: Boolean,
+  incomplete: Boolean,                   // Indexed; true when grade is null/undefined
   timestamps
 }
 ```
 
-**Pre-validate hook:** Ensures `schoolYearTo > schoolYearFrom`
+**Pre-save hook:** Derives `incomplete` from `grade` (`true` when `grade` is `null`/`undefined`, otherwise `false`).
+**Pre-validate hook:** Ensures `schoolYearFrom`/`schoolYearTo` are present and `schoolYearTo > schoolYearFrom` (error messages are in German).
+**Indexes:** Unique compound `{ schoolYearFrom, schoolYearTo, name }`; `incomplete`.
 
 ---
 
@@ -244,26 +324,53 @@ All API routes in `src/app/api/` follow this pattern:
 
 ```typescript
 export async function GET(req: NextRequest) {
-  // 1. Database connection
-  await dbConnect();
+  try {
+    // 1. Authentication check FIRST
+    const session = await auth();
+    if (!session)
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
-  // 2. Authentication check
-  const session = await auth();
-  if (!session)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // 2. Database connection
+    await dbConnect();
 
-  // 3. Validation
-  const { searchParams } = new URL(req.url);
-  const skip = Number(searchParams.get("skip")) || 0;
-  const limit = Number(searchParams.get("limit")) || 20;
+    // 3. Parse params
+    const { searchParams } = new URL(req.url);
+    const page = Math.max(1, Number(searchParams.get("page") || 1));
+    const limit = Math.min(
+      200,
+      Math.max(1, Number(searchParams.get("limit") || 25)),
+    );
+    const skip = (page - 1) * limit;
 
-  // 4. Database operation
-  const result = await Model.paginate({}, { skip, limit });
+    // 4. Manual pagination via .find().skip().limit() + countDocuments()
+    const [items, total] = await Promise.all([
+      Model.find({})
+        .sort({ createdAt: -1, _id: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      Model.countDocuments({}),
+    ]);
 
-  // 5. Response
-  return NextResponse.json(result);
+    // 5. Response
+    return NextResponse.json(
+      { items, page, limit, total, pages: Math.ceil(total / limit) },
+      { status: 200 },
+    );
+  } catch (error) {
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 },
+    );
+  }
 }
 ```
+
+Notes:
+
+- Routes call `auth()` **before** `dbConnect()`.
+- Pagination is done manually with `.find().skip().limit()` plus `countDocuments()` — routes do **not** use `Model.paginate`.
+- Mutating routes (POST/DELETE/etc.) record an audit entry via `createAuditLog()` from `@/server/middleware/audit.middleware`. Shared server-side helpers live under `src/server/`.
 
 ### Error Handling
 
@@ -272,10 +379,7 @@ try {
   // operation
 } catch (error) {
   console.error("Error:", error);
-  return NextResponse.json(
-    { error: toErrorMessage(error) },
-    { status: 500 }
-  );
+  return NextResponse.json({ error: toErrorMessage(error) }, { status: 500 });
 }
 ```
 
@@ -298,22 +402,25 @@ try {
 
 ## Student Onboarding Flow
 
-10-step wizard at `/student/[studentId]`:
+11-step wizard (ids 0–10) at `/student/[studentId]`, defined in `src/constants/studentSteps.constants.tsx` and rendered by `src/components/organisms/StepForm/index.tsx`:
 
-1. **Welcome** - Class selection
-2. **General** - Name, gender, DOB, religion
-3. **Origin** - Birthplace, nationality, language
-4. **Address** - Student address and contact
-5. **Parents/Guardians** - Contact persons
-6. **Pre-Education** - Previous school, qualifications
-7. **Training** - Vocational training (if applicable)
-8. **Company** - Employer info (if vocational)
+0. **Welcome** - Class selection
+1. **General** - Name, gender, DOB, religion
+2. **Origin** - Birthplace, nationality, language _(conditional: only for non-German origin)_
+3. **Address** - Student address and contact
+4. **Legal Guardian** - Contact persons
+5. **Pre-Education** - Previous school, qualifications
+6. **Training** - Vocational training _(conditional: vocational classes only)_
+7. **Company Contact** - Employer info _(conditional: vocational classes only)_
+8. **Agreements** - Consent (data protection, class participation, school rules, image rights, Teams usage)
 9. **Summary** - Review all data
-10. **Completion** - Success message
+10. **Completion** - Success screen
 
-**State:** Persisted in Redux (`student.data`, `student.currentStep`)
+Conditional steps are filtered out by `getActiveSteps()` when not applicable, so a given student sees fewer than 11 steps.
+
+**State:** Persisted in Redux (`student.data`, `student.currentStep`; starts at step 0)
 **Validation:** Formik + Yup schemas
-**Submission:** Only on final step (step 10)
+**Submission:** Triggered from the **Summary** step (step 9). Step 10 (Completion) is only a success screen, not a submission step.
 
 ---
 
@@ -344,7 +451,7 @@ try {
 ## Performance Considerations
 
 - **MongoDB:** Connection pooling via cached `dbConnect()`
-- **Pagination:** Always paginate (mongoose-paginate-v2)
+- **Pagination:** List endpoints page results via manual `.skip()`/`.limit()` + `countDocuments()` (the `mongoose-paginate-v2` plugin is also registered on the models)
 - **Indexes:** On frequently queried fields
 - **Code Splitting:** Automatic with Next.js
 - **SSR:** Server-side rendering for initial load

@@ -180,7 +180,9 @@ const GeneralStudentSettingsTab = () => {
               <Fragment>
                 <StyledHalfBox>
                   <Form>
-                    <Box display="flex" flexDirection="column" gap={2}>
+                    <Box
+                      sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+                    >
                       <Field
                         component={TextField}
                         name="firstName"
@@ -268,7 +270,9 @@ const GeneralStudentSettingsTab = () => {
                 </StyledHalfBox>
                 <StyledHalfBox>
                   <Form>
-                    <Box display="flex" flexDirection="column" gap={2}>
+                    <Box
+                      sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+                    >
                       <Field
                         component={TextField}
                         name="religion"
@@ -324,7 +328,7 @@ const GeneralStudentSettingsTab = () => {
                         }}
                       >
                         <ReadOnlyBox>
-                          <Typography variant="body2" fontWeight={600}>
+                          <Typography variant="body2" sx={{ fontWeight: 600 }}>
                             {t("settings.manageStudent.status")}:
                           </Typography>
                           <Chip
@@ -335,7 +339,7 @@ const GeneralStudentSettingsTab = () => {
                         </ReadOnlyBox>
 
                         <ReadOnlyBox>
-                          <Typography variant="body2" fontWeight={600}>
+                          <Typography variant="body2" sx={{ fontWeight: 600 }}>
                             {t("settings.manageStudent.verificationCode")}:
                           </Typography>
                           <Typography variant="body2">
@@ -343,7 +347,9 @@ const GeneralStudentSettingsTab = () => {
                           </Typography>
                         </ReadOnlyBox>
 
-                        <Box display="flex" alignItems="center" gap={1}>
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                        >
                           <Field name="active">
                             {({ field, form }: FieldProps) => (
                               <>

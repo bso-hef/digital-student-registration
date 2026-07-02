@@ -1,9 +1,7 @@
-import { describe, expect, it } from "vitest";
-
-import { filterClasses, filterStudents } from "@/utils/filter.utils";
-
 import type { ClassInterface } from "@/types/class";
 import type { Student } from "@/types/db";
+import { filterClasses, filterStudents } from "@/utils/filter.utils";
+import { describe, expect, it } from "vitest";
 
 /**
  * Tests for filter utility functions

@@ -1,9 +1,7 @@
+import type { Theme } from "@mui/material";
 import { describe, expect, it, vi } from "vitest";
 
-import { THEME } from "@/constants/general.constants";
 import MuiCssBaselineOverride from "@/theme/overrides/MuiCssBaseline";
-
-import type { Theme } from "@mui/material";
 
 // Mock the general.utils module
 vi.mock("@/utils/general.utils", () => ({
@@ -108,9 +106,8 @@ describe("MuiCssBaselineOverride", () => {
         isFirefox: true,
       }));
 
-      const { default: MuiCssBaselineWithFirefox } = await import(
-        "@/theme/overrides/MuiCssBaseline"
-      );
+      const { default: MuiCssBaselineWithFirefox } =
+        await import("@/theme/overrides/MuiCssBaseline");
 
       const theme = createMockTheme("light");
       const overrides = MuiCssBaselineWithFirefox(theme);
@@ -144,9 +141,9 @@ describe("MuiCssBaselineOverride", () => {
       const overrides = MuiCssBaselineOverride(theme);
 
       expect(overrides["*::-webkit-scrollbar-track"]).toBeDefined();
-      expect(
-        overrides["*::-webkit-scrollbar-track"].backgroundColor,
-      ).toBe(theme.palette.surface.interface.background);
+      expect(overrides["*::-webkit-scrollbar-track"].backgroundColor).toBe(
+        theme.palette.surface.interface.background,
+      );
     });
 
     it("should set border radius for scrollbar thumb", () => {
@@ -228,7 +225,9 @@ describe("MuiCssBaselineOverride", () => {
       const theme = createMockTheme("light");
       const overrides = MuiCssBaselineOverride(theme);
 
-      expect(overrides["@media (prefers-reduced-motion: reduce)"]).toBeDefined();
+      expect(
+        overrides["@media (prefers-reduced-motion: reduce)"],
+      ).toBeDefined();
       expect(
         overrides["@media (prefers-reduced-motion: reduce)"]["*"],
       ).toBeDefined();

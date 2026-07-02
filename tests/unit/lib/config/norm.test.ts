@@ -1,6 +1,5 @@
+import { deburr, isISODate, isoDateToUTC, norm } from "@/lib/config/norm";
 import { describe, expect, it } from "vitest";
-
-import { deburr, isoDateToUTC, isISODate, norm } from "@/lib/config/norm";
 
 /**
  * Tests for normalization and date utility functions

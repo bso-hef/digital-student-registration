@@ -1,11 +1,10 @@
-import { describe, expect, it } from "vitest";
-
 import {
   CHECKBOX_COL_WIDTH,
   ROWS_PER_PAGE_OPTIONS,
   STEPPER_ICON_SIZE,
   TABLE_ALIGN,
 } from "@/constants/ui.constants";
+import { describe, expect, it } from "vitest";
 
 /**
  * Tests for UI constants

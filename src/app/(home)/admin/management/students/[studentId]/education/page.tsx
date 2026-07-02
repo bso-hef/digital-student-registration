@@ -162,7 +162,9 @@ const EducationStudentSettingsTab = () => {
               <Fragment>
                 <StyledHalfBox>
                   <Form>
-                    <Box display="flex" flexDirection="column" gap={2}>
+                    <Box
+                      sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+                    >
                       <SectionTitle variant="subtitle1">
                         {t("settings.manageStudent.currentEducation")}
                       </SectionTitle>
@@ -234,7 +236,9 @@ const EducationStudentSettingsTab = () => {
                 </StyledHalfBox>
                 <StyledHalfBox>
                   <Form>
-                    <Box display="flex" flexDirection="column" gap={2}>
+                    <Box
+                      sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+                    >
                       <SectionTitle variant="subtitle1">
                         {t("settings.manageStudent.vocationalTraining")}
                       </SectionTitle>

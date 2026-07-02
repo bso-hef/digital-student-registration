@@ -105,7 +105,7 @@ exit
 
 ```bash
 mongosh
-use digital-student-onboarding
+use digital-student-registration
 db.students.insertOne({ test: "data" })
 db.students.find()
 db.students.deleteOne({ test: "data" })
@@ -116,39 +116,13 @@ exit
 
 ## SSL Certificates
 
-Application uses HTTPS in development via self-signed certificates.
+The dev server runs over HTTPS in development. The `dev` script uses
+`next dev --turbopack --experimental-https`, which **automatically generates
+and manages self-signed certificates** for `localhost`. There is no manual
+certificate setup and no `certificates/` directory to create.
 
-### Certificates Location
-
-```
-./certificates/
-├── localhost.pem       # Certificate
-└── localhost-key.pem   # Private key
-```
-
-### Generate New Certificates
-
-```bash
-# Install mkcert
-# Windows (Chocolatey)
-choco install mkcert
-
-# Mac
-brew install mkcert
-
-# Linux
-sudo apt install libnss3-tools
-wget https://github.com/FiloSottile/mkcert/releases/download/v1.4.4/mkcert-v1.4.4-linux-amd64
-sudo mv mkcert-v1.4.4-linux-amd64 /usr/local/bin/mkcert
-sudo chmod +x /usr/local/bin/mkcert
-
-# Install local CA
-mkcert -install
-
-# Generate certificates
-cd certificates
-mkcert localhost
-```
+The certificates are created the first time you run `yarn dev` and are stored
+by Next.js internally (under `~/.next` / the user's certificate directory).
 
 ### Trust Certificates
 
@@ -169,40 +143,62 @@ cp .env.example .env.local
 
 ### Edit .env.local
 
-```env
-# Environment
-NODE_ENV=development
+The keys below mirror `.env.example`. For local development, set the URLs to
+`https://localhost:3000` and provide your local MongoDB/Redis values.
 
-# API URL (HTTPS)
+```env
+NODE_ENV=development
+APP_NAME=Digital Student Registration
+APP_VERSION=2.1.0
+
+# Port the app is accessed on (container always runs on 3000 internally)
+APP_PORT=3000
+DOCKER_IMAGE=dsr-app
+
+# Application URLs (use localhost for local dev)
+NEXT_PUBLIC_APP_URL=https://localhost:3000
 NEXT_PUBLIC_API_URL=https://localhost:3000
+NEXTAUTH_URL=https://localhost:3000
 
 # MongoDB
-MONGODB_URI=mongodb://localhost:27017/digital-student-onboarding
+MONGODB_URI=mongodb://localhost:27017/digital-student-registration
+MONGO_USER=admin
+MONGO_PASSWORD=CHANGE_ME
+MONGO_DB=digital-student-registration
 
-# Optional MongoDB Auth
-# MONGO_USER=dev_user
-# MONGO_PASSWORD=dev_password
+# Redis
+REDIS_URL=redis://localhost:6379
+REDIS_PASSWORD=CHANGE_ME
 
-# App Info
-NEXT_PUBLIC_VERSION=$npm_package_version
-NEXT_PUBLIC_NAME=$npm_package_name
+# NextAuth
+NEXTAUTH_SECRET=CHANGE_ME_TO_RANDOM_64_CHAR_STRING
 
-# Logging
-LOG_LEVEL=debug
+NEXT_TELEMETRY_DISABLED=1
 ```
 
 ### Environment Variables
 
-| Variable              | Purpose            | Required |
-| --------------------- | ------------------ | -------- |
-| `NODE_ENV`            | Environment mode   | Yes      |
-| `NEXT_PUBLIC_API_URL` | API base URL       | Yes      |
-| `MONGODB_URI`         | MongoDB connection | Yes      |
-| `MONGO_USER`          | MongoDB username   | No       |
-| `MONGO_PASSWORD`      | MongoDB password   | No       |
-| `LOG_LEVEL`           | Logging verbosity  | No       |
+| Variable                  | Purpose                                   | Required |
+| ------------------------- | ----------------------------------------- | -------- |
+| `NODE_ENV`                | Environment mode                          | Yes      |
+| `APP_NAME`                | Application display name                  | Yes      |
+| `APP_VERSION`             | Application version                       | Yes      |
+| `APP_PORT`                | External host port (container uses 3000)  | Yes      |
+| `DOCKER_IMAGE`            | Docker image name used by docker-compose  | Yes      |
+| `NEXT_PUBLIC_APP_URL`     | Public app base URL (embedded at build)   | Yes      |
+| `NEXT_PUBLIC_API_URL`     | API base URL (embedded at build)          | Yes      |
+| `NEXTAUTH_URL`            | NextAuth callback base URL                | Yes      |
+| `MONGODB_URI`             | MongoDB connection string                 | Yes      |
+| `MONGO_USER`              | MongoDB username                          | Yes      |
+| `MONGO_PASSWORD`          | MongoDB password                          | Yes      |
+| `MONGO_DB`                | MongoDB database name                     | Yes      |
+| `REDIS_URL`               | Redis connection string                   | Yes      |
+| `REDIS_PASSWORD`          | Redis password                            | Yes      |
+| `NEXTAUTH_SECRET`         | NextAuth signing secret (random 64 chars) | Yes      |
+| `NEXT_TELEMETRY_DISABLED` | Disable Next.js telemetry                 | No       |
 
-**Note:** `NEXT_PUBLIC_*` variables exposed to browser.
+**Note:** `NEXT_PUBLIC_*` variables are exposed to the browser and are embedded
+at **build time** (using `localhost` in production breaks QR codes/PDFs/emails).
 
 ---
 
@@ -257,7 +253,9 @@ Press `Ctrl+C`
 
 ### VS Code Settings
 
-`.vscode/settings.json`:
+The repo does not include a `.vscode/` directory. If you want editor-level
+formatting and lint-on-save, you can create your own `.vscode/settings.json`,
+for example:
 
 ```json
 {
@@ -342,7 +340,8 @@ export async function GET(req: NextRequest) {
 
 ### VS Code Launch Config
 
-`.vscode/launch.json`:
+The repo does not include a `.vscode/launch.json`. To enable VS Code debugging,
+you can create one yourself, for example:
 
 ```json
 {
@@ -409,7 +408,9 @@ sudo systemctl status mongod
 
 ### SSL Certificate Warnings
 
-Trust certificates in browser or regenerate with `mkcert`.
+Trust the auto-generated certificate in your browser. To force Next.js to
+regenerate it, stop the dev server and restart `yarn dev` (the
+`--experimental-https` flag recreates certificates as needed).
 
 ### Dependencies Not Installing
 
@@ -441,8 +442,12 @@ yarn dev              # Start dev server
 yarn build            # Build for production
 yarn lint             # Check for errors
 yarn format           # Format code
-yarn test             # Run unit tests
-yarn test:e2e         # Run E2E tests
+yarn test             # Run Vitest in WATCH mode (interactive)
+yarn test:unit        # Run unit tests once (with coverage)
+yarn test:coverage    # Run unit tests once with coverage report
+yarn test:watch       # Run Vitest in watch mode
+yarn test:ui          # Run Vitest with the UI
+yarn test:ts          # Type-check (tsc --noEmit)
 ```
 
 ### URLs

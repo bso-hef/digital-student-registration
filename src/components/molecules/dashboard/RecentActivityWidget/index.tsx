@@ -211,13 +211,15 @@ const RecentActivityWidget: React.FC<RecentActivityWidgetProps> = ({
                   <ListItemText
                     primary={getActivityText(activity)}
                     secondary={getRelativeTime(activity.timestamp)}
-                    primaryTypographyProps={{
-                      variant: "body2",
-                      sx: { fontWeight: 500 },
-                    }}
-                    secondaryTypographyProps={{
-                      variant: "caption",
-                      sx: { fontSize: "0.75rem" },
+                    slotProps={{
+                      primary: {
+                        variant: "body2",
+                        sx: { fontWeight: 500 },
+                      },
+                      secondary: {
+                        variant: "caption",
+                        sx: { fontSize: "0.75rem" },
+                      },
                     }}
                   />
                 </ActivityItem>

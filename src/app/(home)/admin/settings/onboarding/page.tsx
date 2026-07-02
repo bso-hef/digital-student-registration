@@ -91,6 +91,7 @@ const AdminSettingsOnboardingPage = () => {
 
   useEffect(() => {
     if (onboarding && !localSettings) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- initializes editable local form state from fetched/redux onboarding settings
       setLocalSettings(onboarding);
     }
   }, [onboarding, localSettings]);
@@ -280,7 +281,7 @@ const AdminSettingsOnboardingPage = () => {
             onChange={(e) =>
               handleMaxContactPersonsChange(parseInt(e.target.value, 10) || 1)
             }
-            inputProps={{ min: 1 }}
+            slotProps={{ htmlInput: { min: 1 } }}
             sx={{ maxWidth: 200 }}
             size="small"
           />

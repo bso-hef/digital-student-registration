@@ -2,8 +2,9 @@
  * Setup file for integration tests
  * This runs in Node.js environment (not jsdom) and sets up mocks for API testing
  */
-import { beforeAll, afterAll, afterEach, vi } from "vitest";
 import { MongoMemoryServer } from "mongodb-memory-server";
+import { afterAll, afterEach, beforeAll, vi } from "vitest";
+
 import { server } from "./mocks/server";
 
 /**
@@ -40,7 +41,7 @@ beforeAll(async () => {
 
   // Start MSW Server for API mocking
   server.listen({
-    onUnhandledRequest: 'warn',
+    onUnhandledRequest: "warn",
   });
 });
 

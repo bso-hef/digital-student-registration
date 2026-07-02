@@ -75,12 +75,7 @@ const OriginForm: React.FC<OriginFormProps> = ({
       return country?.label || "";
     }
     return "";
-  }, [
-    studentData?.herkunftsland,
-    studentData?.geburtsland,
-    countryOptions,
-    getEnabledOptions,
-  ]);
+  }, [studentData, countryOptions, getEnabledOptions]);
 
   const initialValues: FormValues = {
     herkunftsland: defaultHerkunftsland,

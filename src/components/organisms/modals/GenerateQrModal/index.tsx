@@ -154,17 +154,6 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
   >([]);
   const [loadingStudents, setLoadingStudents] = useState(false);
 
-  // Load students when in class mode
-  useEffect(() => {
-    if (open && classMode && selectedClassIds.length > 0) {
-      loadStudentsForClasses();
-    } else if (!open) {
-      // Reset state when modal closes (only if not already empty to prevent re-renders)
-      setClassesWithStudents((prev) => (prev.length > 0 ? [] : prev));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, classMode, selectedClassIds]);
-
   const loadStudentsForClasses = async () => {
     setLoadingStudents(true);
     try {
@@ -188,6 +177,18 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
       setLoadingStudents(false);
     }
   };
+
+  // Load students when in class mode
+  useEffect(() => {
+    if (open && classMode && selectedClassIds.length > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- syncs local class-student cache to external "modal open" state; loads on open, clears on close
+      loadStudentsForClasses();
+    } else if (!open) {
+      // Reset state when modal closes (only if not already empty to prevent re-renders)
+      setClassesWithStudents((prev) => (prev.length > 0 ? [] : prev));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, classMode, selectedClassIds]);
 
   // Calculate total students in class mode
   const totalClassStudents = classesWithStudents.reduce(
@@ -380,7 +381,7 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
 
       {classMode && !loadingStudents && classesWithStudents.length > 0 && (
         <Box sx={{ pb: 2 }}>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" sx={{ color: "text.secondary" }}>
             {t("modals.generateQrModal.totalStudents", {
               count: totalClassStudents,
             })}
@@ -530,9 +531,13 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                     overflow: "hidden",
                   }}
                 >
-                  <Stack direction="row" alignItems="center" spacing={1}>
+                  <Stack
+                    direction="row"
+                    spacing={1}
+                    sx={{ alignItems: "center" }}
+                  >
                     <QrCode2RoundedIcon sx={{ fontSize: 18 }} />
-                    <Typography variant="caption" fontWeight={600}>
+                    <Typography variant="caption" sx={{ fontWeight: 600 }}>
                       {t("modals.generateQrModal.newRegistration.pdfTitle")}
                     </Typography>
                   </Stack>
@@ -549,7 +554,7 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                     <Stack
                       direction="row"
                       spacing={1.5}
-                      alignItems="flex-start"
+                      sx={{ alignItems: "flex-start" }}
                     >
                       <StyledQRPreviewBox isPortrait={isPortrait}>
                         QR
@@ -614,9 +619,11 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                         <Box sx={{ flex: 1, minWidth: 0 }}>
                           <Typography
                             variant="caption"
-                            fontWeight="bold"
-                            display="block"
-                            sx={{ fontSize: "0.65rem" }}
+                            sx={{
+                              fontWeight: "bold",
+                              display: "block",
+                              fontSize: "0.65rem",
+                            }}
                           >
                             {t(
                               "modals.generateQrModal.newRegistration.pdfInstructions.title",
@@ -624,9 +631,11 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                           </Typography>
                           <Typography
                             variant="caption"
-                            color="text.secondary"
-                            display="block"
-                            sx={{ fontSize: "0.6rem" }}
+                            sx={{
+                              color: "text.secondary",
+                              display: "block",
+                              fontSize: "0.6rem",
+                            }}
                           >
                             {t(
                               "modals.generateQrModal.newRegistration.pdfInstructions.option1Title",
@@ -634,9 +643,11 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                           </Typography>
                           <Typography
                             variant="caption"
-                            color="text.secondary"
-                            display="block"
-                            sx={{ fontSize: "0.6rem" }}
+                            sx={{
+                              color: "text.secondary",
+                              display: "block",
+                              fontSize: "0.6rem",
+                            }}
                           >
                             {t(
                               "modals.generateQrModal.newRegistration.pdfInstructions.option2Title",
@@ -649,8 +660,10 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
 
                   <Stack
                     direction="row"
-                    justifyContent="space-between"
-                    alignItems="center"
+                    sx={{
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
                   >
                     <Typography
                       variant="caption"
@@ -873,9 +886,13 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                     overflow: "hidden",
                   }}
                 >
-                  <Stack direction="row" alignItems="center" spacing={1}>
+                  <Stack
+                    direction="row"
+                    spacing={1}
+                    sx={{ alignItems: "center" }}
+                  >
                     <QrCode2RoundedIcon sx={{ fontSize: 18 }} />
-                    <Typography variant="caption" fontWeight={600}>
+                    <Typography variant="caption" sx={{ fontWeight: 600 }}>
                       {t("modals.generateQrModal.onboardingWizard")}
                     </Typography>
                   </Stack>
@@ -892,7 +909,7 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                     <Stack
                       direction="row"
                       spacing={1.5}
-                      alignItems="flex-start"
+                      sx={{ alignItems: "flex-start" }}
                     >
                       <StyledQRPreviewBox isPortrait={isPortrait}>
                         QR
@@ -974,17 +991,21 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                         <Box sx={{ flex: 1, minWidth: 0 }}>
                           <Typography
                             variant="caption"
-                            fontWeight="bold"
-                            display="block"
-                            sx={{ fontSize: "0.65rem" }}
+                            sx={{
+                              fontWeight: "bold",
+                              display: "block",
+                              fontSize: "0.65rem",
+                            }}
                           >
                             {t("modals.generateQrModal.pdfInstructions.title")}
                           </Typography>
                           <Typography
                             variant="caption"
-                            color="text.secondary"
-                            display="block"
-                            sx={{ fontSize: "0.6rem" }}
+                            sx={{
+                              color: "text.secondary",
+                              display: "block",
+                              fontSize: "0.6rem",
+                            }}
                           >
                             {t(
                               "modals.generateQrModal.pdfInstructions.option1Title",
@@ -992,9 +1013,11 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                           </Typography>
                           <Typography
                             variant="caption"
-                            color="text.secondary"
-                            display="block"
-                            sx={{ fontSize: "0.6rem" }}
+                            sx={{
+                              color: "text.secondary",
+                              display: "block",
+                              fontSize: "0.6rem",
+                            }}
                           >
                             {t(
                               "modals.generateQrModal.pdfInstructions.option2Title",
@@ -1007,8 +1030,10 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
 
                   <Stack
                     direction="row"
-                    justifyContent="space-between"
-                    alignItems="center"
+                    sx={{
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
                   >
                     <Typography
                       variant="caption"

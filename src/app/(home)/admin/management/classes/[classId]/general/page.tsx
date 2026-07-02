@@ -124,7 +124,9 @@ const GeneralClassSettingsTab = () => {
               <Fragment>
                 <StyledHalfBox>
                   <Form>
-                    <Box display="flex" flexDirection="column" gap={2}>
+                    <Box
+                      sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+                    >
                       <Field
                         component={TextField}
                         name="name"
@@ -145,7 +147,13 @@ const GeneralClassSettingsTab = () => {
                       />
 
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <Box display="flex" flexDirection="column" gap={2}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 2,
+                          }}
+                        >
                           <DatePicker
                             label={t("settings.manageClass.schoolYearFrom")}
                             value={values.schoolYearFrom}
@@ -175,7 +183,9 @@ const GeneralClassSettingsTab = () => {
                           mt: 1,
                         }}
                       >
-                        <Box display="flex" alignItems="center" gap={1}>
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                        >
                           <Field name="isVocational">
                             {({ field, form }: FieldProps) => (
                               <>
@@ -196,7 +206,9 @@ const GeneralClassSettingsTab = () => {
                           </Field>
                         </Box>
 
-                        <Box display="flex" alignItems="center" gap={1}>
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                        >
                           <Field name="requiresEmployerInfo">
                             {({ field, form }: FieldProps) => (
                               <>
@@ -219,7 +231,9 @@ const GeneralClassSettingsTab = () => {
                           </Field>
                         </Box>
 
-                        <Box display="flex" alignItems="center" gap={1}>
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                        >
                           <Field name="active">
                             {({ field, form }: FieldProps) => (
                               <>

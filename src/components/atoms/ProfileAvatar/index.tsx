@@ -50,7 +50,8 @@ const ProfileAvatar: React.FC<ProfileAvatarProps> = ({
 
   useEffect(() => {
     if (!imageUrl) {
-      setIsImageValid(false);
+      // No URL to validate. The valid-image branch below is also gated on
+      // imageUrl, so an explicit synchronous reset here is unnecessary.
       return;
     }
 
@@ -60,7 +61,7 @@ const ProfileAvatar: React.FC<ProfileAvatarProps> = ({
     img.onerror = () => setIsImageValid(false);
   }, [imageUrl]);
 
-  if (isImageValid) {
+  if (isImageValid && imageUrl) {
     return (
       <StyledAvatarImage
         alt="avatar"

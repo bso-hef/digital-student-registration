@@ -102,8 +102,11 @@ describe("LanguageDropdown", () => {
       const user = userEvent.setup();
       const changeLocaleSpy = vi.spyOn(uiActions, "changeApplicationLocale");
 
-      const { i18nInstance } = renderWithProviders(<LanguageDropdown />);
-      const changeLanguageSpy = vi.spyOn(i18nInstance, "changeLanguage");
+      // Spy on the i18n instance BEFORE rendering so react-i18next's
+      // useTranslation wrapper captures the spied changeLanguage method.
+      const changeLanguageSpy = vi.spyOn(mockI18n, "changeLanguage");
+
+      renderWithProviders(<LanguageDropdown />);
 
       const combobox = screen.getByRole("combobox");
       await user.click(combobox);

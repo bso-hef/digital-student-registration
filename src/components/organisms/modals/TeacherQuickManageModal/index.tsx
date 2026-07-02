@@ -106,6 +106,7 @@ const TeacherQuickManageModal: React.FC<TeacherQuickManageModalProps> = ({
   // Reset form when modal opens
   useEffect(() => {
     if (open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- resets the user-editable name field each time the modal opens; cannot be derived during render
       setName("");
     }
   }, [open]);
@@ -206,7 +207,7 @@ const TeacherQuickManageModal: React.FC<TeacherQuickManageModalProps> = ({
 
       {/* Class List Section */}
       <Box>
-        <Typography variant="subtitle2" fontWeight={600} gutterBottom>
+        <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 600 }}>
           {t("modals.quickManage.existingClasses")} ({classes.length})
         </Typography>
 
@@ -224,8 +225,7 @@ const TeacherQuickManageModal: React.FC<TeacherQuickManageModalProps> = ({
                 <StyledClassInfo>
                   <Typography
                     variant="body2"
-                    fontWeight={500}
-                    sx={{ minWidth: 100 }}
+                    sx={{ fontWeight: 500, minWidth: 100 }}
                   >
                     {classItem.name}
                   </Typography>

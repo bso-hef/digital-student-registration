@@ -1,3 +1,64 @@
+# Digital Student Registration - Version 2.2.0
+
+**Veröffentlichungsdatum:** 30. Juni 2026
+
+Version 2.2.0 ist ein Wartungs-Release mit Fokus auf aktualisierte Abhängigkeiten und Toolchain. Es bringt keine sichtbaren Funktionsänderungen, hält die Anwendung aber auf einem aktuellen, sicheren und gut wartbaren Stand.
+
+---
+
+## Technische Verbesserungen
+
+### Aktualisierte Abhängigkeiten (Major-Versionen)
+
+- **Material UI** von v7 auf v9 aktualisiert (inkl. Icons, Lab, Data-Grid, Date-Pickers); Code entsprechend migriert
+- **Next.js** von 15 auf 16 aktualisiert
+- **TypeScript** von 5 auf 6 aktualisiert
+- **Mongoose** von 8 auf 9 aktualisiert
+- **ESLint** bewusst auf v9 belassen
+
+### Aktualisierte Abhängigkeiten (Minor/Patch)
+
+- **axios**, **react** und **react-dom** aktualisiert
+- **Prettier 3.9** — Codebasis neu formatiert
+
+### Infrastruktur & Toolchain
+
+- **GitHub Actions** aktualisiert (checkout v7, setup-node v6, codecov v7, upload-artifact v7)
+- **Node.js** auf `22.22.3` angehoben (CI, Docker, `.nvmrc`, `engines`) — erforderlich für lint-staged 17
+
+## Fehlerbehebungen
+
+- Diverse Anpassungen aus dem Code-Review (ParentsForm-Guard, Storage-Signaturen, ThemeWrapper-System-Sync, LeftNavigation, Test-Mocks, Entfernen ungenutzter Abhängigkeiten)
+
+---
+
+## Migration von Version 2.1.0
+
+### Automatische Migration
+
+Alle Änderungen sind abwärtskompatibel. Beim Update:
+
+1. Backup der Datenbank erstellen
+2. **Node.js auf `22.22.3` aktualisieren** (siehe `.nvmrc`)
+3. `yarn install` ausführen
+4. Docker-Image neu bauen und Container starten
+
+### Manuelle Schritte
+
+- Keine manuellen Migrationsschritte erforderlich
+- Entwickler aktualisieren ihre lokale Node-Version auf `22.22.3`
+
+---
+
+## Versionsinformationen
+
+- **Version**: 2.2.0
+- **Veröffentlichungsdatum**: 30. Juni 2026
+- **Codename**: Maintenance
+- **Status**: Produktionsbereit
+
+---
+
 # Digital Student Registration - Version 2.1.0
 
 **Veröffentlichungsdatum:** 29. Dezember 2025

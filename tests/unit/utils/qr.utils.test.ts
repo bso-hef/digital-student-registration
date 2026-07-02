@@ -1,11 +1,10 @@
-import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
-
 import {
   generateWifiQrString,
   makeQrDataUrl,
   makeStudentQrDataUrl,
   makeWlanQrDataUrl,
 } from "@/utils/qr.utils";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 /**
  * Tests for QR code utility functions
@@ -78,7 +77,11 @@ describe("qr.utils", () => {
     });
 
     it("should default to WPA for unknown security types", () => {
-      const result = generateWifiQrString("MyNetwork", "password123", "unknown");
+      const result = generateWifiQrString(
+        "MyNetwork",
+        "password123",
+        "unknown",
+      );
       expect(result).toBe("WIFI:T:WPA;S:MyNetwork;P:password123;H:false;;");
     });
 
@@ -155,16 +158,8 @@ describe("qr.utils", () => {
     });
 
     it("should handle different security types", async () => {
-      const wpaResult = await makeWlanQrDataUrl(
-        "Network",
-        "pass",
-        "WPA",
-      );
-      const wepResult = await makeWlanQrDataUrl(
-        "Network",
-        "pass",
-        "WEP",
-      );
+      const wpaResult = await makeWlanQrDataUrl("Network", "pass", "WPA");
+      const wepResult = await makeWlanQrDataUrl("Network", "pass", "WEP");
       expect(wpaResult).toContain("data:image/png;base64");
       expect(wepResult).toContain("data:image/png;base64");
     });
@@ -185,7 +180,9 @@ describe("qr.utils", () => {
     });
 
     it("should generate student QR code data URL", async () => {
-      const result = await makeStudentQrDataUrl("https://example.com/student/123");
+      const result = await makeStudentQrDataUrl(
+        "https://example.com/student/123",
+      );
       expect(result).toContain("data:image/png;base64");
     });
 

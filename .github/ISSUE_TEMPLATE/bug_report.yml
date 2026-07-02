@@ -1,0 +1,75 @@
+name: Bug report
+description: Report something that is broken, crashing, or behaving incorrectly.
+title: "[bug] "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug report! Please search [existing issues](https://github.com/bso-hef/digital-student-registration/issues?q=is%3Aissue) first to avoid duplicates.
+  - type: input
+    id: version
+    attributes:
+      label: App version
+      description: "Find it in the footer / Settings → System, or via `git rev-parse --short HEAD` if you built from source."
+      placeholder: "2.1.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: deployment
+    attributes:
+      label: How are you running it?
+      options:
+        - Local dev (yarn dev)
+        - Docker Compose
+        - Windows container
+        - Production deployment
+    validations:
+      required: true
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Browser
+      options:
+        - Chrome
+        - Firefox
+        - Safari
+        - Edge
+        - Other / N/A
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: Provide a minimal, ordered list that reliably triggers the bug.
+      placeholder: |
+        1. Log in as admin
+        2. Navigate to …
+        3. Click …
+        4. Observe …
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / screenshots
+      description: Paste relevant browser console or server logs. Drag-and-drop screenshots here. Please redact any real student data.
+      render: shell
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      options:
+        - label: I agree to follow this project's [Code of Conduct](../../blob/main/CODE_OF_CONDUCT.md).
+          required: true

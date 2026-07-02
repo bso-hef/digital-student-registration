@@ -1,5 +1,3 @@
-import { describe, expect, it } from "vitest";
-
 import {
   CONTACT_PERSON_TYPE_OPTIONS,
   GENDER_OPTIONS,
@@ -8,6 +6,7 @@ import {
   SCHOOL_LEVEL_OPTIONS,
   SCHOOL_TYPE_OPTIONS,
 } from "@/constants/dropdown.constants";
+import { describe, expect, it } from "vitest";
 
 /**
  * Tests for dropdown constants

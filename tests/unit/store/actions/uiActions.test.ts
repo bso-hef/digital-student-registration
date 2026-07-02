@@ -1,8 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
-
 import { THEME } from "@/constants/general.constants";
-import * as TYPES from "@/store/types";
-
 import {
   changeApplicationLocale,
   changeApplicationTheme,
@@ -11,6 +7,8 @@ import {
   toggleDyslexiaFont,
   toggleHighContrast,
 } from "@/store/actions/uiActions";
+import * as TYPES from "@/store/types";
+import { describe, expect, it, vi } from "vitest";
 
 /**
  * Tests for UI actions

@@ -167,7 +167,7 @@ const DynamicPageStepper = ({
               >
                 <Box component="span" sx={{ display: "inline-flex" }}>
                   <StepLabel
-                    StepIconComponent={ColorlibStepIcon}
+                    slots={{ stepIcon: ColorlibStepIcon }}
                     sx={{
                       "& .MuiStepLabel-label": {
                         display: shouldShowLabel ? "block" : "none",

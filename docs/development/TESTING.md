@@ -4,19 +4,22 @@ Testing guide for Digital Student Registration.
 
 ## Overview
 
-**Unit Tests:** Vitest (964+ tests)
-**E2E Tests:** Playwright (98+ tests)
-**Coverage Target:** 60-80%
+**Unit Tests:** Vitest — ~2070 tests across 76 test files
+**Environment:** jsdom
+**Coverage Thresholds:** auto-updating (see [Coverage](#coverage))
+
+> Integration tests exist under `tests/integration/` but are currently
+> **excluded** from the Vitest run (see [Integration Tests](#integration-tests)).
+> Only the `unit` project runs.
 
 ---
 
 ## Tech Stack
 
-- **Vitest** - Fast unit/integration test runner
+- **Vitest** - Fast unit test runner (jsdom environment)
 - **React Testing Library** - Component testing
-- **Playwright** - E2E testing (Chromium, Firefox, WebKit)
-- **MSW** - API mocking
-- **mongodb-memory-server** - In-memory MongoDB
+- **MSW** - API mocking (used by integration setup, not unit tests)
+- **mongodb-memory-server** - In-memory MongoDB (integration tests)
 
 ---
 
@@ -25,40 +28,35 @@ Testing guide for Digital Student Registration.
 ### Unit Tests
 
 ```bash
-# All tests
+# Watch mode (default `test` script)
 yarn test
 
-# Watch mode
+# Run once with coverage
+yarn test:unit
+
+# Explicit watch mode
 yarn test:watch
 
-# Coverage
+# Interactive UI
+yarn test:ui
+
+# Coverage (alias of test:unit)
 yarn test:coverage
 
-# Specific file
-yarn test path/to/file.test.ts
-```
+# Type-check only
+yarn test:ts
 
-### E2E Tests
-
-```bash
-# Install browsers (first time only)
-yarn playwright:install
-
-# Run E2E tests (Chromium only, fastest)
-yarn test:e2e:chromium
-
-# Run E2E tests (all browsers)
-yarn test:e2e
-
-# Run specific test
-yarn test:e2e dashboard.spec.ts
-```
-
-### All Tests
-
-```bash
-# Run both unit and E2E tests
+# Run everything (alias of test:unit — unit tests only)
 yarn test:all
+```
+
+> `yarn test` runs Vitest in **watch mode** and does not exit on its own.
+> For a single run (e.g. in CI or pre-commit), use `yarn test:unit`.
+
+To run a specific file in watch mode, pass a path filter:
+
+```bash
+yarn test path/to/file.test.ts
 ```
 
 ---
@@ -126,44 +124,21 @@ describe("formatDate", () => {
 
 ---
 
-## Writing E2E Tests
+## Integration Tests
 
-### Basic Test
+Integration tests live under `tests/integration/` and use
+`tests/integration.setup.ts` (which configures the MSW server lifecycle and
+mongodb-memory-server).
 
-```typescript
-import { expect, test } from "@playwright/test";
+They are **currently disabled** in `vitest.config.ts`:
 
-test("should login successfully", async ({ page }) => {
-  await page.goto("/login");
+- `tests/**/integration/**` is listed in the `exclude` patterns.
+- The dedicated `integration` Vitest project is commented out (it has
+  unresolved `@/` import-resolution issues and would need a separate runner or
+  additional configuration).
 
-  await page.fill('[name="email"]', "test@test.de");
-  await page.fill('[name="password"]', "password");
-  await page.click('button[type="submit"]');
-
-  await expect(page).toHaveURL("/admin/dashboard");
-});
-```
-
-### With Setup
-
-```typescript
-import { expect, test } from "@playwright/test";
-
-test.describe("Dashboard", () => {
-  test.beforeEach(async ({ page }) => {
-    // Login
-    await page.goto("/login");
-    await page.fill('[name="email"]', "test@test.de");
-    await page.fill('[name="password"]', "password");
-    await page.click('button[type="submit"]');
-    await page.waitForURL("/admin/dashboard");
-  });
-
-  test("should display stats", async ({ page }) => {
-    await expect(page.getByText("Total Students")).toBeVisible();
-  });
-});
-```
+As a result, `yarn test:unit` runs only the `unit` project — integration tests
+do not run as part of the normal test command.
 
 ---
 
@@ -194,22 +169,45 @@ const store = createMockStore({
 });
 ```
 
-### Mock Data
+### Mock Data Factories
+
+Factories live in `tests/utils/factories.ts` (note: `@/` maps to `src/`, so use
+the `@/tests` alias for test files):
 
 ```typescript
-import { createMockClass, createMockStudent } from "@/tests/mocks/data";
+import {
+  createMockClass,
+  createMockClasses,
+  createMockDashboardStats,
+  createMockPaginationResponse,
+  createMockStudent,
+  createMockStudents,
+} from "@/tests/utils/factories";
 
 const student = createMockStudent({ firstName: "John" });
 const classData = createMockClass({ name: "10A" });
+const students = createMockStudents(5);
+const page = createMockPaginationResponse(students, { totalDocs: 5 });
 ```
+
+Factory counters are reset automatically after each test (see
+`resetFactoryCounters` in `tests/setup.ts`).
 
 ---
 
 ## MSW (Mock Service Worker)
 
-### Setup
+MSW handlers and server live in `tests/mocks/handlers.ts` and
+`tests/mocks/server.ts`.
 
-MSW handlers are in `tests/mocks/handlers.ts`:
+> **Note:** MSW is **not** enabled for unit tests. The unit setup
+> (`tests/setup.ts`) mocks `fetch` directly because MSW's browser worker needs
+> Service Workers (unavailable in jsdom) and the node server targets a Node
+> environment. The MSW server lifecycle is wired up in
+> `tests/integration.setup.ts`, which is only used by the (currently disabled)
+> integration tests.
+
+### Handlers
 
 ```typescript
 import { HttpResponse, http } from "msw";
@@ -229,21 +227,18 @@ export const handlers = [
 ];
 ```
 
-### Use in Tests
+### Mocking fetch in unit tests
+
+Because unit tests mock `fetch` directly, override it per test:
 
 ```typescript
-import { server } from "@/tests/mocks/server";
-import { HttpResponse, http } from "msw";
-
 it("handles API error", async () => {
-  // Override handler for this test
-  server.use(
-    http.get("/api/classes", () => {
-      return HttpResponse.json({ error: "Server error" }, { status: 500 });
-    }),
-  );
+  (globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+    ok: false,
+    status: 500,
+    json: async () => ({ error: "Server error" }),
+  } as Response);
 
-  // Test error handling
   const store = createMockStore();
   await store.dispatch(getClasses());
 
@@ -260,26 +255,17 @@ it("handles API error", async () => {
 
 ### Component Testing
 
-✅ Use `renderWithProviders()` instead of `render()`
-✅ Use `screen.getByRole()` for accessibility
-✅ Use `userEvent` instead of `fireEvent`
-✅ Test user behavior, not implementation
-✅ Keep tests simple and focused
+- Use `renderWithProviders()` instead of `render()`
+- Use `screen.getByRole()` for accessibility
+- Use `userEvent` instead of `fireEvent`
+- Test user behavior, not implementation
+- Keep tests simple and focused
 
-❌ Don't test implementation details
-❌ Don't mock too much
-❌ Don't use `act()` manually (testing-library handles it)
+Avoid:
 
-### E2E Testing
-
-✅ Test critical user paths
-✅ Use data-testid sparingly (prefer semantic queries)
-✅ Wait for navigation/animations
-✅ Test across different viewports
-
-❌ Don't test every edge case
-❌ Don't repeat unit test scenarios
-❌ Don't use arbitrary timeouts
+- Testing implementation details
+- Mocking too much
+- Calling `act()` manually (testing-library handles it)
 
 ---
 
@@ -288,24 +274,33 @@ it("handles API error", async () => {
 ### View Coverage
 
 ```bash
-yarn test:coverage
+yarn test:unit   # or yarn test:coverage (same script)
 ```
 
 ### Coverage Reports
 
-- **Terminal:** Summary in console
+- **Terminal:** Summary in console (`text` reporter)
 - **HTML:** `coverage/index.html`
+- **JSON:** `coverage/coverage-final.json`
 - **LCOV:** `coverage/lcov.info`
 
 ### Coverage Thresholds
 
+Thresholds are configured with `autoUpdate: true`, which means Vitest rewrites
+them in `vitest.config.ts` whenever coverage increases, so they ratchet upward
+over time. The current values are:
+
 ```javascript
 // vitest.config.ts
 coverage: {
-  lines: 60,
-  functions: 60,
-  branches: 60,
-  statements: 60
+  provider: "v8",
+  thresholds: {
+    autoUpdate: true,
+    branches: 27.63,
+    functions: 24.75,
+    lines: 29.09,
+    statements: 28.74,
+  },
 }
 ```
 
@@ -316,24 +311,11 @@ coverage: {
 ### Vitest
 
 ```bash
-# Run tests in UI mode
-yarn test --ui
+# Interactive UI mode
+yarn test:ui
 
-# Debug specific test
+# Debug a specific test (Node inspector)
 yarn test --inspect-brk path/to/test.ts
-```
-
-### Playwright
-
-```bash
-# Run in headed mode
-yarn test:e2e:chromium --headed
-
-# Debug mode
-yarn test:e2e:chromium --debug
-
-# View trace
-yarn playwright show-trace trace.zip
 ```
 
 ---
@@ -343,13 +325,11 @@ yarn playwright show-trace trace.zip
 ### GitHub Actions
 
 ```yaml
-- name: Run tests
-  run: yarn test
+- name: Type check
+  run: yarn test:ts
 
-- name: E2E tests
-  run: |
-    yarn playwright:install
-    yarn test:e2e
+- name: Run unit tests with coverage
+  run: yarn test:unit
 
 - name: Upload coverage
   uses: codecov/codecov-action@v3
@@ -367,17 +347,12 @@ yarn playwright show-trace trace.zip
 - Check for shared state between tests
 - Use `waitFor()` for async operations
 
-### MSW Not Working
+### fetch Mock Not Working
 
-- Ensure server is started in `setupTests.ts`
-- Check handler URLs match API calls
-- Verify request method (GET/POST/etc.)
-
-### Playwright Tests Timing Out
-
-- Increase timeout in `playwright.config.ts`
-- Ensure dev server is running
-- Check for infinite loading states
+- Remember unit tests mock `fetch` directly (not MSW); set up the mock in the
+  test or rely on the global `vi.fn()` in `tests/setup.ts`
+- Use `mockResolvedValueOnce`/`mockResolvedValue` to return responses
+- Verify the request URL and method match what the code calls
 
 ---
 
@@ -385,5 +360,4 @@ yarn playwright show-trace trace.zip
 
 - [Vitest Docs](https://vitest.dev/)
 - [React Testing Library](https://testing-library.com/react)
-- [Playwright Docs](https://playwright.dev/)
 - [MSW Docs](https://mswjs.io/)

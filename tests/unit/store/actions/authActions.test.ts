@@ -1,9 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-
 import profileService from "@/lib/services/profileService";
-import * as TYPES from "@/store/types";
-import * as notificationUtils from "@/utils/notification.utils";
-
 import {
   checkSetupStatus,
   clearAuthError,
@@ -17,6 +12,11 @@ import {
   updateProfile,
   updateSetupWizard,
 } from "@/store/actions/authActions";
+import * as TYPES from "@/store/types";
+import * as notificationUtils from "@/utils/notification.utils";
+// Import after mocking
+import { signIn, signOut } from "next-auth/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock dependencies
 vi.mock("@/lib/services/profileService", () => ({
@@ -41,9 +41,6 @@ vi.mock("next-auth/react", () => ({
   signIn: vi.fn(),
   signOut: vi.fn(),
 }));
-
-// Import after mocking
-import { signIn, signOut } from "next-auth/react";
 
 // Mock fetch
 global.fetch = vi.fn();
@@ -80,10 +77,11 @@ describe("authActions", () => {
     it("should dispatch success on successful login", async () => {
       vi.mocked(signIn).mockResolvedValue({ ok: true, error: undefined });
 
-      const result = await loginUser(
-        "test@test.com",
-        "password",
-      )(dispatch, getState, undefined);
+      const result = await loginUser("test@test.com", "password")(
+        dispatch,
+        getState,
+        undefined,
+      );
 
       expect(dispatch).toHaveBeenCalledWith({
         type: TYPES.AUTH_LOGIN_REQUEST,
@@ -102,10 +100,11 @@ describe("authActions", () => {
         error: "Invalid credentials",
       });
 
-      const result = await loginUser(
-        "test@test.com",
-        "wrong",
-      )(dispatch, getState, undefined);
+      const result = await loginUser("test@test.com", "wrong")(
+        dispatch,
+        getState,
+        undefined,
+      );
 
       expect(dispatch).toHaveBeenCalledWith({
         type: TYPES.AUTH_LOGIN_FAILURE,
@@ -118,10 +117,11 @@ describe("authActions", () => {
     it("should handle exception during login", async () => {
       vi.mocked(signIn).mockRejectedValue(new Error("Network error"));
 
-      const result = await loginUser(
-        "test@test.com",
-        "password",
-      )(dispatch, getState, undefined);
+      const result = await loginUser("test@test.com", "password")(
+        dispatch,
+        getState,
+        undefined,
+      );
 
       expect(dispatch).toHaveBeenCalledWith({
         type: TYPES.AUTH_LOGIN_FAILURE,
@@ -168,10 +168,11 @@ describe("authActions", () => {
         json: vi.fn().mockResolvedValue({ recoveryCode: "ABC123" }),
       } as unknown as Response);
 
-      const result = await setupAdmin(
-        "admin@test.com",
-        "password",
-      )(dispatch, getState, undefined);
+      const result = await setupAdmin("admin@test.com", "password")(
+        dispatch,
+        getState,
+        undefined,
+      );
 
       expect(dispatch).toHaveBeenCalledWith({
         type: TYPES.AUTH_SETUP_REQUEST,
@@ -189,10 +190,11 @@ describe("authActions", () => {
         json: vi.fn().mockResolvedValue({ error: "Admin already exists" }),
       } as unknown as Response);
 
-      const result = await setupAdmin(
-        "admin@test.com",
-        "password",
-      )(dispatch, getState, undefined);
+      const result = await setupAdmin("admin@test.com", "password")(
+        dispatch,
+        getState,
+        undefined,
+      );
 
       expect(dispatch).toHaveBeenCalledWith({
         type: TYPES.AUTH_SETUP_FAILURE,
@@ -204,10 +206,11 @@ describe("authActions", () => {
     it("should handle network exception during setup", async () => {
       vi.mocked(global.fetch).mockRejectedValue(new Error("Network error"));
 
-      const result = await setupAdmin(
-        "admin@test.com",
-        "password",
-      )(dispatch, getState, undefined);
+      const result = await setupAdmin("admin@test.com", "password")(
+        dispatch,
+        getState,
+        undefined,
+      );
 
       expect(dispatch).toHaveBeenCalledWith({
         type: TYPES.AUTH_SETUP_FAILURE,

@@ -1,9 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-
 import settingsService from "@/lib/services/settingsService";
-import * as TYPES from "@/store/types";
-import * as notificationUtils from "@/utils/notification.utils";
-
 import {
   getAgreementSettings,
   getOnboardingSettings,
@@ -12,6 +7,9 @@ import {
   updateOnboardingSettings,
   updateSettings,
 } from "@/store/actions/settingsActions";
+import * as TYPES from "@/store/types";
+import * as notificationUtils from "@/utils/notification.utils";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock dependencies
 vi.mock("@/lib/services/settingsService", () => ({

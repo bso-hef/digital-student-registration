@@ -1,6 +1,8 @@
+import { applicationScrollbar } from "@/utils/styling.utils";
+import type { Theme } from "@mui/material";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import type { Theme } from "@mui/material";
+import MuiPickersPopperOverride from "@/theme/overrides/MuiPickerPopper";
 
 // Mock styling utils - must be defined before vi.mock
 vi.mock("@/utils/styling.utils", () => ({
@@ -9,9 +11,6 @@ vi.mock("@/utils/styling.utils", () => ({
     scrollbarColor: `${theme.palette.text.disabled} ${theme.palette.surface.interface.background}`,
   })),
 }));
-
-import MuiPickersPopperOverride from "@/theme/overrides/MuiPickerPopper";
-import { applicationScrollbar } from "@/utils/styling.utils";
 
 /**
  * Tests for MuiPickerPopper theme overrides

@@ -30,7 +30,7 @@ const GenderDisplay: FC<GenderDisplayProps> = ({ gender }) => {
   }, [gender, t]);
 
   return (
-    <Box display="flex" alignItems="center" gap={1}>
+    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
       {Icon ? <Icon fontSize="small" /> : null}
       <Typography variant="body2">{label}</Typography>
     </Box>

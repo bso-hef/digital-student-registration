@@ -1,8 +1,8 @@
+import * as TYPES from "@/store/types";
+import { AppSettings } from "@/types/settings";
 import { describe, expect, it } from "vitest";
 
 import appSettingsReducer from "@/store/reducers/appSettings";
-import * as TYPES from "@/store/types";
-import { AppSettings } from "@/types/settings";
 
 /**
  * Tests for appSettings reducer
@@ -231,7 +231,10 @@ describe("appSettingsReducer", () => {
     });
 
     it("should handle GET_AGREEMENT_SETTINGS_SUCCESS", () => {
-      const agreementSettings = { datenschutz: true, teilnahmeunterricht: false };
+      const agreementSettings = {
+        datenschutz: true,
+        teilnahmeunterricht: false,
+      };
       const action = {
         type: TYPES.GET_AGREEMENT_SETTINGS_SUCCESS,
         payload: agreementSettings,

@@ -1,6 +1,6 @@
+import { THEME } from "@/constants/general.constants";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { THEME } from "@/constants/general.constants";
 import {
   getSystemTheme,
   isSystemThemeSupported,

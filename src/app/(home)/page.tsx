@@ -50,14 +50,17 @@ export default function Home() {
   return (
     <Wrapper>
       <SchoolRoundedIcon sx={{ fontSize: 120, color: "primary.main", mb: 2 }} />
-      <Typography variant="h3" component="h1" color="text.default">
+      <Typography variant="h3" component="h1" sx={{ color: "text.default" }}>
         {t("student.home.Title")}
       </Typography>
-      <Typography variant="body1" color="text.information" maxWidth="sm">
+      <Typography
+        variant="body1"
+        sx={{ color: "text.information", maxWidth: "sm" }}
+      >
         {t("student.home.Description")}
       </Typography>
 
-      <Stack direction="row" spacing={2} mt={4}>
+      <Stack direction="row" spacing={2} sx={{ mt: 4 }}>
         <GeneralButton
           label={t("student.home.Administration")}
           isPrimary={false}

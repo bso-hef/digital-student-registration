@@ -5,6 +5,39 @@ All notable changes to the Digital Student Registration project will be document
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2026-06-30
+
+### Changed
+
+#### Dependencies — npm majors
+
+- **Material UI** `v7` → `v9` (`@mui/material`, icons, lab, x-data-grid, x-date-pickers); codebase migrated for the new major
+- **Next.js** `15` → `16`
+- **TypeScript** `5` → `6`
+- **Mongoose** `8` → `9`
+- **ESLint** kept at `v9` (not bumped)
+
+#### Dependencies — npm minor/patch
+
+- **axios**, **react**, **react-dom** bumped (npm-all group)
+- **Prettier** `3.9` — codebase reformatted (short union types collapsed)
+
+#### GitHub Actions
+
+- `actions/checkout` v7, `actions/setup-node` v6, `codecov/codecov-action` v7, `actions/upload-artifact` v7
+
+#### Tooling
+
+- **Node** pinned to `22.22.3` across CI, Docker, `.nvmrc` and `engines` (lint-staged 17 requires `>=22.22.1`)
+
+### Fixed
+
+- **Code review follow-ups**
+  - `ParentsForm` guard, storage param signatures, `ThemeWrapper` cleanup-free system sync
+  - `LeftNavigation` `sx` usage, corrected test mock target, removed unused dependencies
+
+---
+
 ## [2.1.0] - 2025-12-24
 
 ### Added

@@ -1,20 +1,21 @@
-import { http, HttpResponse } from 'msw';
+import { HttpResponse, http } from "msw";
+
 import {
-  createMockStudent,
-  createMockStudents,
+  createMockApiError,
   createMockClass,
   createMockClasses,
-  createMockDashboardStats,
   createMockDashboardHealth,
+  createMockDashboardStats,
   createMockPaginationResponse,
-  createMockApiError,
-} from '../utils/factories';
+  createMockStudent,
+  createMockStudents,
+} from "../utils/factories";
 
 /**
  * MSW handlers for mocking API routes in tests
  */
 
-const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
 /**
  * In-memory data stores for mock API
@@ -64,8 +65,8 @@ export const handlers = [
   // GET /api/students - Get all students with pagination
   http.get(`${baseURL}/api/students`, ({ request }) => {
     const url = new URL(request.url);
-    const skip = parseInt(url.searchParams.get('skip') || '0');
-    const limit = parseInt(url.searchParams.get('limit') || '10');
+    const skip = parseInt(url.searchParams.get("skip") || "0");
+    const limit = parseInt(url.searchParams.get("limit") || "10");
 
     const paginatedStudents = mockStudents.slice(skip, skip + limit);
     const response = createMockPaginationResponse(paginatedStudents, {
@@ -87,7 +88,7 @@ export const handlers = [
         firstName: s.firstName,
         lastName: s.lastName,
         dateOfBirth: new Date(s.dateOfBirth),
-      })
+      }),
     );
 
     mockStudents.push(...createdStudents);
@@ -117,8 +118,8 @@ export const handlers = [
   // GET /api/classes - Get all classes with pagination
   http.get(`${baseURL}/api/classes`, ({ request }) => {
     const url = new URL(request.url);
-    const skip = parseInt(url.searchParams.get('skip') || '0');
-    const limit = parseInt(url.searchParams.get('limit') || '10');
+    const skip = parseInt(url.searchParams.get("skip") || "0");
+    const limit = parseInt(url.searchParams.get("limit") || "10");
 
     const paginatedClasses = mockClasses.slice(skip, skip + limit);
     const response = createMockPaginationResponse(paginatedClasses, {
@@ -144,7 +145,7 @@ export const handlers = [
         isVocational: c.isVocational,
         requiresEmployerInfo: c.requiresEmployerInfo,
         active: c.active,
-      })
+      }),
     );
 
     mockClasses.push(...createdClasses);
@@ -175,10 +176,9 @@ export const handlers = [
     const classItem = mockClasses.find((c) => c._id === classId);
 
     if (!classItem) {
-      return HttpResponse.json(
-        createMockApiError('Class not found', 404),
-        { status: 404 }
-      );
+      return HttpResponse.json(createMockApiError("Class not found", 404), {
+        status: 404,
+      });
     }
 
     return HttpResponse.json(classItem);
@@ -191,17 +191,16 @@ export const handlers = [
     const classIndex = mockClasses.findIndex((c) => c._id === classId);
 
     if (classIndex === -1) {
-      return HttpResponse.json(
-        createMockApiError('Class not found', 404),
-        { status: 404 }
-      );
+      return HttpResponse.json(createMockApiError("Class not found", 404), {
+        status: 404,
+      });
     }
 
     mockClasses[classIndex] = { ...mockClasses[classIndex], ...body };
 
     return HttpResponse.json({
       class: mockClasses[classIndex],
-      message: 'Class updated successfully',
+      message: "Class updated successfully",
     });
   }),
 
@@ -211,76 +210,86 @@ export const handlers = [
     const classIndex = mockClasses.findIndex((c) => c._id === classId);
 
     if (classIndex === -1) {
-      return HttpResponse.json(
-        createMockApiError('Class not found', 404),
-        { status: 404 }
-      );
+      return HttpResponse.json(createMockApiError("Class not found", 404), {
+        status: 404,
+      });
     }
 
     mockClasses.splice(classIndex, 1);
 
     return HttpResponse.json({
       deletedCount: 1,
-      message: 'Class deleted successfully',
+      message: "Class deleted successfully",
     });
   }),
 
   // GET /api/classes/:classId/students - Get students in class
-  http.get(`${baseURL}/api/classes/:classId/students`, ({ params, request }) => {
-    const { classId } = params;
-    const url = new URL(request.url);
-    const skip = parseInt(url.searchParams.get('skip') || '0');
-    const limit = parseInt(url.searchParams.get('limit') || '10');
+  http.get(
+    `${baseURL}/api/classes/:classId/students`,
+    ({ params, request }) => {
+      const { classId } = params;
+      const url = new URL(request.url);
+      const skip = parseInt(url.searchParams.get("skip") || "0");
+      const limit = parseInt(url.searchParams.get("limit") || "10");
 
-    const classStudents = mockStudents.filter((s) => s.currentClass === classId);
-    const paginatedStudents = classStudents.slice(skip, skip + limit);
+      const classStudents = mockStudents.filter(
+        (s) => s.currentClass === classId,
+      );
+      const paginatedStudents = classStudents.slice(skip, skip + limit);
 
-    const response = createMockPaginationResponse(paginatedStudents, {
-      page: Math.floor(skip / limit) + 1,
-      limit,
-      totalDocs: classStudents.length,
-    });
+      const response = createMockPaginationResponse(paginatedStudents, {
+        page: Math.floor(skip / limit) + 1,
+        limit,
+        totalDocs: classStudents.length,
+      });
 
-    return HttpResponse.json(response);
-  }),
+      return HttpResponse.json(response);
+    },
+  ),
 
   // POST /api/classes/:classId/students - Add students to class
-  http.post(`${baseURL}/api/classes/:classId/students`, async ({ params, request }) => {
-    const { classId } = params;
-    const body = (await request.json()) as any;
-    const studentIds = body.studentIds || [];
+  http.post(
+    `${baseURL}/api/classes/:classId/students`,
+    async ({ params, request }) => {
+      const { classId } = params;
+      const body = (await request.json()) as any;
+      const studentIds = body.studentIds || [];
 
-    studentIds.forEach((studentId: string) => {
-      const student = mockStudents.find((s) => s._id === studentId);
-      if (student) {
-        student.currentClass = classId;
-      }
-    });
+      studentIds.forEach((studentId: string) => {
+        const student = mockStudents.find((s) => s._id === studentId);
+        if (student) {
+          student.currentClass = classId;
+        }
+      });
 
-    return HttpResponse.json({
-      addedCount: studentIds.length,
-      message: `Added ${studentIds.length} students to class`,
-    });
-  }),
+      return HttpResponse.json({
+        addedCount: studentIds.length,
+        message: `Added ${studentIds.length} students to class`,
+      });
+    },
+  ),
 
   // DELETE /api/classes/:classId/students - Remove students from class
-  http.delete(`${baseURL}/api/classes/:classId/students`, async ({ params, request }) => {
-    const { classId } = params;
-    const body = (await request.json()) as any;
-    const studentIds = body.studentIds || [];
+  http.delete(
+    `${baseURL}/api/classes/:classId/students`,
+    async ({ params, request }) => {
+      const { classId } = params;
+      const body = (await request.json()) as any;
+      const studentIds = body.studentIds || [];
 
-    studentIds.forEach((studentId: string) => {
-      const student = mockStudents.find((s) => s._id === studentId);
-      if (student && student.currentClass === classId) {
-        student.currentClass = null;
-      }
-    });
+      studentIds.forEach((studentId: string) => {
+        const student = mockStudents.find((s) => s._id === studentId);
+        if (student && student.currentClass === classId) {
+          student.currentClass = null;
+        }
+      });
 
-    return HttpResponse.json({
-      removedCount: studentIds.length,
-      message: `Removed ${studentIds.length} students from class`,
-    });
-  }),
+      return HttpResponse.json({
+        removedCount: studentIds.length,
+        message: `Removed ${studentIds.length} students from class`,
+      });
+    },
+  ),
 
   // ========== Dashboard API ==========
 
@@ -293,7 +302,10 @@ export const handlers = [
 
   // GET /api/health/live - Liveness check
   http.get(`${baseURL}/api/health/live`, () => {
-    return HttpResponse.json({ status: 'alive', timestamp: new Date().toISOString() });
+    return HttpResponse.json({
+      status: "alive",
+      timestamp: new Date().toISOString(),
+    });
   }),
 
   // GET /api/health/full - Full health check
@@ -309,38 +321,38 @@ export const errorHandlers = {
   // Students API errors
   studentsGetError: http.get(`${baseURL}/api/students`, () => {
     return HttpResponse.json(
-      createMockApiError('Failed to fetch students', 500),
-      { status: 500 }
+      createMockApiError("Failed to fetch students", 500),
+      { status: 500 },
     );
   }),
 
   studentsPostError: http.post(`${baseURL}/api/students`, () => {
     return HttpResponse.json(
-      createMockApiError('Failed to create students', 500),
-      { status: 500 }
+      createMockApiError("Failed to create students", 500),
+      { status: 500 },
     );
   }),
 
   // Classes API errors
   classesGetError: http.get(`${baseURL}/api/classes`, () => {
     return HttpResponse.json(
-      createMockApiError('Failed to fetch classes', 500),
-      { status: 500 }
+      createMockApiError("Failed to fetch classes", 500),
+      { status: 500 },
     );
   }),
 
   classesPostError: http.post(`${baseURL}/api/classes`, () => {
     return HttpResponse.json(
-      createMockApiError('Failed to create classes', 500),
-      { status: 500 }
+      createMockApiError("Failed to create classes", 500),
+      { status: 500 },
     );
   }),
 
   // Dashboard API errors
   dashboardStatsError: http.get(`${baseURL}/api/dashboard/stats`, () => {
     return HttpResponse.json(
-      createMockApiError('Failed to fetch dashboard stats', 500),
-      { status: 500 }
+      createMockApiError("Failed to fetch dashboard stats", 500),
+      { status: 500 },
     );
   }),
 

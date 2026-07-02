@@ -64,7 +64,7 @@ docker compose --profile windows up -d  # Windows
 
 # 5. Verify
 docker compose ps
-docker compose logs app | grep "Configuration validation"
+docker logs dsr-app | grep "Configuration validation"
 ```
 
 ### Development (Local)
@@ -122,8 +122,8 @@ openssl rand -base64 64 | tr -d "=+/" | cut -c1-64
 
 ```yaml
 services:
-  app-linux: # Next.js application (Alpine Linux)
-  app-windows: # Next.js application (Windows Server Core)
+  app-linux: # Next.js application (Alpine Linux) — profile: linux (gated)
+  app-windows: # Next.js application (Windows Server Core) — profile: windows (gated)
   mongo: # MongoDB 7.0 database
   redis: # Redis 7 cache
 
@@ -134,6 +134,10 @@ volumes:
 networks:
   app-network: # Internal bridge network
 ```
+
+> **Profiles:** `app-linux` and `app-windows` are gated behind Compose profiles (`linux` / `windows`). A bare `docker compose up -d` starts **only** `mongo` + `redis` — the app never comes up. Always pass `--profile linux` (or `--profile windows`).
+>
+> **Pre-built image:** Compose runs a pre-built image (`image: dsr-app:latest`, `pull_policy: never`, no `build:` section). The image **must be built first** via `scripts/docker-build.sh` (Linux) or `scripts/docker-build.ps1` (Windows) before starting.
 
 ---
 
@@ -204,22 +208,23 @@ Caddy automatically handles SSL with Let's Encrypt.
 ### Logs
 
 ```bash
-docker compose logs -f app
-docker compose logs --tail=100 app
+docker logs -f dsr-app
+docker logs --tail=100 dsr-app
 ```
 
 ### Restart
 
 ```bash
-docker compose restart app
-docker compose restart
+docker compose --profile linux restart app-linux    # Linux (--profile windows / app-windows on Windows)
+docker compose --profile linux restart
 ```
 
 ### Update
 
 ```bash
 git pull
-docker compose --profile linux up -d --build
+./scripts/docker-build.sh --no-cache    # rebuild image (compose has no build: step)
+docker compose --profile linux up -d
 ```
 
 ### Backup
@@ -275,10 +280,10 @@ netstat -ano | findstr :3000  # Windows
 
 ```bash
 # Check logs
-docker compose logs app
+docker logs dsr-app
 
 # Check environment
-docker compose config | grep environment
+docker compose --profile linux config | grep environment
 
 # Check image exists
 docker images | grep dsr-app
@@ -313,19 +318,20 @@ docker compose exec mongo mongosh \
 docker compose ps
 docker stats
 
-# Start/Stop
-docker compose up -d
+# Start/Stop  (use --profile windows on Windows)
+docker compose --profile linux up -d
 docker compose down
-docker compose restart
+docker compose --profile linux restart
 
-# Rebuild
-docker compose up -d --build
+# Rebuild the image, then start (compose does not build it)
+./scripts/docker-build.sh --no-cache    # Linux  (scripts/docker-build.ps1 on Windows)
+docker compose --profile linux up -d
 
 # Clean up
 docker compose down -v  # WARNING: Deletes data!
 
 # Shell access
-docker compose exec app sh
+docker exec -it dsr-app sh
 docker compose exec mongo mongosh
 
 # Resource usage

@@ -86,7 +86,9 @@ const PasswordStrengthBarBackground = styled(Box)(({ theme }) => ({
   overflow: "hidden",
 }));
 
-const PasswordStrengthBarFill = styled(Box)<{
+const PasswordStrengthBarFill = styled(Box, {
+  shouldForwardProp: (prop) => prop !== "strength" && prop !== "color",
+})<{
   strength: number;
   color: string;
 }>(({ strength, color }) => ({

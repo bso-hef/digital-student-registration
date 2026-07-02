@@ -34,21 +34,21 @@ const Root = styled(Box, {
   borderRadius: theme.spacing(2),
 }));
 
-const StyledDialog = styled(Dialog)<{ transparentBackdrop?: boolean }>(
-  ({ theme, transparentBackdrop }) => ({
-    "& .MuiBackdrop-root": transparentBackdrop
-      ? { backgroundColor: "transparent" }
-      : undefined,
-    "& .MuiDialog-paper": {
-      backgroundColor: theme.palette.surface.interface.base,
-      backgroundImage: "unset",
-      color: theme.palette.text.default,
-      borderRadius: theme.spacing(2),
-      margin: 0,
-      ...applicationScrollbar(theme),
-    },
-  }),
-);
+const StyledDialog = styled(Dialog, {
+  shouldForwardProp: (prop) => prop !== "transparentBackdrop",
+})<{ transparentBackdrop?: boolean }>(({ theme, transparentBackdrop }) => ({
+  "& .MuiBackdrop-root": transparentBackdrop
+    ? { backgroundColor: "transparent" }
+    : undefined,
+  "& .MuiDialog-paper": {
+    backgroundColor: theme.palette.surface.interface.base,
+    backgroundImage: "unset",
+    color: theme.palette.text.default,
+    borderRadius: theme.spacing(2),
+    margin: 0,
+    ...applicationScrollbar(theme),
+  },
+}));
 
 export const StyledDialogContent = styled(DialogContent)(({ theme }) => ({
   margin: 0,
@@ -67,8 +67,10 @@ export const StyledDialogActions = styled(DialogActions)(({ theme }) => ({
   width: "100%",
 }));
 
-export interface GeneralModalProps
-  extends Omit<DialogProps, "onClose" | "open" | "title"> {
+export interface GeneralModalProps extends Omit<
+  DialogProps,
+  "onClose" | "open" | "title"
+> {
   open: boolean;
   modalWidth?: number | string;
   modalHeight?: number | string;
@@ -152,14 +154,20 @@ const GeneralModal = ({
     <StyledDialog
       aria-labelledby="customized-dialog-title"
       onClose={(event, reason) => {
-        if (reason === "backdropClick" || reason === "escapeKeyDown") {
+        // MUI v9 removed the `disableEscapeKeyDown` prop; we prevent closing on
+        // backdrop click / escape key here instead. `disableBackdropClick`
+        // additionally keeps the dialog open while a blocking action runs.
+        if (
+          disableBackdropClick ||
+          reason === "backdropClick" ||
+          reason === "escapeKeyDown"
+        ) {
           return;
         }
         handleClose();
       }}
       open={open}
       maxWidth={maxWidth}
-      disableEscapeKeyDown={disableBackdropClick}
       transparentBackdrop={transparentBackdrop}
       slotProps={{ backdrop: { ...backdropProps } }}
       {...transitionProps}

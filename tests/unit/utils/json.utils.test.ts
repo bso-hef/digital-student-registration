@@ -1,7 +1,6 @@
-import { describe, expect, it } from "vitest";
-
-import { buildStudentDataJson } from "@/utils/json.utils";
 import { Student } from "@/types/db";
+import { buildStudentDataJson } from "@/utils/json.utils";
+import { describe, expect, it } from "vitest";
 
 /**
  * Tests for JSON utility functions

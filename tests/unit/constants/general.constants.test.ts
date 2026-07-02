@@ -1,5 +1,3 @@
-import { describe, expect, it } from "vitest";
-
 import {
   COLORS,
   CONTEXT_PATH,
@@ -9,6 +7,7 @@ import {
   THEME,
   WIZZARD_URL,
 } from "@/constants/general.constants";
+import { describe, expect, it } from "vitest";
 
 /**
  * Tests for general constants

@@ -329,9 +329,7 @@ export function mapModelToFormData(
 
       const contactNumber = index + 1;
       const prefix = `ansprechpartner${contactNumber}` as
-        | "ansprechpartner1"
-        | "ansprechpartner2"
-        | "ansprechpartner3";
+        "ansprechpartner1" | "ansprechpartner2" | "ansprechpartner3";
 
       mapped[`${prefix}Art`] = contact.type || "";
       mapped[`${prefix}Vorname`] = contact.firstName || "";

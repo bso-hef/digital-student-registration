@@ -1,7 +1,7 @@
+import * as TYPES from "@/store/types";
 import { describe, expect, it } from "vitest";
 
 import authReducer from "@/store/reducers/auth";
-import * as TYPES from "@/store/types";
 
 /**
  * Tests for auth reducer

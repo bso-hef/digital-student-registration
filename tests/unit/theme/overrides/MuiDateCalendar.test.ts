@@ -1,8 +1,7 @@
+import type { Theme } from "@mui/material";
 import { describe, expect, it } from "vitest";
 
 import MuiDateCalendarOverride from "@/theme/overrides/MuiDateCalendar";
-
-import type { Theme } from "@mui/material";
 
 /**
  * Tests for MuiDateCalendar theme overrides

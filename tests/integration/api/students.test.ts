@@ -1,10 +1,11 @@
-import { describe, it, expect, beforeAll, afterAll, beforeEach } from "vitest";
-import { GET, POST, DELETE } from "../../../src/app/api/students/route";
-import { NextRequest } from "next/server";
-import mongoose from "mongoose";
-import Student from "@/models/Student";
-import Class from "@/models/Class";
 import { dbConnect } from "@/lib/config/mongo";
+import Class from "@/models/Class";
+import Student from "@/models/Student";
+import mongoose from "mongoose";
+import { NextRequest } from "next/server";
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
+
+import { DELETE, GET, POST } from "../../../src/app/api/students/route";
 
 describe("Students API Routes", () => {
   beforeAll(async () => {

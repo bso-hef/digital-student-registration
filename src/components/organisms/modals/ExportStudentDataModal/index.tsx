@@ -162,9 +162,8 @@ const ExportStudentDataModal: React.FC<ExportStudentDataModalProps> = ({
         csvMode === "combined" &&
         students.length > 1
       ) {
-        const { buildCombinedStudentDataCsv } = await import(
-          "@/utils/csv.utils"
-        );
+        const { buildCombinedStudentDataCsv } =
+          await import("@/utils/csv.utils");
         const blob = await buildCombinedStudentDataCsv(
           students as StudentType[],
           {
