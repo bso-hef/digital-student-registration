@@ -2,32 +2,81 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
+
+
 import { useOnboardingSettings } from "@/hooks/useOnboardingSettings";
 import classService from "@/lib/services/classService";
-import {
-  createValidateGeneralStudentData,
-  validateGeneralStudentData,
-} from "@/lib/validate/student.validate";
-import {
-  setStudentOnboardingClass,
-  updateStudentOnboardingData,
-} from "@/store/actions/studentActions";
+import { createValidateGeneralStudentData, validateGeneralStudentData } from "@/lib/validate/student.validate";
+import { setStudentOnboardingClass, updateStudentOnboardingData } from "@/store/actions/studentActions";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { ClassInterface } from "@/types/class";
-import {
-  Autocomplete,
-  Box,
-  TextField as MUITextField,
-  MenuItem,
-  Skeleton,
-  Typography,
-  styled,
-} from "@mui/material";
+import { Autocomplete, Box, TextField as MUITextField, MenuItem, Skeleton, Typography, styled } from "@mui/material";
 import dayjs from "dayjs";
 import { Field, Form, Formik, FormikProps } from "formik";
 import { Select, TextField } from "formik-mui";
 import { DatePicker } from "formik-mui-x-date-pickers";
 import { useTranslation } from "react-i18next";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const StyledForm = styled(Form)(({ theme }) => ({
   display: "flex",
@@ -280,8 +329,9 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
                   variant="outlined"
                   fullWidth
                   slotProps={{
+                    ...params.slotProps,
                     input: {
-                      ...params.InputProps,
+                      ...params.slotProps.input,
                       endAdornment: (
                         <>
                           {classesLoading ? (
@@ -291,7 +341,7 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
                               height={20}
                             />
                           ) : null}
-                          {params.InputProps.endAdornment}
+                          {params.slotProps.input.endAdornment}
                         </>
                       ),
                     },
