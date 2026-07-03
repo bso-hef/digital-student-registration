@@ -125,12 +125,14 @@ export default function StudentPage() {
                 height: "50px",
                 flexShrink: 0,
               }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <PersonRoundedIcon />
-                  </InputAdornment>
-                ),
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <PersonRoundedIcon />
+                    </InputAdornment>
+                  ),
+                },
               }}
             />
             <Field
@@ -145,12 +147,14 @@ export default function StudentPage() {
                 height: "50px",
                 flexShrink: 0,
               }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <PersonRoundedIcon />
-                  </InputAdornment>
-                ),
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <PersonRoundedIcon />
+                    </InputAdornment>
+                  ),
+                },
               }}
             />
             <Field
@@ -162,21 +166,25 @@ export default function StudentPage() {
               }
               helperText={touched.uniqueIdentifier && errors.uniqueIdentifier}
               disabled={isSubmitting}
-              inputProps={{
-                style: { textTransform: "uppercase" },
-                maxLength: 6,
-              }}
               fullWidth
               style={{
                 height: "50px",
                 flexShrink: 0,
               }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <BadgeRoundedIcon />
-                  </InputAdornment>
-                ),
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <BadgeRoundedIcon />
+                    </InputAdornment>
+                  ),
+                },
+                htmlInput: {
+                  maxLength: 6,
+                  style: {
+                    textTransform: "uppercase",
+                  },
+                },
               }}
             />
             <StyledEndContainer>

@@ -94,7 +94,10 @@ const GeneralMenu: React.FC<GeneralMenuProps> = ({
   ...otherProps
 }) => {
   const transitionProps = withTransition
-    ? { TransitionComponent: Fade, TransitionProps: { timeout: 300 } }
+    ? {
+        slots: { transition: Fade },
+        slotProps: { transition: { timeout: 300 } },
+      }
     : {};
 
   const handleItemClick = (itemOnClick: () => void) => {

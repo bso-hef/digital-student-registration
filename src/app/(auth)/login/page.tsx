@@ -144,21 +144,23 @@ export default function LoginPage() {
                   error={touched.password && Boolean(errors.password)}
                   helperText={touched.password && errors.password}
                   onKeyDown={handleKeyDown}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          onClick={() => setShowPassword(!showPassword)}
-                          edge="end"
-                        >
-                          {showPassword ? (
-                            <VisibilityOffRounded />
-                          ) : (
-                            <VisibilityRounded />
-                          )}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
+                  slotProps={{
+                    input: {
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            onClick={() => setShowPassword(!showPassword)}
+                            edge="end"
+                          >
+                            {showPassword ? (
+                              <VisibilityOffRounded />
+                            ) : (
+                              <VisibilityRounded />
+                            )}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    },
                   }}
                 />
 

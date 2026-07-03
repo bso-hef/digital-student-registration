@@ -147,7 +147,10 @@ const GeneralModal = ({
     : {};
 
   const transitionProps = withTransition
-    ? { TransitionComponent: Fade, TransitionProps: { timeout: 300 } }
+    ? {
+        slots: { transition: Fade },
+        slotProps: { transition: { timeout: 300 } },
+      }
     : {};
 
   return (
