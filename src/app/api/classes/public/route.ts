@@ -4,16 +4,6 @@ import Logger from "@/lib/server-logger";
 import Class from "@/models/Class";
 import { NextRequest, NextResponse } from "next/server";
 
-
-
-
-
-
-
-
-
-
-
 // This endpoint is public (no auth) and is an existence oracle, so throttle it
 // per IP to slow down enumeration.
 const RATE_LIMIT = 20;
