@@ -52,7 +52,10 @@ const ActionsTooltip = ({
   ...otherProps
 }: ActionsTooltipProps) => {
   const transitionProps = withTransition
-    ? { TransitionComponent: Zoom, TransitionProps: { timeout: 300 } }
+    ? {
+        slots: { transition: Zoom },
+        slotProps: { transition: { timeout: 300 } },
+      }
     : {};
 
   return (
