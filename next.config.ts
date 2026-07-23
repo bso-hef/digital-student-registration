@@ -40,10 +40,18 @@ function parseAppUrl(urlString: string | undefined): {
 // Get URL components from environment variable
 const appUrl = parseAppUrl(process.env.NEXT_PUBLIC_APP_URL);
 
+let nextalloweddevorigins = process.env.NEXT_ALLOWED_DEV_ORIGINS;
+nextalloweddevorigins = nextalloweddevorigins || "localhost,127.0.01";
 /**
  * @type {import('next').NextConfig}
  */
 const nextConfig: NextConfig = {
+  turbopack: {
+    resolveAlias: {
+      "@": "./src",
+    },
+  },
+  allowedDevOrigins: nextalloweddevorigins.split(","),
   // Inject package.json values as environment variables
   env: {
     NEXT_PUBLIC_NAME: packageJson.name

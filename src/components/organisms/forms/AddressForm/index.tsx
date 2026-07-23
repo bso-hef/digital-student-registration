@@ -6,8 +6,7 @@ import { validateStudentAddressData } from "@/lib/validate/student.validate";
 import { updateStudentOnboardingData } from "@/store/actions/studentActions";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { Box, Typography, styled } from "@mui/material";
-import { FormikProps } from "formik";
-import { Field, Form, Formik } from "formik";
+import { Field, Form, Formik, FormikProps } from "formik";
 import { TextField } from "formik-mui";
 import { useTranslation } from "react-i18next";
 
@@ -139,9 +138,11 @@ const AddressForm: React.FC<AddressFormProps> = ({
               variant="outlined"
               fullWidth
               required
-              inputProps={{
-                inputMode: "numeric",
-                pattern: "[0-9]*",
+              slotProps={{
+                htmlInput: {
+                  inputMode: "numeric",
+                  pattern: "[0-9]*",
+                },
               }}
               onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
                 // Only allow numbers

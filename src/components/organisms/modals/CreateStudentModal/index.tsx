@@ -236,12 +236,14 @@ const CreateStudentModal: React.FC<CreateStudentModalProps> = ({
                         height: "50px",
                         flexShrink: 0,
                       }}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <PersonRoundedIcon />
-                          </InputAdornment>
-                        ),
+                      slotProps={{
+                        input: {
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <PersonRoundedIcon />
+                            </InputAdornment>
+                          ),
+                        },
                       }}
                     />
                   </FieldWrapper>
@@ -264,12 +266,14 @@ const CreateStudentModal: React.FC<CreateStudentModalProps> = ({
                         height: "50px",
                         flexShrink: 0,
                       }}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <PersonRoundedIcon />
-                          </InputAdornment>
-                        ),
+                      slotProps={{
+                        input: {
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <PersonRoundedIcon />
+                            </InputAdornment>
+                          ),
+                        },
                       }}
                     />
                   </FieldWrapper>
