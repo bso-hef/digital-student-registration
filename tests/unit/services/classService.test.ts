@@ -37,6 +37,28 @@ describe("classService", () => {
     });
   });
 
+  describe("getPublic", () => {
+    it("should fetch public classes", async () => {
+      const mockResponse = {
+        data: {
+          classes: [
+            {
+              _id: "class1",
+              name: "10A",
+              active: true,
+            },
+          ],
+        },
+      };
+      vi.mocked(http.get).mockResolvedValue(mockResponse);
+
+      const result = await classService.getPublic();
+
+      expect(http.get).toHaveBeenCalledWith("/api/classes/public");
+      expect(result).toEqual(mockResponse);
+    });
+  });
+
   describe("get", () => {
     it("should fetch a class by ID", async () => {
       const classId = "class123";

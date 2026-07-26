@@ -166,6 +166,7 @@ describe("studentDataMapper", () => {
     it("should map education fields", () => {
       const formData: Partial<StudentData> = {
         eintrittschule: "01.09.2020",
+        currentClass: "class1",
         klassenname: "10A",
         vorhergehendeSchule: "High School",
         vorhergehendeSchulform: "gymnasium",
@@ -176,6 +177,7 @@ describe("studentDataMapper", () => {
       const result = mapFormDataToModel(formData);
 
       expect(result.schoolEntryDate).toBeDefined();
+      expect(result.currentClass).toBe("class1");
       expect(result.currentClassName).toBe("10A");
       expect(result.previousSchool).toBe("High School");
       expect(result.previousSchoolType).toBe("gymnasium");
@@ -460,6 +462,7 @@ describe("studentDataMapper", () => {
     it("should map education fields", () => {
       const student = createMockStudent({
         schoolEntryDate: new Date("2020-09-01"),
+        currentClass: "class1",
         currentClassName: "10A",
         previousSchool: "High School",
         previousSchoolType: "gymnasium",
@@ -470,11 +473,37 @@ describe("studentDataMapper", () => {
       const result = mapModelToFormData(student);
 
       expect(result.eintrittschule).toBeDefined();
+      expect(result.currentClass).toBe("class1");
       expect(result.klassenname).toBe("10A");
       expect(result.vorhergehendeSchule).toBe("High School");
       expect(result.vorhergehendeSchulform).toBe("gymnasium");
       expect(result.vorhergehendeStufe).toBe("10");
       expect(result.abschluesse).toEqual(["abitur"]);
+    });
+
+    it("should map populated currentClass and prefer its name", () => {
+      const currentClass = {
+        _id: "class1",
+        name: "11B",
+        schoolYearFrom: new Date("2024-09-01"),
+        schoolYearTo: new Date("2025-07-31"),
+        grade: 11,
+        isVocational: true,
+        requiresEmployerInfo: true,
+        active: true,
+        incomplete: false,
+        students: [],
+      };
+      const student = createMockStudent({
+        currentClass,
+        currentClassName: "Old Class Name",
+      });
+
+      const result = mapModelToFormData(student);
+
+      expect(result.currentClass).toBe("class1");
+      expect(result.currentClassData).toEqual(currentClass);
+      expect(result.klassenname).toBe("11B");
     });
 
     it("should map profession and training fields", () => {

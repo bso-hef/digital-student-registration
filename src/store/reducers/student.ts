@@ -25,6 +25,8 @@ const initialStudentState: StudentState = {
   previousStep: null,
   editingFromSummary: false,
   data: {
+    currentClass: "",
+    currentClassData: null,
     klassenname: "",
     vorname: "",
     nachname: "",
@@ -160,6 +162,18 @@ const studentReducer = (state = initialStudentState, action: AppAction) => {
         data: {
           ...state.data,
           ...action.payload,
+        },
+      };
+
+    case TYPES.SET_STUDENT_ONBOARDING_CLASS:
+      return {
+        ...state,
+        currentClass: action.payload || null,
+        data: {
+          ...state.data,
+          currentClass: action.payload?._id || "",
+          currentClassData: action.payload || null,
+          klassenname: action.payload?.name || "",
         },
       };
 

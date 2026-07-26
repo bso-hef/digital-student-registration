@@ -1,4 +1,6 @@
 export interface StudentData {
+  currentClass: string;
+  currentClassData?: import("./class").ClassInterface | null;
   klassenname: string;
   vorname: string;
   nachname: string;
