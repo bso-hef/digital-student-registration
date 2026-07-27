@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
     await dbConnect();
 
     const classes = await Class.find({ active: true })
-      .select("_id name requiresEmployerInfo")
+      .select("_id name requiresEmployerInfo isVocational")
       .sort({ name: 1 })
       .lean();
 

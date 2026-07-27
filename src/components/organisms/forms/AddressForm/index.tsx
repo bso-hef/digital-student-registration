@@ -176,7 +176,7 @@ const AddressForm: React.FC<AddressFormProps> = ({
               variant="outlined"
               fullWidth
               placeholder="+49 123 456789"
-              inputProps={{
+              slotProps={{
                 inputMode: "tel",
                 pattern: "[+0-9 ]*",
               }}
@@ -196,7 +196,7 @@ const AddressForm: React.FC<AddressFormProps> = ({
               variant="outlined"
               fullWidth
               placeholder="+49 123 456789"
-              inputProps={{
+              slotProps={{
                 inputMode: "tel",
                 pattern: "[+0-9 ]*",
               }}

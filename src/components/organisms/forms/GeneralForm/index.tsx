@@ -23,10 +23,10 @@ import {
   Typography,
   styled,
 } from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
-import { Field, Form, Formik, FormikProps } from "formik";
+import { Field, Form, Formik, FormikProps, useFormikContext } from "formik";
 import { Select, TextField } from "formik-mui";
-import { DatePicker } from "formik-mui-x-date-pickers";
 import { useTranslation } from "react-i18next";
 
 const StyledForm = styled(Form)(({ theme }) => ({
@@ -202,15 +202,16 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
     }
   };
 
-  // Track validation state changes (must be before early return)
-  useEffect(() => {
-    if (formikRef?.current && onValidationChange) {
-      const { isValid, isValidating } = formikRef.current;
-      if (!isValidating) {
+  // Validation watcher: notify parent when Formik validity changes
+  const ValidationWatcher: React.FC = () => {
+    const { isValid, isValidating } = useFormikContext<FormValues>();
+    useEffect(() => {
+      if (onValidationChange && !isValidating) {
         onValidationChange(isValid);
       }
-    }
-  }, [formikRef, onValidationChange]);
+    }, [isValid, isValidating]);
+    return null;
+  };
 
   // Show loading skeleton while settings are loading
   if (loading) {
@@ -237,8 +238,9 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
       enableReinitialize={false}
       innerRef={formikRef}
     >
-      {({ setFieldValue, values, setFieldTouched }) => (
+      {({ errors, touched, setFieldValue, values, setFieldTouched }) => (
         <>
+          <ValidationWatcher />
           <CountryWatcher
             country={values.geburtsland}
             dispatch={dispatch}
@@ -360,16 +362,22 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
 
             <FormSection>
               {/* Geburtsdatum */}
-              <Field
-                component={DatePicker}
-                name="geburtsdatum"
+              <DatePicker
+                value={values.geburtsdatum}
+                onChange={(newValue) => setFieldValue("geburtsdatum", newValue)}
                 label={t("onboarding.general.birthDate")}
                 format="DD.MM.YYYY"
                 slotProps={{
                   textField: {
                     variant: "outlined",
                     fullWidth: true,
+                    margin: "none",
                     required: true,
+                    error: touched.geburtsdatum && Boolean(errors.geburtsdatum),
+                    helperText:
+                      touched.geburtsdatum && errors.geburtsdatum
+                        ? String(errors.geburtsdatum)
+                        : undefined,
                   },
                 }}
               />

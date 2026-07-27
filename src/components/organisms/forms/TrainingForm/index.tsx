@@ -2,10 +2,7 @@ import React, { useEffect, useMemo } from "react";
 
 import FormikDropdown from "@/components/atoms/dropdowns/FormikDropdown";
 import { useOnboardingSettings } from "@/hooks/useOnboardingSettings";
-import {
-  createValidateStudentTrainingData,
-  validateStudentTrainingData,
-} from "@/lib/validate/student.validate";
+import { createValidateStudentTrainingData } from "@/lib/validate/student.validate";
 import { updateStudentOnboardingData } from "@/store/actions/studentActions";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { StudentData } from "@/types/student";
@@ -57,7 +54,10 @@ const TrainingForm: React.FC<TrainingFormProps> = ({
 
   // Get data from Redux if not provided via props
   const studentDataFromRedux = useAppSelector((state) => state.student.data);
+  const currentClass = useAppSelector((state) => state.student.currentClass);
   const data = dataProp || studentDataFromRedux;
+  const selectedClass = currentClass || data?.currentClassData;
+  const isProfessionRequired = Boolean(selectedClass?.isVocational);
 
   const {
     professionOptions,
@@ -86,10 +86,11 @@ const TrainingForm: React.FC<TrainingFormProps> = ({
       return createValidateStudentTrainingData(
         getOptionValues(professionOptions),
         allowCustom,
+        isProfessionRequired,
       );
     }
-    return validateStudentTrainingData;
-  }, [professionOptions, fieldConfigs, getOptionValues]);
+    return createValidateStudentTrainingData([], true, isProfessionRequired);
+  }, [professionOptions, fieldConfigs, getOptionValues, isProfessionRequired]);
 
   // Track validation state changes (must be before early return)
   useEffect(() => {
@@ -133,7 +134,7 @@ const TrainingForm: React.FC<TrainingFormProps> = ({
               variant="outlined"
               margin="normal"
               fullWidth
-              required
+              required={isProfessionRequired}
               error={touched.beruf && Boolean(errors.beruf)}
               helperText={touched.beruf && errors.beruf}
             />
@@ -142,7 +143,7 @@ const TrainingForm: React.FC<TrainingFormProps> = ({
               name="beruf"
               label={t("onboarding.training.profession")}
               options={getEnabledOptions(professionOptions)}
-              required
+              required={isProfessionRequired}
             />
           )}
 

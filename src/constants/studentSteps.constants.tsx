@@ -100,7 +100,10 @@ export const getActiveSteps = (
   studentData: { geburtsland?: string },
   currentClass: ClassInterface | null,
 ): StepDef[] => {
-  const isVocational = Boolean(currentClass?.isVocational);
+  // Consider both explicit vocational flag and employer-requirement flag
+  const isVocational = Boolean(
+    currentClass?.isVocational || currentClass?.requiresEmployerInfo,
+  );
 
   // Check if student is from Germany or country not yet selected (hide Origin form if true)
   // Normalize country value to handle both ISO codes ("DE") and full names ("Deutschland", "Germany")
