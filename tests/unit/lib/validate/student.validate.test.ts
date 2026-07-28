@@ -3,9 +3,11 @@ import {
   createGenderValidation,
   createReligionValidation,
   createValidateGeneralStudentData,
+  createValidateStudentTrainingData,
   validateGeneralStudentData,
   validateVerificationForm,
 } from "@/lib/validate/student.validate";
+import dayjs from "dayjs";
 import { describe, expect, it } from "vitest";
 
 /**
@@ -407,6 +409,131 @@ describe("student.validate", () => {
         staatsangehoerigkeit1: "Any Country",
       };
       await expect(schema.validate(data)).resolves.toBeTruthy();
+    });
+  });
+
+  describe("createValidateStudentTrainingData", () => {
+    const professionOptions = ["Fachinformatiker", "Elektroniker"];
+    const validTrainingData = {
+      beruf: "Fachinformatiker",
+      betriebEintritt: dayjs("2026-08-01"),
+      betriebName: "Ausbildungsbetrieb GmbH",
+      betriebStraße: "Musterstraße",
+      betriebHausNr: "1",
+      betriebPlz: "12345",
+      betriebOrt: "Musterstadt",
+      betriebTelefon1: "0123456789",
+      betriebEmail: "ausbildung@example.com",
+    };
+
+    it("should require profession for vocational classes", async () => {
+      const schema = createValidateStudentTrainingData(
+        professionOptions,
+        true,
+        true,
+      );
+
+      await expect(schema.validateAt("beruf", { beruf: "" })).rejects.toThrow(
+        "Beruf ist erforderlich",
+      );
+    });
+
+    it("should allow an empty profession for non-vocational classes", async () => {
+      const schema = createValidateStudentTrainingData(
+        professionOptions,
+        true,
+        false,
+      );
+
+      await expect(schema.validateAt("beruf", { beruf: "" })).resolves.toBe("");
+    });
+
+    it("should accept a configured profession when custom values are disabled", async () => {
+      const schema = createValidateStudentTrainingData(
+        professionOptions,
+        false,
+        true,
+      );
+
+      await expect(
+        schema.validateAt("beruf", { beruf: "Fachinformatiker" }),
+      ).resolves.toBe("Fachinformatiker");
+    });
+
+    it("should reject an unknown profession when custom values are disabled", async () => {
+      const schema = createValidateStudentTrainingData(
+        professionOptions,
+        false,
+        true,
+      );
+
+      await expect(
+        schema.validateAt("beruf", { beruf: "Unbekannter Beruf" }),
+      ).rejects.toThrow("Ungültiger Beruf");
+    });
+
+    it("should allow an empty dropdown value for non-vocational classes", async () => {
+      const schema = createValidateStudentTrainingData(
+        professionOptions,
+        false,
+        false,
+      );
+
+      await expect(schema.validateAt("beruf", { beruf: "" })).resolves.toBe("");
+    });
+
+    it("should validate complete training data", async () => {
+      const schema = createValidateStudentTrainingData(
+        professionOptions,
+        false,
+        true,
+      );
+
+      await expect(schema.validate(validTrainingData)).resolves.toEqual(
+        validTrainingData,
+      );
+    });
+
+    it("should reject a missing company start date", async () => {
+      const schema = createValidateStudentTrainingData(
+        professionOptions,
+        false,
+        true,
+      );
+
+      await expect(
+        schema.validate({ ...validTrainingData, betriebEintritt: null }),
+      ).rejects.toThrow("Eintrittsdatum ist erforderlich");
+    });
+
+    it("should reject a company start date that is not a Dayjs value", async () => {
+      const schema = createValidateStudentTrainingData(
+        professionOptions,
+        false,
+        true,
+      );
+
+      await expect(
+        schema.validate({
+          ...validTrainingData,
+          betriebEintritt: "2026-08-01",
+        }),
+      ).rejects.toThrow("Ungültiges Datum");
+    });
+
+    it("should reject an invalid Dayjs company start date", async () => {
+      const schema = createValidateStudentTrainingData(
+        professionOptions,
+        false,
+        true,
+      );
+
+      await expect(
+        schema.validate({
+          ...validTrainingData,
+          betriebEintritt: dayjs("not-a-date"),
+        }),
+      ).rejects.toThrow("Ungültiges Datum");
     });
   });
 });

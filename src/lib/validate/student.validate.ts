@@ -406,12 +406,18 @@ export const validateStudentTrainingData = Yup.object({
 export const createValidateStudentTrainingData = (
   professionOptions: string[],
   allowCustomProfession = true,
+  isProfessionRequired = true,
 ) => {
-  const berufValidation = allowCustomProfession
-    ? Yup.string().required("Beruf ist erforderlich")
-    : Yup.string()
-        .oneOf(professionOptions, "Ungültiger Beruf")
-        .required("Beruf ist erforderlich");
+  const professionSchema = allowCustomProfession
+    ? Yup.string()
+    : Yup.string().oneOf(
+        isProfessionRequired ? professionOptions : ["", ...professionOptions],
+        "Ungültiger Beruf",
+      );
+
+  const berufValidation = isProfessionRequired
+    ? professionSchema.required("Beruf ist erforderlich")
+    : professionSchema.nullable();
 
   return Yup.object({
     beruf: berufValidation,
