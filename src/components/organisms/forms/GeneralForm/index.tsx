@@ -347,6 +347,7 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
                 variant="outlined"
                 fullWidth
                 required
+                formControl={{ required: true }}
               >
                 {getEnabledOptions(genderOptions).map((option) => (
                   <MenuItem key={option.value} value={option.value}>
