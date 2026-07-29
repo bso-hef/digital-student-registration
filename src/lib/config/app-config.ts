@@ -195,19 +195,6 @@ export function validateConfig(): void {
         value: serverConfig.nextAuth.url,
       });
     }
-
-    for (const { name, value } of urlsToCheck) {
-      if (value && value.includes("localhost")) {
-        errors.push(
-          `${name} contains 'localhost' in production! This will cause QR codes and links to be non-functional. Set to your production domain (e.g., https://school.example.com)`,
-        );
-      }
-      if (value && value.includes("127.0.0.1")) {
-        errors.push(
-          `${name} contains '127.0.0.1' in production! This will cause QR codes and links to be non-functional. Set to your production domain (e.g., https://school.example.com)`,
-        );
-      }
-    }
   }
 
   if (errors.length > 0) {

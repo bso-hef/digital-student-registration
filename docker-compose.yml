@@ -18,10 +18,10 @@
 #   3. Ensure configured port is available (default: 3000)
 #
 #   4. REQUIRED: Set application URLs before deployment:
-#      export NEXT_PUBLIC_APP_URL=https://your-domain.com
-#      export NEXT_PUBLIC_API_URL=https://your-domain.com
+#      export QR_CODE_BASE_URL=https://your-domain.com
 #      export NEXTAUTH_URL=https://your-domain.com
-#      These URLs are embedded in QR codes and MUST be your production domain!
+#      QR_CODE_BASE_URL is read when the container is running. Rebuilding the
+#      image is not required when this URL changes.
 #
 # Usage:
 #   Linux:   docker compose --profile linux up -d
@@ -31,6 +31,78 @@
 #   Add nginx, Cloudflare, or cloud load balancer in front for HTTPS
 
 services:
+  # ============================================
+  # Traefik ssl Proxy Application Server (Linux)
+  # ============================================
+  traefik:
+    profiles:
+      - linux
+    image: traefik:v3.1
+    container_name: traefik
+    restart: unless-stopped
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.file.filename=/etc/traefik/dynamic.yml"
+
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+
+      # optional: HTTP -> HTTPS
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+
+    ports:
+      - "443:443"
+
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./certs:/certs:ro"
+      - "./dynamic.yml:/etc/traefik/dynamic.yml:ro"
+
+    networks:
+      - app-network
+
+    depends_on:
+      - app-linux
+
+  # ============================================
+  # Traefik ssl Proxy Application Server (Linux)
+  # ============================================
+  traefik-win:
+    profiles:
+      - windows
+    image: traefik:v3.7.6-windowsservercore-ltsc2022
+    #in case of windows container type must fit the host operatingsystem
+    container_name: traefik_win
+    restart: unless-stopped
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.endpoint=npipe:////./pipe/docker_engine"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.file.filename=c:\\config\\dynamic.yml"
+
+      - "--entrypoints.websecure.address=:443"
+
+      # optional: HTTP -> HTTPS
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+
+    ports:
+      - "443:443"
+
+    volumes:
+      - type: npipe
+        source: \\.\pipe\docker_engine
+        target: \\.\pipe\docker_engine
+      - ./certificates:c:\certs
+      - ./docker/traefik:c:\config
+
+    networks:
+      - app-network
+    isolation: process
+
+
   # ============================================
   # Next.js Application Server (Linux)
   # ============================================
@@ -50,6 +122,7 @@ services:
       NEXT_TELEMETRY_DISABLED: 1
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
       NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
+      QR_CODE_BASE_URL: ${QR_CODE_BASE_URL}
       NEXTAUTH_URL: ${NEXTAUTH_URL}
       SKIP_URL_VALIDATION: ${SKIP_URL_VALIDATION:-false}
       MONGODB_URI: mongodb://${MONGO_USER}:${MONGO_PASSWORD}@mongo:27017/${MONGO_DB:-digital-student-registration}?authSource=admin
@@ -98,37 +171,48 @@ services:
       NEXT_TELEMETRY_DISABLED: 1
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
       NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
+      QR_CODE_BASE_URL: ${QR_CODE_BASE_URL}
       NEXTAUTH_URL: ${NEXTAUTH_URL}
       SKIP_URL_VALIDATION: ${SKIP_URL_VALIDATION:-false}
-      MONGODB_URI: mongodb://${MONGO_USER}:${MONGO_PASSWORD}@mongo:27017/${MONGO_DB:-digital-student-registration}?authSource=admin
-      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
+      MONGODB_URI: mongodb://${MONGO_USER}:${MONGO_PASSWORD}@mongo-win:27017/${MONGO_DB:-digital-student-registration}?authSource=admin
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
       NEXT_PUBLIC_VERSION: ${APP_VERSION:-2.1.0}
       NEXT_PUBLIC_NAME: ${APP_NAME:-Digital Student Registration}
     networks:
       - app-network
     depends_on:
-      mongo:
-        condition: service_healthy
-      redis:
+      mongo-win:
         condition: service_healthy
     logging:
       driver: json-file
       options:
         max-size: "10m"
         max-file: "5"
+    labels:
+      - "traefik.enable=true"
+
+      - "traefik.http.routers.app.rule=Host(`${NEXT_PUBLIC_DOMAIN}`)"
+      - "traefik.http.routers.app.entrypoints=websecure"
+      - "traefik.http.routers.app.tls=true"
+
+      # App läuft intern auf Port 3000
+      - "traefik.http.services.app.loadbalancer.server.port=3000"
 
   # ============================================
   # MongoDB Database
   # ============================================
   mongo:
+    profiles:
+      - linux
     image: mongo:7.0
     container_name: dsr-mongo
     restart: unless-stopped
+    ports:
+      - "27017:27017"
     environment:
       # REQUIRED: Set MONGO_USER and MONGO_PASSWORD in .env (no defaults for security)
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: CHANGE_ME
       MONGO_INITDB_DATABASE: ${MONGO_DB:-digital-student-registration}
     volumes:
       - mongo-data:/data/db
@@ -137,7 +221,7 @@ services:
       - app-network
     command: ["mongod", "--config", "/etc/mongod.conf"]
     healthcheck:
-      test: ["CMD-SHELL", "mongosh --quiet --eval \"db.adminCommand('ping').ok\" --username \"$MONGO_INITDB_ROOT_USERNAME\" --password \"$MONGO_INITDB_ROOT_PASSWORD\" --authenticationDatabase admin || exit 1"]
+      test: ["CMD-SHELL", "mongosh --quiet --eval \"db.adminCommand('ping').ok\" --username \"${MONGO_INITDB_ROOT_USERNAME}\" --password \"${MONGO_INITDB_ROOT_PASSWORD}\" --authenticationDatabase admin || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -152,6 +236,8 @@ services:
   # Redis Cache (for session storage and caching)
   # ============================================
   redis:
+    profiles:
+      - linux
     image: redis:7-alpine
     container_name: dsr-redis
     restart: unless-stopped
@@ -180,12 +266,46 @@ services:
         max-size: "5m"
         max-file: "3"
 
+  # ============================================
+  # MongoDB Database
+  # ============================================
+  mongo-win:
+    profiles:
+      - windows
+    image: mongo:7.0
+    container_name: dsr-mongo-win
+    restart: unless-stopped
+    environment:
+      # REQUIRED: Set MONGO_USER and MONGO_PASSWORD in .env (no defaults for security)
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: CHANGE_ME
+      MONGO_INITDB_DATABASE: ${MONGO_DB:-digital-student-registration}
+    volumes:
+      - mongo-data-win:c:\data\db
+      #- ./mongod.conf:c:/mongodb/bin/mongod.cfg:ro"
+    networks:
+      app-network:
+    #command: ["mongod", "--config", "/etc/mongod.conf"]
+    command: ["mongod", "--bind_ip", "0.0.0.0"]
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: ["CMD-SHELL", "netstat -ano | findstr :27017 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
 # ============================================
 # Networks
 # ============================================
 networks:
   app-network:
-    driver: bridge
     name: dsr-network
 
 # ============================================
@@ -195,7 +315,9 @@ volumes:
   mongo-data:
     driver: local
     name: dsr-mongo-data
-
+  mongo-data-win:
+    driver: local
+    name: dsr-mongo-data-win
   redis-data:
     driver: local
     name: dsr-redis-data

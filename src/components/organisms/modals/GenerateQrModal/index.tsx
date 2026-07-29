@@ -1,7 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
 
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
-import { WIZZARD_URL } from "@/constants/general.constants";
 import classService from "@/lib/services/classService";
 import { ClassInterface } from "@/types/class";
 import {
@@ -26,6 +25,7 @@ import PictureAsPdfRoundedIcon from "@mui/icons-material/PictureAsPdfRounded";
 import QrCode2RoundedIcon from "@mui/icons-material/QrCode2Rounded";
 import WifiRoundedIcon from "@mui/icons-material/WifiRounded";
 import {
+  Alert,
   Box,
   CircularProgress,
   Divider,
@@ -146,6 +146,8 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
 
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState<number | null>(null);
+  const [wizardUrlTemplate, setWizardUrlTemplate] = useState<string>();
+  const [runtimeConfigError, setRuntimeConfigError] = useState(false);
 
   // Class mode state
   const [includeCoverPages, setIncludeCoverPages] = useState(true);
@@ -189,6 +191,60 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, classMode, selectedClassIds]);
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    const controller = new AbortController();
+    Promise.resolve()
+      .then(() => {
+        if (controller.signal.aborted) {
+          return undefined;
+        }
+
+        setWizardUrlTemplate(undefined);
+        setRuntimeConfigError(false);
+
+        return fetch("/api/config/public", {
+          cache: "no-store",
+          signal: controller.signal,
+        });
+      })
+      .then(async (response) => {
+        if (!response) {
+          return undefined;
+        }
+
+        if (!response.ok) {
+          throw new Error("Runtime configuration could not be loaded");
+        }
+
+        return (await response.json()) as { appUrl: string };
+      })
+      .then((config) => {
+        if (!config) {
+          return;
+        }
+
+        const { appUrl } = config;
+        setWizardUrlTemplate(`${appUrl}/student/{short-id}`);
+      })
+      .catch((error: unknown) => {
+        if (error instanceof DOMException && error.name === "AbortError") {
+          return;
+        }
+
+        console.error("Failed to load QR code runtime configuration:", error);
+        setRuntimeConfigError(true);
+      });
+
+    return () => controller.abort();
+  }, [open]);
+
+  const runtimeConfigLoading =
+    open && !wizardUrlTemplate && !runtimeConfigError;
 
   // Calculate total students in class mode
   const totalClassStudents = classesWithStudents.reduce(
@@ -238,6 +294,10 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
   const isNewRegistrationMode = !students?.length && !classMode;
 
   const generateExport = async () => {
+    if (!wizardUrlTemplate) {
+      return;
+    }
+
     setBusy(true);
     setProgress(0);
 
@@ -246,7 +306,7 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
       orientation,
       includeClass,
       shortenId,
-      wizardUrlTemplate: WIZZARD_URL,
+      wizardUrlTemplate,
       locale,
       hidePageLabel: true, // Hide the A4/Portrait label in actual exports
       includeWlan: includeWlan && isWlanConfigured,
@@ -284,7 +344,7 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
         const pdf = await buildNewRegistrationPdf({
           pageSize,
           orientation,
-          wizardUrlTemplate: WIZZARD_URL,
+          wizardUrlTemplate,
           locale,
           includeWlan: includeWlan && isWlanConfigured,
           wlanSettings: isWlanConfigured ? wlanSettings : undefined,
@@ -345,7 +405,12 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === "Enter" && !event.shiftKey && !busy) {
+    if (
+      event.key === "Enter" &&
+      !event.shiftKey &&
+      !busy &&
+      wizardUrlTemplate
+    ) {
       event.preventDefault();
       handleGenerate();
     }
@@ -353,6 +418,13 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
 
   const contentChildren = (
     <Fragment>
+      {runtimeConfigError && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          Die QR-Code-URL konnte nicht aus der Laufzeitkonfiguration geladen
+          werden.
+        </Alert>
+      )}
+
       {busy && (
         <Box sx={{ px: 3, pb: 1 }}>
           <LinearProgress
@@ -1133,7 +1205,11 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
         label={getButtonLabel()}
         onAction={handleGenerate}
         disabled={
-          busy || loadingStudents || (classMode && totalClassStudents === 0)
+          busy ||
+          runtimeConfigLoading ||
+          !wizardUrlTemplate ||
+          loadingStudents ||
+          (classMode && totalClassStudents === 0)
         }
         startIcon={getButtonIcon()}
       />

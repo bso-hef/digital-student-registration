@@ -1,0 +1,4 @@
+tls:
+  certificates:
+    - certFile: 'c:/certs/fullchain.pem'
+      keyFile: 'c:/certs/_.schtt.de_private_key.key'
