@@ -211,8 +211,8 @@ services:
       - "27017:27017"
     environment:
       # REQUIRED: Set MONGO_USER and MONGO_PASSWORD in .env (no defaults for security)
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: CHANGE_ME
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
       MONGO_INITDB_DATABASE: ${MONGO_DB:-digital-student-registration}
     volumes:
       - mongo-data:/data/db
@@ -277,8 +277,8 @@ services:
     restart: unless-stopped
     environment:
       # REQUIRED: Set MONGO_USER and MONGO_PASSWORD in .env (no defaults for security)
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: CHANGE_ME
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
       MONGO_INITDB_DATABASE: ${MONGO_DB:-digital-student-registration}
     volumes:
       - mongo-data-win:c:\data\db
@@ -287,8 +287,6 @@ services:
       app-network:
     #command: ["mongod", "--config", "/etc/mongod.conf"]
     command: ["mongod", "--bind_ip", "0.0.0.0"]
-    ports:
-      - "27017:27017"
     healthcheck:
       test: ["CMD-SHELL", "netstat -ano | findstr :27017 || exit 1"]
       interval: 30s
