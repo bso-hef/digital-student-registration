@@ -181,22 +181,6 @@ export function validateConfig(): void {
     }
   }
 
-  // CRITICAL: Validate that localhost URLs are not used in production
-  // This prevents QR codes with localhost URLs from being generated
-  if (appConfig.env.isProduction) {
-    const urlsToCheck = [
-      { name: "NEXT_PUBLIC_APP_URL", value: appConfig.app.url },
-      { name: "NEXT_PUBLIC_API_URL", value: appConfig.api.url },
-    ];
-
-    if (!isBrowser && serverConfig.nextAuth.url) {
-      urlsToCheck.push({
-        name: "NEXTAUTH_URL",
-        value: serverConfig.nextAuth.url,
-      });
-    }
-  }
-
   if (errors.length > 0) {
     const errorMessage = `Configuration validation failed:\n${errors.join("\n")}`;
     console.error(errorMessage);
