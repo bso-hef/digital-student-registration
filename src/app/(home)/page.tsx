@@ -60,7 +60,7 @@ export default function Home() {
         {t("student.home.Description")}
       </Typography>
 
-      <Stack direction="row" spacing={2} sx={{ mt: 4 }}>
+      <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ mt: 4 }}>
         <GeneralButton
           label={t("student.home.Administration")}
           isPrimary={false}

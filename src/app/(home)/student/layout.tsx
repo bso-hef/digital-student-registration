@@ -58,7 +58,7 @@ const LayoutBox = styled(Box, {
     justifyContent: "center",
     minHeight: "30dvh",
     height: showMobileView ? "100%" : "auto",
-    maxHeight: showMobileView ? "75%" : undefined,
+    maxHeight: showMobileView ? "85vh" : undefined,
     width: "100%",
     maxWidth: isStudentWizzardPage ? "1200px" : "500px",
     textAlign: "center",
@@ -66,7 +66,7 @@ const LayoutBox = styled(Box, {
     backgroundColor: theme.palette.surface.interface.base,
     backgroundImage: "unset",
     color: theme.palette.text.default,
-    borderRadius: showMobileView ? theme.spacing(3, 3, 0, 0) : theme.spacing(3),
+    borderRadius: showMobileView ? theme.spacing(3, 3, 3, 3) : theme.spacing(3),
     border: !showMobileView
       ? `1px solid ${theme.palette.border.seperator}`
       : "none",
@@ -86,7 +86,7 @@ const StyledImageBox = styled(Box)({
   justifyContent: "center",
   width: "100%",
   position: "absolute",
-  top: 0,
+  top: "20px",
 });
 
 export default function StudentLayout({
@@ -134,11 +134,10 @@ export default function StudentLayout({
       <StudentLayoutContainer showMobileView={showMobileView}>
         {isStudentWizzardPage && !showMobileView ? (
           <DynamicPageStepper activeStep={currentStep} steps={activeSteps} />
-        ) : showMobileView ? (
-          <StyledImageBox>
-            <Logo width={250} height={250} />
-          </StyledImageBox>
         ) : null}
+        <StyledImageBox>
+          {showMobileView ? <Logo /> : <Logo width={250} height={150} />}
+        </StyledImageBox>
         <LayoutBox
           isStudentWizzardPage={isStudentWizzardPage}
           showMobileView={showMobileView}
