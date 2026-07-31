@@ -227,6 +227,9 @@ export const validateStudentContactPersonData = Yup.object({
   ansprechpartner1Telefon1: Yup.string()
     .matches(/^\+?[0-9 ]{6,20}$/, "Ungültige Telefonnummer")
     .nullable(),
+  ansprechpartner1Email: Yup.string()
+    .email("Ungültige E-Mail-Adresse")
+    .nullable(),
 });
 
 /**
@@ -248,6 +251,7 @@ export const createValidateStudentContactPersonData = (age: number) => {
       "ansprechpartner1HausNr",
       "ansprechpartner1Mobil",
       "ansprechpartner1Telefon1",
+      "ansprechpartner1Email",
     ];
 
     // Helper to check if any field has a value
@@ -327,11 +331,27 @@ export const createValidateStudentContactPersonData = (age: number) => {
       ansprechpartner1Telefon1: Yup.string()
         .matches(/^\+?[0-9 ]{6,20}$/, "Ungültige Telefonnummer")
         .nullable(),
+      ansprechpartner1Email: Yup.string()
+        .email("Ungültige E-Mail-Adresse")
+        .nullable(),
+      ansprechpartner2Email: Yup.string()
+        .email("Ungültige E-Mail-Adresse")
+        .nullable(),
+      ansprechpartner3Email: Yup.string()
+        .email("Ungültige E-Mail-Adresse")
+        .nullable(),
     });
   }
 
   // Minor: Required
-  return validateStudentContactPersonData;
+  return validateStudentContactPersonData.shape({
+    ansprechpartner2Email: Yup.string()
+      .email("Ungültige E-Mail-Adresse")
+      .nullable(),
+    ansprechpartner3Email: Yup.string()
+      .email("Ungültige E-Mail-Adresse")
+      .nullable(),
+  });
 };
 
 // Step 5: Letzter Bildungsstand

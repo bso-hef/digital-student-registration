@@ -26,6 +26,7 @@ export interface ContactPerson {
   type: string;
   firstName: string;
   lastName: string;
+  email?: string;
   phone?: string;
   mobile?: string;
   address?: {
@@ -43,6 +44,7 @@ const ContactPersonSchema = new Schema(
     type: { type: String, required: true },
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
+    email: { type: String, trim: true, lowercase: true },
     phone: { type: String },
     mobile: { type: String },
     address: { type: AddressSchema, default: undefined },
@@ -267,5 +269,22 @@ StudentSchema.pre(
   },
 );
 
-export default mongoose.models.Student ||
+const existingStudentModel = mongoose.models.Student;
+
+// Next.js keeps compiled Mongoose models across hot reloads. When a field is
+// added to an embedded schema, the cached model would otherwise keep the old
+// schema and silently strip that field when saving.
+if (existingStudentModel) {
+  const contactPersonsPath = existingStudentModel.schema.path(
+    "contactPersons",
+  ) as unknown as { schema?: mongoose.Schema };
+
+  if (contactPersonsPath.schema && !contactPersonsPath.schema.path("email")) {
+    contactPersonsPath.schema.add({
+      email: { type: String, trim: true, lowercase: true },
+    });
+  }
+}
+
+export default existingStudentModel ||
   mongoose.model(SCHEMA.STUDENT, StudentSchema);

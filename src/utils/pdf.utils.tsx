@@ -1157,6 +1157,14 @@ function renderContactPersonsSection(
       layout,
       includeEmptyFields,
     );
+    y = renderField(
+      doc,
+      t("onboarding.legalGuardian.email"),
+      person.email,
+      y,
+      layout,
+      includeEmptyFields,
+    );
 
     if (person.address) {
       const fullAddress = [

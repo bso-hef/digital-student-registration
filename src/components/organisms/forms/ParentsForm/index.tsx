@@ -46,6 +46,7 @@ interface FormValues {
   ansprechpartner1HausNr: string;
   ansprechpartner1Mobil: string;
   ansprechpartner1Telefon1: string;
+  ansprechpartner1Email: string;
   // Contact Person 2
   ansprechpartner2Art: string;
   ansprechpartner2Vorname: string;
@@ -56,6 +57,7 @@ interface FormValues {
   ansprechpartner2HausNr: string;
   ansprechpartner2Mobil: string;
   ansprechpartner2Telefon1: string;
+  ansprechpartner2Email: string;
   // Contact Person 3
   ansprechpartner3Art: string;
   ansprechpartner3Vorname: string;
@@ -66,6 +68,7 @@ interface FormValues {
   ansprechpartner3HausNr: string;
   ansprechpartner3Mobil: string;
   ansprechpartner3Telefon1: string;
+  ansprechpartner3Email: string;
 }
 
 interface ParentsFormProps {
@@ -128,6 +131,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
     ansprechpartner1HausNr: data?.ansprechpartner1HausNr || "",
     ansprechpartner1Mobil: data?.ansprechpartner1Mobil || "",
     ansprechpartner1Telefon1: data?.ansprechpartner1Telefon1 || "",
+    ansprechpartner1Email: data?.ansprechpartner1Email || "",
     // Contact Person 2
     ansprechpartner2Art: data?.ansprechpartner2Art || "",
     ansprechpartner2Vorname: data?.ansprechpartner2Vorname || "",
@@ -138,6 +142,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
     ansprechpartner2HausNr: data?.ansprechpartner2HausNr || "",
     ansprechpartner2Mobil: data?.ansprechpartner2Mobil || "",
     ansprechpartner2Telefon1: data?.ansprechpartner2Telefon1 || "",
+    ansprechpartner2Email: data?.ansprechpartner2Email || "",
     // Contact Person 3
     ansprechpartner3Art: data?.ansprechpartner3Art || "",
     ansprechpartner3Vorname: data?.ansprechpartner3Vorname || "",
@@ -148,6 +153,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
     ansprechpartner3HausNr: data?.ansprechpartner3HausNr || "",
     ansprechpartner3Mobil: data?.ansprechpartner3Mobil || "",
     ansprechpartner3Telefon1: data?.ansprechpartner3Telefon1 || "",
+    ansprechpartner3Email: data?.ansprechpartner3Email || "",
   };
 
   // Use dynamic validation based on age
@@ -320,6 +326,19 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
             touched[`${prefix}Telefon1`] && errors[`${prefix}Telefon1`]
           }
         />
+
+        {/* Email */}
+        <Field
+          component={TextField}
+          name={`${prefix}Email`}
+          type="email"
+          label={t("onboarding.legalGuardian.email")}
+          variant="outlined"
+          margin="normal"
+          fullWidth
+          error={touched[`${prefix}Email`] && Boolean(errors[`${prefix}Email`])}
+          helperText={touched[`${prefix}Email`] && errors[`${prefix}Email`]}
+        />
       </StyledFieldsContainer>
     );
   };
@@ -405,6 +424,7 @@ const ParentsForm: React.FC<ParentsFormProps> = ({
                         setFieldValue(`${prefix}HausNr`, "");
                         setFieldValue(`${prefix}Mobil`, "");
                         setFieldValue(`${prefix}Telefon1`, "");
+                        setFieldValue(`${prefix}Email`, "");
                         handleRemoveContact(contactNumber);
                       }
                     : undefined

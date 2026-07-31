@@ -27,6 +27,7 @@ interface ContactPersonInput {
   type?: string;
   firstName?: string;
   lastName?: string;
+  email?: string;
   phone?: string;
   mobile?: string;
   address?: AddressInput;
@@ -120,6 +121,7 @@ interface ShapedStudentDoc {
     type: string;
     firstName: string;
     lastName: string;
+    email?: string;
     phone?: string;
     mobile?: string;
     address?: {
@@ -291,6 +293,7 @@ const shapeStudent = (row: StudentInput): ShapedStudent => {
         type: getString(cp.type) || "guardian",
         firstName: getString(cp.firstName) || "",
         lastName: getString(cp.lastName) || "",
+        email: getString(cp.email)?.toLowerCase(),
         phone: getString(cp.phone),
         mobile: getString(cp.mobile),
         address:

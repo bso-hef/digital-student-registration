@@ -2,6 +2,7 @@ export interface ContactPerson {
   type: string;
   firstName: string;
   lastName: string;
+  email?: string;
   phone?: string;
   mobile?: string;
   address?: {
