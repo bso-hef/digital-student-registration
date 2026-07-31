@@ -32,6 +32,12 @@ const Root = styled(Box, {
   height: modalHeight ?? "auto",
   maxHeight: modalMaxHeight ?? "100%",
   borderRadius: theme.spacing(2),
+  [theme.breakpoints.down("sm")]: {
+    boxSizing: "border-box",
+    width: modalWidth ?? 630,
+    maxWidth: `calc(100vw - ${theme.spacing(4)})`,
+    padding: theme.spacing(3),
+  },
 }));
 
 const StyledDialog = styled(Dialog, {

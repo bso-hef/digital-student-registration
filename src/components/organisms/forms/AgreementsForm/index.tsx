@@ -15,8 +15,8 @@ import * as Yup from "yup";
 const StyledForm = styled(Form)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  alignItems: "stretch",
   justifyContent: "center",
+  flexWrap: "wrap",
   width: "100%",
   height: "auto",
   gap: theme.spacing(2),
@@ -36,13 +36,28 @@ const AgreementCard = styled(Box)(({ theme }) => ({
     borderColor: theme.palette.primary.main,
     backgroundColor: theme.palette.surface.button.hoverLight,
   },
+  [theme.breakpoints.down("sm")]: {
+    flexDirection: "column",
+    gap: theme.spacing(1.5),
+    padding: theme.spacing(2),
+  },
+}));
+
+const ControlsContainer = styled(Box)(({ theme }) => ({
+  display: "contents",
+  [theme.breakpoints.down("sm")]: {
+    display: "flex",
+    alignItems: "center",
+    gap: theme.spacing(1),
+    width: "100%",
+  },
 }));
 
 const CheckboxContainer = styled(Box)(({ theme }) => ({
   display: "flex",
-  alignItems: "flex-start",
+  alignItems: "center",
   justifyContent: "center",
-  paddingTop: theme.spacing(0.5),
+  minHeight: theme.spacing(6),
 }));
 
 const IconContainer = styled(Box)(({ theme }) => ({
@@ -50,7 +65,7 @@ const IconContainer = styled(Box)(({ theme }) => ({
   alignItems: "center",
   justifyContent: "center",
   color: theme.palette.icon.secondary,
-  paddingTop: theme.spacing(1),
+  minHeight: theme.spacing(6),
 }));
 
 const ContentContainer = styled(Box)(({ theme }) => ({
@@ -188,37 +203,54 @@ const AgreementsForm: React.FC<AgreementsFormProps> = ({
             return (
               <Box key={agreement.id}>
                 <AgreementCard>
-                  {/* Large Checkbox on Left */}
-                  <CheckboxContainer>
-                    <Checkbox
-                      checked={isChecked}
-                      onChange={async (e) => {
-                        const newValue = e.target.checked;
-                        await setFieldValue(fieldName, newValue, false);
-                        setFieldTouched(fieldName, true, false);
-                        // Immediately validate this field to clear/show errors
-                        await validateField(fieldName);
-                        // Also trigger full form validation to update parent
-                        if (formikRef?.current && onValidationChange) {
-                          const errors = await formikRef.current.validateForm();
-                          const isValid =
-                            !errors || Object.keys(errors).length === 0;
-                          onValidationChange(isValid);
-                        }
-                      }}
-                      size="large"
-                    />
-                  </CheckboxContainer>
-
-                  {/* Icon (if provided) */}
-                  {agreement.icon && (
-                    <IconContainer>
-                      <DynamicMuiIcon
-                        iconName={agreement.icon}
-                        fontSize="large"
+                  <ControlsContainer>
+                    {/* Large Checkbox on Left */}
+                    <CheckboxContainer>
+                      <Checkbox
+                        checked={isChecked}
+                        onChange={async (e) => {
+                          const newValue = e.target.checked;
+                          await setFieldValue(fieldName, newValue, false);
+                          setFieldTouched(fieldName, true, false);
+                          // Immediately validate this field to clear/show errors
+                          await validateField(fieldName);
+                          // Also trigger full form validation to update parent
+                          if (formikRef?.current && onValidationChange) {
+                            const errors =
+                              await formikRef.current.validateForm();
+                            const isValid =
+                              !errors || Object.keys(errors).length === 0;
+                            onValidationChange(isValid);
+                          }
+                        }}
+                        size="large"
                       />
-                    </IconContainer>
-                  )}
+                    </CheckboxContainer>
+
+                    {/* Icon (if provided) */}
+                    {agreement.icon && (
+                      <IconContainer>
+                        <DynamicMuiIcon
+                          iconName={agreement.icon}
+                          fontSize="large"
+                        />
+                      </IconContainer>
+                    )}
+
+                    {agreement.required && (
+                      <Chip
+                        label={t("onboarding.agreements.requiredBadge")}
+                        size="small"
+                        color="error"
+                        sx={{
+                          display: { xs: "inline-flex", sm: "none" },
+                          height: 20,
+                          fontSize: "0.7rem",
+                          marginLeft: "auto",
+                        }}
+                      />
+                    )}
+                  </ControlsContainer>
 
                   {/* Title and Description on Right */}
                   <ContentContainer>
@@ -234,7 +266,11 @@ const AgreementsForm: React.FC<AgreementsFormProps> = ({
                           label={t("onboarding.agreements.requiredBadge")}
                           size="small"
                           color="error"
-                          sx={{ height: 20, fontSize: "0.7rem" }}
+                          sx={{
+                            display: { xs: "none", sm: "inline-flex" },
+                            height: 20,
+                            fontSize: "0.7rem",
+                          }}
                         />
                       )}
                     </Box>
