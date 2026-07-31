@@ -140,6 +140,7 @@ const EnhancedTablePagination: React.FC<EnhancedTablePaginationProps> = ({
 type EnhancedTablePaginationRowProps<T> = {
   rowsPerPageOptions?: number[];
   data: T[];
+  totalCount?: number;
   rowsPerPage: number;
   page: number;
   handleChangePage: (
@@ -152,23 +153,26 @@ type EnhancedTablePaginationRowProps<T> = {
 export const EnhancedTablePaginationRow = <T,>({
   rowsPerPageOptions = ROWS_PER_PAGE_OPTIONS,
   data,
+  totalCount,
   rowsPerPage,
   page,
   handleChangePage,
   handleChangeRowsPerPage,
 }: EnhancedTablePaginationRowProps<T>) => {
+  const count = totalCount ?? data.length;
+
   return (
     <StyledPaginationRow>
       <EnhancedTablePagination
         rowsPerPageOptions={rowsPerPageOptions}
-        count={data?.length}
+        count={count}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
       <EnhancedPagination
-        count={Math.ceil(data.length / rowsPerPage)}
+        count={Math.ceil(count / rowsPerPage)}
         page={page + 1}
         size="small"
         onChange={(_, newPage) => handleChangePage(null, newPage)}

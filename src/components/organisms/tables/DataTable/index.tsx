@@ -155,6 +155,13 @@ interface DataTableProps {
   loading?: boolean;
   notFoundTitle?: string;
   notFoundDescription?: string;
+  pagination?: {
+    page: number;
+    rowsPerPage: number;
+    total: number;
+    onPageChange: (page: number) => void;
+    onRowsPerPageChange: (rowsPerPage: number) => void;
+  };
 }
 
 const DataTable: React.FC<DataTableProps> = ({
@@ -169,6 +176,7 @@ const DataTable: React.FC<DataTableProps> = ({
   loading = false,
   notFoundTitle,
   notFoundDescription,
+  pagination,
 }) => {
   const { t } = useTranslation();
   const [selected, setSelected] = useState<(string | number)[]>([]);
@@ -176,6 +184,8 @@ const DataTable: React.FC<DataTableProps> = ({
   const [rowsPerPage, setRowsPerPage] = useState(25);
   const [order, setOrder] = React.useState<"asc" | "desc">("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
+  const currentPage = pagination?.page ?? page;
+  const currentRowsPerPage = pagination?.rowsPerPage ?? rowsPerPage;
 
   // Track if this is the initial render to avoid syncing empty state on mount
   const isInitialMount = useRef(true);
@@ -212,9 +222,14 @@ const DataTable: React.FC<DataTableProps> = ({
 
   const handleChangePage = useCallback(
     (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
-      setPage(newPage - 1);
+      const nextPage = newPage - 1;
+      if (pagination) {
+        pagination.onPageChange(nextPage);
+        return;
+      }
+      setPage(nextPage);
     },
-    [setPage],
+    [pagination],
   );
 
   const handleSelectAllClick = (event: { target: { checked: boolean } }) => {
@@ -254,10 +269,15 @@ const DataTable: React.FC<DataTableProps> = ({
 
   const handleChangeRowsPerPage = useCallback(
     (event: { target: { value: string } }) => {
-      setRowsPerPage(parseInt(event.target.value, 10));
+      const nextRowsPerPage = parseInt(event.target.value, 10);
+      if (pagination) {
+        pagination.onRowsPerPageChange(nextRowsPerPage);
+        return;
+      }
+      setRowsPerPage(nextRowsPerPage);
       setPage(0);
     },
-    [setPage, setRowsPerPage],
+    [pagination],
   );
 
   const isSelected = (name: string | number) => selected.indexOf(name) !== -1;
@@ -288,7 +308,12 @@ const DataTable: React.FC<DataTableProps> = ({
 
               <TableBody>
                 {stableSort(data || [], getComparator(order, orderBy))
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .slice(
+                    pagination ? 0 : currentPage * currentRowsPerPage,
+                    pagination
+                      ? undefined
+                      : currentPage * currentRowsPerPage + currentRowsPerPage,
+                  )
                   .map((row: Record<string, unknown>, index: number) => {
                     const isItemSelected = isSelected(
                       row.id as string | number,
@@ -396,8 +421,9 @@ const DataTable: React.FC<DataTableProps> = ({
           {!loading && dataSelection && (
             <EnhancedTablePaginationRow
               data={data}
-              rowsPerPage={rowsPerPage}
-              page={page}
+              totalCount={pagination?.total}
+              rowsPerPage={currentRowsPerPage}
+              page={currentPage}
               handleChangePage={handleChangePage}
               handleChangeRowsPerPage={handleChangeRowsPerPage}
             />

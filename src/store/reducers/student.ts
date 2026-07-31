@@ -1,3 +1,4 @@
+import type { StudentListFilters } from "@/lib/services/studentService";
 import { ClassInterface } from "@/types/class.d";
 import { Student } from "@/types/db";
 import { StudentData } from "@/types/student";
@@ -11,6 +12,13 @@ interface StudentState {
   editingFromSummary: boolean;
   data: StudentData;
   students: Student[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    pages: number;
+  };
+  filters: StudentListFilters;
   loading: boolean;
   error: Error | null;
   currentClass: ClassInterface | null;
@@ -103,6 +111,13 @@ const initialStudentState: StudentState = {
     teamsnutzung: false,
   },
   students: [],
+  pagination: {
+    page: 1,
+    limit: 25,
+    total: 0,
+    pages: 0,
+  },
+  filters: {},
   loading: false,
   error: null,
   currentClass: null,
@@ -133,7 +148,13 @@ const studentReducer = (state = initialStudentState, action: AppAction) => {
       return { ...state, loading: true, error: null };
 
     case TYPES.GET_STUDENTS_SUCCESS:
-      return { ...state, loading: false, students: action.payload };
+      return {
+        ...state,
+        loading: false,
+        students: action.payload.students,
+        pagination: action.payload.pagination,
+        filters: action.payload.filters,
+      };
 
     case TYPES.ADD_STUDENTS_SUCCESS:
       return {

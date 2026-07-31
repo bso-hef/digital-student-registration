@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useCallback, useRef, useState } from "react";
 
 import GeneralButton from "@/components/atoms/buttons/GeneralButton";
 import { Student as StudentType } from "@/types/db";
@@ -33,6 +33,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store/reducers";
 
 import GeneralModal from "../GeneralModal";
+
+const MIN_PROGRESS_UPDATE_STEP = 5;
 
 const StyledContentStack = styled(Stack)(({}) => ({
   width: "100%",
@@ -97,12 +99,32 @@ const ExportStudentDataModal: React.FC<ExportStudentDataModalProps> = ({
     "portrait",
   );
   const [filenamePattern, setFilenamePattern] = useState(
-    "{lastName}_{firstName}_{class}_data.pdf",
+    "{class}_{lastName}_{firstName}_{id}_data.pdf",
   );
   const [includeEmptyFields, setIncludeEmptyFields] = useState(false);
 
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState<number | null>(null);
+  const lastProgressRef = useRef(0);
+
+  const updateProgress = useCallback((value: number, force = false) => {
+    const nextProgress = Math.max(0, Math.min(100, Math.round(value)));
+
+    if (
+      !force &&
+      nextProgress !== 100 &&
+      nextProgress - lastProgressRef.current < MIN_PROGRESS_UPDATE_STEP
+    ) {
+      return;
+    }
+
+    if (nextProgress === lastProgressRef.current && !force) {
+      return;
+    }
+
+    lastProgressRef.current = nextProgress;
+    setProgress(nextProgress);
+  }, []);
 
   const count = students?.length || 0;
   const sample: StudentType = count
@@ -157,6 +179,7 @@ const ExportStudentDataModal: React.FC<ExportStudentDataModalProps> = ({
     if (!students?.length) return;
 
     setBusy(true);
+    lastProgressRef.current = 0;
     setProgress(0);
 
     try {
@@ -174,12 +197,12 @@ const ExportStudentDataModal: React.FC<ExportStudentDataModalProps> = ({
             locale,
           },
         );
-        setProgress(95);
+        updateProgress(95, true);
 
         const dateStr = dayjs().format("DD-MM-YYYY");
         const filename = `student_data_export_${dateStr}.csv`;
         downloadBlob(filename, blob);
-        setProgress(100);
+        updateProgress(100, true);
       } else if (students.length === 1) {
         const s = students[0];
         let blob: Blob;
@@ -213,7 +236,7 @@ const ExportStudentDataModal: React.FC<ExportStudentDataModalProps> = ({
 
         const filename = resolveFilename(s, exportFormat);
         downloadBlob(filename, blob);
-        setProgress(100);
+        updateProgress(100, true);
       } else {
         const files: Array<{ name: string; blob: Blob }> = [];
         let done = 0;
@@ -250,12 +273,12 @@ const ExportStudentDataModal: React.FC<ExportStudentDataModalProps> = ({
 
           files.push({ name: resolveFilename(s, exportFormat), blob });
           done += 1;
-          setProgress(Math.round((done / students.length) * 95));
+          updateProgress((done / students.length) * 95);
         }
 
         const dateStr = dayjs().format("DD-MM-YYYY");
         const zipBlob = await buildZip(files, (p) =>
-          setProgress(95 + Math.round((p || 0) * 0.05)),
+          updateProgress(95 + (p || 0) * 0.05),
         );
 
         const formatName = exportFormat.toUpperCase();

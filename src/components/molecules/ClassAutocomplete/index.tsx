@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useCallback, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { updateStudentClass } from "@/store/actions/studentActions";
 import { AppDispatch } from "@/store/store";
@@ -75,11 +81,15 @@ const StyledEmployerIcon = styled(Box)(({ theme }) => ({
   },
 }));
 
-type ClassOption = ClassInterface | null;
+type ClassOption =
+  (Pick<ClassInterface, "_id" | "name"> & Partial<ClassInterface>) | null;
+
+const UNLINKED_CLASS_PREFIX = "unlinked-class:";
 
 type Props = {
   studentId: string;
   currentClass: { _id: string; name: string } | string | null | undefined;
+  currentClassName?: string;
   availableClasses: ClassInterface[];
   compact?: boolean;
 };
@@ -87,6 +97,7 @@ type Props = {
 const ClassAutocomplete: React.FC<Props> = ({
   studentId,
   currentClass,
+  currentClassName,
   availableClasses,
   compact = true,
 }) => {
@@ -100,16 +111,51 @@ const ClassAutocomplete: React.FC<Props> = ({
   };
 
   const currentClassId = getCurrentClassId();
-  const initialValue =
-    availableClasses.find((c) => c._id === currentClassId) || null;
+  const resolvedCurrentClass = useMemo<ClassOption>(() => {
+    const classFromOptions = availableClasses.find(
+      (classItem) => classItem._id === currentClassId,
+    );
+    if (classFromOptions) return classFromOptions;
 
-  const [selectedClass, setSelectedClass] = useState<ClassOption>(initialValue);
+    if (currentClass && typeof currentClass === "object") {
+      return currentClass;
+    }
+
+    if (currentClassName) {
+      return (
+        availableClasses.find(
+          (classItem) => classItem.name === currentClassName,
+        ) || {
+          _id: currentClassId || `${UNLINKED_CLASS_PREFIX}${currentClassName}`,
+          name: currentClassName,
+        }
+      );
+    }
+
+    return null;
+  }, [availableClasses, currentClass, currentClassId, currentClassName]);
+
+  const [selectedClass, setSelectedClass] =
+    useState<ClassOption>(resolvedCurrentClass);
   const [loading, setLoading] = useState(false);
 
   // Ref to track previous value for rollback without causing re-renders
-  const previousClassRef = useRef<ClassOption>(initialValue);
+  const previousClassRef = useRef<ClassOption>(resolvedCurrentClass);
 
-  const formatClassOption = (classItem: ClassInterface): string => {
+  useEffect(() => {
+    if (loading) return;
+
+    previousClassRef.current = resolvedCurrentClass;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronize the controlled value after students and classes finish loading independently
+    setSelectedClass((previousClass) =>
+      previousClass?._id === resolvedCurrentClass?._id &&
+      previousClass?.name === resolvedCurrentClass?.name
+        ? previousClass
+        : resolvedCurrentClass,
+    );
+  }, [loading, resolvedCurrentClass]);
+
+  const formatClassOption = (classItem: NonNullable<ClassOption>): string => {
     return classItem.name;
   };
 
@@ -117,6 +163,8 @@ const ClassAutocomplete: React.FC<Props> = ({
     async (newValue: ClassOption) => {
       const previousClass = previousClassRef.current;
       const newClassId = newValue?._id || null;
+
+      if (newClassId?.startsWith(UNLINKED_CLASS_PREFIX)) return;
 
       // Update ref and state for optimistic update
       previousClassRef.current = newValue;
@@ -136,7 +184,14 @@ const ClassAutocomplete: React.FC<Props> = ({
     [dispatch, studentId],
   );
 
-  const options: ClassOption[] = [null, ...availableClasses];
+  const options: ClassOption[] = [
+    null,
+    ...(selectedClass &&
+    !availableClasses.some((classItem) => classItem._id === selectedClass._id)
+      ? [selectedClass]
+      : []),
+    ...availableClasses,
+  ];
 
   return (
     <StyledAutocomplete
@@ -145,7 +200,7 @@ const ClassAutocomplete: React.FC<Props> = ({
       options={options}
       getOptionLabel={(option) =>
         option && typeof option === "object" && "name" in option
-          ? formatClassOption(option as ClassInterface)
+          ? formatClassOption(option as NonNullable<ClassOption>)
           : "-"
       }
       isOptionEqualToValue={(option, value) => {
@@ -252,15 +307,19 @@ export default React.memo(ClassAutocomplete, (prevProps, nextProps) => {
   return (
     prevProps.studentId === nextProps.studentId &&
     prevProps.compact === nextProps.compact &&
+    prevProps.currentClassName === nextProps.currentClassName &&
     // Compare class IDs instead of object references
     (prevProps.currentClass === nextProps.currentClass ||
       (typeof prevProps.currentClass === "object" &&
         typeof nextProps.currentClass === "object" &&
-        prevProps.currentClass?._id === nextProps.currentClass?._id)) &&
+        prevProps.currentClass?._id === nextProps.currentClass?._id &&
+        prevProps.currentClass?.name === nextProps.currentClass?.name)) &&
     // Compare availableClasses by length and IDs for stability
     prevProps.availableClasses.length === nextProps.availableClasses.length &&
     prevProps.availableClasses.every(
-      (c, i) => c._id === nextProps.availableClasses[i]?._id,
+      (c, i) =>
+        c._id === nextProps.availableClasses[i]?._id &&
+        c.name === nextProps.availableClasses[i]?.name,
     )
   );
 });

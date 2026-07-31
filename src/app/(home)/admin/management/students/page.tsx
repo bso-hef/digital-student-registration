@@ -13,6 +13,9 @@ import ConfirmationModal from "@/components/organisms/modals/ConfirmationModal";
 import ExportStudentDataModal from "@/components/organisms/modals/ExportStudentDataModal";
 import GenerateQrDialog from "@/components/organisms/modals/GenerateQrModal";
 import DataTable from "@/components/organisms/tables/DataTable";
+import studentService, {
+  StudentListFilters,
+} from "@/lib/services/studentService";
 import { getClasses } from "@/store/actions/classActions";
 import {
   addStudents,
@@ -24,7 +27,10 @@ import { Student } from "@/types/db";
 import { CreateStudentInput } from "@/types/student";
 import { ParsedStudent, parseCSVFile } from "@/utils/csv.utils";
 import { filterStudents } from "@/utils/filter.utils";
-import { successNotification } from "@/utils/notification.utils";
+import {
+  errorNotification,
+  successNotification,
+} from "@/utils/notification.utils";
 import { copyText } from "@/utils/string.utils";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import ContentCopyRoundedIcon from "@mui/icons-material/ContentCopyRounded";
@@ -80,7 +86,7 @@ const StudentManagementPage = () => {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const router = useRouter();
-  const { students, loading } = useSelector(
+  const { students, loading, pagination } = useSelector(
     (state: RootState) => state.student,
   );
   const { classes } = useSelector((state: RootState) => state.class);
@@ -89,6 +95,9 @@ const StudentManagementPage = () => {
   const [openStudentDeleteModal, setOpenStudentDeleteModal] = useState(false);
   const [openStudentQRModal, setOpenStudentQRModal] = useState(false);
   const [openStudentExportModal, setOpenStudentExportModal] = useState(false);
+  const [studentsToExport, setStudentsToExport] = useState<Student[]>([]);
+  const [isPreparingFilteredExport, setIsPreparingFilteredExport] =
+    useState(false);
   const [searchString, setSearchString] = useState("");
   const [csvData, setCsvData] = useState<ParsedStudent[]>([]);
   const [selectedItems, setSelectedItems] = useState<(string | number)[]>([]);
@@ -101,7 +110,7 @@ const StudentManagementPage = () => {
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
   useEffect(() => {
-    dispatch(getStudents());
+    dispatch(getStudents(1, pagination.limit, {}));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -109,6 +118,36 @@ const StudentManagementPage = () => {
     dispatch(getClasses());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handlePageChange = useCallback(
+    (page: number) => {
+      dispatch(
+        getStudents(page + 1, pagination.limit, {
+          classId: classFilter === "all" ? undefined : classFilter,
+          status:
+            statusFilter === "all"
+              ? undefined
+              : (statusFilter as "imported" | "invited" | "onboarded"),
+        }),
+      );
+    },
+    [classFilter, dispatch, pagination.limit, statusFilter],
+  );
+
+  const handleRowsPerPageChange = useCallback(
+    (rowsPerPage: number) => {
+      dispatch(
+        getStudents(1, rowsPerPage, {
+          classId: classFilter === "all" ? undefined : classFilter,
+          status:
+            statusFilter === "all"
+              ? undefined
+              : (statusFilter as "imported" | "invited" | "onboarded"),
+        }),
+      );
+    },
+    [classFilter, dispatch, statusFilter],
+  );
 
   // Memoize table headers to prevent DataTable re-renders
   const tableHeaders = useMemo(() => manageTableHeaders(t), [t]);
@@ -162,12 +201,57 @@ const StudentManagementPage = () => {
   }, []);
 
   const handleExportStudentModalOpen = useCallback(() => {
+    setStudentsToExport(
+      students.filter((student: Student) =>
+        selectedItems.includes(student._id),
+      ),
+    );
     setOpenStudentExportModal(true);
-  }, []);
+  }, [selectedItems, students]);
 
   const handleExportStudentModalClose = useCallback(() => {
     setOpenStudentExportModal(false);
+    setStudentsToExport([]);
   }, []);
+
+  const handleExportFilteredStudents = useCallback(async () => {
+    const filters: StudentListFilters = {
+      classId: classFilter === "all" ? undefined : classFilter,
+      status:
+        statusFilter === "all"
+          ? undefined
+          : (statusFilter as "imported" | "invited" | "onboarded"),
+    };
+    const exportPageSize = 200;
+
+    setIsPreparingFilteredExport(true);
+    try {
+      const firstResponse = await studentService.getAll({
+        page: 1,
+        limit: exportPageSize,
+        ...filters,
+      });
+      const allStudents = [...(firstResponse.data.students as Student[])];
+      const pageCount = firstResponse.data.pages || 1;
+
+      for (let page = 2; page <= pageCount; page += 1) {
+        const response = await studentService.getAll({
+          page,
+          limit: exportPageSize,
+          ...filters,
+        });
+        allStudents.push(...(response.data.students as Student[]));
+      }
+
+      setStudentsToExport(allStudents);
+      setOpenStudentExportModal(true);
+    } catch (error) {
+      console.error("Failed to load filtered students for export:", error);
+      errorNotification(t("actions.studentFilteredExportFailed"));
+    } finally {
+      setIsPreparingFilteredExport(false);
+    }
+  }, [classFilter, statusFilter, t]);
 
   const handleAddStudents = useCallback(
     async (students: CreateStudentInput[]) => {
@@ -204,61 +288,57 @@ const StudentManagementPage = () => {
   // Filter handlers
   const handleClassFilter = useCallback(
     (event: SelectChangeEvent<string | number>) => {
-      setClassFilter(event.target.value as string);
+      const nextClassFilter = event.target.value as string;
+      setClassFilter(nextClassFilter);
+      setSelectedItems([]);
+      setClearSelected(true);
+      dispatch(
+        getStudents(1, pagination.limit, {
+          classId: nextClassFilter === "all" ? undefined : nextClassFilter,
+          status:
+            statusFilter === "all"
+              ? undefined
+              : (statusFilter as "imported" | "invited" | "onboarded"),
+        }),
+      );
     },
-    [],
+    [dispatch, pagination.limit, statusFilter],
   );
 
   const handleStatusFilter = useCallback(
     (event: SelectChangeEvent<string | number>) => {
-      setStatusFilter(event.target.value as string);
+      const nextStatusFilter = event.target.value as string;
+      setStatusFilter(nextStatusFilter);
+      setSelectedItems([]);
+      setClearSelected(true);
+      dispatch(
+        getStudents(1, pagination.limit, {
+          classId: classFilter === "all" ? undefined : classFilter,
+          status:
+            nextStatusFilter === "all"
+              ? undefined
+              : (nextStatusFilter as "imported" | "invited" | "onboarded"),
+        }),
+      );
     },
-    [],
+    [classFilter, dispatch, pagination.limit],
   );
 
   const tableData = useMemo(() => {
     // Apply search filter first
-    let filteredStudents = filterStudents(searchString, students);
-
-    // Helper to extract class ID from currentClass (can be object, string, or null)
-    const getClassId = (
-      currentClass: { _id: string; name: string } | string | null | undefined,
-    ): string | null | undefined => {
-      if (!currentClass) return currentClass;
-      if (typeof currentClass === "string") return currentClass;
-      return currentClass._id;
-    };
-
-    // Apply class filter
-    if (classFilter && classFilter !== "all") {
-      filteredStudents = filteredStudents.filter((student: Student) => {
-        const studentWithClass = student as Student & {
-          currentClass?: { _id: string; name: string } | string | null;
-        };
-        const classId = getClassId(studentWithClass.currentClass);
-
-        // Filter for unassigned students
-        if (classFilter === "unassigned") {
-          return !classId;
-        }
-
-        return classId === classFilter;
-      });
-    }
-
-    // Apply status filter
-    if (statusFilter && statusFilter !== "all") {
-      filteredStudents = filteredStudents.filter(
-        (student: Student) => student.status === statusFilter,
-      );
-    }
+    const filteredStudents = filterStudents(searchString, students);
 
     return filteredStudents.map((student: Student) => {
       const currentClass = (
         student as Student & {
           currentClass?: { _id: string; name: string } | string | null;
+          currentClassName?: string;
         }
       ).currentClass;
+
+      const currentClassName = (
+        student as Student & { currentClassName?: string }
+      ).currentClassName;
 
       return {
         id: student?._id,
@@ -276,6 +356,7 @@ const StudentManagementPage = () => {
           <ClassAutocomplete
             studentId={student._id}
             currentClass={currentClass}
+            currentClassName={currentClassName}
             availableClasses={classes}
           />
         ),
@@ -307,7 +388,7 @@ const StudentManagementPage = () => {
       };
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [students, searchString, classes, classFilter, statusFilter]);
+  }, [students, searchString, classes]);
 
   const handleDeleteStudents = useCallback(() => {
     const ids = selectedItems.filter(
@@ -354,9 +435,7 @@ const StudentManagementPage = () => {
       <ExportStudentDataModal
         open={openStudentExportModal}
         onClose={handleExportStudentModalClose}
-        students={students.filter((student: Student) =>
-          selectedItems.includes(student._id),
-        )}
+        students={studentsToExport}
       />
       <AdminSettingsHeader
         title={t("navigation.studentManagement")}
@@ -364,24 +443,6 @@ const StudentManagementPage = () => {
           handleSearchString(value);
         }}
       >
-        <GeneralButton
-          label={t("settings.manageStudent.deleteStudents")}
-          onAction={handleDeleteStudentModalOpen}
-          fullHeight={false}
-          fullWidth={false}
-          isPrimary={false}
-          disabled={selectedItems.length === 0}
-          startIcon={<DeleteOutlineRoundedIcon />}
-        />
-        <GeneralButton
-          label={t("settings.manageStudent.exportStudentData")}
-          onAction={handleExportStudentModalOpen}
-          fullHeight={false}
-          fullWidth={false}
-          isPrimary={false}
-          disabled={selectedItems.length === 0}
-          startIcon={<FileDownloadRoundedIcon />}
-        />
         <GeneralButton
           label={t("settings.manageStudent.generateQRCode")}
           onAction={handleQRStudentModalOpen}
@@ -399,53 +460,85 @@ const StudentManagementPage = () => {
         />
       </AdminSettingsHeader>
       <StyledTableBox>
-        {students.length > 0 && (
-          <FiltersBox>
-            <Box sx={{ minWidth: 200 }}>
-              <GeneralDropdown
-                value={classFilter}
-                onChange={handleClassFilter}
-                label={t("settings.manageStudent.filterByClass")}
-                size="small"
-                options={[
-                  { value: "all", label: t("general.All") },
-                  {
-                    value: "unassigned",
-                    label: t("settings.manageStudent.notAssigned"),
-                  },
-                  ...classes.map((c) => ({ value: c._id, label: c.name })),
-                ]}
-              />
-            </Box>
+        <FiltersBox>
+          <Box sx={{ minWidth: 200 }}>
+            <GeneralDropdown
+              value={classFilter}
+              onChange={handleClassFilter}
+              label={t("settings.manageStudent.filterByClass")}
+              size="small"
+              options={[
+                { value: "all", label: t("general.All") },
+                {
+                  value: "unassigned",
+                  label: t("settings.manageStudent.notAssigned"),
+                },
+                ...classes.map((c) => ({ value: c._id, label: c.name })),
+              ]}
+            />
+          </Box>
 
-            <Box sx={{ minWidth: 200 }}>
-              <GeneralDropdown
-                value={statusFilter}
-                onChange={handleStatusFilter}
-                label={t("settings.manageStudent.filterByStatus")}
-                size="small"
-                options={[
-                  { value: "all", label: t("general.All") },
-                  {
-                    value: "imported",
-                    label: t("dashboard.status.imported"),
-                    leftIcon: <FileDownloadDoneRoundedIcon />,
-                  },
-                  {
-                    value: "invited",
-                    label: t("dashboard.status.invited"),
-                    leftIcon: <MailOutlineRoundedIcon />,
-                  },
-                  {
-                    value: "onboarded",
-                    label: t("dashboard.status.onboarded"),
-                    leftIcon: <CheckCircleRoundedIcon />,
-                  },
-                ]}
-              />
-            </Box>
-          </FiltersBox>
-        )}
+          <Box sx={{ minWidth: 200 }}>
+            <GeneralDropdown
+              value={statusFilter}
+              onChange={handleStatusFilter}
+              label={t("settings.manageStudent.filterByStatus")}
+              size="small"
+              options={[
+                { value: "all", label: t("general.All") },
+                {
+                  value: "imported",
+                  label: t("dashboard.status.imported"),
+                  leftIcon: <FileDownloadDoneRoundedIcon />,
+                },
+                {
+                  value: "invited",
+                  label: t("dashboard.status.invited"),
+                  leftIcon: <MailOutlineRoundedIcon />,
+                },
+                {
+                  value: "onboarded",
+                  label: t("dashboard.status.onboarded"),
+                  leftIcon: <CheckCircleRoundedIcon />,
+                },
+              ]}
+            />
+          </Box>
+
+          <GeneralButton
+            label={t("settings.manageStudent.deleteStudents")}
+            onAction={handleDeleteStudentModalOpen}
+            fullHeight={false}
+            fullWidth={false}
+            isPrimary={false}
+            disabled={selectedItems.length === 0}
+            startIcon={<DeleteOutlineRoundedIcon />}
+          />
+          <GeneralButton
+            label={t("settings.manageStudent.exportStudentData")}
+            onAction={handleExportStudentModalOpen}
+            fullHeight={false}
+            fullWidth={false}
+            isPrimary={false}
+            disabled={selectedItems.length === 0}
+            startIcon={<FileDownloadRoundedIcon />}
+          />
+          <GeneralButton
+            label={t(
+              isPreparingFilteredExport
+                ? "settings.manageStudent.preparingFilteredExport"
+                : "settings.manageStudent.exportFilteredStudents",
+            )}
+            onAction={handleExportFilteredStudents}
+            fullHeight={false}
+            fullWidth={false}
+            isPrimary={false}
+            disabled={
+              loading || pagination.total === 0 || isPreparingFilteredExport
+            }
+            startIcon={<FileDownloadRoundedIcon />}
+          />
+        </FiltersBox>
 
         <DataTable
           headers={tableHeaders}
@@ -455,6 +548,13 @@ const StudentManagementPage = () => {
           clearSelected={clearSelected}
           setClearSelected={setClearSelected}
           onClickRowItem={handleRowClick}
+          pagination={{
+            page: pagination.page - 1,
+            rowsPerPage: pagination.limit,
+            total: pagination.total,
+            onPageChange: handlePageChange,
+            onRowsPerPageChange: handleRowsPerPageChange,
+          }}
         />
       </StyledTableBox>
     </Wrapper>

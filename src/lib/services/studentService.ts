@@ -17,9 +17,19 @@ type CreateStudentInput = {
   status?: "imported" | "invited" | "onboarded";
 };
 
+export type StudentListFilters = {
+  classId?: string;
+  status?: "imported" | "invited" | "onboarded";
+};
+
+type StudentPaginationParams = StudentListFilters & {
+  page: number;
+  limit: number;
+};
+
 const studentService = {
-  getAll: () => {
-    return http.get("/api/students");
+  getAll: (params: StudentPaginationParams) => {
+    return http.get("/api/students", { params });
   },
   getById: (id: string) => {
     return http.get(`/api/students/${id}`);

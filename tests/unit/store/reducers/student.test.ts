@@ -174,13 +174,29 @@ describe("studentReducer", () => {
 
     it("should handle GET_STUDENTS_SUCCESS", () => {
       const students = [mockStudent];
+      const pagination = {
+        page: 2,
+        limit: 50,
+        total: 1,
+        pages: 1,
+      };
+      const filters = {
+        classId: "507f1f77bcf86cd799439011",
+        status: "onboarded" as const,
+      };
       const action = {
         type: TYPES.GET_STUDENTS_SUCCESS,
-        payload: students,
+        payload: {
+          students,
+          pagination,
+          filters,
+        },
       };
       const state = studentReducer(initialState, action);
       expect(state.loading).toBe(false);
       expect(state.students).toEqual(students);
+      expect(state.pagination).toEqual(pagination);
+      expect(state.filters).toEqual(filters);
     });
 
     it("should handle GET_STUDENTS_FAILURE", () => {
