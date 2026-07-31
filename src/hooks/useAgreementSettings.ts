@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { getAgreementSettings } from "@/store/actions/settingsActions";
+import { getPublicAgreementSettings } from "@/store/actions/settingsActions";
 import { AppDispatch, RootState } from "@/store/store";
 import { AgreementItem } from "@/types/settings.d";
 import { useTranslation } from "react-i18next";
@@ -16,7 +16,7 @@ export const useAgreementSettings = () => {
   const agreements = data?.agreements?.agreements;
 
   useEffect(() => {
-    dispatch(getAgreementSettings());
+    dispatch(getPublicAgreementSettings());
   }, [dispatch]);
 
   const getEnabledAgreements = (): AgreementItem[] => {
