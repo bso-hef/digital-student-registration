@@ -54,6 +54,7 @@ export interface StudentData {
   ansprechpartner1Ort: string;
   ansprechpartner1Mobil: string;
   ansprechpartner1Telefon1: string;
+  ansprechpartner1Email: string;
   ansprechpartner2Art: string;
   ansprechpartner2Vorname: string;
   ansprechpartner2Nachname: string;
@@ -63,6 +64,7 @@ export interface StudentData {
   ansprechpartner2Ort: string;
   ansprechpartner2Mobil: string;
   ansprechpartner2Telefon1: string;
+  ansprechpartner2Email: string;
   ansprechpartner3Art: string;
   ansprechpartner3Vorname: string;
   ansprechpartner3Nachname: string;
@@ -72,6 +74,7 @@ export interface StudentData {
   ansprechpartner3Ort: string;
   ansprechpartner3Mobil: string;
   ansprechpartner3Telefon1: string;
+  ansprechpartner3Email: string;
   datenschutz: boolean;
   teilnahmeunterricht: boolean;
   schulordnung: boolean;

@@ -350,6 +350,10 @@ const SummaryForm: React.FC<SummaryFormProps> = ({
             t("onboarding.legalGuardian.phone"),
             studentData.ansprechpartner1Telefon1,
           )}
+          {renderDataRow(
+            t("onboarding.legalGuardian.email"),
+            studentData.ansprechpartner1Email,
+          )}
 
           {/* Contact Person 2 (if exists) */}
           {studentData.ansprechpartner2Vorname && (
@@ -384,6 +388,10 @@ const SummaryForm: React.FC<SummaryFormProps> = ({
               {renderDataRow(
                 t("onboarding.legalGuardian.phone"),
                 studentData.ansprechpartner2Telefon1,
+              )}
+              {renderDataRow(
+                t("onboarding.legalGuardian.email"),
+                studentData.ansprechpartner2Email,
               )}
             </>
           )}
@@ -421,6 +429,10 @@ const SummaryForm: React.FC<SummaryFormProps> = ({
               {renderDataRow(
                 t("onboarding.legalGuardian.phone"),
                 studentData.ansprechpartner3Telefon1,
+              )}
+              {renderDataRow(
+                t("onboarding.legalGuardian.email"),
+                studentData.ansprechpartner3Email,
               )}
             </>
           )}

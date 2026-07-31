@@ -15,6 +15,7 @@ export interface ParsedContactPerson {
   type?: string;
   firstName?: string;
   lastName?: string;
+  email?: string;
   phone?: string;
   mobile?: string;
   address?: ParsedStudentAddress;
@@ -510,6 +511,7 @@ function buildCSVRow(
     cp1?.address?.city || "",
     cp1?.mobile || "",
     cp1?.phone || "",
+    cp1?.email || "",
     cp2?.type || "",
     cp2?.firstName || "",
     cp2?.lastName || "",
@@ -519,6 +521,7 @@ function buildCSVRow(
     cp2?.address?.city || "",
     cp2?.mobile || "",
     cp2?.phone || "",
+    cp2?.email || "",
     cp3?.type || "",
     cp3?.firstName || "",
     cp3?.lastName || "",
@@ -528,6 +531,7 @@ function buildCSVRow(
     cp3?.address?.city || "",
     cp3?.mobile || "",
     cp3?.phone || "",
+    cp3?.email || "",
     student.previousSchool || "",
     student.previousSchoolType || "",
     student.previousSchoolLevel || "",
@@ -586,6 +590,7 @@ function getCSVHeaders(): string[] {
     "cp1_city",
     "cp1_mobile",
     "cp1_phone",
+    "cp1_email",
     "cp2_type",
     "cp2_firstName",
     "cp2_lastName",
@@ -595,6 +600,7 @@ function getCSVHeaders(): string[] {
     "cp2_city",
     "cp2_mobile",
     "cp2_phone",
+    "cp2_email",
     "cp3_type",
     "cp3_firstName",
     "cp3_lastName",
@@ -604,6 +610,7 @@ function getCSVHeaders(): string[] {
     "cp3_city",
     "cp3_mobile",
     "cp3_phone",
+    "cp3_email",
     "previousSchool",
     "previousSchoolType",
     "previousGrade",

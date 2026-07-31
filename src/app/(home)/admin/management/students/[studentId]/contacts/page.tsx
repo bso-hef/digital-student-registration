@@ -73,6 +73,7 @@ const contactPersonSchema = yup.object({
   type: yup.string().nullable(),
   firstName: yup.string().nullable(),
   lastName: yup.string().nullable(),
+  email: yup.string().email("Invalid email").nullable(),
   phone: yup.string().nullable(),
   mobile: yup.string().nullable(),
   street: yup.string().nullable(),
@@ -88,6 +89,7 @@ interface ContactPersonFormData {
   type: string;
   firstName: string;
   lastName: string;
+  email: string;
   phone: string;
   mobile: string;
   street: string;
@@ -99,6 +101,7 @@ const emptyContactPerson: ContactPersonFormData = {
   type: "",
   firstName: "",
   lastName: "",
+  email: "",
   phone: "",
   mobile: "",
   street: "",
@@ -106,22 +109,32 @@ const emptyContactPerson: ContactPersonFormData = {
   zip: "",
 };
 
-const contactTypeOptions = [
-  "Mother",
-  "Father",
-  "ContactPerson",
-  "Grandparent",
-  "Sibling",
-  "Other",
-];
-
 const ContactsStudentSettingsTab = () => {
   const dispatch: AppDispatch = useDispatch();
   const { t } = useTranslation();
-  const { maxContactPersons } = useOnboardingSettings();
+  const { contactPersonTypeOptions, getEnabledOptions, maxContactPersons } =
+    useOnboardingSettings();
   const { currentStudent, currentStudentLoading } = useSelector(
     (state: RootState) => state.student,
   );
+
+  const contactTypeOptions = getEnabledOptions(contactPersonTypeOptions).map(
+    ({ value, label }) => ({ value, label }),
+  );
+
+  // Keep legacy or custom values visible even if they are no longer part of
+  // the currently enabled onboarding options.
+  currentStudent?.contactPersons?.forEach((contactPerson: ContactPerson) => {
+    if (
+      contactPerson.type &&
+      !contactTypeOptions.some(({ value }) => value === contactPerson.type)
+    ) {
+      contactTypeOptions.push({
+        value: contactPerson.type,
+        label: contactPerson.type,
+      });
+    }
+  });
 
   const mapContactPersonsToForm = useCallback((): ContactPersonFormData[] => {
     if (!currentStudent?.contactPersons?.length) {
@@ -132,6 +145,7 @@ const ContactsStudentSettingsTab = () => {
       type: cp.type || "",
       firstName: cp.firstName || "",
       lastName: cp.lastName || "",
+      email: cp.email || "",
       phone: cp.phone || "",
       mobile: cp.mobile || "",
       street: cp.address?.street || "",
@@ -156,12 +170,18 @@ const ContactsStudentSettingsTab = () => {
           const contactPersons = values.contactPersons
             .filter(
               (cp) =>
-                cp.firstName || cp.lastName || cp.type || cp.phone || cp.mobile,
+                cp.firstName ||
+                cp.lastName ||
+                cp.type ||
+                cp.email ||
+                cp.phone ||
+                cp.mobile,
             )
             .map((cp) => ({
               type: cp.type || null,
               firstName: cp.firstName || "",
               lastName: cp.lastName || "",
+              email: cp.email || null,
               phone: cp.phone || null,
               mobile: cp.mobile || null,
               address:
@@ -243,11 +263,12 @@ const ContactsStudentSettingsTab = () => {
                                     <MenuItem value="">
                                       {t("common.notSpecified")}
                                     </MenuItem>
-                                    {contactTypeOptions.map((type) => (
-                                      <MenuItem key={type} value={type}>
-                                        {t(
-                                          `settings.manageStudent.contactTypes.${type}`,
-                                        )}
+                                    {contactTypeOptions.map((option) => (
+                                      <MenuItem
+                                        key={option.value}
+                                        value={option.value}
+                                      >
+                                        {option.label}
                                       </MenuItem>
                                     ))}
                                   </Select>
@@ -275,6 +296,15 @@ const ContactsStudentSettingsTab = () => {
                           </FieldsRow>
 
                           <FieldsRow>
+                            <Field
+                              component={TextField}
+                              name={`contactPersons.${index}.email`}
+                              type="email"
+                              label={t("settings.manageStudent.email")}
+                              variant="outlined"
+                              size="small"
+                              fullWidth
+                            />
                             <Field
                               component={TextField}
                               name={`contactPersons.${index}.phone`}

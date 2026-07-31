@@ -76,6 +76,7 @@ export async function buildStudentDataJson(
       type: cp.type,
       firstName: cp.firstName,
       lastName: cp.lastName,
+      email: cp.email,
       address: cp.address
         ? {
             street: cp.address.street,

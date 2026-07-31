@@ -124,6 +124,7 @@ export function mapFormDataToModel(
     type: string;
     firstName: string;
     lastName: string;
+    email: string;
     phone: string;
     mobile: string;
     address: {
@@ -148,6 +149,10 @@ export function mapFormDataToModel(
           "parent",
         firstName: (vorname as string) || "",
         lastName: (nachname as string) || "",
+        email:
+          (formData[
+            `ansprechpartner${i}Email` as keyof StudentData
+          ] as string) || "",
         phone:
           (formData[
             `ansprechpartner${i}Mobil` as keyof StudentData
@@ -346,6 +351,7 @@ export function mapModelToFormData(
       mapped[`${prefix}Art`] = contact.type || "";
       mapped[`${prefix}Vorname`] = contact.firstName || "";
       mapped[`${prefix}Nachname`] = contact.lastName || "";
+      mapped[`${prefix}Email`] = contact.email || "";
       mapped[`${prefix}Mobil`] = contact.mobile || "";
       mapped[`${prefix}Telefon1`] = contact.phone || "";
 
