@@ -10,8 +10,7 @@
 #   NEXT_PUBLIC_API_URL - API URL (REQUIRED for production!)
 #   NEXT_PUBLIC_NAME - Application name (optional, default: Digital Student Registration)
 #
-# WARNING: For production builds, you MUST set the URL variables to your actual domain!
-# Using localhost in production will result in non-functional QR codes.
+# QR code URLs are configured at container runtime through QR_CODE_BASE_URL.
 
 set -e
 
@@ -55,7 +54,7 @@ if [ -z "$NEXT_PUBLIC_APP_URL" ]; then
     echo -e "  export NEXT_PUBLIC_APP_URL=https://your-domain.com"
     echo -e "  export NEXT_PUBLIC_API_URL=https://your-domain.com"
     echo -e ""
-    echo -e "${YELLOW}Without these, QR codes will not work!${NC}"
+    echo -e "${YELLOW}The QR code URL is configured separately at runtime through QR_CODE_BASE_URL.${NC}"
     echo -e "${YELLOW}========================================${NC}"
     echo -e ""
     read -p "Continue anyway? (y/N) " -n 1 -r
