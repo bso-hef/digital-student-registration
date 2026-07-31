@@ -17,7 +17,7 @@ describe("studentService", () => {
   });
 
   describe("getAll", () => {
-    it("should fetch all students", async () => {
+    it("should fetch students with pagination and filters", async () => {
       const mockResponse = {
         data: {
           students: [],
@@ -29,9 +29,15 @@ describe("studentService", () => {
       };
       vi.mocked(http.get).mockResolvedValue(mockResponse);
 
-      const result = await studentService.getAll();
+      const params = {
+        page: 2,
+        limit: 50,
+        classId: "507f1f77bcf86cd799439011",
+        status: "onboarded" as const,
+      };
+      const result = await studentService.getAll(params);
 
-      expect(http.get).toHaveBeenCalledWith("/api/students");
+      expect(http.get).toHaveBeenCalledWith("/api/students", { params });
       expect(result).toEqual(mockResponse);
     });
 
@@ -39,7 +45,9 @@ describe("studentService", () => {
       const mockError = new Error("Network error");
       vi.mocked(http.get).mockRejectedValue(mockError);
 
-      await expect(studentService.getAll()).rejects.toThrow("Network error");
+      await expect(
+        studentService.getAll({ page: 1, limit: 25 }),
+      ).rejects.toThrow("Network error");
     });
   });
 

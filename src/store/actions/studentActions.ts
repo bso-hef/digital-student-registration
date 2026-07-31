@@ -1,4 +1,6 @@
-import studentService from "@/lib/services/studentService";
+import studentService, {
+  StudentListFilters,
+} from "@/lib/services/studentService";
 import { OnboardingErrorCode, ValidationError } from "@/types/errors";
 import { CreateStudentInput, StudentData } from "@/types/student";
 import {
@@ -32,17 +34,41 @@ export const setEditingFromSummary =
     });
   };
 
-export const getStudents = (): AppThunk => async (dispatch) => {
-  dispatch({ type: TYPES.GET_STUDENTS_REQUEST });
-  try {
-    const { data } = await studentService.getAll();
+export const getStudents =
+  (page?: number, limit?: number, filters?: StudentListFilters): AppThunk =>
+  async (dispatch, getState) => {
+    const studentState = getState().student;
+    const currentPagination = studentState.pagination;
+    const requestedPage = page ?? currentPagination.page;
+    const requestedLimit = limit ?? currentPagination.limit;
+    const requestedFilters = filters ?? studentState.filters;
 
-    dispatch({ type: TYPES.GET_STUDENTS_SUCCESS, payload: data.students });
-  } catch (error) {
-    errorNotification(i18n.t("actions.studentFetchFailed"));
-    dispatch({ type: TYPES.GET_STUDENTS_FAILURE, payload: error });
-  }
-};
+    dispatch({ type: TYPES.GET_STUDENTS_REQUEST });
+    try {
+      const { data } = await studentService.getAll({
+        page: requestedPage,
+        limit: requestedLimit,
+        ...requestedFilters,
+      });
+
+      dispatch({
+        type: TYPES.GET_STUDENTS_SUCCESS,
+        payload: {
+          students: data.students,
+          pagination: {
+            page: data.page,
+            limit: data.limit,
+            total: data.total,
+            pages: data.pages,
+          },
+          filters: requestedFilters,
+        },
+      });
+    } catch (error) {
+      errorNotification(i18n.t("actions.studentFetchFailed"));
+      dispatch({ type: TYPES.GET_STUDENTS_FAILURE, payload: error });
+    }
+  };
 
 export const addStudents =
   (students: CreateStudentInput[]): AppThunk =>

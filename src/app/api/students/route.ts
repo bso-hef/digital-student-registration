@@ -333,6 +333,21 @@ export async function GET(request: NextRequest) {
     const skip = (page - 1) * limit;
     const unassigned = searchParams.get("unassigned") === "true";
     const forAssignment = searchParams.get("forAssignment") === "true";
+    const classId = searchParams.get("classId");
+    const status = searchParams.get("status");
+
+    if (
+      classId &&
+      classId !== "unassigned" &&
+      !Types.ObjectId.isValid(classId)
+    ) {
+      return NextResponse.json({ message: "Invalid classId" }, { status: 400 });
+    }
+
+    const validStatuses = ["imported", "invited", "onboarded"];
+    if (status && !validStatuses.includes(status)) {
+      return NextResponse.json({ message: "Invalid status" }, { status: 400 });
+    }
 
     // Build filter query
     const filter: Record<string, unknown> = {};
@@ -342,6 +357,16 @@ export async function GET(request: NextRequest) {
     } else if (forAssignment) {
       // For class assignment: get all active students (including those already assigned)
       filter.active = true;
+    }
+
+    if (classId === "unassigned") {
+      filter.currentClass = null;
+    } else if (classId) {
+      filter.currentClass = new Types.ObjectId(classId);
+    }
+
+    if (status) {
+      filter.status = status;
     }
 
     // Sort by name for assignment dropdown, by date for other views

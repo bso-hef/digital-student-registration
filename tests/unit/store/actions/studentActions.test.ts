@@ -67,6 +67,13 @@ describe("studentActions", () => {
     getState = vi.fn(() => ({
       student: {
         previousStep: null,
+        pagination: {
+          page: 1,
+          limit: 25,
+          total: 0,
+          pages: 0,
+        },
+        filters: {},
       },
     }));
     vi.clearAllMocks();
@@ -102,17 +109,42 @@ describe("studentActions", () => {
     it("should dispatch success on successful fetch", async () => {
       const mockStudents = [{ _id: "1", firstName: "John" }];
       vi.mocked(studentService.getAll).mockResolvedValue({
-        data: { students: mockStudents },
+        data: {
+          students: mockStudents,
+          page: 2,
+          limit: 50,
+          total: 1,
+          pages: 1,
+        },
       });
 
-      await getStudents()(dispatch, getState, undefined);
+      const filters = {
+        classId: "507f1f77bcf86cd799439011",
+        status: "onboarded" as const,
+      };
+      await getStudents(2, 50, filters)(dispatch, getState, undefined);
+
+      expect(studentService.getAll).toHaveBeenCalledWith({
+        page: 2,
+        limit: 50,
+        ...filters,
+      });
 
       expect(dispatch).toHaveBeenCalledWith({
         type: TYPES.GET_STUDENTS_REQUEST,
       });
       expect(dispatch).toHaveBeenCalledWith({
         type: TYPES.GET_STUDENTS_SUCCESS,
-        payload: mockStudents,
+        payload: {
+          students: mockStudents,
+          pagination: {
+            page: 2,
+            limit: 50,
+            total: 1,
+            pages: 1,
+          },
+          filters,
+        },
       });
     });
 

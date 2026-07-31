@@ -488,6 +488,7 @@
     "auditLogClearSuccess": "Audit logs cleared successfully.",
     "auditLogClearFailed": "Failed to clear audit logs.",
     "studentClassUpdateSuccess": "Student class updated successfully.",
+    "studentFilteredExportFailed": "Failed to load the filtered students for export.",
     "studentClassUpdateFailed": "Failed to update student class.",
     "studentUpdateSuccess": "Student updated successfully.",
     "studentUpdateFailed": "Failed to update student."
@@ -904,7 +905,9 @@
       "importStudents": "Import Students",
       "deleteStudents": "Delete Students",
       "generateQRCode": "Generate QR Code",
-      "exportStudentData": "Export Student Data",
+      "exportStudentData": "Export selected",
+      "exportFilteredStudents": "Export all",
+      "preparingFilteredExport": "Preparing export...",
       "delete Student request": "Are you sure you want to delete the selected student(s)? This action cannot be undone.",
       "noClass": "No Class",
       "selectClass": "Select class...",
