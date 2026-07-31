@@ -206,7 +206,7 @@
       "portrait": "Portrait",
       "landscape": "Landscape",
       "filenameSchema": "Filename Schema",
-      "filenameSchemaExample": "Example: {lastName}_{firstName}_{class}.pdf",
+      "filenameSchemaExample": "Example: {class}_{lastName}_{firstName}_{id}_data.pdf",
       "availableOptions": "Available",
       "filename": "Filename",
       "options": "Options",

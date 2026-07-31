@@ -99,7 +99,7 @@ const ExportStudentDataModal: React.FC<ExportStudentDataModalProps> = ({
     "portrait",
   );
   const [filenamePattern, setFilenamePattern] = useState(
-    "{lastName}_{firstName}_{class}_data.pdf",
+    "{class}_{lastName}_{firstName}_{id}_data.pdf",
   );
   const [includeEmptyFields, setIncludeEmptyFields] = useState(false);
 
