@@ -13,8 +13,7 @@
 #   NEXT_PUBLIC_API_URL - API URL (REQUIRED for production!)
 #   NEXT_PUBLIC_NAME - Application name (optional, default: Digital Student Registration)
 #
-# WARNING: For production builds, you MUST set the URL variables to your actual domain!
-# Using localhost in production will result in non-functional QR codes.
+# QR code URLs are configured at container runtime through QR_CODE_BASE_URL.
 
 param(
     [switch]$NoCache,
@@ -54,7 +53,7 @@ try {
         Write-Host '  $env:NEXT_PUBLIC_APP_URL="https://your-domain.com"' -ForegroundColor White
         Write-Host '  $env:NEXT_PUBLIC_API_URL="https://your-domain.com"' -ForegroundColor White
         Write-Host ""
-        Write-Host "Without these, QR codes will not work!" -ForegroundColor Yellow
+        Write-Host "The QR code URL is configured separately at runtime through QR_CODE_BASE_URL." -ForegroundColor Yellow
         Write-Host "========================================" -ForegroundColor Yellow
         Write-Host ""
         $response = Read-Host "Continue anyway? (y/N)"
@@ -71,7 +70,7 @@ try {
         $LatestTag = "${NAME}:latest"
         $Platform = "Linux (Alpine)"
     } else {
-        $Dockerfile = "Dockerfile.windows"
+        $Dockerfile = "windows.Dockerfile"
         $VersionTag = "${NAME}:${VERSION}-windows"
         $LatestTag = "${NAME}:latest-windows"
         $Platform = "Windows Server Core"

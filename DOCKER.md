@@ -4,15 +4,16 @@ Docker deployment guide for Digital Student Registration.
 
 ## ⚠️ CRITICAL: QR Code URLs
 
-**QR codes contain URLs embedded at BUILD TIME!**
+**QR codes read their public base URL at container runtime.**
 
-If you deploy without setting production URLs, **all QR codes will contain `localhost:3000`**.
+Set `QR_CODE_BASE_URL` to the externally reachable application URL. The
+container must be recreated after changing it, but the image does not need to
+be rebuilt.
 
-**REQUIRED before building:**
+**Required before starting the container:**
 
 ```bash
-export NEXT_PUBLIC_APP_URL=https://your-domain.com
-export NEXT_PUBLIC_API_URL=https://your-domain.com
+export QR_CODE_BASE_URL=https://your-domain.com
 export NEXTAUTH_URL=https://your-domain.com
 ```
 
@@ -49,20 +50,17 @@ Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```bash
 # 1. Configure .env
 cp .env.example .env
-# Edit: Set NEXT_PUBLIC_APP_URL, MONGO_USER, MONGO_PASSWORD, REDIS_PASSWORD, NEXTAUTH_SECRET
+# Edit: Set QR_CODE_BASE_URL, MONGO_USER, MONGO_PASSWORD, REDIS_PASSWORD, NEXTAUTH_SECRET
 
-# 2. Export URLs for build
-export $(grep "NEXT_PUBLIC" .env | xargs)
-
-# 3. Build
+# 2. Build
 ./scripts/docker-build.sh --no-cache    # Linux
 .\scripts\docker-build.ps1 -NoCache    # Windows
 
-# 4. Deploy
+# 3. Deploy
 docker compose --profile linux up -d    # Linux
 docker compose --profile windows up -d  # Windows
 
-# 5. Verify
+# 4. Verify
 docker compose ps
 docker logs dsr-app | grep "Configuration validation"
 ```
@@ -94,9 +92,10 @@ Docker mapping: `host_port:container_port` (only host port changes)
 
 | Variable              | Example              | When           |
 | --------------------- | -------------------- | -------------- |
+| `QR_CODE_BASE_URL`    | `https://school.com` | Runtime        |
 | `NEXT_PUBLIC_APP_URL` | `https://school.com` | **BUILD TIME** |
 | `NEXT_PUBLIC_API_URL` | `https://school.com` | **BUILD TIME** |
-| `NEXTAUTH_URL`        | `https://school.com` | **BUILD TIME** |
+| `NEXTAUTH_URL`        | `https://school.com` | Runtime        |
 | `MONGO_USER`          | `admin`              | Runtime        |
 | `MONGO_PASSWORD`      | `[password]`         | Runtime        |
 | `REDIS_PASSWORD`      | `[password]`         | Runtime        |
@@ -146,7 +145,7 @@ networks:
 ### Step-by-Step
 
 1. **Set environment variables** in `.env`
-2. **Build Docker image** with production URLs
+2. **Build Docker image**
 3. **Start services** with Docker Compose
 4. **Verify deployment** (logs, health checks)
 5. **Test QR codes** (CRITICAL!)
@@ -161,7 +160,8 @@ networks:
 # 4. URL MUST be your production domain, NOT localhost
 ```
 
-If QR code shows localhost, rebuild with correct URLs.
+If the QR code shows localhost, set `QR_CODE_BASE_URL` and recreate the app
+container.
 
 ---
 
@@ -254,10 +254,8 @@ docker compose exec mongo mongorestore \
 **Solution:**
 
 ```bash
-export NEXT_PUBLIC_APP_URL=https://your-domain.com
-export NEXT_PUBLIC_API_URL=https://your-domain.com
-./scripts/docker-build.sh --no-cache
-docker compose down && docker compose --profile linux up -d
+export QR_CODE_BASE_URL=https://your-domain.com
+docker compose --profile linux up -d --force-recreate app-linux
 ```
 
 ### Validation Error on Startup

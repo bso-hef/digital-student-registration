@@ -187,6 +187,8 @@ export function validateConfig(): void {
     const urlsToCheck = [
       { name: "NEXT_PUBLIC_APP_URL", value: appConfig.app.url },
       { name: "NEXT_PUBLIC_API_URL", value: appConfig.api.url },
+      { name: "QR_CODE_BASE_URL", value: appConfig.api.url },
+      { name: "NEXT_PUBLIC_DOMAIN", value: appConfig.api.url },
     ];
 
     if (!isBrowser && serverConfig.nextAuth.url) {
