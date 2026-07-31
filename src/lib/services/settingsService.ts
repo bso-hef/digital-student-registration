@@ -50,6 +50,15 @@ const settingsService = {
   },
 
   /**
+   * Fetches enabled agreements for the unauthenticated student workflow
+   */
+  getPublicAgreements: () => {
+    return http.get<{ success: boolean; data: AgreementSettings }>(
+      "/api/settings/agreements/public",
+    );
+  },
+
+  /**
    * Updates only agreement settings
    */
   updateAgreements: (agreements: Partial<AgreementSettings>) => {

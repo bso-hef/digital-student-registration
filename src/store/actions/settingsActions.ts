@@ -103,6 +103,25 @@ export const getAgreementSettings = (): AppThunk => async (dispatch) => {
   }
 };
 
+export const getPublicAgreementSettings = (): AppThunk => async (dispatch) => {
+  dispatch({ type: TYPES.GET_AGREEMENT_SETTINGS_REQUEST });
+  try {
+    const { data } = await settingsService.getPublicAgreements();
+
+    dispatch({
+      type: TYPES.GET_AGREEMENT_SETTINGS_SUCCESS,
+      payload: data.data,
+    });
+  } catch (error) {
+    errorNotification(i18n.t("actions.agreementSettingsFetchFailed"));
+    const appError = await toAppError(error);
+    dispatch({
+      type: TYPES.GET_AGREEMENT_SETTINGS_FAILURE,
+      payload: appError,
+    });
+  }
+};
+
 export const updateAgreementSettings =
   (agreements: Partial<AgreementSettings>): AppThunk =>
   async (dispatch) => {
