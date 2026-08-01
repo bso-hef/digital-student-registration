@@ -6,6 +6,7 @@ import { createValidateStudentTrainingData } from "@/lib/validate/student.valida
 import { updateStudentOnboardingData } from "@/store/actions/studentActions";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { StudentData } from "@/types/student";
+import { parseDate } from "@/utils/date.utils";
 import { styled } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs, { Dayjs } from "dayjs";
@@ -56,6 +57,10 @@ const TrainingForm: React.FC<TrainingFormProps> = ({
   const studentDataFromRedux = useAppSelector((state) => state.student.data);
   const currentClass = useAppSelector((state) => state.student.currentClass);
   const data = dataProp || studentDataFromRedux;
+  const companyEntryDateValue = useMemo(() => {
+    const parsedCompanyEntryDate = parseDate(data?.betriebEintritt);
+    return parsedCompanyEntryDate ? dayjs(parsedCompanyEntryDate) : null;
+  }, [data?.betriebEintritt]);
   const selectedClass = currentClass || data?.currentClassData;
   const isProfessionRequired = Boolean(selectedClass?.isVocational);
 
@@ -69,7 +74,7 @@ const TrainingForm: React.FC<TrainingFormProps> = ({
 
   const initialValues: FormValues = {
     beruf: data?.beruf || "",
-    betriebEintritt: data?.betriebEintritt ? dayjs(data.betriebEintritt) : null,
+    betriebEintritt: companyEntryDateValue,
     betriebName: data?.betriebName || "",
     betriebStraße: data?.betriebStraße || "",
     betriebHausNr: data?.betriebHausNr || "",
@@ -109,6 +114,7 @@ const TrainingForm: React.FC<TrainingFormProps> = ({
     <Formik<FormValues>
       initialValues={initialValues}
       validationSchema={validationSchema}
+      enableReinitialize
       onSubmit={(values) => {
         // Convert Dayjs to string for storage
         const dataToSave = {
@@ -149,6 +155,7 @@ const TrainingForm: React.FC<TrainingFormProps> = ({
 
           {/* betriebEintritt */}
           <DatePicker
+            key={data?.betriebEintritt || "empty-company-entry-date"}
             value={values.betriebEintritt}
             onChange={(newValue) => setFieldValue("betriebEintritt", newValue)}
             label={t("onboarding.training.companyStartDate")}

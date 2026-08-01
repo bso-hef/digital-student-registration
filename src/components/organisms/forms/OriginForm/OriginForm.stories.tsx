@@ -17,7 +17,7 @@ export const Default: Story = {
   args: {
     data: {
       herkunftsland: "Türkei",
-      zuzugjahr: 2010,
+      zuzugsjahr: 2010,
       familiensprache: "Türkisch",
     },
   },

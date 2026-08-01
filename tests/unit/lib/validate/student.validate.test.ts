@@ -5,6 +5,7 @@ import {
   createValidateGeneralStudentData,
   createValidateStudentTrainingData,
   validateGeneralStudentData,
+  validateStudentOriginData,
   validateVerificationForm,
 } from "@/lib/validate/student.validate";
 import dayjs from "dayjs";
@@ -429,6 +430,31 @@ describe("student.validate", () => {
         staatsangehoerigkeit1: "Any Country",
       };
       await expect(schema.validate(data)).resolves.toBeTruthy();
+    });
+  });
+
+  describe("validateStudentOriginData", () => {
+    const validOriginData = {
+      herkunftsland: "Türkei",
+      zuzugsjahr: dayjs("2015-01-01"),
+      familiensprache: "Türkisch",
+    };
+
+    it("should validate the immigration year using the StudentData field name", async () => {
+      await expect(
+        validateStudentOriginData.validate(validOriginData),
+      ).resolves.toEqual(validOriginData);
+    });
+
+    it("should reject the obsolete immigration year field name", async () => {
+      const { zuzugsjahr, ...originData } = validOriginData;
+
+      await expect(
+        validateStudentOriginData.validate({
+          ...originData,
+          zuzugjahr: zuzugsjahr,
+        }),
+      ).rejects.toThrow("Zuzugsjahr ist erforderlich");
     });
   });
 

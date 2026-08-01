@@ -169,7 +169,7 @@ export const createValidateGeneralStudentData = (
 // Step 2: Herkunft (Optional)
 export const validateStudentOriginData = Yup.object({
   herkunftsland: Yup.string().required("Herkunftsland ist erforderlich"),
-  zuzugjahr: Yup.mixed()
+  zuzugsjahr: Yup.mixed()
     .nullable()
     .test("valid-year", "Ungültiges Jahr", (value) => {
       if (!value) return false; // Required field
@@ -196,7 +196,7 @@ export const createValidateStudentOriginData = (
 
   return Yup.object({
     herkunftsland: Yup.string().required("Herkunftsland ist erforderlich"),
-    zuzugjahr: Yup.mixed()
+    zuzugsjahr: Yup.mixed()
       .nullable()
       .test("valid-year", "Ungültiges Jahr", (value) => {
         if (!value) return false; // Required field

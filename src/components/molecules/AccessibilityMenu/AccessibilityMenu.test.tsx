@@ -607,21 +607,14 @@ describe("AccessibilityMenu", () => {
 
       renderWithProviders(<AccessibilityMenu />, { store });
 
-      const buttons = screen.getAllByTestId("small-icon-button");
-
       // Open
-      await user.click(buttons[0]);
+      await user.click(screen.getAllByTestId("small-icon-button")[0]);
       await waitFor(() => {
         expect(screen.getByText("general.Accessibility")).toBeInTheDocument();
       });
 
       // Close
-      const allButtons = screen.getAllByTestId("small-icon-button");
-      const closeButton = allButtons.find(
-        (btn) => btn.getAttribute("title") === "general.Close",
-      );
-      expect(closeButton).toBeDefined();
-      await user.click(closeButton!);
+      await user.click(screen.getByTitle("general.Close"));
       await waitFor(() => {
         expect(
           screen.queryByText("general.Accessibility"),
@@ -630,15 +623,12 @@ describe("AccessibilityMenu", () => {
 
       // Reopen
       await user.click(screen.getAllByTestId("small-icon-button")[0]);
-      await waitFor(() => {
-        const switches = screen.getAllByTestId("apple-switch");
-        const highContrastSwitch = switches.find(
-          (sw) =>
-            sw.getAttribute("aria-label") ===
-            "accessibility.High Contrast Mode",
-        );
-        expect(highContrastSwitch).toBeChecked();
-      });
+
+      expect(
+        await screen.findByRole("checkbox", {
+          name: "accessibility.High Contrast Mode",
+        }),
+      ).toBeChecked();
     });
   });
 });
