@@ -1,20 +1,12 @@
 import React, { useEffect, useMemo } from "react";
 
+import FormikConfiguredAutocomplete from "@/components/atoms/dropdowns/FormikConfiguredAutocomplete";
 import { useOnboardingSettings } from "@/hooks/useOnboardingSettings";
-import {
-  createValidateStudentPreviousSchoolData,
-  validateStudentPreviousSchoolData,
-} from "@/lib/validate/student.validate";
+import { createValidateStudentPreviousSchoolData } from "@/lib/validate/student.validate";
 import { updateStudentOnboardingData } from "@/store/actions/studentActions";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { ClassInterface } from "@/types/class.d";
-import {
-  Autocomplete,
-  FormControl,
-  TextField as MUITextField,
-  MenuItem,
-  styled,
-} from "@mui/material";
+import { FormControl, MenuItem, styled } from "@mui/material";
 import { FormikProps } from "formik";
 import { Field, Form, Formik } from "formik";
 import { Select, TextField } from "formik-mui";
@@ -58,6 +50,7 @@ const PreEducationForm: React.FC<PreEducationFormProps> = ({
     schoolLevelOptions,
     schoolTypeOptions,
     degreeOptions,
+    fieldConfigs,
     getOptionValues,
     getEnabledOptions,
     loading,
@@ -120,21 +113,24 @@ const PreEducationForm: React.FC<PreEducationFormProps> = ({
   };
 
   // Create dynamic validation schema with settings
-  const validationSchema = useMemo(() => {
-    if (
-      schoolLevelOptions.length > 0 &&
-      schoolTypeOptions.length > 0 &&
-      degreeOptions.length > 0
-    ) {
-      return createValidateStudentPreviousSchoolData(
+  const validationSchema = useMemo(
+    () =>
+      createValidateStudentPreviousSchoolData(
         getOptionValues(schoolLevelOptions),
         getOptionValues(schoolTypeOptions),
         getOptionValues(degreeOptions),
-        true, // Always allow custom values in Autocomplete
-      );
-    }
-    return validateStudentPreviousSchoolData;
-  }, [schoolLevelOptions, schoolTypeOptions, degreeOptions, getOptionValues]);
+        fieldConfigs.abschluesse,
+        fieldConfigs.vorhergehendeSchulform,
+      ),
+    [
+      schoolLevelOptions,
+      schoolTypeOptions,
+      degreeOptions,
+      fieldConfigs.abschluesse,
+      fieldConfigs.vorhergehendeSchulform,
+      getOptionValues,
+    ],
+  );
 
   // Track validation state changes (must be before early return)
   useEffect(() => {
@@ -165,7 +161,7 @@ const PreEducationForm: React.FC<PreEducationFormProps> = ({
       }}
       innerRef={formikRef}
     >
-      {({ errors, touched, values, setFieldValue, setFieldTouched }) => (
+      {({ errors, touched }) => (
         <StyledForm>
           {/* vorhergehendeSchule */}
           <Field
@@ -204,67 +200,21 @@ const PreEducationForm: React.FC<PreEducationFormProps> = ({
             </Field>
           </FormControl>
 
-          {/* vorhergehendeSchulform - Dynamic Dropdown */}
-          <FormControl fullWidth>
-            <Field
-              component={Select}
-              name="vorhergehendeSchulform"
-              label={t("onboarding.preEducation.previousSchoolType")}
-              variant="outlined"
-              fullWidth
-              required
-              error={
-                touched.vorhergehendeSchulform &&
-                Boolean(errors.vorhergehendeSchulform)
-              }
-            >
-              {getEnabledOptions(schoolTypeOptions).map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </Field>
-          </FormControl>
-
-          {/* Abschluesse - Autocomplete */}
-          <Autocomplete
-            options={getEnabledOptions(degreeOptions)}
-            getOptionLabel={(option) =>
-              typeof option === "string" ? option : option.label
-            }
-            isOptionEqualToValue={(option, value) => {
-              const optionValue =
-                typeof option === "string" ? option : option.value;
-              const compareValue =
-                typeof value === "string" ? value : value.value;
-              return optionValue === compareValue;
-            }}
-            value={
-              getEnabledOptions(degreeOptions).find(
-                (opt) => opt.value === values.abschluesse,
-              ) ??
-              (values.abschluesse || null)
-            }
-            onChange={(_, newValue) => {
-              const newDegree =
-                typeof newValue === "string"
-                  ? newValue
-                  : newValue?.value || "Kein";
-              setFieldValue("abschluesse", newDegree);
-            }}
-            onBlur={() => setFieldTouched("abschluesse", true)}
+          <FormikConfiguredAutocomplete
+            name="vorhergehendeSchulform"
+            fieldConfigKey="vorhergehendeSchulform"
+            label={t("onboarding.preEducation.previousSchoolType")}
+            options={schoolTypeOptions}
             fullWidth
-            freeSolo
-            renderInput={(params) => (
-              <MUITextField
-                {...params}
-                label={t("onboarding.preEducation.qualifications")}
-                variant="outlined"
-                fullWidth
-                error={touched.abschluesse && Boolean(errors.abschluesse)}
-                helperText={touched.abschluesse && errors.abschluesse}
-              />
-            )}
+          />
+
+          <FormikConfiguredAutocomplete
+            name="abschluesse"
+            fieldConfigKey="abschluesse"
+            label={t("onboarding.preEducation.qualifications")}
+            options={degreeOptions}
+            emptyValue="Kein"
+            fullWidth
           />
         </StyledForm>
       )}

@@ -6,6 +6,7 @@ import AdminSettingsHeader from "@/components/molecules/AdminSettingsHeader";
 import EnhancedCollapse from "@/components/molecules/EnhancedCollapse";
 import DropdownOptionsManager from "@/components/organisms/settings/DropdownOptionsManager";
 import FieldConfigurationPanel from "@/components/organisms/settings/FieldConfigurationPanel";
+import { DEFAULT_PREVIOUS_SCHOOL_TYPE_FIELD_CONFIG } from "@/lib/config/onboarding";
 import {
   getOnboardingSettings,
   updateOnboardingSettings,
@@ -162,6 +163,16 @@ const AdminSettingsOnboardingPage = () => {
       description: t("settings.onboarding.fields.familiensprache.description"),
       config:
         localSettings?.fieldConfigs?.familiensprache ?? ({} as FieldConfig),
+    },
+    {
+      name: "vorhergehendeSchulform",
+      label: t("settings.onboarding.fields.vorhergehendeSchulform.label"),
+      description: t(
+        "settings.onboarding.fields.vorhergehendeSchulform.description",
+      ),
+      config:
+        localSettings?.fieldConfigs?.vorhergehendeSchulform ??
+        DEFAULT_PREVIOUS_SCHOOL_TYPE_FIELD_CONFIG,
     },
   ];
 

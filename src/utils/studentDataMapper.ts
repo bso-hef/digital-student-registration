@@ -16,7 +16,7 @@ export function mapFormDataToModel(
     if (parsed) mapped.dateOfBirth = parsed;
   }
   if (formData.geschlecht) {
-    const genderMap: { [key: string]: "male" | "female" | "diverse" } = {
+    const genderMap: Record<string, string> = {
       männlich: "male",
       weiblich: "female",
       divers: "diverse",
@@ -24,7 +24,7 @@ export function mapFormDataToModel(
       female: "female",
       diverse: "diverse",
     };
-    mapped.gender = genderMap[formData.geschlecht] || undefined;
+    mapped.gender = genderMap[formData.geschlecht] || formData.geschlecht;
   }
   if (formData.geburtsort) mapped.birthplace = formData.geburtsort;
   if (formData.geburtsland) mapped.birthCountry = formData.geburtsland;

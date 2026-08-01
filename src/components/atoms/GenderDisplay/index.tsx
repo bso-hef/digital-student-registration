@@ -25,7 +25,7 @@ const GenderDisplay: FC<GenderDisplayProps> = ({ gender }) => {
       case "diverse":
         return { icon: TransgenderRoundedIcon, label: t("gender.diverse") };
       default:
-        return { icon: null, label: t("gender.unknown") };
+        return { icon: null, label: gender || t("gender.unknown") };
     }
   }, [gender, t]);
 
