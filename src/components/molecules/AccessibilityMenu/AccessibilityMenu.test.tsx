@@ -620,12 +620,16 @@ describe("AccessibilityMenu", () => {
       const closeButton = allButtons.find(
         (btn) => btn.getAttribute("title") === "general.Close",
       );
-      if (closeButton) {
-        await user.click(closeButton);
-      }
+      expect(closeButton).toBeDefined();
+      await user.click(closeButton!);
+      await waitFor(() => {
+        expect(
+          screen.queryByText("general.Accessibility"),
+        ).not.toBeInTheDocument();
+      });
 
       // Reopen
-      await user.click(buttons[0]);
+      await user.click(screen.getAllByTestId("small-icon-button")[0]);
       await waitFor(() => {
         const switches = screen.getAllByTestId("apple-switch");
         const highContrastSwitch = switches.find(

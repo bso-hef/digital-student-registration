@@ -76,9 +76,9 @@ describe("studentDataMapper", () => {
       expect(diverseData.gender).toBe("diverse");
     });
 
-    it("should handle unknown gender values", () => {
+    it("should preserve custom gender values", () => {
       const result = mapFormDataToModel({ geschlecht: "unknown" });
-      expect(result.gender).toBeUndefined();
+      expect(result.gender).toBe("unknown");
     });
 
     it("should map origin fields", () => {
@@ -404,7 +404,7 @@ describe("studentDataMapper", () => {
     });
 
     it("should pass through unknown gender values", () => {
-      const student = createMockStudent({ gender: "other" as "male" });
+      const student = createMockStudent({ gender: "other" });
       const result = mapModelToFormData(student);
 
       expect(result.geschlecht).toBe("other");

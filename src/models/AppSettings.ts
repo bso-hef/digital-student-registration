@@ -1,4 +1,5 @@
 import { SCHEMA } from "@/constants/db.constants";
+import { DEFAULT_PREVIOUS_SCHOOL_TYPE_FIELD_CONFIG } from "@/lib/config/onboarding";
 import mongoose, { Schema } from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
 
@@ -426,7 +427,7 @@ const AppSettingsSchema = new Schema(
         },
         vorhergehendeSchulform: {
           type: FieldConfigSchema,
-          default: { required: true, visible: true, allowCustom: false },
+          default: DEFAULT_PREVIOUS_SCHOOL_TYPE_FIELD_CONFIG,
         },
         abschluesse: {
           type: FieldConfigSchema,

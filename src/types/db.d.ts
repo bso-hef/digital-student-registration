@@ -45,7 +45,7 @@ export interface Student {
   lastName: string;
   birthName?: string;
   dateOfBirth: Date | null;
-  gender?: "male" | "female" | "diverse";
+  gender?: string;
   birthplace?: string;
   birthCountry?: string;
   religion?: string;

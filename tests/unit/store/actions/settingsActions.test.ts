@@ -16,6 +16,7 @@ vi.mock("@/lib/services/settingsService", () => ({
   default: {
     getAll: vi.fn(),
     getOnboarding: vi.fn(),
+    getPublicOnboarding: vi.fn(),
     update: vi.fn(),
     updateOnboarding: vi.fn(),
     getAgreements: vi.fn(),
@@ -95,8 +96,8 @@ describe("settingsActions", () => {
         welcomeMessage: "Welcome!",
         fields: [],
       };
-      vi.mocked(settingsService.getOnboarding).mockResolvedValue({
-        data: { data: mockOnboarding },
+      vi.mocked(settingsService.getPublicOnboarding).mockResolvedValue({
+        data: { data: { onboarding: mockOnboarding } },
       });
 
       await getOnboardingSettings()(dispatch, getState, undefined);
@@ -106,12 +107,12 @@ describe("settingsActions", () => {
       });
       expect(dispatch).toHaveBeenCalledWith({
         type: TYPES.GET_ONBOARDING_SETTINGS_SUCCESS,
-        payload: mockOnboarding,
+        payload: { onboarding: mockOnboarding },
       });
     });
 
     it("should dispatch failure on fetch error", async () => {
-      vi.mocked(settingsService.getOnboarding).mockRejectedValue(
+      vi.mocked(settingsService.getPublicOnboarding).mockRejectedValue(
         new Error("Fetch failed"),
       );
 
