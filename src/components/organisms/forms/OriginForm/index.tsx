@@ -30,7 +30,7 @@ const StyledForm = styled(Form)(() => ({
 
 interface FormValues {
   herkunftsland: string;
-  zuzugjahr: Dayjs | null;
+  zuzugsjahr: Dayjs | null;
   familiensprache: string;
 }
 
@@ -53,6 +53,12 @@ const OriginForm: React.FC<OriginFormProps> = ({
   const { data: studentData } = useSelector(
     (state: RootState) => state.student,
   );
+  const immigrationYearValue = useMemo(() => {
+    const year = Number(studentData?.zuzugsjahr);
+    return Number.isInteger(year) && year >= 1900
+      ? dayjs().startOf("year").year(year)
+      : null;
+  }, [studentData?.zuzugsjahr]);
 
   const {
     languageOptions,
@@ -79,9 +85,7 @@ const OriginForm: React.FC<OriginFormProps> = ({
 
   const initialValues: FormValues = {
     herkunftsland: defaultHerkunftsland,
-    zuzugjahr: studentData?.zuzugjahr
-      ? dayjs().year(studentData.zuzugjahr)
-      : null,
+    zuzugsjahr: immigrationYearValue,
     familiensprache: studentData?.familiensprache || "",
   };
 
@@ -115,11 +119,14 @@ const OriginForm: React.FC<OriginFormProps> = ({
     <Formik<FormValues>
       initialValues={initialValues}
       validationSchema={validationSchema}
+      enableReinitialize
       onSubmit={(values) => {
-        // Convert Dayjs to year number for storage
+        // Convert Dayjs to the string format used by StudentData
         const dataToSave = {
           ...values,
-          zuzugjahr: values.zuzugjahr ? values.zuzugjahr.year() : null,
+          zuzugsjahr: values.zuzugsjahr
+            ? values.zuzugsjahr.year().toString()
+            : "",
         };
         dispatch(updateStudentOnboardingData(dataToSave));
         // Pass values to parent to ensure immediate save to database
@@ -162,8 +169,11 @@ const OriginForm: React.FC<OriginFormProps> = ({
 
             {/* Zuzugsjahr - Year Picker */}
             <DatePicker
-              value={values.zuzugjahr}
-              onChange={(newValue) => setFieldValue("zuzugjahr", newValue)}
+              key={studentData?.zuzugsjahr || "empty-immigration-year"}
+              value={values.zuzugsjahr}
+              onChange={(newValue) => {
+                setFieldValue("zuzugsjahr", newValue);
+              }}
               label={t("onboarding.origin.yearOfImmigration", "Zuzugsjahr")}
               views={["year"]}
               format="YYYY"
@@ -174,10 +184,10 @@ const OriginForm: React.FC<OriginFormProps> = ({
                   fullWidth: true,
                   margin: "normal",
                   required: true,
-                  error: touched.zuzugjahr && Boolean(errors.zuzugjahr),
+                  error: touched.zuzugsjahr && Boolean(errors.zuzugsjahr),
                   helperText:
-                    touched.zuzugjahr && errors.zuzugjahr
-                      ? String(errors.zuzugjahr)
+                    touched.zuzugsjahr && errors.zuzugsjahr
+                      ? String(errors.zuzugsjahr)
                       : undefined,
                 },
               }}

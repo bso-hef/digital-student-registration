@@ -14,6 +14,7 @@ import {
 } from "@/store/actions/studentActions";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { ClassInterface } from "@/types/class";
+import { parseDate } from "@/utils/date.utils";
 import {
   Autocomplete,
   Box,
@@ -96,6 +97,10 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
   const dispatch = useAppDispatch();
   const studentData = useAppSelector((state) => state.student.data);
   const currentClass = useAppSelector((state) => state.student.currentClass);
+  const dateOfBirthValue = useMemo(() => {
+    const parsedDateOfBirth = parseDate(studentData.geburtsdatum);
+    return parsedDateOfBirth ? dayjs(parsedDateOfBirth) : null;
+  }, [studentData.geburtsdatum]);
   const previousCountryRef = useRef<string>(studentData.geburtsland || "DE");
   const [classes, setClasses] = useState<ClassInterface[]>([]);
   const [classesLoading, setClassesLoading] = useState(false);
@@ -107,6 +112,17 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
     getEnabledOptions,
     loading,
   } = useOnboardingSettings();
+
+  useEffect(() => {
+    window.console.log(
+      "[Onboarding GeneralForm] Date of birth from Redux/API:",
+      studentData.geburtsdatum,
+    );
+    window.console.log(
+      "[Onboarding GeneralForm] Parsed date of birth:",
+      parseDate(studentData.geburtsdatum),
+    );
+  }, [studentData.geburtsdatum]);
 
   // Initial sync: Ensure Redux has the current country value on mount
   useEffect(() => {
@@ -160,9 +176,7 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
     nachname: studentData.nachname || "",
     geburtsname: studentData.geburtsname || "",
     geschlecht: studentData.geschlecht || "",
-    geburtsdatum: studentData.geburtsdatum
-      ? dayjs(studentData.geburtsdatum)
-      : null,
+    geburtsdatum: dateOfBirthValue,
     geburtsland: studentData.geburtsland || "DE",
     geburtsort: studentData.geburtsort || "",
     religion: studentData.religion || "",
@@ -235,7 +249,7 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
       initialValues={initialValues}
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
-      enableReinitialize={false}
+      enableReinitialize
       innerRef={formikRef}
     >
       {({ errors, touched, setFieldValue, values, setFieldTouched }) => (
@@ -364,6 +378,7 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
             <FormSection>
               {/* Geburtsdatum */}
               <DatePicker
+                key={studentData.geburtsdatum || "empty-date-of-birth"}
                 value={values.geburtsdatum}
                 onChange={(newValue) => setFieldValue("geburtsdatum", newValue)}
                 label={t("onboarding.general.birthDate")}
