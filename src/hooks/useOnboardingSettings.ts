@@ -5,6 +5,8 @@ import { AppDispatch, RootState } from "@/store/store";
 import { DropdownOption } from "@/types/settings";
 import { useDispatch, useSelector } from "react-redux";
 
+let onboardingSettingsRequested = false;
+
 export const useOnboardingSettings = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { data, loading, error } = useSelector(
@@ -13,10 +15,11 @@ export const useOnboardingSettings = () => {
   const onboarding = data?.onboarding;
 
   useEffect(() => {
-    if (!onboarding && !loading) {
+    if (!onboardingSettingsRequested) {
+      onboardingSettingsRequested = true;
       dispatch(getOnboardingSettings());
     }
-  }, [onboarding, loading, dispatch]);
+  }, [dispatch]);
 
   const getEnabledOptions = (
     options: DropdownOption[] = [],

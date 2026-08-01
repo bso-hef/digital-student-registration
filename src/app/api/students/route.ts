@@ -85,7 +85,7 @@ interface ShapedStudentDoc {
   status: string;
   // Optional fields
   birthName?: string;
-  gender?: "male" | "female" | "diverse";
+  gender?: string;
   birthCountry?: string;
   birthplace?: string;
   religion?: string;
@@ -142,14 +142,14 @@ type ShapedStudent = ShapedStudentInvalid | ShapedStudentValid;
 /**
  * Map gender from various formats to standard enum value
  */
-function mapGender(value: unknown): "male" | "female" | "diverse" | undefined {
+function mapGender(value: unknown): string | undefined {
   if (typeof value !== "string") return undefined;
   const v = value.toLowerCase().trim();
   if (v === "m" || v === "männlich" || v === "male") return "male";
   if (v === "w" || v === "f" || v === "weiblich" || v === "female")
     return "female";
   if (v === "d" || v === "divers" || v === "diverse") return "diverse";
-  return undefined;
+  return value.trim() || undefined;
 }
 
 /**

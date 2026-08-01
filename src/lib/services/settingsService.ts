@@ -25,6 +25,16 @@ const settingsService = {
   },
 
   /**
+   * Fetches onboarding settings for the unauthenticated student workflow
+   */
+  getPublicOnboarding: () => {
+    return http.get<{
+      success: boolean;
+      data: Pick<AppSettings, "onboarding">;
+    }>("/api/settings/onboarding/public");
+  },
+
+  /**
    * Updates all application settings
    */
   update: (settings: Partial<AppSettings>) => {

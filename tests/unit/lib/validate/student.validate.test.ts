@@ -397,6 +397,26 @@ describe("student.validate", () => {
       await expect(schema.validate(data)).rejects.toThrow();
     });
 
+    it("should accept a custom gender when enabled by field config", async () => {
+      const schema = createValidateGeneralStudentData(
+        ["male", "female"],
+        ["Germany"],
+        [],
+        { required: true, visible: true, allowCustom: true },
+      );
+      const data = {
+        vorname: "John",
+        nachname: "Doe",
+        geschlecht: "custom gender",
+        geburtsdatum: new Date("2000-01-01"),
+        geburtsland: "Germany",
+        geburtsort: "Berlin",
+        staatsangehoerigkeit1: "Germany",
+      };
+
+      await expect(schema.validate(data)).resolves.toBeTruthy();
+    });
+
     it("should accept any country when countryOptions is empty", async () => {
       const schema = createValidateGeneralStudentData(["male", "female"], []);
       const data = {

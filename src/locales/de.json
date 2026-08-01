@@ -865,6 +865,10 @@
         "familiensprache": {
           "label": "Familiensprache",
           "description": "Hauptsprache, die zu Hause gesprochen wird"
+        },
+        "vorhergehendeSchulform": {
+          "label": "Vorhergehende Schulform",
+          "description": "Zuletzt besuchte Schulform vor der aktuellen Schule"
         }
       },
       "dropdownManager": {
