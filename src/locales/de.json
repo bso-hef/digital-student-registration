@@ -249,7 +249,7 @@
           "option1Text": "Scannen Sie den QR-Code oben mit Ihrer Smartphone-Kamera, um das Anmeldeformular direkt zu öffnen.",
           "option2Title": "Option 2: Manuelle Eingabe",
           "option2Step1": "Besuchen Sie:",
-          "option2Step2": "Klicken Sie auf 'Neuen Schüler anlegen', um den Anmeldeprozess zu starten"
+          "option2Step2": "Das Formular zur Neuanmeldung öffnet sich automatisch"
         }
       },
       "includeClass": "Klasse auf PDF anzeigen",

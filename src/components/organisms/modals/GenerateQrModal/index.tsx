@@ -340,7 +340,7 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
           downloadBlob(generateClassExportFilename("combined", locale), pdf);
         }
       } else if (isNewRegistrationMode) {
-        // New registration mode: generate a PDF with QR code linking to /student
+        // New registration mode: link directly to the student creation modal.
         const pdf = await buildNewRegistrationPdf({
           pageSize,
           orientation,
@@ -651,7 +651,7 @@ const GenerateQrDialog: React.FC<GenerateQrModalProps> = ({
                             fontSize: "0.6rem",
                           }}
                         >
-                          URL: /student
+                          URL: /student/new
                         </Typography>
                       </Stack>
                     </Stack>
