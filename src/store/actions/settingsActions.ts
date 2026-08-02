@@ -30,7 +30,7 @@ export const getSettings = (): AppThunk => async (dispatch) => {
 export const getOnboardingSettings = (): AppThunk => async (dispatch) => {
   dispatch({ type: TYPES.GET_ONBOARDING_SETTINGS_REQUEST });
   try {
-    const { data } = await settingsService.getOnboarding();
+    const { data } = await settingsService.getPublicOnboarding();
 
     dispatch({
       type: TYPES.GET_ONBOARDING_SETTINGS_SUCCESS,

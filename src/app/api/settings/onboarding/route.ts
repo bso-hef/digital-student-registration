@@ -123,11 +123,15 @@ export async function PATCH(request: NextRequest) {
 
 /**
  * GET /api/settings/onboarding
- * Fetches only the onboarding settings
- * Public endpoint - no authentication required for invited students
+ * Fetches only the onboarding settings for authenticated administrators
  */
 export async function GET() {
   try {
+    const session = await auth();
+    if (!session) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
     await dbConnect();
 
     let settings = await AppSettings.findOne().lean();

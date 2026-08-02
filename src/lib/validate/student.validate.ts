@@ -1,3 +1,4 @@
+import { FieldConfig } from "@/types/settings";
 import dayjs from "dayjs";
 import * as Yup from "yup";
 
@@ -57,8 +58,11 @@ export const validateManualCreationForm = Yup.object({
 export const createGenderValidation = (
   allowedValues: string[],
   required = true,
+  allowCustom = false,
 ) => {
-  const schema = Yup.string().oneOf(allowedValues, "Ungültiges Geschlecht");
+  const schema = allowCustom
+    ? Yup.string()
+    : Yup.string().oneOf(allowedValues, "Ungültiges Geschlecht");
   return required
     ? schema.required("Geschlecht ist erforderlich")
     : schema.nullable();
@@ -116,6 +120,17 @@ export const validateGeneralStudentData = Yup.object({
 export const createValidateGeneralStudentData = (
   genderOptions: string[],
   countryOptions: string[] = [],
+  religionOptions: string[] = [],
+  genderConfig: FieldConfig = {
+    required: true,
+    visible: true,
+    allowCustom: false,
+  },
+  religionConfig: FieldConfig = {
+    required: false,
+    visible: true,
+    allowCustom: true,
+  },
 ) =>
   Yup.object({
     eintrittschule: Yup.string().nullable(),
@@ -123,7 +138,13 @@ export const createValidateGeneralStudentData = (
     vorname: Yup.string().required("Vorname ist erforderlich"),
     nachname: Yup.string().required("Nachname ist erforderlich"),
     geburtsname: Yup.string().nullable(),
-    geschlecht: createGenderValidation(genderOptions, true),
+    geschlecht: genderConfig.visible
+      ? createGenderValidation(
+          genderOptions,
+          genderConfig.required,
+          genderConfig.allowCustom,
+        )
+      : Yup.string().nullable(),
     geburtsdatum: Yup.date()
       .typeError("Ungültiges Datum")
       .required("Geburtsdatum ist erforderlich"),
@@ -132,7 +153,13 @@ export const createValidateGeneralStudentData = (
         ? createCountryValidation(countryOptions, true)
         : Yup.string().required("Geburtsland ist erforderlich"),
     geburtsort: Yup.string().required("Geburtsort ist erforderlich"),
-    religion: Yup.string().nullable(),
+    religion: religionConfig.visible
+      ? createReligionValidation(
+          religionOptions,
+          religionConfig.required,
+          religionConfig.allowCustom,
+        )
+      : Yup.string().nullable(),
     staatsangehoerigkeit1: Yup.string().required(
       "Staatsangehörigkeit ist erforderlich",
     ),
@@ -142,7 +169,7 @@ export const createValidateGeneralStudentData = (
 // Step 2: Herkunft (Optional)
 export const validateStudentOriginData = Yup.object({
   herkunftsland: Yup.string().required("Herkunftsland ist erforderlich"),
-  zuzugjahr: Yup.mixed()
+  zuzugsjahr: Yup.mixed()
     .nullable()
     .test("valid-year", "Ungültiges Jahr", (value) => {
       if (!value) return false; // Required field
@@ -169,7 +196,7 @@ export const createValidateStudentOriginData = (
 
   return Yup.object({
     herkunftsland: Yup.string().required("Herkunftsland ist erforderlich"),
-    zuzugjahr: Yup.mixed()
+    zuzugsjahr: Yup.mixed()
       .nullable()
       .test("valid-year", "Ungültiges Jahr", (value) => {
         if (!value) return false; // Required field
@@ -373,11 +400,33 @@ export const createValidateStudentPreviousSchoolData = (
   schoolLevelOptions: string[],
   schoolTypeOptions: string[],
   degreeOptions: string[],
-  allowCustomDegree = true,
+  degreeConfig: FieldConfig = {
+    required: false,
+    visible: true,
+    allowCustom: true,
+  },
+  schoolTypeConfig: FieldConfig = {
+    required: true,
+    visible: true,
+    allowCustom: true,
+  },
 ) => {
-  const abschluesseValidation = allowCustomDegree
+  const degreeSchema = degreeConfig.allowCustom
+    ? Yup.string()
+    : Yup.string().oneOf(degreeOptions, "Ungültiger Abschluss");
+  const abschluesseValidation = !degreeConfig.visible
     ? Yup.string().nullable()
-    : Yup.string().oneOf(degreeOptions, "Ungültiger Abschluss").nullable();
+    : degreeConfig.required
+      ? degreeSchema.required("Abschluss ist erforderlich")
+      : degreeSchema.nullable();
+  const schoolTypeSchema = schoolTypeConfig.allowCustom
+    ? Yup.string()
+    : Yup.string().oneOf(schoolTypeOptions, "Ungültige Schulform");
+  const previousSchoolTypeValidation = !schoolTypeConfig.visible
+    ? Yup.string().nullable()
+    : schoolTypeConfig.required
+      ? schoolTypeSchema.required("Vorhergehende Schulform ist erforderlich")
+      : schoolTypeSchema.nullable();
 
   return Yup.object({
     vorhergehendeSchule: Yup.string().required(
@@ -386,9 +435,7 @@ export const createValidateStudentPreviousSchoolData = (
     vorhergehendeStufe: Yup.string()
       .oneOf(schoolLevelOptions, "Ungültige Stufe")
       .required("Vorhergehende Stufe ist erforderlich"),
-    vorhergehendeSchulform: Yup.string()
-      .oneOf(schoolTypeOptions, "Ungültige Schulform")
-      .required("Vorhergehende Schulform ist erforderlich"),
+    vorhergehendeSchulform: previousSchoolTypeValidation,
     abschluesse: abschluesseValidation,
   });
 };

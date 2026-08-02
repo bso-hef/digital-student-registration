@@ -59,7 +59,10 @@ export default defineConfig({
         lines: 28,
         statements: 28,
       },
-      enabled: true,
+      // Keep regular and IDE-driven single-file test runs independent from
+      // global project coverage. The test:unit and test:coverage scripts enable
+      // coverage explicitly via --coverage and still enforce these thresholds.
+      enabled: false,
       reportOnFailure: true,
     },
     testTimeout: 10000,

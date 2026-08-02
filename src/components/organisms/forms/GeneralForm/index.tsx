@@ -2,23 +2,21 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
+import FormikConfiguredAutocomplete from "@/components/atoms/dropdowns/FormikConfiguredAutocomplete";
 import { useOnboardingSettings } from "@/hooks/useOnboardingSettings";
 import classService from "@/lib/services/classService";
-import {
-  createValidateGeneralStudentData,
-  validateGeneralStudentData,
-} from "@/lib/validate/student.validate";
+import { createValidateGeneralStudentData } from "@/lib/validate/student.validate";
 import {
   setStudentOnboardingClass,
   updateStudentOnboardingData,
 } from "@/store/actions/studentActions";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { ClassInterface } from "@/types/class";
+import { parseDate } from "@/utils/date.utils";
 import {
   Autocomplete,
   Box,
   TextField as MUITextField,
-  MenuItem,
   Skeleton,
   Typography,
   styled,
@@ -26,7 +24,7 @@ import {
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import { Field, Form, Formik, FormikProps, useFormikContext } from "formik";
-import { Select, TextField } from "formik-mui";
+import { TextField } from "formik-mui";
 import { useTranslation } from "react-i18next";
 
 const StyledForm = styled(Form)(({ theme }) => ({
@@ -96,6 +94,10 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
   const dispatch = useAppDispatch();
   const studentData = useAppSelector((state) => state.student.data);
   const currentClass = useAppSelector((state) => state.student.currentClass);
+  const dateOfBirthValue = useMemo(() => {
+    const parsedDateOfBirth = parseDate(studentData.geburtsdatum);
+    return parsedDateOfBirth ? dayjs(parsedDateOfBirth) : null;
+  }, [studentData.geburtsdatum]);
   const previousCountryRef = useRef<string>(studentData.geburtsland || "DE");
   const [classes, setClasses] = useState<ClassInterface[]>([]);
   const [classesLoading, setClassesLoading] = useState(false);
@@ -103,10 +105,22 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
     genderOptions,
     religionOptions,
     countryOptions,
+    fieldConfigs,
     getOptionValues,
     getEnabledOptions,
     loading,
   } = useOnboardingSettings();
+
+  useEffect(() => {
+    window.console.log(
+      "[Onboarding GeneralForm] Date of birth from Redux/API:",
+      studentData.geburtsdatum,
+    );
+    window.console.log(
+      "[Onboarding GeneralForm] Parsed date of birth:",
+      parseDate(studentData.geburtsdatum),
+    );
+  }, [studentData.geburtsdatum]);
 
   // Initial sync: Ensure Redux has the current country value on mount
   useEffect(() => {
@@ -160,9 +174,7 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
     nachname: studentData.nachname || "",
     geburtsname: studentData.geburtsname || "",
     geschlecht: studentData.geschlecht || "",
-    geburtsdatum: studentData.geburtsdatum
-      ? dayjs(studentData.geburtsdatum)
-      : null,
+    geburtsdatum: dateOfBirthValue,
     geburtsland: studentData.geburtsland || "DE",
     geburtsort: studentData.geburtsort || "",
     religion: studentData.religion || "",
@@ -171,15 +183,24 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
   };
 
   // Create dynamic validation schema with settings
-  const validationSchema = useMemo(() => {
-    if (genderOptions.length > 0 || countryOptions.length > 0) {
-      return createValidateGeneralStudentData(
+  const validationSchema = useMemo(
+    () =>
+      createValidateGeneralStudentData(
         getOptionValues(genderOptions),
         getOptionValues(countryOptions),
-      );
-    }
-    return validateGeneralStudentData;
-  }, [genderOptions, countryOptions, getOptionValues]);
+        getOptionValues(religionOptions),
+        fieldConfigs.geschlecht,
+        fieldConfigs.religion,
+      ),
+    [
+      genderOptions,
+      countryOptions,
+      religionOptions,
+      fieldConfigs.geschlecht,
+      fieldConfigs.religion,
+      getOptionValues,
+    ],
+  );
 
   const handleSubmit = (values: FormValues) => {
     // Convert Dayjs objects to ISO strings for Redux storage
@@ -235,7 +256,7 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
       initialValues={initialValues}
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
-      enableReinitialize={false}
+      enableReinitialize
       innerRef={formikRef}
     >
       {({ errors, touched, setFieldValue, values, setFieldTouched }) => (
@@ -339,22 +360,13 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
                 fullWidth
               />
 
-              {/* Geschlecht - Dynamic Dropdown */}
-              <Field
-                component={Select}
+              <FormikConfiguredAutocomplete
                 name="geschlecht"
+                fieldConfigKey="geschlecht"
                 label={t("onboarding.general.gender")}
-                variant="outlined"
+                options={genderOptions}
                 fullWidth
-                required
-                formControl={{ required: true }}
-              >
-                {getEnabledOptions(genderOptions).map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </Field>
+              />
             </FormSection>
 
             <Typography variant="subtitle1" sx={{ mt: 2 }}>
@@ -364,6 +376,7 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
             <FormSection>
               {/* Geburtsdatum */}
               <DatePicker
+                key={studentData.geburtsdatum || "empty-date-of-birth"}
                 value={values.geburtsdatum}
                 onChange={(newValue) => setFieldValue("geburtsdatum", newValue)}
                 label={t("onboarding.general.birthDate")}
@@ -427,23 +440,14 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
             </Typography>
 
             <FormSection>
-              {/* Religion */}
-              <Field
-                component={Select}
+              <FormikConfiguredAutocomplete
                 name="religion"
+                fieldConfigKey="religion"
                 label={t("onboarding.general.religion")}
-                variant="outlined"
+                options={religionOptions}
+                emptyValue=""
                 fullWidth
-              >
-                <MenuItem value="">
-                  <em>{t("general.none")}</em>
-                </MenuItem>
-                {getEnabledOptions(religionOptions).map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </Field>
+              />
 
               {/* Staatsangehörigkeit 1 */}
               <Field

@@ -5,6 +5,7 @@ import {
   createValidateGeneralStudentData,
   createValidateStudentTrainingData,
   validateGeneralStudentData,
+  validateStudentOriginData,
   validateVerificationForm,
 } from "@/lib/validate/student.validate";
 import dayjs from "dayjs";
@@ -397,6 +398,26 @@ describe("student.validate", () => {
       await expect(schema.validate(data)).rejects.toThrow();
     });
 
+    it("should accept a custom gender when enabled by field config", async () => {
+      const schema = createValidateGeneralStudentData(
+        ["male", "female"],
+        ["Germany"],
+        [],
+        { required: true, visible: true, allowCustom: true },
+      );
+      const data = {
+        vorname: "John",
+        nachname: "Doe",
+        geschlecht: "custom gender",
+        geburtsdatum: new Date("2000-01-01"),
+        geburtsland: "Germany",
+        geburtsort: "Berlin",
+        staatsangehoerigkeit1: "Germany",
+      };
+
+      await expect(schema.validate(data)).resolves.toBeTruthy();
+    });
+
     it("should accept any country when countryOptions is empty", async () => {
       const schema = createValidateGeneralStudentData(["male", "female"], []);
       const data = {
@@ -409,6 +430,31 @@ describe("student.validate", () => {
         staatsangehoerigkeit1: "Any Country",
       };
       await expect(schema.validate(data)).resolves.toBeTruthy();
+    });
+  });
+
+  describe("validateStudentOriginData", () => {
+    const validOriginData = {
+      herkunftsland: "Türkei",
+      zuzugsjahr: dayjs("2015-01-01"),
+      familiensprache: "Türkisch",
+    };
+
+    it("should validate the immigration year using the StudentData field name", async () => {
+      await expect(
+        validateStudentOriginData.validate(validOriginData),
+      ).resolves.toEqual(validOriginData);
+    });
+
+    it("should reject the obsolete immigration year field name", async () => {
+      const { zuzugsjahr, ...originData } = validOriginData;
+
+      await expect(
+        validateStudentOriginData.validate({
+          ...originData,
+          zuzugjahr: zuzugsjahr,
+        }),
+      ).rejects.toThrow("Zuzugsjahr ist erforderlich");
     });
   });
 

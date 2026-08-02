@@ -115,7 +115,7 @@ const StudentSchema = new Schema(
     dateOfBirth: { type: Date, required: true },
     gender: {
       type: String,
-      enum: ["male", "female", "diverse"],
+      trim: true,
       default: undefined,
     },
     birthplace: { type: String, trim: true },
@@ -297,6 +297,17 @@ if (existingStudentModel) {
     contactPersonsPath.schema.add({
       email: { type: String, trim: true, lowercase: true },
     });
+  }
+
+  const genderPath = existingStudentModel.schema.path("gender") as unknown as {
+    enumValues?: string[];
+    validators?: Array<{ type?: string }>;
+  };
+  genderPath.enumValues?.splice(0);
+  if (genderPath.validators) {
+    genderPath.validators = genderPath.validators.filter(
+      (validator) => validator.type !== "enum",
+    );
   }
 }
 
