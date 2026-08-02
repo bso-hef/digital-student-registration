@@ -45,6 +45,7 @@ const initialStudentState: StudentState = {
     ort: "",
     geburtsort: "",
     geburtsland: "",
+    herkunftsland: "",
     zuzugsjahr: "",
     mobil: "",
     telefon1: "",

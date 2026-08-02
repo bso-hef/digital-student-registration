@@ -35,6 +35,7 @@ export function mapFormDataToModel(
   if (formData.staatsangehoerigkeit2)
     mapped.secondNationality = formData.staatsangehoerigkeit2;
 
+  if (formData.herkunftsland) mapped.originCountry = formData.herkunftsland;
   if (formData.familiensprache)
     mapped.familyLanguage = formData.familiensprache;
   if (formData.zuzugsjahr) {
@@ -45,7 +46,8 @@ export function mapFormDataToModel(
   }
 
   if (formData.email) mapped.email = formData.email;
-  if (formData.mobil) mapped.phone = formData.mobil;
+  if (formData.mobil) mapped.mobile = formData.mobil;
+  if (formData.telefon1) mapped.phone = formData.telefon1;
 
   if (
     formData.straße ||
@@ -155,12 +157,8 @@ export function mapFormDataToModel(
           ] as string) || "",
         phone:
           (formData[
-            `ansprechpartner${i}Mobil` as keyof StudentData
-          ] as string) ||
-          (formData[
             `ansprechpartner${i}Telefon1` as keyof StudentData
-          ] as string) ||
-          "",
+          ] as string) || "",
         mobile:
           (formData[
             `ansprechpartner${i}Mobil` as keyof StudentData
@@ -252,12 +250,14 @@ export function mapModelToFormData(
   if (student.secondNationality)
     mapped.staatsangehoerigkeit2 = student.secondNationality;
 
+  if (student.originCountry) mapped.herkunftsland = student.originCountry;
   if (student.familyLanguage) mapped.familiensprache = student.familyLanguage;
   if (student.immigrationYear)
     mapped.zuzugsjahr = student.immigrationYear.toString();
 
   if (student.email) mapped.email = student.email;
-  if (student.phone) mapped.mobil = student.phone;
+  if (student.mobile) mapped.mobil = student.mobile;
+  if (student.phone) mapped.telefon1 = student.phone;
 
   if (student.address) {
     const addressParts = student.address.street?.split(" ") || [];

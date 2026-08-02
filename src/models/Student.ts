@@ -125,11 +125,13 @@ const StudentSchema = new Schema(
     nationality: { type: String, trim: true },
     secondNationality: { type: String, trim: true },
 
+    originCountry: { type: String, trim: true },
     familyLanguage: { type: String, trim: true },
     immigrationYear: { type: Number },
 
     email: { type: String, trim: true, lowercase: true },
     phone: { type: String, trim: true },
+    mobile: { type: String, trim: true },
     address: { type: AddressSchema, default: undefined },
 
     currentClass: {
@@ -275,6 +277,18 @@ const existingStudentModel = mongoose.models.Student;
 // added to an embedded schema, the cached model would otherwise keep the old
 // schema and silently strip that field when saving.
 if (existingStudentModel) {
+  if (!existingStudentModel.schema.path("mobile")) {
+    existingStudentModel.schema.add({
+      mobile: { type: String, trim: true },
+    });
+  }
+
+  if (!existingStudentModel.schema.path("originCountry")) {
+    existingStudentModel.schema.add({
+      originCountry: { type: String, trim: true },
+    });
+  }
+
   const contactPersonsPath = existingStudentModel.schema.path(
     "contactPersons",
   ) as unknown as { schema?: mongoose.Schema };

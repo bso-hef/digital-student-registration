@@ -779,6 +779,7 @@ type LayoutConfig = {
   rightMargin: number;
   topMargin: number;
   bottomMargin: number;
+  footerHeight: number;
   contentStart: number;
   sectionGap: number;
   fieldRowHeight: number;
@@ -847,20 +848,22 @@ function renderField(
   const labelMaxWidth = availableWidth / 2 - 5; // 5mm padding
   const valueMaxWidth = availableWidth / 2 - 5; // 5mm padding
 
+  const labelLines = doc.splitTextToSize(`${label}:`, labelMaxWidth);
+  const valueLines = doc.splitTextToSize(displayValue, valueMaxWidth);
+  const maxLines = Math.max(labelLines.length, valueLines.length);
+  const requiredHeight = layout.fieldRowHeight * maxLines;
+  const fieldY = checkPageBreak(doc, y, layout, requiredHeight);
+
   // Render label (left 50%)
   doc.setFont("helvetica", "bold");
   doc.setFontSize(10);
-  const labelLines = doc.splitTextToSize(`${label}:`, labelMaxWidth);
-  doc.text(labelLines, layout.leftMargin, y);
+  doc.text(labelLines, layout.leftMargin, fieldY);
 
   // Render value (right 50%)
   doc.setFont("helvetica", "normal");
-  const valueLines = doc.splitTextToSize(displayValue, valueMaxWidth);
-  doc.text(valueLines, splitPoint, y);
+  doc.text(valueLines, splitPoint, fieldY);
 
-  // Calculate height based on whichever is taller
-  const maxLines = Math.max(labelLines.length, valueLines.length);
-  return y + layout.fieldRowHeight * maxLines;
+  return fieldY + requiredHeight;
 }
 
 function checkPageBreak(
@@ -869,7 +872,10 @@ function checkPageBreak(
   layout: LayoutConfig,
   requiredSpace: number = 20,
 ): number {
-  if (currentY + requiredSpace > layout.pageHeight - layout.bottomMargin) {
+  const contentBottom =
+    layout.pageHeight - layout.bottomMargin - layout.footerHeight;
+
+  if (currentY + requiredSpace > contentBottom) {
     doc.addPage();
     // Use topMargin for subsequent pages (no header needed)
     return layout.topMargin + 5;
@@ -1000,6 +1006,8 @@ function renderOriginSection(
 ): number {
   if (
     !includeEmptyFields &&
+    !student.originCountry &&
+    !student.birthCountry &&
     !student.familyLanguage &&
     !student.immigrationYear
   ) {
@@ -1013,6 +1021,14 @@ function renderOriginSection(
   doc.text(t("onboarding.summary.origin"), layout.leftMargin, y);
   y += 8;
 
+  y = renderField(
+    doc,
+    t("onboarding.origin.countryOfOrigin"),
+    student.originCountry || student.birthCountry,
+    y,
+    layout,
+    includeEmptyFields,
+  );
   y = renderField(
     doc,
     t("onboarding.origin.familyLanguage"),
@@ -1066,6 +1082,14 @@ function renderAddressSection(
     doc,
     t("onboarding.address.city"),
     cityValue,
+    y,
+    layout,
+    includeEmptyFields,
+  );
+  y = renderField(
+    doc,
+    t("onboarding.address.mobile"),
+    student.mobile,
     y,
     layout,
     includeEmptyFields,
@@ -1149,10 +1173,12 @@ function renderContactPersonsSection(
       layout,
       includeEmptyFields,
     );
+    const landline =
+      person.phone && person.phone !== person.mobile ? person.phone : undefined;
     y = renderField(
       doc,
       t("onboarding.legalGuardian.phone"),
-      person.phone,
+      landline,
       y,
       layout,
       includeEmptyFields,
@@ -1330,7 +1356,20 @@ function renderVocationalSection(
       includeEmptyFields,
     );
 
-    if (student.employer.contactName) {
+    const hasFirstCompanyContact = Boolean(
+      student.employer.contactName ||
+      student.employer.contactSalutation ||
+      student.employer.contactPhone ||
+      student.employer.contactEmail,
+    );
+    const hasSecondCompanyContact = Boolean(
+      student.employer.contact2Name ||
+      student.employer.contact2Salutation ||
+      student.employer.contact2Phone ||
+      student.employer.contact2Email,
+    );
+
+    if (hasFirstCompanyContact || hasSecondCompanyContact) {
       y += layout.sectionGap;
       y = checkPageBreak(doc, y, layout);
 
@@ -1342,38 +1381,73 @@ function renderVocationalSection(
       doc.setFont("helvetica", "normal");
       doc.setFontSize(10);
 
-      y = renderField(
-        doc,
-        t("onboarding.companyContact.salutation"),
-        student.employer.contactSalutation,
-        y,
-        layout,
-        includeEmptyFields,
-      );
-      y = renderField(
-        doc,
-        t("onboarding.general.name"),
-        student.employer.contactName,
-        y,
-        layout,
-        includeEmptyFields,
-      );
-      y = renderField(
-        doc,
-        t("onboarding.companyContact.phone"),
-        student.employer.contactPhone,
-        y,
-        layout,
-        includeEmptyFields,
-      );
-      y = renderField(
-        doc,
-        t("onboarding.companyContact.email"),
-        student.employer.contactEmail,
-        y,
-        layout,
-        includeEmptyFields,
-      );
+      const renderCompanyContact = (
+        titleKey: string,
+        salutation?: string,
+        name?: string,
+        phone?: string,
+        email?: string,
+      ) => {
+        y = checkPageBreak(doc, y, layout);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(11);
+        doc.text(t(titleKey), layout.leftMargin + 2, y);
+        y += 6;
+
+        y = renderField(
+          doc,
+          t("onboarding.companyContact.salutation"),
+          salutation,
+          y,
+          layout,
+          includeEmptyFields,
+        );
+        y = renderField(
+          doc,
+          t("onboarding.general.name"),
+          name,
+          y,
+          layout,
+          includeEmptyFields,
+        );
+        y = renderField(
+          doc,
+          t("onboarding.companyContact.phone"),
+          phone,
+          y,
+          layout,
+          includeEmptyFields,
+        );
+        y = renderField(
+          doc,
+          t("onboarding.companyContact.email"),
+          email,
+          y,
+          layout,
+          includeEmptyFields,
+        );
+        y += 3;
+      };
+
+      if (hasFirstCompanyContact) {
+        renderCompanyContact(
+          "onboarding.companyContact.contact1Title",
+          student.employer.contactSalutation,
+          student.employer.contactName,
+          student.employer.contactPhone,
+          student.employer.contactEmail,
+        );
+      }
+
+      if (hasSecondCompanyContact) {
+        renderCompanyContact(
+          "onboarding.companyContact.contact2Title",
+          student.employer.contact2Salutation,
+          student.employer.contact2Name,
+          student.employer.contact2Phone,
+          student.employer.contact2Email,
+        );
+      }
     }
   }
 
@@ -1487,7 +1561,8 @@ export async function buildStudentDataPdf(
     leftMargin: 15,
     rightMargin: 15,
     topMargin: 15,
-    bottomMargin: 15,
+    bottomMargin: 10,
+    footerHeight: 10,
     contentStart: 38,
     sectionGap: 8,
     fieldRowHeight: 7,
@@ -1500,7 +1575,7 @@ export async function buildStudentDataPdf(
   doc.setFont("helvetica", "normal");
   doc.setFontSize(10);
   doc.text(
-    `${student.firstName} ${student.lastName}`,
+    `${student.firstName} ${student.lastName} (${student.currentClassName})`,
     layout.leftMargin,
     layout.topMargin + 12,
   );
@@ -1568,12 +1643,19 @@ export async function buildStudentDataPdf(
     doc.setTextColor(120);
 
     const dateText = `${generatedOnLabel}: ${formatDate(new Date(), locale)}`;
-    doc.text(dateText, layout.leftMargin, pageH - 10, { align: "left" });
+    doc.text(dateText, layout.leftMargin, pageH - layout.bottomMargin, {
+      align: "left",
+    });
 
     const pageText = `${i} / ${totalPages}`;
-    doc.text(pageText, pageW - layout.rightMargin, pageH - 10, {
-      align: "right",
-    });
+    doc.text(
+      pageText,
+      pageW - layout.rightMargin,
+      pageH - layout.bottomMargin,
+      {
+        align: "right",
+      },
+    );
   }
 
   return doc.output("blob");
