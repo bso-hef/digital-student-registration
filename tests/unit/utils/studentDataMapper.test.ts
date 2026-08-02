@@ -117,12 +117,14 @@ describe("studentDataMapper", () => {
       const formData: Partial<StudentData> = {
         email: "max@example.com",
         mobil: "0171234567",
+        telefon1: "0665234567",
       };
 
       const result = mapFormDataToModel(formData);
 
       expect(result.email).toBe("max@example.com");
-      expect(result.phone).toBe("0171234567");
+      expect(result.mobile).toBe("0171234567");
+      expect(result.phone).toBe("0665234567");
     });
 
     it("should map address with street and house number", () => {
@@ -365,7 +367,8 @@ describe("studentDataMapper", () => {
       familyLanguage: "German",
       immigrationYear: 2015,
       email: "max@example.com",
-      phone: "0171234567",
+      mobile: "0171234567",
+      phone: "0662534567",
       address: {
         street: "Hauptstraße 123",
         city: "Berlin",
@@ -429,6 +432,7 @@ describe("studentDataMapper", () => {
 
       expect(result.email).toBe("max@example.com");
       expect(result.mobil).toBe("0171234567");
+      expect(result.telefon1).toBe("0662534567");
     });
 
     it("should parse address into separate fields", () => {

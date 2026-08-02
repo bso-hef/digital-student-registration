@@ -53,11 +53,13 @@ export interface Student {
   nationality?: string;
   secondNationality?: string;
 
+  originCountry?: string;
   familyLanguage?: string;
   immigrationYear?: number;
 
   email?: string;
   phone?: string;
+  mobile?: string;
   address?: {
     street?: string;
     city?: string;

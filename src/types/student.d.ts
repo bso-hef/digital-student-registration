@@ -11,6 +11,7 @@ export interface StudentData {
   ort: string;
   geburtsort: string;
   geburtsland: string;
+  herkunftsland: string;
   zuzugsjahr: string;
   mobil: string;
   telefon1: string;
