@@ -104,7 +104,9 @@ export default function StudentLayout({
   const pathname = usePathname();
 
   const isStudentWizzardPage =
-    pathname.includes("/student/") && !pathname.endsWith("/student");
+    pathname.includes("/student/") &&
+    !pathname.endsWith("/student") &&
+    !pathname.endsWith("/student/new");
 
   const showMobileView = isMobile || isTabletVertical;
 

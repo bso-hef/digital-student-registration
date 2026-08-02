@@ -249,7 +249,7 @@
           "option1Text": "Please scan the QR code above with your smartphone camera to open the registration form directly.",
           "option2Title": "Option 2: Manual entry",
           "option2Step1": "Visit:",
-          "option2Step2": "Click on 'Create New Student' to start the registration process"
+          "option2Step2": "The new student registration form opens automatically"
         }
       },
       "includeClass": "Show class on PDF",

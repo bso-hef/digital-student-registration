@@ -635,7 +635,7 @@ function renderNewRegistrationInstructionBox(
   doc.setFontSize(8);
   // Step 1: Visit URL
   doc.text(
-    `1. ${t("modals.generateQrModal.newRegistration.pdfInstructions.option2Step1")} ${baseUrl}/student`,
+    `1. ${t("modals.generateQrModal.newRegistration.pdfInstructions.option2Step1")} ${baseUrl}/student/new`,
     textStartX + 4,
     y,
   );
@@ -651,7 +651,7 @@ function renderNewRegistrationInstructionBox(
 
 /**
  * Builds a PDF with a QR code for new student registration.
- * This PDF links to the base /student page where users can create a new student.
+ * This PDF links directly to the new student creation flow.
  */
 export async function buildNewRegistrationPdf(
   settings: NewRegistrationPdfSettings,
@@ -681,9 +681,10 @@ export async function buildNewRegistrationPdf(
   doc.setFont("helvetica");
   doc.text(t("modals.generateQrModal.newRegistration.pdfTitle"), pad, pad + 7);
 
-  // QR code URL points to the base /student page
+  // QR code URL opens the new student modal directly. The base /student page
+  // remains the entry point for profiles that have already been created.
   const baseUrl = extractBaseUrl(settings.wizardUrlTemplate);
-  const wizUrl = `${baseUrl}/student`;
+  const wizUrl = `${baseUrl}/student/new`;
 
   const qrSize = Math.min(isPortrait ? 45 : 35, contentH);
   const qrX = pad;
