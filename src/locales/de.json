@@ -231,8 +231,10 @@
       "pdfInstructions": {
         "title": "So vervollständigen Sie Ihre Anmeldung:",
         "option1Title": "Option 1: QR-Code scannen",
+        "option1WlanStep": "Scannen Sie den WLAN-QR-Code links mit Ihrer Smartphone-Kamera.",
         "option1Text": "Scannen Sie den QR-Code oben mit Ihrer Smartphone-Kamera, um das Anmeldeformular direkt zu öffnen.",
         "option2Title": "Option 2: Manuelle Eingabe",
+        "option2WlanStep": "Verbinden Sie sich mit dem WLAN: \"{{ssid}}\" und dem Passwort: \"{{password}}\".",
         "option2Step1": "Besuchen Sie:",
         "option2Step2": "Geben Sie Ihren Vor- und Nachnamen ein",
         "option2Step3": "Geben Sie Ihren Verifizierungscode ein:"
