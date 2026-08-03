@@ -117,15 +117,20 @@ export async function GET(request: NextRequest) {
       200,
       Math.max(1, Number(searchParams.get("limit") || 25)),
     );
+    const search = searchParams.get("search")?.trim() ?? "";
     const skip = (page - 1) * limit;
+    const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const query = escapedSearch
+      ? { name: { $regex: escapedSearch, $options: "i" } }
+      : {};
 
     const [classes, total] = await Promise.all([
-      Class.find({})
+      Class.find(query)
         .sort({ createdAt: -1, _id: -1 })
         .skip(skip)
         .limit(limit)
         .lean(),
-      Class.countDocuments({}),
+      Class.countDocuments(query),
     ]);
 
     // Ensure incomplete field is computed for all classes (backwards compatibility)

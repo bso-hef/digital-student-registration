@@ -18,7 +18,7 @@ describe("classService", () => {
   });
 
   describe("getAll", () => {
-    it("should fetch all classes", async () => {
+    it("should fetch paginated classes with an optional search term", async () => {
       const mockResponse = {
         data: {
           classes: [],
@@ -30,9 +30,15 @@ describe("classService", () => {
       };
       vi.mocked(http.get).mockResolvedValue(mockResponse);
 
-      const result = await classService.getAll();
+      const result = await classService.getAll(1, 25, "10A");
 
-      expect(http.get).toHaveBeenCalledWith("/api/classes");
+      expect(http.get).toHaveBeenCalledWith("/api/classes", {
+        params: {
+          page: 1,
+          limit: 25,
+          search: "10A",
+        },
+      });
       expect(result).toEqual(mockResponse);
     });
   });

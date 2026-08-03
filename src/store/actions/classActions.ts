@@ -15,18 +15,28 @@ const stripUndefined = <T extends object>(obj: T): T =>
     Object.entries(obj).filter(([, v]) => v !== undefined),
   ) as T;
 
-export const getClasses = (): AppThunk => async (dispatch) => {
-  dispatch({ type: TYPES.GET_CLASSES_REQUEST });
-  try {
-    const { data } = await classService.getAll();
+export const getClasses =
+  (page?: number, limit?: number, search?: string): AppThunk =>
+  async (dispatch, getState) => {
+    const classState = getState().class;
+    const requestedPage = page ?? classState.page;
+    const requestedLimit = limit ?? classState.limit;
 
-    dispatch({ type: TYPES.GET_CLASSES_SUCCESS, payload: data });
-  } catch (error) {
-    errorNotification(i18n.t("actions.classFetchFailed"));
-    const appError = await toAppError(error);
-    dispatch({ type: TYPES.GET_CLASSES_FAILURE, payload: appError });
-  }
-};
+    dispatch({ type: TYPES.GET_CLASSES_REQUEST });
+    try {
+      const { data } = await classService.getAll(
+        requestedPage,
+        requestedLimit,
+        search,
+      );
+
+      dispatch({ type: TYPES.GET_CLASSES_SUCCESS, payload: data });
+    } catch (error) {
+      errorNotification(i18n.t("actions.classFetchFailed"));
+      const appError = await toAppError(error);
+      dispatch({ type: TYPES.GET_CLASSES_FAILURE, payload: appError });
+    }
+  };
 
 export const addClass =
   (classes: ClassCreateInput[]): AppThunk =>

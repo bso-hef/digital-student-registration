@@ -5,8 +5,10 @@ import http from "./api";
 export type ClassPatch = Partial<ClassCreateInput>;
 
 const classService = {
-  getAll: () => {
-    return http.get("/api/classes");
+  getAll: (page: number, limit: number, search?: string) => {
+    return http.get("/api/classes", {
+      params: { page, limit, search: search || undefined },
+    });
   },
   getPublic: () => {
     return http.get("/api/classes/public");

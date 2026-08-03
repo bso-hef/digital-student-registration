@@ -25,7 +25,6 @@ import {
   downloadBlob,
   parseClassCSVFile,
 } from "@/utils/classCSV.utils";
-import { filterClasses } from "@/utils/filter.utils";
 import { successNotification } from "@/utils/notification.utils";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import FileDownloadRoundedIcon from "@mui/icons-material/FileDownloadRounded";
@@ -68,7 +67,9 @@ const StyledTableBox = styled(Box)(({ theme }) => ({
 const ClassManagementPage = () => {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
-  const { classes, loading } = useSelector((state: RootState) => state.class);
+  const { classes, loading, page, limit, total } = useSelector(
+    (state: RootState) => state.class,
+  );
 
   const [openClassAddModal, setOpenClassAddModal] = useState(false);
   const [openClassDeleteModal, setOpenClassDeleteModal] = useState(false);
@@ -88,13 +89,27 @@ const ClassManagementPage = () => {
   const [openGenerateQrModal, setOpenGenerateQrModal] = useState(false);
 
   useEffect(() => {
-    dispatch(getClasses());
+    dispatch(getClasses(1, limit));
 
     return () => {
       dispatch(clearCurrentClass());
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handlePageChange = useCallback(
+    (nextPage: number) => {
+      dispatch(getClasses(nextPage + 1, limit, searchString));
+    },
+    [dispatch, limit, searchString],
+  );
+
+  const handleRowsPerPageChange = useCallback(
+    (rowsPerPage: number) => {
+      dispatch(getClasses(1, rowsPerPage, searchString));
+    },
+    [dispatch, searchString],
+  );
 
   const handleAddClassModalOpen = useCallback(() => {
     setOpenClassAddModal(true);
@@ -130,8 +145,11 @@ const ClassManagementPage = () => {
     () =>
       debounce(
         function (text: string) {
-          if (isString(text) && (text.length > 2 || text.length === 0)) {
+          if (isString(text)) {
             setSearchString(text);
+            setSelectedItems([]);
+            setClearSelected(true);
+            dispatch(getClasses(1, limit, text));
           }
         },
         500,
@@ -140,7 +158,14 @@ const ClassManagementPage = () => {
           trailing: true,
         },
       ),
-    [setSearchString],
+    [dispatch, limit],
+  );
+
+  useEffect(
+    () => () => {
+      handleSearchString.cancel();
+    },
+    [handleSearchString],
   );
 
   const getTableData = useCallback(() => {
@@ -159,7 +184,7 @@ const ClassManagementPage = () => {
       return Array.isArray(maybe) ? maybe.length : 0;
     };
 
-    return filterClasses(searchString, classes).map((c: ClassInterface) => {
+    return classes.map((c: ClassInterface) => {
       const yFrom = toYear(c.schoolYearFrom as YearLike);
       const yTo = toYear(c.schoolYearTo as YearLike);
       const schoolYear =
@@ -210,7 +235,7 @@ const ClassManagementPage = () => {
         ),
       };
     });
-  }, [classes, dispatch, searchString, t]);
+  }, [classes, dispatch, t]);
 
   const handleDeleteClasses = useCallback(() => {
     const ids = selectedItems.filter(
@@ -386,6 +411,13 @@ const ClassManagementPage = () => {
           setSelectedItems={setSelectedItems}
           clearSelected={clearSelected}
           setClearSelected={setClearSelected}
+          pagination={{
+            page: page - 1,
+            rowsPerPage: limit,
+            total,
+            onPageChange: handlePageChange,
+            onRowsPerPageChange: handleRowsPerPageChange,
+          }}
         />
       </StyledTableBox>
     </Wrapper>
