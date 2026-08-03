@@ -31,6 +31,8 @@ export type PdfSettings = {
   wlanSettings?: WlanSettings; // WLAN configuration
 };
 
+type PdfTranslator = (key: string, options?: Record<string, unknown>) => string;
+
 /**
  * Extracts the base URL from a wizard URL template.
  * E.g., "https://school.example.com/student/{short-id}" -> "https://school.example.com"
@@ -57,11 +59,12 @@ function renderInstructionBox(
   pad: number,
   verificationCode: string,
   baseUrl: string,
-  t: (key: string) => string,
+  t: PdfTranslator,
   wlanQrDataUrl?: string,
+  wlanSettings?: WlanSettings,
 ): void {
   const boxPad = 4;
-  const lineHeight = 5;
+  const lineHeight = wlanSettings ? 4 : 5;
 
   // WLAN QR code dimensions (inside the box)
   const wlanQrSize = wlanQrDataUrl ? 26 : 0;
@@ -72,8 +75,45 @@ function renderInstructionBox(
   const boxY = startY + 4;
   const boxW = pageW - pad * 2;
 
-  // Calculate box height based on content
-  const boxH = lineHeight * 8 + boxPad * 2;
+  // Text content starts after WLAN QR (if present)
+  const textStartX = boxX + boxPad + wlanInternalPad;
+  const textMaxW = boxW - boxPad * 2 - wlanInternalPad - 4;
+  const textIndentX = textStartX + 4;
+  const stepMaxW = textMaxW - 4;
+
+  const option1Steps = wlanSettings
+    ? [
+        `1. ${t("modals.generateQrModal.pdfInstructions.option1WlanStep")}`,
+        `2. ${t("modals.generateQrModal.pdfInstructions.option1Text")}`,
+      ]
+    : [t("modals.generateQrModal.pdfInstructions.option1Text")];
+  const option1LineGroups = option1Steps.map((step) =>
+    doc.splitTextToSize(step, stepMaxW),
+  );
+
+  const option2Steps = [
+    ...(wlanSettings
+      ? [
+          t("modals.generateQrModal.pdfInstructions.option2WlanStep", {
+            ssid: wlanSettings.ssid,
+            password: wlanSettings.password,
+          }),
+        ]
+      : []),
+    `${t("modals.generateQrModal.pdfInstructions.option2Step1")} ${baseUrl}/student`,
+    t("modals.generateQrModal.pdfInstructions.option2Step2"),
+  ];
+  const option2LineGroups = option2Steps.map((step, index) =>
+    doc.splitTextToSize(`${index + 1}. ${step}`, stepMaxW),
+  );
+  const contentLineCount =
+    3 +
+    option1LineGroups.reduce((count, lines) => count + lines.length, 0) +
+    option2LineGroups.reduce((count, lines) => count + lines.length, 0) +
+    1;
+
+  // Size the box from the wrapped content so long WLAN credentials remain legible.
+  const boxH = boxPad + 9 + (contentLineCount - 1) * lineHeight;
 
   // Don't render if it would go past the page
   if (boxY + boxH > pageH - pad - 10) {
@@ -100,10 +140,6 @@ function renderInstructionBox(
     );
   }
 
-  // Text content starts after WLAN QR (if present)
-  const textStartX = boxX + boxPad + wlanInternalPad;
-  const textMaxW = boxW - boxPad * 2 - wlanInternalPad - 4;
-
   let y = boxY + boxPad + 4;
 
   // Title
@@ -125,12 +161,11 @@ function renderInstructionBox(
 
   doc.setFont("helvetica", "normal");
   doc.setFontSize(8);
-  const option1Lines = doc.splitTextToSize(
-    t("modals.generateQrModal.pdfInstructions.option1Text"),
-    textMaxW,
-  );
-  doc.text(option1Lines, textStartX + 4, y);
-  y += lineHeight * Math.max(option1Lines.length, 1) + 1;
+  option1LineGroups.forEach((lines) => {
+    doc.text(lines, textIndentX, y);
+    y += lineHeight * Math.max(lines.length, 1);
+  });
+  y += 1;
 
   // Option 2
   doc.setFont("helvetica", "bold");
@@ -144,34 +179,24 @@ function renderInstructionBox(
 
   doc.setFont("helvetica", "normal");
   doc.setFontSize(8);
-  // Step 1: Visit URL
-  doc.text(
-    `1. ${t("modals.generateQrModal.pdfInstructions.option2Step1")} ${baseUrl}/student`,
-    textStartX + 4,
-    y,
-  );
-  y += lineHeight;
+  option2LineGroups.forEach((lines) => {
+    doc.text(lines, textIndentX, y);
+    y += lineHeight * Math.max(lines.length, 1);
+  });
 
-  // Step 2: Enter name
-  doc.text(
-    `2. ${t("modals.generateQrModal.pdfInstructions.option2Step2")}`,
-    textStartX + 4,
-    y,
-  );
-  y += lineHeight;
-
-  // Step 3: Enter verification code
+  // Enter verification code
+  const verificationStepNumber = option2Steps.length + 1;
   doc.setFont("helvetica", "normal");
   doc.text(
-    `3. ${t("modals.generateQrModal.pdfInstructions.option2Step3")} `,
-    textStartX + 4,
+    `${verificationStepNumber}. ${t("modals.generateQrModal.pdfInstructions.option2Step3")} `,
+    textIndentX,
     y,
   );
   // Add the code in bold
-  const step3Text = `3. ${t("modals.generateQrModal.pdfInstructions.option2Step3")} `;
-  const step3Width = doc.getTextWidth(step3Text);
+  const verificationStepText = `${verificationStepNumber}. ${t("modals.generateQrModal.pdfInstructions.option2Step3")} `;
+  const verificationStepWidth = doc.getTextWidth(verificationStepText);
   doc.setFont("helvetica", "bold");
-  doc.text(verificationCode, textStartX + 4 + step3Width, y);
+  doc.text(verificationCode, textIndentX + verificationStepWidth, y);
 }
 
 export async function buildPdfForStudent(
@@ -179,7 +204,8 @@ export async function buildPdfForStudent(
   settings: PdfSettings,
 ): Promise<Blob> {
   const { locale = "en" } = settings;
-  const t = (key: string) => i18next.t(key, { lng: locale });
+  const t: PdfTranslator = (key, options) =>
+    i18next.t(key, { lng: locale, ...options });
 
   const isPortrait = settings.orientation === "portrait";
   const doc = new jsPDF({
@@ -306,6 +332,7 @@ export async function buildPdfForStudent(
     baseUrl,
     t,
     wlanQrDataUrl,
+    wlanQrDataUrl ? settings.wlanSettings : undefined,
   );
 
   // Only show page label if not hidden (for preview purposes)
@@ -542,11 +569,12 @@ function renderNewRegistrationInstructionBox(
   pageH: number,
   pad: number,
   baseUrl: string,
-  t: (key: string) => string,
+  t: PdfTranslator,
   wlanQrDataUrl?: string,
+  wlanSettings?: WlanSettings,
 ): void {
   const boxPad = 4;
-  const lineHeight = 5;
+  const lineHeight = wlanSettings ? 4 : 5;
 
   // WLAN QR code dimensions (inside the box)
   const wlanQrSize = wlanQrDataUrl ? 26 : 0;
@@ -557,8 +585,44 @@ function renderNewRegistrationInstructionBox(
   const boxY = startY + 4;
   const boxW = pageW - pad * 2;
 
-  // Calculate box height based on content (fewer lines than student version)
-  const boxH = lineHeight * 6 + boxPad * 2;
+  // Text content starts after WLAN QR (if present)
+  const textStartX = boxX + boxPad + wlanInternalPad;
+  const textMaxW = boxW - boxPad * 2 - wlanInternalPad - 4;
+  const textIndentX = textStartX + 4;
+  const stepMaxW = textMaxW - 4;
+
+  const option1Steps = wlanSettings
+    ? [
+        `1. ${t("modals.generateQrModal.pdfInstructions.option1WlanStep")}`,
+        `2. ${t("modals.generateQrModal.newRegistration.pdfInstructions.option1Text")}`,
+      ]
+    : [t("modals.generateQrModal.newRegistration.pdfInstructions.option1Text")];
+  const option1LineGroups = option1Steps.map((step) =>
+    doc.splitTextToSize(step, stepMaxW),
+  );
+
+  const option2Steps = [
+    ...(wlanSettings
+      ? [
+          t("modals.generateQrModal.pdfInstructions.option2WlanStep", {
+            ssid: wlanSettings.ssid,
+            password: wlanSettings.password,
+          }),
+        ]
+      : []),
+    `${t("modals.generateQrModal.newRegistration.pdfInstructions.option2Step1")} ${baseUrl}/student/new`,
+    t("modals.generateQrModal.newRegistration.pdfInstructions.option2Step2"),
+  ];
+  const option2LineGroups = option2Steps.map((step, index) =>
+    doc.splitTextToSize(`${index + 1}. ${step}`, stepMaxW),
+  );
+  const contentLineCount =
+    3 +
+    option1LineGroups.reduce((count, lines) => count + lines.length, 0) +
+    option2LineGroups.reduce((count, lines) => count + lines.length, 0);
+
+  // Size the box from the wrapped content so long WLAN credentials remain legible.
+  const boxH = boxPad + 9 + (contentLineCount - 1) * lineHeight;
 
   // Don't render if it would go past the page
   if (boxY + boxH > pageH - pad - 10) {
@@ -585,10 +649,6 @@ function renderNewRegistrationInstructionBox(
     );
   }
 
-  // Text content starts after WLAN QR (if present)
-  const textStartX = boxX + boxPad + wlanInternalPad;
-  const textMaxW = boxW - boxPad * 2 - wlanInternalPad - 4;
-
   let y = boxY + boxPad + 4;
 
   // Title
@@ -614,12 +674,11 @@ function renderNewRegistrationInstructionBox(
 
   doc.setFont("helvetica", "normal");
   doc.setFontSize(8);
-  const option1Lines = doc.splitTextToSize(
-    t("modals.generateQrModal.newRegistration.pdfInstructions.option1Text"),
-    textMaxW,
-  );
-  doc.text(option1Lines, textStartX + 4, y);
-  y += lineHeight * Math.max(option1Lines.length, 1) + 1;
+  option1LineGroups.forEach((lines) => {
+    doc.text(lines, textIndentX, y);
+    y += lineHeight * Math.max(lines.length, 1);
+  });
+  y += 1;
 
   // Option 2
   doc.setFont("helvetica", "bold");
@@ -633,20 +692,10 @@ function renderNewRegistrationInstructionBox(
 
   doc.setFont("helvetica", "normal");
   doc.setFontSize(8);
-  // Step 1: Visit URL
-  doc.text(
-    `1. ${t("modals.generateQrModal.newRegistration.pdfInstructions.option2Step1")} ${baseUrl}/student/new`,
-    textStartX + 4,
-    y,
-  );
-  y += lineHeight;
-
-  // Step 2: Click to create
-  doc.text(
-    `2. ${t("modals.generateQrModal.newRegistration.pdfInstructions.option2Step2")}`,
-    textStartX + 4,
-    y,
-  );
+  option2LineGroups.forEach((lines) => {
+    doc.text(lines, textIndentX, y);
+    y += lineHeight * Math.max(lines.length, 1);
+  });
 }
 
 /**
@@ -657,7 +706,8 @@ export async function buildNewRegistrationPdf(
   settings: NewRegistrationPdfSettings,
 ): Promise<Blob> {
   const { locale = "en" } = settings;
-  const t = (key: string) => i18next.t(key, { lng: locale });
+  const t: PdfTranslator = (key, options) =>
+    i18next.t(key, { lng: locale, ...options });
 
   const isPortrait = settings.orientation === "portrait";
   const doc = new jsPDF({
@@ -742,6 +792,7 @@ export async function buildNewRegistrationPdf(
     baseUrl,
     t,
     wlanQrDataUrl,
+    wlanQrDataUrl ? settings.wlanSettings : undefined,
   );
 
   // Filename in bottom right
