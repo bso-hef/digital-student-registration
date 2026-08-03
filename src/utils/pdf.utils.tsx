@@ -708,15 +708,7 @@ export async function buildNewRegistrationPdf(
   );
 
   // Description
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(11);
-  let ty = qrY + 16;
-  const descLines = doc.splitTextToSize(
-    t("modals.generateQrModal.newRegistration.description"),
-    textMaxW,
-  );
-  doc.text(descLines, textX, ty);
-  ty += 6 * descLines.length + 4;
+  const ty = qrY + 16;
 
   // URL
   doc.setTextColor(0);
