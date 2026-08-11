@@ -96,6 +96,7 @@ export const createCountryValidation = (
 
 // Step 1: Allgemeine Daten
 export const validateGeneralStudentData = Yup.object({
+  currentClass: Yup.string().required("Klasse ist erforderlich"),
   eintrittschule: Yup.string().nullable(),
   klassenname: Yup.string().nullable(),
   vorname: Yup.string().required("Vorname ist erforderlich"),
@@ -133,6 +134,7 @@ export const createValidateGeneralStudentData = (
   },
 ) =>
   Yup.object({
+    currentClass: Yup.string().required("Klasse ist erforderlich"),
     eintrittschule: Yup.string().nullable(),
     klassenname: Yup.string().nullable(),
     vorname: Yup.string().required("Vorname ist erforderlich"),
