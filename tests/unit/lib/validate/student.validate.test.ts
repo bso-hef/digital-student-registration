@@ -3,6 +3,7 @@ import {
   createGenderValidation,
   createReligionValidation,
   createValidateGeneralStudentData,
+  createValidateStudentAddressData,
   createValidateStudentTrainingData,
   validateGeneralStudentData,
   validateStudentOriginData,
@@ -17,6 +18,32 @@ import { describe, expect, it } from "vitest";
  */
 
 describe("student.validate", () => {
+  describe("createValidateStudentAddressData", () => {
+    it("requires the student phone number when configured", async () => {
+      const schema = createValidateStudentAddressData({
+        required: true,
+        visible: true,
+        allowCustom: false,
+      });
+
+      await expect(schema.validateAt("tel", { tel: "" })).rejects.toThrow(
+        "Telefonnummer ist erforderlich",
+      );
+    });
+
+    it("does not validate the student phone number when hidden", async () => {
+      const schema = createValidateStudentAddressData({
+        required: true,
+        visible: false,
+        allowCustom: false,
+      });
+
+      await expect(
+        schema.validateAt("tel", { tel: "keine Telefonnummer" }),
+      ).resolves.toBe("keine Telefonnummer");
+    });
+  });
+
   describe("validateVerificationForm", () => {
     it("should validate correct verification data", async () => {
       const validData = {
