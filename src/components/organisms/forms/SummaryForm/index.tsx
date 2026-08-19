@@ -10,6 +10,7 @@ import {
   getStepIdByName,
 } from "@/constants/studentSteps.constants";
 import { useAgreementSettings } from "@/hooks/useAgreementSettings";
+import { useOnboardingSettings } from "@/hooks/useOnboardingSettings";
 import { setEditingFromSummary } from "@/store/actions/studentActions";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { formatGermanDate } from "@/utils/date.utils";
@@ -92,6 +93,7 @@ const SummaryForm: React.FC<SummaryFormProps> = ({
   const dispatch = useAppDispatch();
   const studentData = useAppSelector((state) => state.student.data);
   const { enabledAgreements, getAgreementLabel } = useAgreementSettings();
+  const { fieldConfigs } = useOnboardingSettings();
 
   // All sections start collapsed by default
   const [expandedSections, setExpandedSections] = useState<{
@@ -295,7 +297,8 @@ const SummaryForm: React.FC<SummaryFormProps> = ({
             : undefined,
         )}
         {renderDataRow(t("onboarding.address.mobile"), studentData.mobil)}
-        {renderDataRow(t("onboarding.address.phone"), studentData.telefon1)}
+        {fieldConfigs.telefon1?.visible !== false &&
+          renderDataRow(t("onboarding.address.phone"), studentData.telefon1)}
         {renderDataRow(t("onboarding.address.email"), studentData.email)}
       </EnhancedCollapse>
 

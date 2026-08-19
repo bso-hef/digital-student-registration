@@ -58,6 +58,7 @@ describe("GET /api/settings/onboarding/public", () => {
       ],
       fieldConfigs: {
         geschlecht: { required: true, visible: true, allowCustom: false },
+        telefon1: { required: false, visible: true, allowCustom: false },
         vorhergehendeSchulform: {
           required: true,
           visible: true,
@@ -112,6 +113,11 @@ describe("GET /api/settings/onboarding/public", () => {
     expect(response.status).toBe(200);
     expect(body.data.onboarding).toEqual({
       fieldConfigs: {
+        telefon1: {
+          required: false,
+          visible: true,
+          allowCustom: false,
+        },
         vorhergehendeSchulform: {
           required: true,
           visible: true,
