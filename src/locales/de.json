@@ -860,6 +860,10 @@
           "label": "Geschlecht",
           "description": "Geschlechtsauswahl des Schülers"
         },
+        "telefon1": {
+          "label": "Telefonnummer des Schülers",
+          "description": "Festnetznummer des Schülers"
+        },
         "religion": {
           "label": "Religion",
           "description": "Religionszugehörigkeit des Schülers"
