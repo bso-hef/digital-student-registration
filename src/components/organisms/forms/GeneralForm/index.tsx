@@ -302,6 +302,9 @@ const GeneralForm: React.FC<GeneralFormProps> = ({
                   label={t("onboarding.general.onboardingIntoClass")}
                   variant="outlined"
                   fullWidth
+                  required
+                  error={touched.currentClass && Boolean(errors.currentClass)}
+                  helperText={touched.currentClass && errors.currentClass}
                   slotProps={{
                     ...params.slotProps,
                     input: {
