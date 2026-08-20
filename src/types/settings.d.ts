@@ -39,6 +39,7 @@ export interface OnboardingSettings {
 
   fieldConfigs: {
     geschlecht: FieldConfig;
+    telefon1: FieldConfig;
     religion: FieldConfig;
     staatsangehoerigkeit2: FieldConfig;
     herkunftsland: FieldConfig;

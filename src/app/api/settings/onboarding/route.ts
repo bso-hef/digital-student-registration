@@ -1,8 +1,10 @@
 import { auth } from "@/lib/auth/auth";
 import { dbConnect } from "@/lib/config/mongo";
+import { applyOnboardingFieldConfigDefaults } from "@/lib/config/onboarding";
 import { tServer } from "@/lib/server-i18n";
 import Logger from "@/lib/server-logger";
 import { createAuditLog } from "@/server/middleware/audit.middleware";
+import { AppSettings as AppSettingsType } from "@/types/settings";
 import { NextRequest, NextResponse } from "next/server";
 
 import AppSettings from "@/models/AppSettings";
@@ -10,6 +12,13 @@ import AppSettings from "@/models/AppSettings";
 export const runtime = "nodejs";
 
 const logger = new Logger("API <<==>> Settings::Onboarding");
+
+const applyDefaultsToSettings = (
+  settings: AppSettingsType,
+): AppSettingsType => ({
+  ...settings,
+  onboarding: applyOnboardingFieldConfigDefaults(settings.onboarding),
+});
 
 /**
  * PATCH /api/settings/onboarding
@@ -84,10 +93,14 @@ export async function PATCH(request: NextRequest) {
 
     logger.info("Onboarding settings updated successfully");
 
+    const responseSettings = applyDefaultsToSettings(
+      settings.toObject() as AppSettingsType,
+    );
+
     return NextResponse.json(
       {
         success: true,
-        data: settings.toObject(),
+        data: responseSettings,
       },
       { status: 200 },
     );
@@ -139,15 +152,19 @@ export async function GET() {
     if (!settings) {
       logger.info("No settings found, returning default onboarding settings");
       const defaultSettings = new AppSettings({});
-      settings = await defaultSettings.save();
+      settings = (await defaultSettings.save()).toObject();
     }
 
     logger.info("Onboarding settings fetched successfully");
 
+    const responseSettings = applyDefaultsToSettings(
+      settings as unknown as AppSettingsType,
+    );
+
     return NextResponse.json(
       {
         success: true,
-        data: settings, // Return full AppSettings object
+        data: responseSettings,
       },
       { status: 200 },
     );

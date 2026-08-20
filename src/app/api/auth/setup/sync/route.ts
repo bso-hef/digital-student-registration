@@ -9,18 +9,17 @@ import { NextRequest, NextResponse } from "next/server";
  *
  * Usage:
  * - GET /api/auth/setup/sync - Returns JSON with sync status
- * - GET /api/auth/setup/sync?redirect=/login - Sets cookie and redirects
+ * - GET /api/auth/setup/sync?redirect=/student/new - Sets cookie and redirects
  */
 export async function GET(req: NextRequest) {
   try {
+    const { searchParams } = new URL(req.url);
+    const redirectUrl = searchParams.get("redirect");
+
     // Check if setup is complete in database
     const setupComplete = await isSystemSetup();
 
     if (setupComplete) {
-      // Check if redirect parameter is provided
-      const { searchParams } = new URL(req.url);
-      const redirectUrl = searchParams.get("redirect");
-
       // Create response (either redirect or JSON)
       // Use configured app URL to ensure consistent redirects with correct port
       const response = redirectUrl
@@ -44,6 +43,13 @@ export async function GET(req: NextRequest) {
       });
 
       return response;
+    }
+
+    // The middleware uses this endpoint for fresh browsers. If setup really is
+    // incomplete, continue to the setup UI instead of leaving the visitor on a
+    // JSON response.
+    if (redirectUrl) {
+      return NextResponse.redirect(new URL("/setup", appConfig.app.url));
     }
 
     return NextResponse.json(

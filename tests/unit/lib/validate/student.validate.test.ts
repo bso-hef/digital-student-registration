@@ -3,6 +3,7 @@ import {
   createGenderValidation,
   createReligionValidation,
   createValidateGeneralStudentData,
+  createValidateStudentAddressData,
   createValidateStudentTrainingData,
   validateGeneralStudentData,
   validateStudentOriginData,
@@ -17,6 +18,32 @@ import { describe, expect, it } from "vitest";
  */
 
 describe("student.validate", () => {
+  describe("createValidateStudentAddressData", () => {
+    it("requires the student phone number when configured", async () => {
+      const schema = createValidateStudentAddressData({
+        required: true,
+        visible: true,
+        allowCustom: false,
+      });
+
+      await expect(schema.validateAt("tel", { tel: "" })).rejects.toThrow(
+        "Telefonnummer ist erforderlich",
+      );
+    });
+
+    it("does not validate the student phone number when hidden", async () => {
+      const schema = createValidateStudentAddressData({
+        required: true,
+        visible: false,
+        allowCustom: false,
+      });
+
+      await expect(
+        schema.validateAt("tel", { tel: "keine Telefonnummer" }),
+      ).resolves.toBe("keine Telefonnummer");
+    });
+  });
+
   describe("validateVerificationForm", () => {
     it("should validate correct verification data", async () => {
       const validData = {
@@ -261,6 +288,7 @@ describe("student.validate", () => {
     const validData = {
       eintrittschule: "2023-09-01",
       klassenname: "10A",
+      currentClass: "12FOI",
       vorname: "Max",
       nachname: "Mustermann",
       geburtsname: null,
@@ -346,6 +374,7 @@ describe("student.validate", () => {
       const minimalData = {
         vorname: "Max",
         nachname: "Mustermann",
+        currentClass: "12FOI",
         geschlecht: "männlich",
         geburtsdatum: new Date("2008-05-15"),
         geburtsland: "Deutschland",
@@ -372,6 +401,7 @@ describe("student.validate", () => {
       const data = {
         vorname: "John",
         nachname: "Doe",
+        currentClass: "12FOI",
         geschlecht: "male",
         geburtsdatum: new Date("2000-01-01"),
         geburtsland: "Germany",
@@ -408,6 +438,7 @@ describe("student.validate", () => {
       const data = {
         vorname: "John",
         nachname: "Doe",
+        currentClass: "12FOI",
         geschlecht: "custom gender",
         geburtsdatum: new Date("2000-01-01"),
         geburtsland: "Germany",
@@ -423,6 +454,7 @@ describe("student.validate", () => {
       const data = {
         vorname: "John",
         nachname: "Doe",
+        currentClass: "12FOI",
         geschlecht: "male",
         geburtsdatum: new Date("2000-01-01"),
         geburtsland: "Any Country",

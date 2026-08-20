@@ -861,6 +861,10 @@
           "label": "Gender (Geschlecht)",
           "description": "Student's gender selection"
         },
+        "telefon1": {
+          "label": "Student phone number",
+          "description": "Student's landline phone number"
+        },
         "religion": {
           "label": "Religion",
           "description": "Student's religious affiliation"

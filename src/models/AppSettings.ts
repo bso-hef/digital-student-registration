@@ -1,5 +1,8 @@
 import { SCHEMA } from "@/constants/db.constants";
-import { DEFAULT_PREVIOUS_SCHOOL_TYPE_FIELD_CONFIG } from "@/lib/config/onboarding";
+import {
+  DEFAULT_PREVIOUS_SCHOOL_TYPE_FIELD_CONFIG,
+  DEFAULT_STUDENT_PHONE_FIELD_CONFIG,
+} from "@/lib/config/onboarding";
 import mongoose, { Schema } from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
 
@@ -405,6 +408,10 @@ const AppSettingsSchema = new Schema(
           type: FieldConfigSchema,
           default: { required: true, visible: true, allowCustom: false },
         },
+        telefon1: {
+          type: FieldConfigSchema,
+          default: DEFAULT_STUDENT_PHONE_FIELD_CONFIG,
+        },
         religion: {
           type: FieldConfigSchema,
           default: { required: false, visible: true, allowCustom: true },
@@ -506,5 +513,21 @@ const AppSettingsSchema = new Schema(
 
 AppSettingsSchema.plugin(mongoosePaginate);
 
-export default mongoose.models.AppSettings ||
+const existingAppSettingsModel = mongoose.models.AppSettings;
+
+// Next.js keeps compiled Mongoose models across hot reloads. Without updating
+// the cached schema, newly added settings are silently stripped during save.
+if (
+  existingAppSettingsModel &&
+  !existingAppSettingsModel.schema.path("onboarding.fieldConfigs.telefon1")
+) {
+  existingAppSettingsModel.schema.add({
+    "onboarding.fieldConfigs.telefon1": {
+      type: FieldConfigSchema,
+      default: DEFAULT_STUDENT_PHONE_FIELD_CONFIG,
+    },
+  });
+}
+
+export default existingAppSettingsModel ||
   mongoose.model(SCHEMA.APP_SETTINGS, AppSettingsSchema);

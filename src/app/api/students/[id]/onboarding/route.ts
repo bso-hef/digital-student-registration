@@ -122,6 +122,13 @@ export async function PATCH(
 
     // If final submit, change status to "onboarded"
     if (finalSubmit) {
+      if (!student.currentClass) {
+        return NextResponse.json(
+          { error: "Class is required to complete onboarding" },
+          { status: 400 },
+        );
+      }
+
       student.status = "onboarded";
       logger.info(`Student ${id} completed onboarding`);
     } else {
