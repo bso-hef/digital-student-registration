@@ -22,8 +22,15 @@ export default auth((req) => {
     if (pathname === "/setup") {
       return NextResponse.next();
     }
-    // Redirect all other routes to setup using configured app URL
-    return NextResponse.redirect(new URL("/setup", baseUrl));
+
+    // A fresh browser (for example a phone opening a registration QR code)
+    // does not have the setup cookie yet. Let the Node.js sync endpoint verify
+    // the database state, set the cookie and return to the originally requested
+    // page. Sending every fresh browser through /setup would otherwise lose the
+    // target and eventually display the admin login page.
+    const syncUrl = new URL("/api/auth/setup/sync", baseUrl);
+    syncUrl.searchParams.set("redirect", `${pathname}${req.nextUrl.search}`);
+    return NextResponse.redirect(syncUrl);
   }
 
   // If setup IS complete and user tries to access setup page
