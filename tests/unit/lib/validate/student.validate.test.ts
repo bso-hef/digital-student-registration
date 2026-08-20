@@ -288,6 +288,7 @@ describe("student.validate", () => {
     const validData = {
       eintrittschule: "2023-09-01",
       klassenname: "10A",
+      currentClass: "12FOI",
       vorname: "Max",
       nachname: "Mustermann",
       geburtsname: null,
@@ -373,6 +374,7 @@ describe("student.validate", () => {
       const minimalData = {
         vorname: "Max",
         nachname: "Mustermann",
+        currentClass: "12FOI",
         geschlecht: "männlich",
         geburtsdatum: new Date("2008-05-15"),
         geburtsland: "Deutschland",
@@ -399,6 +401,7 @@ describe("student.validate", () => {
       const data = {
         vorname: "John",
         nachname: "Doe",
+        currentClass: "12FOI",
         geschlecht: "male",
         geburtsdatum: new Date("2000-01-01"),
         geburtsland: "Germany",
@@ -435,6 +438,7 @@ describe("student.validate", () => {
       const data = {
         vorname: "John",
         nachname: "Doe",
+        currentClass: "12FOI",
         geschlecht: "custom gender",
         geburtsdatum: new Date("2000-01-01"),
         geburtsland: "Germany",
@@ -449,8 +453,8 @@ describe("student.validate", () => {
       const schema = createValidateGeneralStudentData(["male", "female"], []);
       const data = {
         vorname: "John",
-        currentClass: "12FOI",
         nachname: "Doe",
+        currentClass: "12FOI",
         geschlecht: "male",
         geburtsdatum: new Date("2000-01-01"),
         geburtsland: "Any Country",
