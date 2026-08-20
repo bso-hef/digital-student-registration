@@ -48,6 +48,7 @@ interface FieldConfigItem {
   label: string;
   description?: string;
   config: FieldConfig;
+  allowCustom?: boolean;
 }
 
 interface FieldConfigurationPanelProps {
@@ -149,23 +150,27 @@ const FieldConfigurationPanel: React.FC<FieldConfigurationPanelProps> = ({
                   />
                 </TableCell>
                 <TableCell align="center">
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={field?.config?.allowCustom}
-                        onChange={() =>
-                          handleToggle(
-                            field?.name,
-                            field?.config,
-                            "allowCustom",
-                          )
-                        }
-                        size="small"
-                        disabled={!field?.config?.visible}
-                      />
-                    }
-                    label=""
-                  />
+                  {field.allowCustom === false ? (
+                    <Typography aria-hidden="true">—</Typography>
+                  ) : (
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          checked={field?.config?.allowCustom}
+                          onChange={() =>
+                            handleToggle(
+                              field?.name,
+                              field?.config,
+                              "allowCustom",
+                            )
+                          }
+                          size="small"
+                          disabled={!field?.config?.visible}
+                        />
+                      }
+                      label=""
+                    />
+                  )}
                 </TableCell>
               </TableRow>
             ))}

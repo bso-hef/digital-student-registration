@@ -6,7 +6,10 @@ import AdminSettingsHeader from "@/components/molecules/AdminSettingsHeader";
 import EnhancedCollapse from "@/components/molecules/EnhancedCollapse";
 import DropdownOptionsManager from "@/components/organisms/settings/DropdownOptionsManager";
 import FieldConfigurationPanel from "@/components/organisms/settings/FieldConfigurationPanel";
-import { DEFAULT_PREVIOUS_SCHOOL_TYPE_FIELD_CONFIG } from "@/lib/config/onboarding";
+import {
+  DEFAULT_PREVIOUS_SCHOOL_TYPE_FIELD_CONFIG,
+  DEFAULT_STUDENT_PHONE_FIELD_CONFIG,
+} from "@/lib/config/onboarding";
 import {
   getOnboardingSettings,
   updateOnboardingSettings,
@@ -115,7 +118,8 @@ const AdminSettingsOnboardingPage = () => {
       ...localSettings,
       fieldConfigs: {
         ...localSettings?.fieldConfigs,
-        [fieldName]: config,
+        [fieldName]:
+          fieldName === "telefon1" ? { ...config, allowCustom: false } : config,
       },
     });
     setHasChanges(true);
@@ -150,6 +154,15 @@ const AdminSettingsOnboardingPage = () => {
       label: t("settings.onboarding.fields.geschlecht.label"),
       description: t("settings.onboarding.fields.geschlecht.description"),
       config: localSettings?.fieldConfigs?.geschlecht ?? ({} as FieldConfig),
+    },
+    {
+      name: "telefon1",
+      label: t("settings.onboarding.fields.telefon1.label"),
+      description: t("settings.onboarding.fields.telefon1.description"),
+      config:
+        localSettings?.fieldConfigs?.telefon1 ??
+        DEFAULT_STUDENT_PHONE_FIELD_CONFIG,
+      allowCustom: false,
     },
     {
       name: "religion",

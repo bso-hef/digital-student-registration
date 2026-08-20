@@ -212,23 +212,38 @@ export const createValidateStudentOriginData = (
 };
 
 // Step 3: Adresse
-export const validateStudentAddressData = Yup.object({
-  straße: Yup.string().required("Straße ist erforderlich"),
-  hausnr: Yup.string().required("Hausnummer ist erforderlich"),
-  plz: Yup.string()
-    .matches(/^\d{5}$/, "PLZ muss 5 Ziffern haben")
-    .required("PLZ ist erforderlich"),
-  ort: Yup.string().required("Ort ist erforderlich"),
-  mobil: Yup.string()
-    .matches(/^\+?[0-9 ]{6,20}$/, "Ungültige Mobilnummer")
-    .nullable(),
-  tel: Yup.string()
-    .matches(/^\+?[0-9 ]{6,20}$/, "Ungültige Telefonnummer")
-    .nullable(), // Optional
-  mail: Yup.string()
-    .email("Ungültige E-Mail-Adresse")
-    .required("E-Mail ist erforderlich"),
-});
+export const createValidateStudentAddressData = (
+  phoneConfig: FieldConfig = {
+    required: false,
+    visible: true,
+    allowCustom: false,
+  },
+) =>
+  Yup.object({
+    straße: Yup.string().required("Straße ist erforderlich"),
+    hausnr: Yup.string().required("Hausnummer ist erforderlich"),
+    plz: Yup.string()
+      .matches(/^\d{5}$/, "PLZ muss 5 Ziffern haben")
+      .required("PLZ ist erforderlich"),
+    ort: Yup.string().required("Ort ist erforderlich"),
+    mobil: Yup.string()
+      .matches(/^\+?[0-9 ]{6,20}$/, "Ungültige Mobilnummer")
+      .nullable(),
+    tel: phoneConfig.visible
+      ? phoneConfig.required
+        ? Yup.string()
+            .required("Telefonnummer ist erforderlich")
+            .matches(/^\+?[0-9 ]{6,20}$/, "Ungültige Telefonnummer")
+        : Yup.string()
+            .matches(/^\+?[0-9 ]{6,20}$/, "Ungültige Telefonnummer")
+            .nullable()
+      : Yup.string().nullable(),
+    mail: Yup.string()
+      .email("Ungültige E-Mail-Adresse")
+      .required("E-Mail ist erforderlich"),
+  });
+
+export const validateStudentAddressData = createValidateStudentAddressData();
 
 // Step 4: Ansprechpartner: (Optional / Pflicht bei Minderjährigen < 18 / Checkbox > 18 Jahre)
 // Fixed: Field names now match form (ansprechpartner1Art instead of ansprechpartnerArt)

@@ -2,7 +2,9 @@
 
 import React, { useEffect } from "react";
 
-import { validateStudentAddressData } from "@/lib/validate/student.validate";
+import { useOnboardingSettings } from "@/hooks/useOnboardingSettings";
+import { DEFAULT_STUDENT_PHONE_FIELD_CONFIG } from "@/lib/config/onboarding";
+import { createValidateStudentAddressData } from "@/lib/validate/student.validate";
 import { updateStudentOnboardingData } from "@/store/actions/studentActions";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { Box, Typography, styled } from "@mui/material";
@@ -54,6 +56,9 @@ const AddressForm: React.FC<AddressFormProps> = ({
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const studentData = useAppSelector((state) => state.student.data);
+  const { fieldConfigs } = useOnboardingSettings();
+  const phoneConfig =
+    fieldConfigs.telefon1 ?? DEFAULT_STUDENT_PHONE_FIELD_CONFIG;
 
   const initialValues: FormValues = {
     straße: studentData.straße || "",
@@ -96,7 +101,7 @@ const AddressForm: React.FC<AddressFormProps> = ({
   return (
     <Formik<FormValues>
       initialValues={initialValues}
-      validationSchema={validateStudentAddressData}
+      validationSchema={createValidateStudentAddressData(phoneConfig)}
       onSubmit={handleSubmit}
       enableReinitialize
       innerRef={formikRef}
@@ -189,24 +194,27 @@ const AddressForm: React.FC<AddressFormProps> = ({
             />
 
             {/* Festnetz */}
-            <Field
-              component={TextField}
-              name="tel"
-              label={t("onboarding.address.phone")}
-              variant="outlined"
-              fullWidth
-              placeholder="+49 123 456789"
-              slotProps={{
-                inputMode: "tel",
-                pattern: "[+0-9 ]*",
-              }}
-              onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                // Only allow numbers, +, and spaces
-                if (!/[0-9+\s]/.test(e.key)) {
-                  e.preventDefault();
-                }
-              }}
-            />
+            {phoneConfig.visible && (
+              <Field
+                component={TextField}
+                name="tel"
+                label={t("onboarding.address.phone")}
+                variant="outlined"
+                fullWidth
+                required={phoneConfig.required}
+                placeholder="+49 123 456789"
+                slotProps={{
+                  inputMode: "tel",
+                  pattern: "[+0-9 ]*",
+                }}
+                onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                  // Only allow numbers, +, and spaces
+                  if (!/[0-9+\s]/.test(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
+              />
+            )}
 
             {/* E-Mail */}
             <Field
