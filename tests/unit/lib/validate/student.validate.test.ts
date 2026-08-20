@@ -449,6 +449,7 @@ describe("student.validate", () => {
       const schema = createValidateGeneralStudentData(["male", "female"], []);
       const data = {
         vorname: "John",
+        currentClass: "12FOI",
         nachname: "Doe",
         geschlecht: "male",
         geburtsdatum: new Date("2000-01-01"),
