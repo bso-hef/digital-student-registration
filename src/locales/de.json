@@ -106,6 +106,7 @@
   "navigation": {
     "dashboard": "Übersicht",
     "management": "Verwaltung",
+    "adminManagement": "Administratoren",
     "studentManagement": "Schülerverwaltung",
     "classManagement": "Klassenverwaltung",
     "data": "Daten",
@@ -985,6 +986,47 @@
         "Other": "Andere"
       }
     },
+    "manageAdmins": {
+      "add": "Administrator anlegen",
+      "addTitle": "Administrator anlegen",
+      "edit": "Bearbeiten",
+      "editTitle": "Administrator bearbeiten",
+      "delete": "Löschen",
+      "deleteTitle": "Administrator löschen",
+      "deleteConfirm": "Soll das Administratorkonto {{email}} wirklich gelöscht werden? Diese Aktion kann nicht rückgängig gemacht werden.",
+      "cannotDeleteSelf": "Das eigene Konto kann nicht gelöscht werden",
+      "name": "Name",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "email": "E-Mail-Adresse",
+      "password": "Passwort",
+      "newPassword": "Neues Passwort",
+      "passwordHelp": "Mindestens 8 Zeichen mit Groß- und Kleinbuchstaben sowie einer Zahl",
+      "passwordOptional": "Leer lassen, um das bestehende Passwort beizubehalten",
+      "status": "Status",
+      "active": "Aktiv",
+      "inactive": "Inaktiv",
+      "activeAccount": "Konto aktiv",
+      "lastLogin": "Letzte Anmeldung",
+      "never": "Noch nie",
+      "actions": "Aktionen",
+      "you": "Sie",
+      "empty": "Keine Administratorkonten gefunden.",
+      "formSubtitle": "Zugangsdaten und Kontostatus verwalten",
+      "recoverySubtitle": "Das Konto wurde erfolgreich angelegt",
+      "recoveryWarning": "Speichern Sie diesen Wiederherstellungscode jetzt sicher ab. Er kann später nicht erneut angezeigt werden.",
+      "copy": "Code kopieren",
+      "messages": {
+        "created": "Administrator wurde angelegt",
+        "updated": "Administrator wurde aktualisiert",
+        "deleted": "Administrator wurde gelöscht"
+      },
+      "errors": {
+        "load": "Administratoren konnten nicht geladen werden",
+        "save": "Administrator konnte nicht gespeichert werden",
+        "delete": "Administrator konnte nicht gelöscht werden"
+      }
+    },
     "manageClass": {
       "className": "Klassenname",
       "numberOfStudents": "Anzahl der Schüler",
@@ -1149,6 +1191,9 @@
       "settings.update_onboarding": "Onboarding aktualisiert",
       "auth.profile_update": "Profil aktualisiert",
       "auth.password_change": "Passwort geändert",
+      "auth.admin_create": "Administrator angelegt",
+      "auth.admin_update": "Administrator aktualisiert",
+      "auth.admin_delete": "Administrator gelöscht",
       "system.clear_audit_logs": "Audit-Protokolle gelöscht"
     }
   },

@@ -106,6 +106,7 @@
   "navigation": {
     "dashboard": "Dashboard",
     "management": "Management",
+    "adminManagement": "Administrators",
     "studentManagement": "Student Management",
     "classManagement": "Class Management",
     "data": "Data",
@@ -985,6 +986,47 @@
         "Other": "Other"
       }
     },
+    "manageAdmins": {
+      "add": "Add administrator",
+      "addTitle": "Add administrator",
+      "edit": "Edit",
+      "editTitle": "Edit administrator",
+      "delete": "Delete",
+      "deleteTitle": "Delete administrator",
+      "deleteConfirm": "Are you sure you want to delete the administrator account {{email}}? This action cannot be undone.",
+      "cannotDeleteSelf": "You cannot delete your own account",
+      "name": "Name",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email address",
+      "password": "Password",
+      "newPassword": "New password",
+      "passwordHelp": "At least 8 characters with uppercase, lowercase and a number",
+      "passwordOptional": "Leave blank to keep the current password",
+      "status": "Status",
+      "active": "Active",
+      "inactive": "Inactive",
+      "activeAccount": "Account active",
+      "lastLogin": "Last login",
+      "never": "Never",
+      "actions": "Actions",
+      "you": "You",
+      "empty": "No administrator accounts found.",
+      "formSubtitle": "Manage credentials and account status",
+      "recoverySubtitle": "The account was created successfully",
+      "recoveryWarning": "Save this recovery code securely now. It cannot be displayed again later.",
+      "copy": "Copy code",
+      "messages": {
+        "created": "Administrator created",
+        "updated": "Administrator updated",
+        "deleted": "Administrator deleted"
+      },
+      "errors": {
+        "load": "Administrators could not be loaded",
+        "save": "Administrator could not be saved",
+        "delete": "Administrator could not be deleted"
+      }
+    },
     "manageClass": {
       "className": "Class Name",
       "numberOfStudents": "Number of Students",
@@ -1149,6 +1191,9 @@
       "settings.update_onboarding": "Onboarding Updated",
       "auth.profile_update": "Profile Updated",
       "auth.password_change": "Password Changed",
+      "auth.admin_create": "Administrator Created",
+      "auth.admin_update": "Administrator Updated",
+      "auth.admin_delete": "Administrator Deleted",
       "system.clear_audit_logs": "Audit Logs Cleared"
     }
   },

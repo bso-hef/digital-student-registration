@@ -1,5 +1,6 @@
 import React from "react";
 
+import AdminPanelSettingsRoundedIcon from "@mui/icons-material/AdminPanelSettingsRounded";
 import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
 import ManageAccountsRoundedIcon from "@mui/icons-material/ManageAccountsRounded";
 import MonitorHeartRoundedIcon from "@mui/icons-material/MonitorHeartRounded";
@@ -23,6 +24,11 @@ export const listOfRoutes = (t: TFunction) => {
       displayValue: t("navigation.management"),
       icon: <ManageAccountsRoundedIcon />,
       children: [
+        {
+          path: "/admin/management/admins",
+          displayValue: t("navigation.adminManagement"),
+          icon: <AdminPanelSettingsRoundedIcon />,
+        },
         {
           path: "/admin/management/students",
           displayValue: t("navigation.studentManagement"),
